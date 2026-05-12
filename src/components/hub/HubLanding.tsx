@@ -99,13 +99,13 @@ export default function HubLanding() {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem',
         }}>
           {/* Logo We Make - Official */}
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', height: '44px' }}>
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', height: '44px', minWidth: '160px' }}>
             <Image
               src="/images/we-make-1.png"
               alt="We Make"
               width={160}
               height={44}
-              style={{ objectFit: 'contain', opacity: 0.95, width: 'auto', height: 'auto' }}
+              style={{ objectFit: 'contain', objectPosition: 'left', opacity: 0.95 }}
               priority
             />
           </Link>
