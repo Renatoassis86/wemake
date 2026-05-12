@@ -1,0 +1,115 @@
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.header {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.logoText {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.accent {
+  color: var(--primary);
+}
+
+.nav {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px; /* margem para o scroll */
+}
+
+/* Esconder barra de rolagem padrão para estética (opcional) */
+.nav::-webkit-scrollbar {
+  width: 4px;
+}
+.nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+}
+.nav:hover::-webkit-scrollbar-thumb {
+  background: rgba(200,245,66,0.3);
+}
+
+.nav ul, .footer ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nav li a, .footer li a, .logoutBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  color: var(--secondary);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.nav li a:hover, .footer li a:hover, .logoutBtn:hover {
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--foreground);
+}
+
+@media (prefers-color-scheme: dark) {
+  .nav li a:hover, .footer li a:hover, .logoutBtn:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+}
+
+.active {
+  background: var(--primary-glow) !important;
+  color: var(--primary) !important;
+  font-weight: 600 !important;
+}
+
+.footer {
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+.logoutBtn {
+  color: var(--danger);
+  margin-top: 0.25rem;
+}
+
+.logoutBtn:hover {
+  background: rgba(239, 68, 68, 0.05) !important;
+  color: var(--danger) !important;
+}
+
+.categoryTitle {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #6B7280; /* text-gray-500 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 1rem;
+  margin-bottom: 0.4rem;
+  padding-left: 0.75rem;
+  display: block;
+}
