@@ -1,0 +1,82 @@
+/* ── DASHBOARD LAYOUT CLIENT ──────────────────────────── */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #0A0C0E;
+  color: #F4F2ED;
+}
+
+.layoutHub {
+  display: block; /* No Flexbox Sidebar */
+}
+
+.content {
+  flex: 1;
+  margin-left: 260px; /* Sidebar width */
+  display: flex;
+  flex-direction: column;
+}
+
+.contentHub {
+  margin-left: 0 !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  height: 64px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  background: rgba(13,14,18,0.7);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.companySwitcher {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #000;
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.userMenu {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.perfilIcon {
+  width: 32px;
+  height: 32px;
+  background: rgba(200,245,66,0.05);
+  color: #C8F542;
+  border-radius: 50%;
+  border: 1px solid rgba(200,245,66,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.main {
+  flex: 1;
+  padding: 2rem;
+}
+
+.mainHub {
+  padding-top: 3rem;
+  background: radial-gradient(circle at 50% -10%, rgba(200,245,66,0.03) 0%, transparent 40%);
+}

@@ -1,0 +1,124 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.content {
+  flex: 1;
+  margin-left: 260px; /* Alinhado com a largura da Sidebar */
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  height: 64px;
+  background-color: var(--header);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.companySwitcher {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--background);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.userMenu {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.perfilIcon {
+  width: 32px;
+  height: 32px;
+  background: var(--primary-glow);
+  color: var(--primary);
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.main {
+  flex: 1;
+  padding: 2rem;
+}
+
+.title {
+  font-size: 1.875rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: var(--secondary);
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  background: var(--sidebar);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.iconWrapper {
+  width: 48px;
+  height: 48px;
+  background: var(--primary-glow);
+  color: var(--primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.statLabel {
+  color: var(--secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.statValue {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
