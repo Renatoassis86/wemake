@@ -1,7 +1,7 @@
 # Prompt para Gerar Vídeos Hero - Plataforma We Make
 
 ## Contexto Geral
-- **Marca**: We Make - Plataforma de Gestão Comercial
+- **Marca**: We Make - Plataforma de Gestão Comercial para Educação
 - **Tagline**: "nós criamos"
 - **Filosofia**: Educação tecnológica com excelência, inovação criativa e transformação integral
 - **Paleta de Cores Principal**:
@@ -12,11 +12,12 @@
 
 - **Logo**: Checkmark geométrico em mint e blue com design moderno e limpo
 - **Estilo Visual**: Moderno, minimalista, geométrico, tech-forward mas humano
-- **Público**: Educadores, administradores escolares, gestores comerciais
+- **Público**: Educadores, Professores, Alunos, Escolas com programas STEM/Maker
+- **Tom Visual**: Educativo, acessível, inspirador, com crianças e professores interagindo com tecnologia
 
 ---
 
-## VÍDEO 1: Hero - Página Inicial (Apresentação da Plataforma)
+## VÍDEO 1: Hero - Página Inicial (Crianças em Sala Maker - Robotics)
 
 ### Especificações Técnicas
 - **Duração**: 8-10 segundos
@@ -27,36 +28,44 @@
 
 ### Briefing Criativo
 
-**Objetivo**: Criar um vídeo impactante que apresente a plataforma We Make como solução inovadora de gestão comercial para educadores e gestores.
+**Objetivo**: Mostrar crianças (7-12 anos) em uma sala maker/laboratório interagindo com robôs, placas eletrônicas e projetos hands-on, com professores orientando. Transmitir energia, curiosidade, aprendizado colaborativo e inovação.
 
 **Elementos Visuais**:
 1. **Abertura (0-2s)**:
-   - Fundo gradiente suave de Cyan (#5FE3D0) degradando para Blue (#4A7FDB) da esquerda para direita
-   - Logo da We Make (checkmark geométrico) aparecendo com animação de "desenho" (draw animation) partindo do canto esquerdo
-   - O logo cresce suavemente até ocupar 40% da tela
+   - Cena real: Sala maker moderna com iluminação quente
+   - Crianças em primeiro plano manipulando robôs educacionais (LEGO, Arduino, ou similares)
+   - Professora ao fundo orientando um grupo
+   - Transição suave com overlay de gradiente Cyan-Blue sutilmente sobre a cena (opacidade 10%)
+   - Logo We Make aparece discretamente no canto superior direito (pequeno, semi-transparente)
 
-2. **Conteúdo Principal (2-6s)**:
-   - Transição suave para layout com o logo no topo esquerdo (reduzido, 20% da tela)
-   - Geométricos abstratos (círculos, linhas, quadrados arredondados) em Mint e Blue fluindo pela tela de forma dinâmica
-   - Animações de movimento: efeito de "conexão" entre os elementos (linhas conectando pontos)
-   - Texto aparecendo em tipografia moderna e limpa:
-     - Título: "We Make" (fonte grande, bold)
-     - Subtítulo: "nós criamos" (fonte menor, em Mint)
-   - Cenas rápidas de dashboard/interfaces digitais modernas passando ao fundo (estilo flat design)
+2. **Conteúdo Principal (2-7s)**:
+   - Close-ups intercalados:
+     - Criança concentrada montando um robô (mãos, paciência)
+     - Criança testando projeto (felicidade, sucesso)
+     - Professor explicando conceito para grupo (mentorado, engajado)
+     - Crianças colaborando, rindo, compartilhando ideias
+     - Tela de laptop com código ou interface de controle do robô
+     - Criança apresentando projeto para classe (orgulho, apresentação)
+   - Transições: cortes dinâmicos, não lentos
+   - Inserção sutil de elementos gráficos em Cyan/Blue:
+     - Linhas conectando as ações (simbolizando aprendizado conectado)
+     - Pequenos checkmarks quando criança completa tarefa
+     - Ícones de inovação fluindo
 
-3. **Encerramento (6-10s)**:
-   - Todos os elementos convergem para o centro
-   - Call-to-action: "Transforme sua Gestão Comercial" (em Blue)
-   - Logo volta para posição central e cresce sutilmente
-   - Fade para branco com subtexto: "Plataforma de Gestão Comercial para Educadores"
+3. **Encerramento (7-10s)**:
+   - Zoom out: visão geral da sala maker com todas as crianças e professores
+   - Logo We Make em tamanho maior aparece no centro
+   - Texto overlay: "Educação Tecnológica de Excelência" (em Cyan)
+   - Subtexto: "nós criamos" (em Blue)
+   - Fade para branco
 
-**Tonalidade**: Otimista, inovador, profissional, acessível
-**Música/Som**: Música eletrônica moderna, dinâmica, positiva (sem palavras)
-**Estilo de Animação**: Geométrico, suave, "glassmorphism" com efeitos de transparência
+**Tonalidade**: Inspirador, alegre, empoderador, inclusivo, moderno
+**Música/Som**: Música otimista, educacional, com sons de sucesso suaves (bips, "dings")
+**Estilo de Animação**: Natural (cenas reais) + Efeitos gráficos minimalistas, não invasivo
 
 ---
 
-## VÍDEO 2: Hero - Página Inicial (Benefícios da Plataforma)
+## VÍDEO 2: Hero - Página Inicial (Professor em Sala de Aula - Programação)
 
 ### Especificações Técnicas
 - **Duração**: 8-10 segundos
@@ -67,43 +76,48 @@
 
 ### Briefing Criativo
 
-**Objetivo**: Comunicar os benefícios e valores da plataforma: eficiência, inovação, humanização da gestão.
+**Objetivo**: Mostrar um professor (20-50 anos) em uma sala de aula moderna ensinando programação. Crianças ao redor, alguns em computadores, alguns em tablets/notebooks. Demonstrar mentorado, tecnologia acessível, aprendizado colaborativo.
 
 **Elementos Visuais**:
 1. **Abertura (0-2s)**:
-   - Fundo Blue gradiente, geométricos em Mint fluindo como "partículas" do topo para baixo
-   - Transição rápida através de 3 cenas diferentes (0.5s cada):
-     - Cena 1: Dashboard administrativo moderno
-     - Cena 2: Gráficos e dados em tempo real
-     - Cena 3: Conexões entre usuários (rede)
+   - Cena real: Sala de aula moderna com iluminação natural
+   - Professor no centro, sorrindo, apontando para tela/projetor mostrando código
+   - Crianças ao redor em diferentes estágios (sentadas, em pé, concentradas)
+   - Ambiente colorido, alegre, com posters educacionais
+   - Overlay suave de gradiente Cyan-Blue (opacidade 8%)
+   - Transição: linhas em Mint conectando professor aos alunos
 
 2. **Conteúdo Principal (2-7s)**:
-   - Split screen com 3 colunas apresentando benefícios:
-     - **Coluna 1**: Ícone de velocidade (em Mint) + "Eficiência"
-       - Animação: elementos se organizando rapidamente
-     - **Coluna 2**: Ícone de inovação (em Blue) + "Inovação"
-       - Animação: ideias conectadas fluindo
-     - **Coluna 3**: Ícone de pessoas (em Mint) + "Humanização"
-       - Animação: pessoas/círculos interagindo
-   - Cada coluna tem fundo em Cyan com opacidade 10-20%
-   - Texto descritivo curto em cada: "Gestão Simplificada", "Tecnologia Avançada", "Educação de Excelência"
+   - Close-ups intercalados (cada 1s):
+     - Professor explicando com entusiasmo em frente a uma tela/quadro
+     - Criança digitando código em notebook (concentração, foco)
+     - Criança levantando a mão fazendo pergunta (engajamento)
+     - Duas crianças colaborando no mesmo projeto (cooperação)
+     - Tela mostrando programa rodando com sucesso (vitória visual)
+     - Criança ensinando outra criança (peer learning, mentor)
+     - Visão geral: sala inteira com todos engajados
+   - Elementos gráficos:
+     - Checkmarks verdes em Cyan aparecem quando conceito é completado
+     - Linhas em Blue conectando ideias (rede neural visual)
+     - Números/estatísticas aparecem (progresso): "95% aprendeu", "8 conceitos", "1 projeto"
 
 3. **Encerramento (7-10s)**:
-   - Convergência de todas as 3 colunas para o centro
-   - Logo We Make aparece no meio
-   - Tagline: "nós criamos • transformação integral"
+   - Zoom out: vista panorâmica da sala com professor e todos os alunos
+   - Logo We Make aparece no centro com efeito de destaque
+   - Texto: "Transformando Salas de Aula" (em Cyan)
+   - Subtexto: "Professores empoderados • Alunos inspirados" (em Blue, menor)
    - Fade para branco
 
-**Tonalidade**: Inspirador, claro, moderno, profissional
-**Música/Som**: Progressão musical positiva, corporativa mas com toque inovador
-**Estilo de Animação**: Limpo, geométrico, com efeitos de glassmorphism
+**Tonalidade**: Inspirador, educacional, acessível, humano, otimista
+**Música/Som**: Música educacional positiva, sem palavras, com "dings" suaves de sucesso
+**Estilo de Animação**: Cenas reais + sobreposições gráficas minimalistas em Cyan/Blue
 
 ---
 
-## VÍDEO 3: Hero - Página de Gestão de Contratos
+## VÍDEO 3: Hero - Página de Gestão de Contratos (Diversidade em Maker)
 
 ### Especificações Técnicas
-- **Duração**: 6-8 segundos
+- **Duração**: 8-10 segundos
 - **Resolução**: 1920x1080 (Full HD) ou 2560x1440 (2K)
 - **Formato**: MP4 (H.264)
 - **FPS**: 60fps
@@ -111,42 +125,42 @@
 
 ### Briefing Criativo
 
-**Objetivo**: Apresentar especificamente a funcionalidade de gestão de contratos de forma clara e profissional.
+**Objetivo**: Mostrar crianças de diferentes idades, etnias e gêneros em uma sala maker com projetos eletrônicos/IoT. Enfatizar inclusão, diversidade, criatividade e mentorado entre pares. Clima de colaboração e descoberta.
 
 **Elementos Visuais**:
-1. **Abertura (0-1.5s)**:
-   - Fundo gradiente Blue suave para Cyan
-   - Ícone de contrato (documento com checkmark) em Mint aparecendo com animação de "flip"
-   - Ícone cresce sutilmente
+1. **Abertura (0-2s)**:
+   - Cena real: Sala maker com estações de trabalho com eletrônicos, drones, impressoras 3D
+   - Crianças diversas (meninos, meninas, diferentes etnias) em diferentes estações
+   - Professor/Mentora observando, apoiando um aluno
+   - Iluminação moderna, ambiente vibrante, leve
+   - Logo We Make aparece com animação suave no canto superior
+   - Efeito de transição: linhas em Mint conectando as estações
 
-2. **Conteúdo Principal (1.5-6s)**:
-   - Layout horizontal mostrando fluxo de gestão de contratos:
-     - **Estágio 1 (esquerda)**: "Criação" - Documento em branco se preenchendo
-       - Cor: Mint (#5FE3D0)
-       - Animação: linhas de texto aparecendo
-     - **Estágio 2 (centro-esquerda)**: "Aprovação" - Checkmark animado
-       - Cor: Blue (#4A7FDB)
-       - Animação: selo de aprovação batendo
-     - **Estágio 3 (centro-direito)**: "Assinatura" - Assinatura digital
-       - Cor: Mint (#5FE3D0)
-       - Animação: caneta escrevendo
-     - **Estágio 4 (direita)**: "Arquivo" - Documento armazenado
-       - Cor: Blue (#4A7FDB)
-       - Animação: documento entrando em pasta
-   
-   - Setas conectando os estágios em Cyan com animação de "flow"
-   - Tempo para cada estágio: ~1s
+2. **Conteúdo Principal (2-7s)**:
+   - Montagem de cenas rápidas (0.8-1s cada) mostrando:
+     - Menina montando circuito eletrônico (foco, determinação)
+     - Menino controlando drone pequeno (diversão, inovação)
+     - Criança observando impressora 3D fazer peça (maravilha, aprendizado)
+     - Duas crianças (diferente gênero/etnia) colaborando em projeto (inclusão, amizade)
+     - Criança ensinando conceito para outra (peer mentoring, conhecimento compartilhado)
+     - Grupo inteiro em volta de um projeto bem-sucedido (celebração, comunidade)
+   - Sobreposições gráficas suaves:
+     - Ícones de inovação em Cyan aparecem para cada criança
+     - Linhas em Blue conectando crianças (rede de aprendizado)
+     - Pequenos checkmarks quando tarefa é concluída
+     - Efeitos: partículas em Cyan fluindo suavemente
 
-3. **Encerramento (6-8s)**:
-   - Todos os estágios se unificam em uma linha horizontal
-   - Texto aparece: "Gestão de Contratos Simplificada"
-   - Subtexto: "Automação inteligente • Segurança garantida"
-   - Logo We Make em canto superior esquerdo (pequeno)
-   - Fade para branco com CTA: "Comece Agora"
+3. **Encerramento (7-10s)**:
+   - Zoom lento para fora: sala maker completa com todas as crianças, professores, e atividades
+   - Logo We Make cresce ao centro
+   - Texto principal: "Educação Inclusiva & Inovadora" (em Cyan, grande)
+   - Subtexto: "Cada criança é um criador" (em Blue, itálico)
+   - Tagline: "nós criamos" (pequeno, em Mint)
+   - Fade suave para branco
 
-**Tonalidade**: Profissional, confiável, claro, eficiente
-**Música/Som**: Som corporativo moderno, com efeitos sonoros para cada transição (suaves, não invasivos)
-**Estilo de Animação**: Linear, profissional, com transições nítidas entre estágios
+**Tonalidade**: Inspirador, inclusivo, alegre, empoderador, acessível
+**Música/Som**: Música otimista, multicultural, sons de curiosidade (sons leves de eletrônica, buzinas suaves)
+**Estilo de Animação**: Cenas reais + Efeitos gráficos geométricos minimalistas, nunca dominante
 
 ---
 
@@ -166,23 +180,41 @@ Gradients:
 
 ---
 
-## Referências Visuais
+## Referências Visuais - Educação & Maker Spaces
 
-- **Logo**: Checkmark geométrico com formas arredondadas em Mint com destaque em Blue
-- **Estilo**: Inspirado em startups tech modernas (Figma, Notion, Slack)
-- **Tipografia**: Sans-serif moderna (considerar Roboto, Inter, ou similar)
-- **Padrão**: Geométrico, minimalista, com uso de espaço negativo
+### Ambientes Esperados
+- Salas de aula modernas com iluminação natural e artificial bem equilibrada
+- Laboratórios Maker com mesas de trabalho, computadores, eletrônicos
+- Crianças (7-14 anos) de diferentes etnias e gêneros
+- Professores/Mentores engajados, alegres, apoiadores
+- Tecnologia visível: robôs, drones, eletrônicos, notebooks, tablets
+- Ambiente colorido mas organizado (não caótico)
+
+### Elementos de Design Gráfico
+- **Logo**: Checkmark geométrico em Mint com destaque em Blue (discreto nas cenas)
+- **Efeitos**: Linhas conectivas em Blue, checkmarks em Cyan, partículas sutis
+- **Tipografia**: Inter, sans-serif moderna, legível sobre cenas
+- **Padrão**: Minimalista, não competindo com o conteúdo real
+
+### Tom Visual Global
+- Inspirador mas realista (crianças e professores REAIS)
+- Educacional sem ser entediante
+- Moderno e contemporâneo
+- Inclusivo e acessível
+- Alegre e otimista
 
 ---
 
 ## Instruções Adicionais para Veo3
 
-1. **Qualidade**: Máxima qualidade possível (4K if available)
-2. **Suavidade**: Garantir 60fps para animações suaves
-3. **Cores Precisas**: Usar exatamente as cores especificadas
-4. **Sem Watermark**: Se possível, remover watermarks
-5. **Formato Final**: Entregar em MP4 com codec H.264
-6. **Compatibilidade Web**: Otimizado para web (comprimido mas mantendo qualidade)
+1. **Qualidade**: Máxima qualidade possível (4K se disponível)
+2. **Suavidade**: Garantir 60fps para transições suaves
+3. **Cores Precisas**: Usar cores especificadas para sobreposições gráficas
+4. **Conteúdo Real**: Priorizar cenas reais de escolas/maker spaces com pessoas genuínas
+5. **Sem Watermark**: Remover watermarks, logos de terceiros
+6. **Formato Final**: MP4 com codec H.264, otimizado para web
+7. **Duração Exata**: Respeitar durações especificadas (±0.5s tolerância)
+8. **Música**: Sem copyright, educacional, positiva, inspiradora
 
 ---
 
