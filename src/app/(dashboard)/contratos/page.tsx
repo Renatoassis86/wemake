@@ -1,0 +1,19 @@
+﻿export default function Page() {
+  return (
+    <div className="p-6">
+      <div className="wip-banner">
+        <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        <span className="wip-tag">Em Desenvolvimento</span>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginTop: '1rem', marginBottom: '.5rem' }}>Jornada Contratual</h2>
+        <p style={{ color: 'rgba(255,255,255,.75)', fontSize: '.95rem' }}>Gestão completa de contratos com minutas, assinaturas e prazos.</p>
+        <p style={{ color: 'rgba(255,255,255,.45)', fontSize: '.8rem', marginTop: '.5rem' }}>
+          Este módulo está em desenvolvimento e estará disponível em breve.
+        </p>
+      </div>
+    </div>
+  )
+}

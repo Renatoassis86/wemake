@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-workspace
+*.sublime-project
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+/media/
+/staticfiles/
+
+# Next.js / Node
+node_modules/
+/.next/
+/out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+/coverage/
+/.cache/
+
+# Production
+/build/
+/dist/
+
+# OS
+.env
+.env.local
+.env.*.local
+.env.production.local
+
+# IDE folders
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Testing
+/.test-cache/
+/coverage/
+
+# Misc
+*.pem
+.vercel/
+.turbo/
+
+# App comercial education (reference only)
+app_comercial_education/
+app_gestao_contratos/
+app_registro_estoque/
+comercial_nextjs/
+cve_comercial/

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 100" width="560" height="100">
+  <title>ARKOS — Logo Horizontal · Fundo Claro</title>
+  <!-- Fundo -->
+  <rect width="560" height="100" fill="#F4F2ED"/>
+
+  <!-- SÍMBOLO -->
+  <line x1="50" y1="10" x2="10"  y2="90" stroke="#0A0C0F" stroke-width="11" stroke-linecap="round"/>
+  <line x1="50" y1="10" x2="90"  y2="90" stroke="#0A0C0F" stroke-width="11" stroke-linecap="round"/>
+  <line x1="24" y1="58" x2="76"  y2="58" stroke="#7FAA10" stroke-width="8"  stroke-linecap="round"/>
+  <circle cx="50" cy="10" r="7"           fill="#7FAA10"/>
+
+  <!-- SEPARADOR -->
+  <line x1="118" y1="22" x2="118" y2="78" stroke="#D4D2CC" stroke-width="1"/>
+
+  <!-- WORDMARK -->
+  <text
+    x="136" y="63"
+    font-family="'DM Mono', 'Courier New', monospace"
+    font-weight="500"
+    font-size="42"
+    letter-spacing="14"
+    fill="#0A0C0F">ARKOS</text>
+</svg>
