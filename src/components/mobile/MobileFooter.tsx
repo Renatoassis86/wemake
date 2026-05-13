@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react'
-import Image from 'next/image'
 import { Mail, Phone, MessageCircle, ChevronDown } from 'lucide-react'
 
 interface FooterSection {
@@ -44,15 +43,8 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
       padding: '1.5rem 1rem 2rem',
     }}>
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        {/* Logo e frase */}
+        {/* Frase institucional */}
         <div style={{ marginBottom: '1.5rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,.05)' }}>
-          <Image
-            src="/images/we-make-1.png"
-            alt="We Make"
-            width={120}
-            height={32}
-            style={{ objectFit: 'contain', width: 'auto', height: 'auto', marginBottom: '0.75rem' }}
-          />
           <p style={{
             fontFamily: 'var(--font-cormorant, serif)',
             fontSize: '0.9rem',
