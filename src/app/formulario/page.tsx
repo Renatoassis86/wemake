@@ -16,7 +16,7 @@ function Section({ title, children, index }: { title: string; children: React.Re
   const [expanded, setExpanded] = useState(index === 0) // First section expanded by default
 
   return (
-    <div style={{ marginBottom: '1.5rem', border: '1px solid #e2e8f0', borderRadius: 12, overflow: 'hidden' }} className="form-section">
+    <div style={{ marginBottom: '1.5rem', border: '1.5px solid #94a3b8', borderRadius: 12, overflow: 'hidden' }} className="form-section">
       <button
         onClick={() => setExpanded(!expanded)}
         style={{
@@ -74,17 +74,17 @@ function Field({ label, name, type = 'text', required, options, placeholder }: {
         {label}{required && ' *'}
       </label>
       {options ? (
-        <select name={name} required={required} autoComplete="off" style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: '1px solid #e2e8f0', borderRadius: 8, background: '#fff', outline: 'none', transition: 'border-color .15s, box-shadow .15s' }} onFocus={e => { e.target.style.borderColor = '#4a8fe7'; e.target.style.boxShadow = '0 0 0 3px rgba(74,143,231,.15)' }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.boxShadow = 'none' }}>
+        <select name={name} required={required} autoComplete="off" style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: '1.5px solid #94a3b8', borderRadius: 8, background: '#fff', outline: 'none', transition: 'border-color .15s, box-shadow .15s' }} onFocus={e => { e.target.style.borderColor = '#4a8fe7'; e.target.style.boxShadow = '0 0 0 3px rgba(74,143,231,.15)' }} onBlur={e => { e.target.style.borderColor = '#94a3b8'; e.target.style.boxShadow = 'none' }}>
           <option value="">Selecione...</option>
           {options.map(o => <option key={o} value={o}>{o}</option>)}
         </select>
       ) : type === 'textarea' ? (
-        <textarea name={name} rows={3} placeholder={placeholder} autoComplete="off" style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: '1px solid #e2e8f0', borderRadius: 8, resize: 'vertical', outline: 'none', transition: 'border-color .15s, box-shadow .15s' }} onFocus={e => { e.target.style.borderColor = '#4a8fe7'; e.target.style.boxShadow = '0 0 0 3px rgba(74,143,231,.15)' }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.boxShadow = 'none' }} />
+        <textarea name={name} rows={3} placeholder={placeholder} autoComplete="off" style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: '1.5px solid #94a3b8', borderRadius: 8, resize: 'vertical', outline: 'none', transition: 'border-color .15s, box-shadow .15s' }} onFocus={e => { e.target.style.borderColor = '#4a8fe7'; e.target.style.boxShadow = '0 0 0 3px rgba(74,143,231,.15)' }} onBlur={e => { e.target.style.borderColor = '#94a3b8'; e.target.style.boxShadow = 'none' }} />
       ) : (
         <input name={name} type={type} required={required} placeholder={placeholder} autoComplete="off"
-          style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: '1px solid #e2e8f0', borderRadius: 8, outline: 'none', transition: 'border-color .15s, box-shadow .15s' }}
+          style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: '1.5px solid #94a3b8', borderRadius: 8, outline: 'none', transition: 'border-color .15s, box-shadow .15s' }}
           onFocus={e => { e.target.style.borderColor = '#4a8fe7'; e.target.style.boxShadow = '0 0 0 3px rgba(74,143,231,.15)' }}
-          onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.boxShadow = 'none' }} />
+          onBlur={e => { e.target.style.borderColor = '#94a3b8'; e.target.style.boxShadow = 'none' }} />
       )}
     </div>
   )
@@ -215,7 +215,7 @@ export default function FormularioPublico() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', padding: 'clamp(1rem, 3vw, 1.5rem)' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', padding: 'clamp(1rem, 3vw, 1.5rem)', colorScheme: 'light' }}>
       {/* Logo + Botão de voltar */}
       <div style={{ maxWidth: 1200, margin: '0 auto', marginBottom: 'clamp(1.5rem, 4vw, 2rem)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <Image
@@ -339,7 +339,7 @@ export default function FormularioPublico() {
           autoComplete="off"
           spellCheck="false"
         >
-          <div style={{ background: '#fff', borderRadius: 'clamp(12px, 3vw, 16px)', padding: 'clamp(1.25rem, 4vw, 2.5rem)', boxShadow: '0 1px 3px rgba(0,0,0,.08)', marginBottom: '1.5rem', border: '1px solid #e2e8f0' }}>
+          <div style={{ background: '#fff', borderRadius: 'clamp(12px, 3vw, 16px)', padding: 'clamp(1.25rem, 4vw, 2.5rem)', boxShadow: '0 1px 3px rgba(0,0,0,.08)', marginBottom: '1.5rem', border: '1.5px solid #94a3b8' }}>
 
             <Section title="1. Responsável pelo Preenchimento" index={0}>
               <Field label="E-mail" name="resp_email" type="email" required placeholder="seu@escola.org" />
@@ -399,22 +399,22 @@ export default function FormularioPublico() {
                   <div>
                     <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#64748b', marginBottom: '.3rem' }}>Infantil</label>
                     <input name="alunos_infantil" type="number" min="0" defaultValue="0" placeholder="0"
-                      style={{ width: '100%', padding: '.55rem .75rem', fontSize: '.875rem', border: '1px solid #e2e8f0', borderRadius: 6, outline: 'none' }} />
+                      style={{ width: '100%', padding: '.55rem .75rem', fontSize: '.875rem', border: '1.5px solid #94a3b8', borderRadius: 6, outline: 'none' }} />
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#64748b', marginBottom: '.3rem' }}>Fundamental 1</label>
                     <input name="alunos_fundamental_1" type="number" min="0" defaultValue="0" placeholder="0"
-                      style={{ width: '100%', padding: '.55rem .75rem', fontSize: '.875rem', border: '1px solid #e2e8f0', borderRadius: 6, outline: 'none' }} />
+                      style={{ width: '100%', padding: '.55rem .75rem', fontSize: '.875rem', border: '1.5px solid #94a3b8', borderRadius: 6, outline: 'none' }} />
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#64748b', marginBottom: '.3rem' }}>Fundamental 2</label>
                     <input name="alunos_fundamental_2" type="number" min="0" defaultValue="0" placeholder="0"
-                      style={{ width: '100%', padding: '.55rem .75rem', fontSize: '.875rem', border: '1px solid #e2e8f0', borderRadius: 6, outline: 'none' }} />
+                      style={{ width: '100%', padding: '.55rem .75rem', fontSize: '.875rem', border: '1.5px solid #94a3b8', borderRadius: 6, outline: 'none' }} />
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#64748b', marginBottom: '.3rem' }}>Ensino Médio</label>
                     <input name="alunos_ensino_medio" type="number" min="0" defaultValue="0" placeholder="0"
-                      style={{ width: '100%', padding: '.55rem .75rem', fontSize: '.875rem', border: '1px solid #e2e8f0', borderRadius: 6, outline: 'none' }} />
+                      style={{ width: '100%', padding: '.55rem .75rem', fontSize: '.875rem', border: '1.5px solid #94a3b8', borderRadius: 6, outline: 'none' }} />
                   </div>
                 </Row>
               </div>
@@ -539,6 +539,26 @@ export default function FormularioPublico() {
 
       {/* Mobile responsive styles */}
       <style>{`
+        /* Force light theme on form inputs regardless of browser/OS dark mode */
+        form input, form select, form textarea {
+          color-scheme: light !important;
+          background-color: #ffffff !important;
+          color: #0f172a !important;
+          border-color: #94a3b8 !important;
+        }
+        form input::placeholder, form textarea::placeholder {
+          color: #94a3b8 !important;
+          opacity: 1 !important;
+        }
+        form input:focus, form select:focus, form textarea:focus {
+          border-color: #4a8fe7 !important;
+          box-shadow: 0 0 0 3px rgba(74,143,231,.15) !important;
+        }
+        /* Section card borders */
+        .form-section {
+          border-color: #94a3b8 !important;
+        }
+
         /* Mobile form styling */
         @media (max-width: 768px) {
           .form-section {
