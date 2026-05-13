@@ -13,7 +13,7 @@ const MODULES = [
     tagline: 'Plataforma de inteligência comercial',
     description:
       'Cadastro de escolas, pipeline Kanban, registros de negociação, contratos, dashboard e indicadores em tempo real para suas parcerias educacionais.',
-    href: '/login',
+    href: '/comercial',
     color: '#5FE3D0',
     bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
     icon: (
