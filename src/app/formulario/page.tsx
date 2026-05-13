@@ -74,16 +74,16 @@ function Field({ label, name, type = 'text', required, options, placeholder }: {
         {label}{required && ' *'}
       </label>
       {options ? (
-        <select name={name} required={required} autoComplete="off" style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: '1px solid #e2e8f0', borderRadius: 8, background: '#fff', outline: 'none', transition: 'border-color .15s, box-shadow .15s' }} onFocus={e => { e.target.style.borderColor = '#5FE3D0'; e.target.style.boxShadow = '0 0 0 3px rgba(95,227,208,.1)' }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.boxShadow = 'none' }}>
+        <select name={name} required={required} autoComplete="off" style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: '1px solid #e2e8f0', borderRadius: 8, background: '#fff', outline: 'none', transition: 'border-color .15s, box-shadow .15s' }} onFocus={e => { e.target.style.borderColor = '#4a8fe7'; e.target.style.boxShadow = '0 0 0 3px rgba(74,143,231,.15)' }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.boxShadow = 'none' }}>
           <option value="">Selecione...</option>
           {options.map(o => <option key={o} value={o}>{o}</option>)}
         </select>
       ) : type === 'textarea' ? (
-        <textarea name={name} rows={3} placeholder={placeholder} autoComplete="off" style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: '1px solid #e2e8f0', borderRadius: 8, resize: 'vertical', outline: 'none', transition: 'border-color .15s, box-shadow .15s' }} onFocus={e => { e.target.style.borderColor = '#5FE3D0'; e.target.style.boxShadow = '0 0 0 3px rgba(95,227,208,.1)' }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.boxShadow = 'none' }} />
+        <textarea name={name} rows={3} placeholder={placeholder} autoComplete="off" style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: '1px solid #e2e8f0', borderRadius: 8, resize: 'vertical', outline: 'none', transition: 'border-color .15s, box-shadow .15s' }} onFocus={e => { e.target.style.borderColor = '#4a8fe7'; e.target.style.boxShadow = '0 0 0 3px rgba(74,143,231,.15)' }} onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.boxShadow = 'none' }} />
       ) : (
         <input name={name} type={type} required={required} placeholder={placeholder} autoComplete="off"
           style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: '1px solid #e2e8f0', borderRadius: 8, outline: 'none', transition: 'border-color .15s, box-shadow .15s' }}
-          onFocus={e => { e.target.style.borderColor = '#5FE3D0'; e.target.style.boxShadow = '0 0 0 3px rgba(95,227,208,.1)' }}
+          onFocus={e => { e.target.style.borderColor = '#4a8fe7'; e.target.style.boxShadow = '0 0 0 3px rgba(74,143,231,.15)' }}
           onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.boxShadow = 'none' }} />
       )}
     </div>

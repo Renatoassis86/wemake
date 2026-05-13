@@ -918,12 +918,6 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   }
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  /* We Make already uses dark mode as default, minimal changes needed */
-  input, select, textarea {
-    background: rgba(255,255,255,.08) !important;
-    color: #fff !important;
-    border-color: rgba(255,255,255,.1) !important;
-  }
-}
+/* Dark mode support — we use light theme on /formulario page (white background)
+   so do not override inputs globally. Pages with dark background style their
+   own inputs explicitly. */
