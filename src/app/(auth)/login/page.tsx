@@ -67,6 +67,35 @@ export default function LoginPage() {
       </div>
 
       {/* ══════════════════════════════════════════════════════════
+          MOBILE TOP CTA - Formulário da Escola com destaque
+          ══════════════════════════════════════════════════════════ */}
+      <div className="mobile-cta-header" style={{
+        display: 'none',
+        background: 'linear-gradient(135deg, rgba(95,227,208,.2) 0%, rgba(95,227,208,.1) 100%)',
+        borderBottom: '2px solid #5FE3D0',
+        padding: '1rem',
+        position: 'sticky',
+        top: 0,
+        zIndex: 40,
+      }}>
+        <a href="/formulario" style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.6rem',
+          background: '#5FE3D0', color: '#0f172a',
+          padding: '.8rem 1.2rem', borderRadius: 9999,
+          fontSize: '.9rem', fontWeight: 700, textDecoration: 'none',
+          boxShadow: '0 6px 20px rgba(95,227,208,.5)',
+          fontFamily: 'var(--font-montserrat, sans-serif)',
+          width: '100%', justifyContent: 'center', textAlign: 'center',
+        }}
+          onTouchStart={e => { e.currentTarget.style.background = '#4A7FDB'; e.currentTarget.style.color = '#fff' }}
+          onTouchEnd={e => { e.currentTarget.style.background = '#5FE3D0'; e.currentTarget.style.color = '#0f172a' }}
+        >
+          <ClipboardList size={18} />
+          <span>Formulário da Escola</span>
+        </a>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════
           HEADER — Logo + link formulário (desktop only)
           ══════════════════════════════════════════════════════════ */}
       <header style={{
@@ -563,9 +592,14 @@ export default function LoginPage() {
             paddingTop: '1.25rem',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.5rem',
           }}>
-            <p style={{ fontSize: '.7rem', color: 'rgba(255,255,255,.2)', fontFamily: 'var(--font-montserrat, sans-serif)', letterSpacing: '.03em' }}>
-              © {new Date().getFullYear()} We Make · Gestão Comercial para Educação
-            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
+              <p style={{ fontSize: '.7rem', color: 'rgba(255,255,255,.2)', fontFamily: 'var(--font-montserrat, sans-serif)', letterSpacing: '.03em' }}>
+                © {new Date().getFullYear()} We Make · Gestão Comercial para Educação
+              </p>
+              <p style={{ fontSize: '.65rem', color: 'rgba(255,255,255,.15)', fontFamily: 'var(--font-inter, sans-serif)', fontStyle: 'italic' }}>
+                Criado pela Arkos
+              </p>
+            </div>
             <p style={{ fontSize: '.7rem', color: 'rgba(255,255,255,.15)', fontFamily: 'var(--font-inter, sans-serif)' }}>
               Plataforma de uso exclusivo da equipe interna
             </p>
@@ -596,23 +630,46 @@ export default function LoginPage() {
           .desktop-footer { display: none !important; }
           .mobile-nav-container { display: block !important; }
           .mobile-footer-container { display: block !important; }
+          .mobile-cta-header { display: block !important; }
 
           .hero-grid {
             grid-template-columns: 1fr !important;
-            padding: 70px 1rem 2rem !important;
-            gap: 1.5rem !important;
+            padding: 80px 1rem 3rem !important;
+            gap: 2rem !important;
             margin-top: 0 !important;
           }
 
-          /* Hide hero text on mobile, show only login form */
+          /* Show hero text on mobile with better formatting */
           .hero-grid > div:first-child {
-            display: none !important;
+            display: block !important;
+            padding-bottom: 1.5rem !important;
+            border-bottom: 1px solid rgba(95,227,208,.15) !important;
+          }
+
+          .hero-grid > div:first-child h1 {
+            font-size: 2rem !important;
+            margin-bottom: 1rem !important;
+          }
+
+          .hero-grid > div:first-child p {
+            font-size: 0.95rem !important;
+            line-height: 1.6 !important;
+            margin-bottom: 1.25rem !important;
           }
 
           /* Login card: responsive */
           .hero-grid > div:last-child {
             width: 100% !important;
+            max-width: 100% !important;
             padding: 1.5rem !important;
+          }
+
+          /* Form inputs responsive */
+          input, button {
+            width: 100% !important;
+            min-height: 48px !important;
+            font-size: 1rem !important;
+            padding: 12px 16px !important;
           }
 
           /* Hero section padding adjustments */
@@ -624,6 +681,12 @@ export default function LoginPage() {
           .footer-grid {
             grid-template-columns: 1fr !important;
             gap: 1.5rem !important;
+          }
+
+          /* Badge responsive */
+          [style*="inline-flex"][style*="gap"] {
+            font-size: 0.6rem !important;
+            padding: 0.25rem 0.75rem !important;
           }
         }
 

@@ -204,8 +204,17 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
             color: 'rgba(255,255,255,.2)',
             fontFamily: 'var(--font-montserrat, sans-serif)',
             letterSpacing: '.03em',
+            marginBottom: '0.5rem',
           }}>
             © {new Date().getFullYear()} We Make · Gestão Comercial para Educação
+          </p>
+          <p style={{
+            fontSize: '0.65rem',
+            color: 'rgba(255,255,255,.15)',
+            fontFamily: 'var(--font-inter, sans-serif)',
+            fontStyle: 'italic',
+          }}>
+            Criado pela Arkos
           </p>
         </div>
       </div>
