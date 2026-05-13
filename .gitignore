@@ -69,3 +69,5 @@ app_gestao_contratos/
 app_registro_estoque/
 comercial_nextjs/
 cve_comercial/
+
+.vercel
