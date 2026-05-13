@@ -13,7 +13,7 @@ const ESTADOS_BR = [
 const SEGMENTOS = ['Infantil', 'Fundamental 1', 'Fundamental 2', 'Ensino Médio']
 
 function Section({ title, children, index }: { title: string; children: React.ReactNode; index?: number }) {
-  const [expanded, setExpanded] = useState(index === 0) // First section expanded by default
+  const [expanded, setExpanded] = useState(true) // All sections expanded by default
 
   return (
     <div style={{ marginBottom: '1.5rem', border: '1.5px solid #94a3b8', borderRadius: 12, overflow: 'hidden' }} className="form-section">
@@ -186,7 +186,7 @@ export default function FormularioPublico() {
         setLoading(false)
         setFeedback({
           type: 'success',
-          message: '✅ Seu registro foi salvo com sucesso. Brevemente nossa equipe administrativa enviará a minuta do contrato para análise.'
+          message: '✅ Recebemos seu pré-cadastro com sucesso. Nossa equipe comercial entrará em contato em breve para apresentar a proposta personalizada We Make.'
         })
 
         console.log('✅ SUCESSO! Dados salvos no banco de dados')
