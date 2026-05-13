@@ -590,15 +590,23 @@ export default function LoginPage() {
           <div style={{
             borderTop: '1px solid rgba(255,255,255,.05)',
             paddingTop: '1.25rem',
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '.5rem',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem',
           }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
               <p style={{ fontSize: '.7rem', color: 'rgba(255,255,255,.2)', fontFamily: 'var(--font-montserrat, sans-serif)', letterSpacing: '.03em' }}>
                 © {new Date().getFullYear()} We Make · Gestão Comercial para Educação
               </p>
-              <p style={{ fontSize: '.65rem', color: 'rgba(255,255,255,.15)', fontFamily: 'var(--font-inter, sans-serif)', fontStyle: 'italic' }}>
-                Criado pela Arkos
-              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', paddingTop: '.25rem' }}>
+                <svg width="32" height="20" viewBox="0 0 560 100" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.7 }}>
+                  <line x1="50" y1="10" x2="10" y2="90" stroke="rgba(255,255,255,.5)" strokeWidth="11" strokeLinecap="round"/>
+                  <line x1="50" y1="10" x2="90" y2="90" stroke="rgba(255,255,255,.5)" strokeWidth="11" strokeLinecap="round"/>
+                  <line x1="24" y1="58" x2="76" y2="58" stroke="rgba(255,255,255,.5)" strokeWidth="8" strokeLinecap="round"/>
+                  <circle cx="50" cy="10" r="7" fill="rgba(255,255,255,.5)"/>
+                </svg>
+                <p style={{ fontSize: '.65rem', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-inter, sans-serif)', fontStyle: 'italic', margin: 0 }}>
+                  Criado pela Arkos
+                </p>
+              </div>
             </div>
             <p style={{ fontSize: '.7rem', color: 'rgba(255,255,255,.15)', fontFamily: 'var(--font-inter, sans-serif)' }}>
               Plataforma de uso exclusivo da equipe interna

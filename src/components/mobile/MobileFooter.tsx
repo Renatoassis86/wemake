@@ -204,18 +204,27 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
             color: 'rgba(255,255,255,.2)',
             fontFamily: 'var(--font-montserrat, sans-serif)',
             letterSpacing: '.03em',
-            marginBottom: '0.5rem',
+            marginBottom: '0.75rem',
           }}>
             © {new Date().getFullYear()} We Make · Gestão Comercial para Educação
           </p>
-          <p style={{
-            fontSize: '0.65rem',
-            color: 'rgba(255,255,255,.15)',
-            fontFamily: 'var(--font-inter, sans-serif)',
-            fontStyle: 'italic',
-          }}>
-            Criado pela Arkos
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem', marginBottom: '0.5rem' }}>
+            <svg width="28" height="16" viewBox="0 0 560 100" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.6 }}>
+              <line x1="50" y1="10" x2="10" y2="90" stroke="rgba(255,255,255,.5)" strokeWidth="11" strokeLinecap="round"/>
+              <line x1="50" y1="10" x2="90" y2="90" stroke="rgba(255,255,255,.5)" strokeWidth="11" strokeLinecap="round"/>
+              <line x1="24" y1="58" x2="76" y2="58" stroke="rgba(255,255,255,.5)" strokeWidth="8" strokeLinecap="round"/>
+              <circle cx="50" cy="10" r="7" fill="rgba(255,255,255,.5)"/>
+            </svg>
+            <p style={{
+              fontSize: '0.65rem',
+              color: 'rgba(255,255,255,.4)',
+              fontFamily: 'var(--font-inter, sans-serif)',
+              fontStyle: 'italic',
+              margin: 0,
+            }}>
+              Criado pela Arkos
+            </p>
+          </div>
         </div>
       </div>
     </footer>
