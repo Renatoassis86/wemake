@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Eye, EyeOff, ArrowRight, ClipboardList, Phone, Mail, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
+import MobileNav from '@/components/mobile/MobileNav'
+import MobileFooter from '@/components/mobile/MobileFooter'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -14,6 +16,7 @@ export default function LoginPage() {
   const [loading, setLoading]   = useState(false)
   const [error, setError]       = useState('')
   const [currentVideo, setCurrentVideo] = useState(0)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const videos = ['hero.mp4', 'hero1.mp4', 'hero2.mp4']
 
@@ -48,14 +51,30 @@ export default function LoginPage() {
     }}>
 
       {/* ══════════════════════════════════════════════════════════
-          HEADER — Logo + link formulário
+          MOBILE NAV (mobile only)
+          ══════════════════════════════════════════════════════════ */}
+      <div style={{ display: 'none' }} className="mobile-nav-container">
+        <MobileNav
+          mobileMenuOpen={mobileMenuOpen}
+          setMobileMenuOpen={setMobileMenuOpen}
+          menuItems={[
+            { label: 'Início', href: '/' },
+            { label: 'Sobre We Make', href: 'https://wemake.com.br' },
+            { label: 'Contato', href: 'mailto:comercial@wemake.org' },
+          ]}
+          cta={{ label: 'Formulário da Escola', href: '/formulario' }}
+        />
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════
+          HEADER — Logo + link formulário (desktop only)
           ══════════════════════════════════════════════════════════ */}
       <header style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
         padding: '1rem 2rem',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         background: 'linear-gradient(to bottom, rgba(15,23,42,.9) 0%, transparent 100%)',
-      }}>
+      }} className="desktop-header">
         <Image
           src="/images/we-make-1.png"
           alt="We Make"
@@ -419,28 +438,20 @@ export default function LoginPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════
-          FOOTER — Contatos We Make + Logo + Links
+          FOOTER — Responsivo (mobile e desktop)
           ══════════════════════════════════════════════════════════ */}
-      <footer style={{
+      <footer className="desktop-footer" style={{
         background: '#030712',
         borderTop: '1px solid rgba(255,255,255,.06)',
         padding: '3rem 2rem 2rem',
+        display: 'none',
       }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
 
           <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: '3rem', marginBottom: '2.5rem' }}>
 
-            {/* Coluna 1 — Logo + frase + contatos */}
+            {/* Coluna 1 — Frase + contatos */}
             <div>
-              <div style={{ marginBottom: '1.5rem', height: '40px', display: 'flex', alignItems: 'flex-start' }}>
-                <Image
-                  src="/images/we-make-1.png"
-                  alt="We Make"
-                  width={140}
-                  height={40}
-                  style={{ objectFit: 'contain', objectPosition: 'left top', opacity: 0.85 }}
-                />
-              </div>
               {/* Frase institucional */}
               <p style={{
                 fontFamily: 'var(--font-cormorant, serif)',
@@ -562,19 +573,57 @@ export default function LoginPage() {
         </div>
       </footer>
 
+      {/* Mobile Footer */}
+      <div className="mobile-footer-container">
+        <MobileFooter />
+      </div>
+
       {/* Responsivo — mobile */}
       <style>{`
         input::placeholder { color: rgba(255,255,255,.22) !important; }
 
+        /* Desktop styles — header and footer visible */
+        @media (min-width: 769px) {
+          .desktop-header { display: flex !important; }
+          .desktop-footer { display: grid !important; }
+          .mobile-nav-container { display: none !important; }
+          .mobile-footer-container { display: none !important; }
+        }
+
+        /* Mobile styles — mobile nav and footer visible */
         @media (max-width: 768px) {
+          .desktop-header { display: none !important; }
+          .desktop-footer { display: none !important; }
+          .mobile-nav-container { display: block !important; }
+          .mobile-footer-container { display: block !important; }
+
           .hero-grid {
             grid-template-columns: 1fr !important;
-            padding: 5rem 1rem 2rem !important;
-            gap: 2rem !important;
+            padding: 70px 1rem 2rem !important;
+            gap: 1.5rem !important;
+            margin-top: 0 !important;
           }
-          /* Hide hero text on very small screens, show only login form */
+
+          /* Hide hero text on mobile, show only login form */
           .hero-grid > div:first-child {
-            display: none;
+            display: none !important;
+          }
+
+          /* Login card: responsive */
+          .hero-grid > div:last-child {
+            width: 100% !important;
+            padding: 1.5rem !important;
+          }
+
+          /* Hero section padding adjustments */
+          section[style*="flex: 1"] {
+            padding-top: 70px !important;
+          }
+
+          /* Responsive grid for 2-column layouts */
+          .footer-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
           }
         }
 
@@ -582,11 +631,13 @@ export default function LoginPage() {
           .hero-grid { grid-template-columns: 1fr !important; }
         }
 
-        /* Footer responsive */
-        @media (max-width: 768px) {
-          .footer-grid {
-            grid-template-columns: 1fr !important;
-            gap: 2rem !important;
+        @media (max-width: 480px) {
+          .hero-grid {
+            padding: 70px 0.75rem 1rem !important;
+          }
+
+          .hero-grid > div:last-child {
+            padding: 1rem !important;
           }
         }
       `}</style>

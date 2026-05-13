@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import MobileNav from '@/components/mobile/MobileNav'
+import MobileFooter from '@/components/mobile/MobileFooter'
 
 const MODULES = [
   {
@@ -61,6 +63,7 @@ const MODULES = [
 export default function HubLanding() {
   const [scrolled, setScrolled] = useState(false)
   const [currentVideo, setCurrentVideo] = useState(0)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const videos = ['hero.mp4', 'hero1.mp4', 'hero2.mp4']
 
   useEffect(() => {
@@ -85,18 +88,30 @@ export default function HubLanding() {
   return (
     <div style={{ minHeight: '100vh', background: '#fff', color: '#0f172a' }}>
 
-      {/* ══════════ TOPBAR ══════════ */}
+      {/* ══════════ MOBILE NAV ══════════ */}
+      <div style={{ display: 'none' }} className="mobile-nav-container">
+        <MobileNav
+          mobileMenuOpen={mobileMenuOpen}
+          setMobileMenuOpen={setMobileMenuOpen}
+          menuItems={MODULES.map(m => ({ label: m.label, href: m.href }))}
+          cta={{ label: 'Entrar', href: '/login' }}
+        />
+      </div>
+
+      {/* ══════════ TOPBAR (Desktop) ══════════ */}
       <header style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
         background: scrolled ? 'rgba(15,23,42,.92)' : 'rgba(15,23,42,.4)',
         backdropFilter: 'blur(14px)',
         borderBottom: scrolled ? '1px solid rgba(255,255,255,.08)' : '1px solid transparent',
         transition: 'all .3s',
-      }}>
+        display: 'flex',
+      }} className="desktop-header">
         <div style={{
           maxWidth: 1280, margin: '0 auto',
           padding: '.85rem 1.75rem',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem',
+          width: '100%',
         }}>
           {/* Logo We Make - Official */}
           <Link href="/" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', height: '44px', minWidth: '160px' }}>
@@ -281,28 +296,30 @@ export default function HubLanding() {
       </section>
 
       {/* ══════════ MÓDULOS ══════════ */}
-      <section id="modulos" style={{ background: '#fff', padding: '6rem 1.75rem', position: 'relative', zIndex: 10 }}>
+      <section id="modulos" style={{ background: '#fff', padding: 'clamp(3rem, 6vw, 6rem) clamp(1rem, 4vw, 1.75rem)', position: 'relative', zIndex: 10 }} className="modulos-section">
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 4vw, 4rem)' }}>
             <h2 style={{
               fontFamily: 'var(--font-cormorant,serif)',
-              fontSize: 'clamp(2rem, 4vw, 3rem)',
-              fontWeight: 700, color: '#0f172a', marginBottom: '1rem',
+              fontSize: 'clamp(1.75rem, 5vw, 3rem)',
+              fontWeight: 700, color: '#0f172a', marginBottom: '0.75rem',
             }}>
               Módulos da Plataforma
             </h2>
             <p style={{
               fontFamily: 'var(--font-inter,sans-serif)',
-              fontSize: '1.05rem', color: 'rgba(15,23,42,.7)',
+              fontSize: 'clamp(0.9rem, 2vw, 1.05rem)',
+              color: 'rgba(15,23,42,.7)',
               maxWidth: 600, margin: '0 auto',
+              lineHeight: 1.5,
             }}>
               Soluções completas para gestão comercial educacional
             </p>
           </div>
 
           <div style={{
-            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '2rem',
+            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 'clamp(1.25rem, 3vw, 2rem)',
           }}>
             {MODULES.map(m => (
               <div key={m.id} style={{
@@ -381,11 +398,12 @@ export default function HubLanding() {
         </div>
       </section>
 
-      {/* ══════════ FOOTER ══════════ */}
+      {/* ══════════ FOOTER (Desktop) ══════════ */}
       <footer style={{
         background: '#0f172a', borderTop: '1px solid rgba(255,255,255,.06)',
         padding: '4rem 1.75rem 2rem', color: '#fff',
-      }}>
+        display: 'none',
+      }} className="desktop-footer">
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{
             display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr',
@@ -490,6 +508,59 @@ export default function HubLanding() {
           </div>
         </div>
       </footer>
+
+      {/* Mobile Footer */}
+      <div className="mobile-footer-container">
+        <MobileFooter />
+      </div>
+      {/* Mobile and Desktop Responsive Styles */}
+      <style>{`
+        /* Desktop: show desktop elements */
+        @media (min-width: 769px) {
+          .desktop-header { display: flex !important; }
+          .desktop-footer { display: block !important; }
+          .mobile-nav-container { display: none !important; }
+          .mobile-footer-container { display: none !important; }
+        }
+
+        /* Mobile: show mobile elements */
+        @media (max-width: 768px) {
+          .desktop-header { display: none !important; }
+          .desktop-footer { display: none !important; }
+          .mobile-nav-container { display: block !important; }
+          .mobile-footer-container { display: block !important; }
+
+          /* Hero section padding for mobile nav */
+          section:first-of-type {
+            padding-top: 70px !important;
+            min-height: calc(100vh - 70px) !important;
+          }
+
+          /* Módulos section responsive */
+          .modulos-section {
+            padding: 2rem 1rem !important;
+          }
+
+          /* Module cards: reduce gap on mobile */
+          .modulos-section > div > div {
+            gap: 1rem !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .modulos-section {
+            padding: 1.5rem 0.75rem !important;
+          }
+
+          /* Ensure good touch targets */
+          button, a {
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+      `}</style>
     </div>
   )
 }

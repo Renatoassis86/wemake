@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { enviarFormularioPublico } from '@/lib/actions'
+import { ChevronDown } from 'lucide-react'
 
 const ESTADOS_BR = [
   'AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG',
@@ -11,13 +12,51 @@ const ESTADOS_BR = [
 
 const SEGMENTOS = ['Infantil', 'Fundamental 1', 'Fundamental 2', 'Ensino Médio']
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children, index }: { title: string; children: React.ReactNode; index?: number }) {
+  const [expanded, setExpanded] = useState(index === 0) // First section expanded by default
+
   return (
-    <div style={{ marginBottom: '2.5rem' }}>
-      <div style={{ fontSize: '.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#5FE3D0', borderBottom: '2px solid #5FE3D0', paddingBottom: '.5rem', marginBottom: '1.25rem' }}>
-        {title}
-      </div>
-      {children}
+    <div style={{ marginBottom: '1.5rem', border: '1px solid #e2e8f0', borderRadius: 12, overflow: 'hidden' }} className="form-section">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        style={{
+          width: '100%',
+          padding: '1rem 1.25rem',
+          background: expanded ? '#f1f5f9' : '#fff',
+          border: 'none',
+          borderBottom: expanded ? '1px solid #e2e8f0' : 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          transition: 'all .2s',
+        }}
+        onMouseEnter={e => {
+          if (!expanded) e.currentTarget.style.background = '#f8fafc'
+        }}
+        onMouseLeave={e => {
+          if (!expanded) e.currentTarget.style.background = '#fff'
+        }}
+      >
+        <div style={{ fontSize: '.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#5FE3D0', textAlign: 'left' }}>
+          {title}
+        </div>
+        <ChevronDown
+          size={18}
+          style={{
+            color: '#5FE3D0',
+            transition: 'transform .3s',
+            transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+            flexShrink: 0,
+          }}
+        />
+      </button>
+
+      {expanded && (
+        <div style={{ padding: '1.25rem', background: '#fff' }}>
+          {children}
+        </div>
+      )}
     </div>
   )
 }
@@ -176,15 +215,15 @@ export default function FormularioPublico() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', padding: '1.5rem 1rem' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', padding: 'clamp(1rem, 3vw, 1.5rem)' }}>
       {/* Logo + Botão de voltar */}
-      <div style={{ maxWidth: 1200, margin: '0 auto', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', marginBottom: 'clamp(1.5rem, 4vw, 2rem)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <Image
           src="/images/we-make-1.png"
           alt="We Make"
-          width={140}
-          height={44}
-          style={{ objectFit: 'contain', width: 'auto', height: 'auto' }}
+          width={120}
+          height={32}
+          style={{ objectFit: 'contain', width: 'auto', height: 'auto', maxHeight: 32 }}
           priority
         />
         <button
@@ -193,13 +232,16 @@ export default function FormularioPublico() {
             background: 'transparent',
             border: '1px solid #cbd5e1',
             color: '#0f172a',
-            padding: '0.65rem 1.25rem',
+            padding: 'clamp(0.5rem, 2vw, 0.65rem) clamp(0.85rem, 3vw, 1.25rem)',
             borderRadius: '9999px',
             cursor: 'pointer',
-            fontSize: '.85rem',
+            fontSize: 'clamp(0.8rem, 2vw, 0.85rem)',
             fontWeight: 600,
             fontFamily: 'var(--font-montserrat, sans-serif)',
             transition: 'all .2s',
+            minHeight: 44,
+            display: 'flex',
+            alignItems: 'center',
           }}
           onMouseEnter={e => {
             e.currentTarget.style.background = '#f1f5f9'
@@ -217,14 +259,14 @@ export default function FormularioPublico() {
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
 
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
 
           {/* Badge */}
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '.4rem',
             background: 'rgba(95,227,208,.1)', border: '1px solid rgba(95,227,208,.3)',
-            borderRadius: 9999, padding: '.4rem 1rem', marginBottom: '1.25rem',
-            fontSize: '.7rem', fontWeight: 700, color: '#0891b2',
+            borderRadius: 9999, padding: 'clamp(0.3rem, 1vw, 0.4rem) clamp(0.8rem, 2vw, 1rem)', marginBottom: '1rem',
+            fontSize: 'clamp(0.65rem, 1.5vw, 0.7rem)', fontWeight: 700, color: '#0891b2',
             textTransform: 'uppercase', letterSpacing: '.08em',
             fontFamily: 'var(--font-montserrat, sans-serif)',
           }}>
@@ -233,18 +275,19 @@ export default function FormularioPublico() {
 
           <h1 style={{
             fontFamily: 'var(--font-cormorant, "Georgia", serif)',
-            fontSize: 'clamp(2rem, 5vw, 3rem)',
-            fontWeight: 700, color: '#0f172a', lineHeight: 1.1,
-            marginBottom: '1rem',
+            fontSize: 'clamp(1.75rem, 5vw, 3rem)',
+            fontWeight: 700, color: '#0f172a', lineHeight: 1.15,
+            marginBottom: '0.75rem',
           }}>
             Parceria Educacional<br />
             <span style={{ color: '#5FE3D0' }}>We Make</span>
           </h1>
 
           <p style={{
-            color: '#64748b', fontSize: '.95rem', lineHeight: 1.7,
+            color: '#64748b', fontSize: 'clamp(0.85rem, 2vw, 0.95rem)', lineHeight: 1.6,
             maxWidth: 620, margin: '0 auto',
             fontFamily: 'var(--font-inter, sans-serif)',
+            padding: '0 0.5rem',
           }}>
             Preencha o formulário abaixo com os dados de sua escola. Nossa equipe comercial entrará em contato para apresentar a proposta personalizada We Make.
           </p>
@@ -296,13 +339,13 @@ export default function FormularioPublico() {
           autoComplete="off"
           spellCheck="false"
         >
-          <div style={{ background: '#fff', borderRadius: 16, padding: '2.5rem', boxShadow: '0 1px 3px rgba(0,0,0,.08)', marginBottom: '1.5rem', border: '1px solid #e2e8f0' }}>
+          <div style={{ background: '#fff', borderRadius: 'clamp(12px, 3vw, 16px)', padding: 'clamp(1.25rem, 4vw, 2.5rem)', boxShadow: '0 1px 3px rgba(0,0,0,.08)', marginBottom: '1.5rem', border: '1px solid #e2e8f0' }}>
 
-            <Section title="1. Responsável pelo Preenchimento">
+            <Section title="1. Responsável pelo Preenchimento" index={0}>
               <Field label="E-mail" name="resp_email" type="email" required placeholder="seu@escola.org" />
             </Section>
 
-            <Section title="2. Dados da Escola">
+            <Section title="2. Dados da Escola" index={1}>
               <Row>
                 <Field label="CNPJ" name="cnpj" required placeholder="00.000.000/0000-00" />
                 <div style={{ gridColumn: 'span 1' }}><Field label="Razão Social" name="razao_social" required /></div>
@@ -327,7 +370,7 @@ export default function FormularioPublico() {
               </Row>
             </Section>
 
-            <Section title="3. Informações Acadêmicas">
+            <Section title="3. Informações Acadêmicas" index={2}>
               <div style={{ marginBottom: '1.5rem' }}>
                 <div style={{ fontSize: '.85rem', fontWeight: 600, color: '#334155', marginBottom: '.75rem' }}>Quais segmentos adotarão?</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '.8rem' }}>
@@ -386,7 +429,7 @@ export default function FormularioPublico() {
               <Field label="Observações Adicionais" name="observacoes" type="textarea" placeholder="Informações complementares sobre a escola" />
             </Section>
 
-            <Section title="4. Representante Legal">
+            <Section title="4. Representante Legal" index={3}>
               <Row>
                 <div style={{ gridColumn: 'span 2' }}><Field label="Nome Completo" name="legal_nome" required /></div>
                 <Field label="CPF" name="legal_cpf" required placeholder="000.000.000-00" />
@@ -410,7 +453,7 @@ export default function FormularioPublico() {
               </Row>
             </Section>
 
-            <Section title="5. Financeiro e Faturamento">
+            <Section title="5. Financeiro e Faturamento" index={4}>
               <Row>
                 <Field label="E-mail (Cobrança e Envio de NF)" name="fin_email_cobranca" type="email" required placeholder="financeiro@escola.org" />
               </Row>
@@ -457,11 +500,11 @@ export default function FormularioPublico() {
             <button type="submit" disabled={loading}
               style={{
                 width: '100%',
-                padding: '.95rem',
+                padding: 'clamp(0.75rem, 2vw, 0.95rem)',
                 background: loading ? '#cbd5e1' : '#5FE3D0',
                 color: loading ? '#64748b' : '#0f172a',
                 fontWeight: 700,
-                fontSize: '.95rem',
+                fontSize: 'clamp(0.85rem, 2vw, 0.95rem)',
                 border: 'none',
                 borderRadius: 9999,
                 cursor: loading ? 'not-allowed' : 'pointer',
@@ -470,6 +513,7 @@ export default function FormularioPublico() {
                 boxShadow: loading ? 'none' : '0 4px 12px rgba(95,227,208,.3)',
                 transition: 'all .2s',
                 opacity: loading ? 0.7 : 1,
+                minHeight: 44,
               }}
               onMouseEnter={e => {
                 if (!loading) {
@@ -488,10 +532,52 @@ export default function FormularioPublico() {
           </div>
         </form>
 
-        <p style={{ textAlign: 'center', fontSize: '.75rem', color: '#94a3b8' }}>
+        <p style={{ textAlign: 'center', fontSize: 'clamp(0.65rem, 1.5vw, 0.75rem)', color: '#94a3b8', padding: '0 0.5rem' }}>
           We Make © {new Date().getFullYear()} · Gestão Comercial para Educação · Após envio, nossa equipe entrará em contato.
         </p>
       </div>
+
+      {/* Mobile responsive styles */}
+      <style>{`
+        /* Mobile form styling */
+        @media (max-width: 768px) {
+          .form-section {
+            margin-bottom: 0.75rem !important;
+          }
+
+          input, select, textarea {
+            font-size: 16px !important; /* Prevents zoom on iOS */
+            padding: 0.65rem 0.85rem !important;
+          }
+
+          label {
+            font-size: 0.8rem !important;
+            margin-bottom: 0.35rem !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          form {
+            padding: 0 0.5rem !important;
+          }
+
+          input, select, textarea {
+            font-size: 16px !important;
+          }
+        }
+
+        /* Touch-friendly buttons and inputs */
+        button, input, select, textarea {
+          min-height: 44px;
+        }
+
+        /* Ensure proper spacing in mobile */
+        @media (max-width: 768px) {
+          div[style*="display: 'grid'"][style*="gap:"] {
+            gap: 0.75rem !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }
