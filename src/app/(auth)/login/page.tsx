@@ -432,13 +432,13 @@ export default function LoginPage() {
 
             {/* Coluna 1 — Logo + frase + contatos */}
             <div>
-              <div style={{ marginBottom: '1rem', height: '44px' }}>
+              <div style={{ marginBottom: '1.5rem', height: '40px', display: 'flex', alignItems: 'flex-start' }}>
                 <Image
                   src="/images/we-make-1.png"
                   alt="We Make"
-                  width={160}
-                  height={44}
-                  style={{ objectFit: 'contain', opacity: 0.85, width: 'auto', height: 'auto' }}
+                  width={140}
+                  height={40}
+                  style={{ objectFit: 'contain', objectPosition: 'left top', opacity: 0.85 }}
                 />
               </div>
               {/* Frase institucional */}
