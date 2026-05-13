@@ -447,20 +447,24 @@ export default function LoginPage() {
 
             {/* Link formulário dentro do card */}
             <a href="/formulario" style={{
-              display: 'flex', alignItems: 'center', gap: '.5rem',
-              padding: '.7rem 1rem', borderRadius: 10,
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.6rem',
+              padding: '.75rem 1rem', borderRadius: 10,
               border: '1px solid rgba(95,227,208,.25)',
               background: 'rgba(95,227,208,.08)',
               color: '#5FE3D0', textDecoration: 'none',
-              fontSize: '.78rem', fontWeight: 600,
+              fontSize: '.82rem', fontWeight: 600,
               transition: 'all .2s',
               fontFamily: 'var(--font-montserrat, sans-serif)',
+              whiteSpace: 'nowrap',
             }}
               onMouseEnter={e => { e.currentTarget.style.background = 'rgba(95,227,208,.15)'; e.currentTarget.style.borderColor = 'rgba(95,227,208,.5)' }}
               onMouseLeave={e => { e.currentTarget.style.background = 'rgba(95,227,208,.08)'; e.currentTarget.style.borderColor = 'rgba(95,227,208,.25)' }}
             >
-              <ClipboardList size={15} style={{ flexShrink: 0 }} />
-              <span>Quero ser escola parceira — Pré-Cadastro →</span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.55rem', minWidth: 0 }}>
+                <ClipboardList size={15} style={{ flexShrink: 0 }} />
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>Pré-cadastro de escola</span>
+              </span>
+              <ArrowRight size={14} style={{ flexShrink: 0 }} />
             </a>
           </div>
         </div>
