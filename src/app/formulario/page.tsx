@@ -38,13 +38,13 @@ function Section({ title, children, index }: { title: string; children: React.Re
           if (!expanded) e.currentTarget.style.background = '#fff'
         }}
       >
-        <div style={{ fontSize: '.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#5FE3D0', textAlign: 'left' }}>
+        <div style={{ fontSize: '.85rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4a8fe7', textAlign: 'left' }}>
           {title}
         </div>
         <ChevronDown
           size={18}
           style={{
-            color: '#5FE3D0',
+            color: '#4a8fe7',
             transition: 'transform .3s',
             transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
             flexShrink: 0,
@@ -264,9 +264,9 @@ export default function FormularioPublico() {
           {/* Badge */}
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-            background: 'rgba(95,227,208,.1)', border: '1px solid rgba(95,227,208,.3)',
+            background: 'rgba(74,143,231,.1)', border: '1px solid rgba(74,143,231,.3)',
             borderRadius: 9999, padding: 'clamp(0.3rem, 1vw, 0.4rem) clamp(0.8rem, 2vw, 1rem)', marginBottom: '1rem',
-            fontSize: 'clamp(0.65rem, 1.5vw, 0.7rem)', fontWeight: 700, color: '#0891b2',
+            fontSize: 'clamp(0.65rem, 1.5vw, 0.7rem)', fontWeight: 700, color: '#4a8fe7',
             textTransform: 'uppercase', letterSpacing: '.08em',
             fontFamily: 'var(--font-montserrat, sans-serif)',
           }}>
@@ -280,7 +280,7 @@ export default function FormularioPublico() {
             marginBottom: '0.75rem',
           }}>
             Parceria Educacional<br />
-            <span style={{ color: '#5FE3D0' }}>We Make</span>
+            <span style={{ color: '#4a8fe7' }}>We Make</span>
           </h1>
 
           <p style={{
