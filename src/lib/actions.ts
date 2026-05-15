@@ -786,68 +786,25 @@ export async function enviarFormularioPublico(formData: FormData): Promise<Actio
       status: 'pendente',
     }
 
-    const { error } = await supabase.from('form_precadastro_wemake').insert(payload)
-    if (error) return { success: false, error: error.message }
+    const { data: inserted, error } = await supabase
+      .from('form_precadastro_wemake')
+      .insert(payload)
+      .select('id')
+      .single()
 
-    // Vincular automaticamente ao banco de escolas do CRM (se nome_fantasia fornecido)
-    if (nome_fantasia) {
-      const qtdInfantil = alunos_infantil
-      const qtdFund1 = alunos_fundamental_1
-      const qtdFund2 = alunos_fundamental_2
-      const qtdMedio = alunos_ensino_medio
-
-      // Tentar encontrar escola existente pelo CNPJ ou nome+cidade
-      let { data: escolaExistente } = cnpj
-        ? await supabase.from('escolas').select('id').eq('cnpj', cnpj).single()
-        : await supabase.from('escolas').select('id')
-            .ilike('nome', nome_fantasia)
-            .eq('ativa', true)
-            .limit(1)
-            .single()
-
-      if (escolaExistente?.id) {
-        // Atualiza escola existente com os dados do formulário
-        await supabase.from('escolas').update({
-          cnpj:          cnpj || undefined,
-          cidade:        cidade || undefined,
-          estado:        estado || undefined,
-          rua:           rua || undefined,
-          numero:        numero || undefined,
-          bairro:        bairro || undefined,
-          cep:           cep || undefined,
-          qtd_infantil:  qtdInfantil || undefined,
-          qtd_fund1:     qtdFund1 || undefined,
-          qtd_fund2:     qtdFund2 || undefined,
-          qtd_medio:     qtdMedio || undefined,
-          contato_nome:  legal_nome || undefined,
-          email:         email_institucional || undefined,
-        }).eq('id', escolaExistente.id)
-      } else {
-        // Cria nova escola no CRM com os dados do formulário
-        await supabase.from('escolas').insert({
-          nome:          nome_fantasia,
-          cnpj:          cnpj || null,
-          cidade:        cidade || null,
-          estado:        estado || null,
-          rua:           rua || null,
-          numero:        numero || null,
-          bairro:        bairro || null,
-          cep:           cep || null,
-          email:         email_institucional || null,
-          contato_nome:  legal_nome || null,
-          qtd_infantil:  qtdInfantil,
-          qtd_fund1:     qtdFund1,
-          qtd_fund2:     qtdFund2,
-          qtd_medio:     qtdMedio,
-          origem_lead:   'site',
-          ativa:         true,
-        })
-      }
+    if (error) {
+      console.error('[enviarFormularioPublico] INSERT failed:', error)
+      return { success: false, error: `Erro ao salvar: ${error.message}` }
+    }
+    if (!inserted?.id) {
+      console.error('[enviarFormularioPublico] INSERT returned no id')
+      return { success: false, error: 'Não foi possível confirmar o registro no banco.' }
     }
 
-    return { success: true, id: 'form_submitted' }
+    return { success: true, id: String(inserted.id) }
   } catch (err: any) {
-    return { success: false, error: err.message ?? 'Erro ao enviar formulário' }
+    console.error('[enviarFormularioPublico] Exception:', err)
+    return { success: false, error: err?.message ?? 'Erro ao enviar formulário' }
   }
 }
 
