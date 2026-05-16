@@ -41,7 +41,8 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
     <footer style={{
       background: '#030712',
       borderTop: '1px solid rgba(255,255,255,.05)',
-      padding: '1.5rem 1rem 2rem',
+      padding: '1.5rem 1rem 0',
+      paddingBottom: 'calc(env(safe-area-inset-bottom) + 1.5rem)',
     }}>
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         {/* Frase institucional */}
@@ -133,7 +134,8 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '1rem 0.5rem',
+                minHeight: 48,
+                padding: '0 0.5rem',
                 background: 'transparent',
                 border: 'none',
                 borderBottom: '1px solid rgba(255,255,255,.05)',
@@ -198,6 +200,7 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
           display: 'flex',
           justifyContent: 'center',
           marginTop: '1.5rem',
+          marginBottom: '1rem',
           paddingTop: '1.5rem',
           borderTop: '1px solid rgba(255,255,255,.05)',
         }}>

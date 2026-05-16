@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { enviarFormularioPublico } from '@/lib/actions'
 import { ChevronDown } from 'lucide-react'
 
@@ -94,6 +94,16 @@ export default function FormularioPublico() {
   const [loading, setLoading] = useState(false)
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const [isFormDirty, setIsFormDirty] = useState(false)
+  const feedbackRef = useRef<HTMLDivElement | null>(null)
+
+  // Quando o toast aparece, rola para mostrá-lo
+  useEffect(() => {
+    if (feedback && feedbackRef.current) {
+      try {
+        feedbackRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      } catch {}
+    }
+  }, [feedback])
 
   // GARANTE QUE DADOS NUNCA SOMEM - Recupera do localStorage ao carregar página
   useEffect(() => {
@@ -301,27 +311,32 @@ export default function FormularioPublico() {
         </div>
 
         {feedback && (
-          <div style={{
-            position: 'fixed',
-            top: '1rem',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 9999,
-            maxWidth: '90%',
-            width: '600px',
-            background: feedback.type === 'success' ? '#10b981' : '#ef4444',
-            border: 'none',
-            color: '#fff',
-            padding: '1.25rem 1.75rem',
-            borderRadius: 12,
-            fontWeight: 700,
-            fontFamily: 'var(--font-inter, sans-serif)',
-            fontSize: '1rem',
-            boxShadow: feedback.type === 'success'
-              ? '0 10px 30px rgba(16,185,129,.3)'
-              : '0 10px 30px rgba(239,68,68,.3)',
-            animation: 'slideDown 0.3s ease-out',
-          }}>
+          <div
+            ref={feedbackRef}
+            className="form-feedback-toast"
+            role="status"
+            aria-live="polite"
+            style={{
+              position: 'fixed',
+              top: '1rem',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 9999,
+              maxWidth: '90%',
+              width: '600px',
+              background: feedback.type === 'success' ? '#10b981' : '#ef4444',
+              border: 'none',
+              color: '#fff',
+              padding: '1.25rem 1.75rem',
+              borderRadius: 12,
+              fontWeight: 700,
+              fontFamily: 'var(--font-inter, sans-serif)',
+              fontSize: '1rem',
+              boxShadow: feedback.type === 'success'
+                ? '0 10px 30px rgba(16,185,129,.3)'
+                : '0 10px 30px rgba(239,68,68,.3)',
+              animation: 'slideDown 0.3s ease-out',
+            }}>
             {feedback.message}
           </div>
         )}
@@ -336,6 +351,23 @@ export default function FormularioPublico() {
             to {
               opacity: 1;
               transform: translateX(-50%) translateY(0);
+            }
+          }
+
+          /* Mobile: toast sticky no topo, dentro do fluxo, sem cobrir conteúdo */
+          @media (max-width: 768px) {
+            .form-feedback-toast {
+              position: sticky !important;
+              top: 0.5rem !important;
+              left: auto !important;
+              transform: none !important;
+              z-index: 50 !important;
+              width: 100% !important;
+              max-width: 100% !important;
+              padding: 1rem 1.1rem !important;
+              font-size: 0.95rem !important;
+              animation: none !important;
+              margin-bottom: 1rem !important;
             }
           }
         `}</style>
@@ -469,7 +501,7 @@ export default function FormularioPublico() {
               </Row>
             </Section>
 
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+            <div className="form-actions" style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
               <button
                 type="button"
                 onClick={(e) => {
@@ -484,34 +516,38 @@ export default function FormularioPublico() {
                     alert('✅ Rascunho salvo localmente! Você pode continuar depois.')
                   }
                 }}
+                className="form-btn-secondary"
                 style={{
                   flex: 1,
-                  padding: '.75rem',
+                  minWidth: 0,
+                  padding: '.75rem 1rem',
                   background: '#f1f5f9',
                   color: '#0f172a',
                   fontWeight: 600,
-                  fontSize: '.85rem',
+                  fontSize: '.9rem',
                   border: '1px solid #cbd5e1',
                   borderRadius: 9999,
                   cursor: 'pointer',
                   fontFamily: 'var(--font-montserrat, sans-serif)',
                   transition: 'all .2s',
+                  minHeight: 48,
                 }}
                 onMouseEnter={e => { (e.target as HTMLButtonElement).style.background = '#e2e8f0' }}
                 onMouseLeave={e => { (e.target as HTMLButtonElement).style.background = '#f1f5f9' }}
               >
                 💾 Salvar Rascunho
               </button>
-            </div>
 
-            <button type="submit" disabled={loading}
+              <button type="submit" disabled={loading}
+              className="form-btn-primary"
               style={{
-                width: '100%',
+                flex: 2,
+                minWidth: 0,
                 padding: 'clamp(0.75rem, 2vw, 0.95rem)',
                 background: loading ? '#cbd5e1' : '#5FE3D0',
                 color: loading ? '#64748b' : '#0f172a',
                 fontWeight: 700,
-                fontSize: 'clamp(0.85rem, 2vw, 0.95rem)',
+                fontSize: 'clamp(0.9rem, 2vw, 0.95rem)',
                 border: 'none',
                 borderRadius: 9999,
                 cursor: loading ? 'not-allowed' : 'pointer',
@@ -520,7 +556,7 @@ export default function FormularioPublico() {
                 boxShadow: loading ? 'none' : '0 4px 12px rgba(95,227,208,.3)',
                 transition: 'all .2s',
                 opacity: loading ? 0.7 : 1,
-                minHeight: 44,
+                minHeight: 48,
               }}
               onMouseEnter={e => {
                 if (!loading) {
@@ -536,6 +572,7 @@ export default function FormularioPublico() {
               }}>
               {loading ? 'Enviando...' : 'Enviar Formulário'}
             </button>
+            </div>
           </div>
         </form>
 
@@ -551,57 +588,86 @@ export default function FormularioPublico() {
           color-scheme: light !important;
           background-color: #ffffff !important;
           color: #0f172a !important;
-          border-color: #94a3b8 !important;
+          border-color: #cbd5e1 !important;
         }
         form input::placeholder, form textarea::placeholder {
           color: #94a3b8 !important;
           opacity: 1 !important;
         }
         form input:focus, form select:focus, form textarea:focus {
-          border-color: #4a8fe7 !important;
-          box-shadow: 0 0 0 3px rgba(74,143,231,.15) !important;
+          border-color: #4A7FDB !important;
+          box-shadow: 0 0 0 3px rgba(74,127,219,.15) !important;
         }
         /* Section card borders */
         .form-section {
-          border-color: #94a3b8 !important;
+          border-color: #cbd5e1 !important;
         }
 
-        /* Mobile form styling */
-        @media (max-width: 768px) {
-          .form-section {
-            margin-bottom: 0.75rem !important;
-          }
-
-          input, select, textarea {
-            font-size: 16px !important; /* Prevents zoom on iOS */
-            padding: 0.65rem 0.85rem !important;
-          }
-
-          label {
-            font-size: 0.8rem !important;
-            margin-bottom: 0.35rem !important;
-          }
-        }
-
-        @media (max-width: 480px) {
-          form {
-            padding: 0 0.5rem !important;
-          }
-
-          input, select, textarea {
-            font-size: 16px !important;
-          }
-        }
-
-        /* Touch-friendly buttons and inputs */
+        /* Touch-friendly inputs */
         button, input, select, textarea {
           min-height: 44px;
         }
 
-        /* Ensure proper spacing in mobile */
+        /* Mobile form styling */
         @media (max-width: 768px) {
-          div[style*="display: 'grid'"][style*="gap:"] {
+          html, body { overflow-x: hidden; }
+
+          .form-section {
+            margin-bottom: 1rem !important;
+            padding: 0 !important;
+            border-radius: 14px !important;
+          }
+
+          .form-section > button {
+            padding: 1rem !important;
+            min-height: 52px !important;
+          }
+
+          .form-section > button > div {
+            font-size: clamp(0.95rem, 4vw, 1.1rem) !important;
+          }
+
+          .form-section > div {
+            padding: 1rem !important;
+          }
+
+          input, select, textarea {
+            font-size: 16px !important; /* Prevents zoom on iOS */
+            min-height: 48px !important;
+            padding: 0.75rem 0.9rem !important;
+            border-width: 1.5px !important;
+          }
+
+          textarea {
+            min-height: 96px !important;
+          }
+
+          label {
+            font-size: 0.85rem !important;
+            margin-bottom: 0.4rem !important;
+          }
+
+          /* Grid de campos: gap 1rem em mobile */
+          .form-section [style*="grid-template-columns"] {
+            gap: 1rem !important;
+          }
+
+          /* Botões empilhados verticalmente em mobile */
+          .form-actions {
+            flex-direction: column !important;
             gap: 0.75rem !important;
+          }
+          .form-actions > button {
+            width: 100% !important;
+            flex: none !important;
+            min-height: 52px !important;
+            font-size: 0.95rem !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          input, select, textarea {
+            font-size: 16px !important;
           }
         }
       `}</style>

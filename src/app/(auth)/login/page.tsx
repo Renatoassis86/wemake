@@ -74,19 +74,18 @@ export default function LoginPage() {
         display: 'none',
         background: 'linear-gradient(135deg, rgba(95,227,208,.2) 0%, rgba(95,227,208,.1) 100%)',
         borderBottom: '2px solid #5FE3D0',
-        padding: '1rem',
-        position: 'sticky',
-        top: 0,
-        zIndex: 40,
+        padding: '0.75rem 1rem',
+        position: 'static',
       }}>
         <a href="/formulario" style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.6rem',
           background: '#5FE3D0', color: '#0f172a',
-          padding: '.8rem 1.2rem', borderRadius: 9999,
+          padding: '0 1.2rem', borderRadius: 9999,
+          minHeight: 48,
           fontSize: '.9rem', fontWeight: 700, textDecoration: 'none',
           boxShadow: '0 6px 20px rgba(95,227,208,.5)',
           fontFamily: 'var(--font-montserrat, sans-serif)',
-          width: '100%', justifyContent: 'center', textAlign: 'center',
+          width: '100%', textAlign: 'center',
         }}
           onTouchStart={e => { e.currentTarget.style.background = '#4A7FDB'; e.currentTarget.style.color = '#fff' }}
           onTouchEnd={e => { e.currentTarget.style.background = '#5FE3D0'; e.currentTarget.style.color = '#0f172a' }}
@@ -654,10 +653,12 @@ export default function LoginPage() {
           .desktop-footer { display: grid !important; }
           .mobile-nav-container { display: none !important; }
           .mobile-footer-container { display: none !important; }
+          .mobile-cta-header { display: none !important; }
         }
 
         /* Mobile styles — mobile nav and footer visible */
         @media (max-width: 768px) {
+          html, body { overflow-x: hidden; }
           .desktop-header { display: none !important; }
           .desktop-footer { display: none !important; }
           .mobile-nav-container { display: block !important; }
@@ -666,7 +667,7 @@ export default function LoginPage() {
 
           .hero-grid {
             grid-template-columns: 1fr !important;
-            padding: 80px 1rem 3rem !important;
+            padding: calc(56px + env(safe-area-inset-top) + 1.25rem) 1rem 2.5rem !important;
             gap: 2rem !important;
             margin-top: 0 !important;
           }
@@ -679,7 +680,7 @@ export default function LoginPage() {
           }
 
           .hero-grid > div:first-child h1 {
-            font-size: 2rem !important;
+            font-size: clamp(1.75rem, 7vw, 2.25rem) !important;
             margin-bottom: 1rem !important;
           }
 
@@ -689,24 +690,19 @@ export default function LoginPage() {
             margin-bottom: 1.25rem !important;
           }
 
-          /* Login card: responsive */
+          /* Login card: responsive — width 100%, padding 1.25rem, no fixed positioning */
           .hero-grid > div:last-child {
+            position: static !important;
             width: 100% !important;
             max-width: 100% !important;
-            padding: 1.5rem !important;
+            padding: 1.25rem !important;
           }
 
-          /* Form inputs responsive */
+          /* Form inputs responsive (font-size 16px prevents iOS zoom) */
           input, button {
             width: 100% !important;
             min-height: 48px !important;
-            font-size: 1rem !important;
-            padding: 12px 16px !important;
-          }
-
-          /* Hero section padding adjustments */
-          section[style*="flex: 1"] {
-            padding-top: 70px !important;
+            font-size: 16px !important;
           }
 
           /* Responsive grid for 2-column layouts */
@@ -714,21 +710,15 @@ export default function LoginPage() {
             grid-template-columns: 1fr !important;
             gap: 1.5rem !important;
           }
-
-          /* Badge responsive */
-          [style*="inline-flex"][style*="gap"] {
-            font-size: 0.6rem !important;
-            padding: 0.25rem 0.75rem !important;
-          }
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 900px) and (min-width: 769px) {
           .hero-grid { grid-template-columns: 1fr !important; }
         }
 
         @media (max-width: 480px) {
           .hero-grid {
-            padding: 70px 0.75rem 1rem !important;
+            padding: calc(56px + env(safe-area-inset-top) + 1rem) 0.875rem 1.5rem !important;
           }
 
           .hero-grid > div:last-child {

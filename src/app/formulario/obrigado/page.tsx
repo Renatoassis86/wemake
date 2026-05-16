@@ -5,8 +5,17 @@ import Link from 'next/link'
 
 export default function FormularioObrigado() {
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%)', padding: '2rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ maxWidth: 500, textAlign: 'center' }}>
+    <div style={{
+      minHeight: '100dvh',
+      background: 'linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%)',
+      padding: '2rem 1rem',
+      paddingTop: 'calc(env(safe-area-inset-top) + 2rem)',
+      paddingBottom: 'calc(env(safe-area-inset-bottom) + 1rem)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+      <div style={{ maxWidth: 500, width: '100%', textAlign: 'center' }}>
 
         {/* Ícone de sucesso */}
         <div style={{ marginBottom: '2rem' }}>
@@ -16,7 +25,7 @@ export default function FormularioObrigado() {
         {/* Título */}
         <h1 style={{
           fontFamily: 'var(--font-cormorant, "Georgia", serif)',
-          fontSize: '2.5rem',
+          fontSize: 'clamp(2rem, 7vw, 2.5rem)',
           fontWeight: 700,
           color: '#0f172a',
           marginBottom: '1rem',
@@ -27,7 +36,7 @@ export default function FormularioObrigado() {
 
         {/* Descrição */}
         <p style={{
-          fontSize: '1.05rem',
+          fontSize: 'clamp(0.95rem, 3vw, 1.05rem)',
           color: '#475569',
           marginBottom: '.5rem',
           lineHeight: 1.7,
@@ -37,7 +46,7 @@ export default function FormularioObrigado() {
         </p>
 
         <p style={{
-          fontSize: '.95rem',
+          fontSize: 'clamp(0.85rem, 2.5vw, 0.95rem)',
           color: '#64748b',
           marginBottom: '2rem',
           lineHeight: 1.6,
@@ -45,6 +54,28 @@ export default function FormularioObrigado() {
         }}>
           Nossa equipe comercial da We Make entrará em contato nos próximos dias para apresentar a proposta personalizada para sua escola.
         </p>
+
+        {/* Botão de retorno */}
+        <Link href="/" style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '.5rem',
+          minHeight: 48,
+          padding: '0 1.75rem',
+          background: 'linear-gradient(135deg, #5FE3D0, #4A7FDB)',
+          color: '#fff',
+          textDecoration: 'none',
+          borderRadius: 9999,
+          fontWeight: 700,
+          fontSize: '.95rem',
+          fontFamily: 'var(--font-montserrat, sans-serif)',
+          boxShadow: '0 6px 20px rgba(95,227,208,.35)',
+          letterSpacing: '.02em',
+          transition: 'transform .2s, box-shadow .2s',
+        }}>
+          Voltar ao início <ArrowRight size={16} />
+        </Link>
 
         {/* Footer simples */}
         <p style={{
