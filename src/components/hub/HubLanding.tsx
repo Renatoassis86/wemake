@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import MobileNav from '@/components/mobile/MobileNav'
 import MobileFooter from '@/components/mobile/MobileFooter'
 
@@ -62,9 +62,9 @@ const MODULES = [
 
 export default function HubLanding() {
   const [scrolled, setScrolled] = useState(false)
-  const [currentVideo, setCurrentVideo] = useState(0)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const videos = ['hero.mp4', 'hero1.mp4', 'hero2.mp4']
+  const [videoFading, setVideoFading] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30)
@@ -72,14 +72,31 @@ export default function HubLanding() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Auto-rotate videos com fade suave
+  // Loop suave: nos últimos 0.8s do vídeo aplica fade-out, reinicia, e fade-in
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentVideo((prev) => (prev + 1) % videos.length)
-    }, 8000) // Troca a cada 8 segundos, antes do texto aparecer
+    const v = videoRef.current
+    if (!v) return
+    const FADE_WINDOW = 0.8
 
-    return () => clearInterval(timer)
-  }, [])
+    function onTimeUpdate() {
+      if (!v || !v.duration || isNaN(v.duration)) return
+      const remaining = v.duration - v.currentTime
+      if (remaining < FADE_WINDOW && !videoFading) {
+        setVideoFading(true)
+      }
+    }
+    function onLoop() {
+      // dispara quando o vídeo reinicia (loop nativo)
+      setVideoFading(false)
+    }
+
+    v.addEventListener('timeupdate', onTimeUpdate)
+    v.addEventListener('seeked', onLoop)
+    return () => {
+      v.removeEventListener('timeupdate', onTimeUpdate)
+      v.removeEventListener('seeked', onLoop)
+    }
+  }, [videoFading])
 
   function scrollToModulos() {
     document.getElementById('modulos')?.scrollIntoView({ behavior: 'smooth' })
@@ -164,33 +181,27 @@ export default function HubLanding() {
 
       {/* ══════════ HERO COM VÍDEOS ══════════ */}
       <section style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
-        {/* Vídeos em rotação com fade */}
+        {/* Vídeo hero em loop com fade suave na virada */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-          {videos.map((video, idx) => (
-            <video
-              key={idx}
-              autoPlay={idx === currentVideo}
-              muted
-              playsInline
-              style={{
-                position: 'absolute',
-                inset: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                zIndex: 0,
-                opacity: idx === currentVideo ? 1 : 0,
-                transition: 'opacity 1.5s ease-in-out',
-              }}
-              onEnded={() => {
-                if (idx === currentVideo) {
-                  setCurrentVideo((prev) => (prev + 1) % videos.length)
-                }
-              }}
-            >
-              <source src={`/videos/${video}`} type="video/mp4" />
-            </video>
-          ))}
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              zIndex: 0,
+              opacity: videoFading ? 0 : 1,
+              transition: 'opacity 0.8s ease-in-out',
+            }}
+          >
+            <source src="/videos/hero.mp4" type="video/mp4" />
+          </video>
         </div>
 
         {/* Máscara superior para cortar textos (fade out antes deles aparecerem) */}
