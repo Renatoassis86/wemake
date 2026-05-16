@@ -249,7 +249,7 @@ export default function HubLanding() {
               </span>
             </div>
 
-            <h1 style={{
+            <h1 className="hero-title" style={{
               fontFamily: 'var(--font-cormorant,serif)',
               fontSize: 'clamp(2.2rem, 5vw, 4rem)',
               fontWeight: 700, color: '#fff', lineHeight: 1.05,
@@ -273,7 +273,7 @@ export default function HubLanding() {
               Ferramenta exclusiva para a equipe interna da We Make. Gerencie escolas parceiras, registre interações, acompanhe negociações e monitore indicadores comerciais em tempo real.
             </p>
 
-            <div style={{ display: 'flex', gap: '.85rem', flexWrap: 'wrap' }}>
+            <div className="hero-cta-row" style={{ display: 'flex', gap: '.85rem', flexWrap: 'wrap' }}>
               <button onClick={scrollToModulos} style={{
                 padding: '.8rem 2.2rem', borderRadius: 9999, fontWeight: 700,
                 background: 'linear-gradient(135deg, #5FE3D0, #4A7FDB)', color: '#fff',
@@ -328,12 +328,12 @@ export default function HubLanding() {
             </p>
           </div>
 
-          <div style={{
+          <div className="modulos-grid" style={{
             display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
             gap: 'clamp(1.25rem, 3vw, 2rem)',
           }}>
             {MODULES.map(m => (
-              <div key={m.id} style={{
+              <div key={m.id} className="modulo-card" style={{
                 background: m.bg, borderRadius: 16, padding: '2.5rem 2rem',
                 border: `1px solid ${m.color}33`,
                 transition: 'all .3s',
@@ -536,15 +536,40 @@ export default function HubLanding() {
 
         /* Mobile: show mobile elements */
         @media (max-width: 768px) {
+          html, body { overflow-x: hidden; }
           .desktop-header { display: none !important; }
           .desktop-footer { display: none !important; }
           .mobile-nav-container { display: block !important; }
           .mobile-footer-container { display: block !important; }
 
-          /* Hero section padding for mobile nav */
+          /* Hero section padding: clear mobile nav */
           section:first-of-type {
-            padding-top: 70px !important;
-            min-height: calc(100vh - 70px) !important;
+            padding-top: calc(56px + env(safe-area-inset-top)) !important;
+            min-height: calc(100dvh - 56px - env(safe-area-inset-top)) !important;
+          }
+
+          /* Hero inner padding mobile */
+          section:first-of-type > div:last-child {
+            padding: 6rem 1rem 3rem !important;
+          }
+
+          .hero-title {
+            font-size: clamp(1.75rem, 7vw, 2.5rem) !important;
+            margin-bottom: 1rem !important;
+          }
+
+          .hero-cta-row {
+            flex-direction: column !important;
+            gap: 0.75rem !important;
+            width: 100% !important;
+          }
+          .hero-cta-row > * {
+            width: 100% !important;
+            min-height: 52px !important;
+            padding-left: 1.25rem !important;
+            padding-right: 1.25rem !important;
+            text-align: center !important;
+            justify-content: center !important;
           }
 
           /* Módulos section responsive */
@@ -552,23 +577,19 @@ export default function HubLanding() {
             padding: 2rem 1rem !important;
           }
 
-          /* Module cards: reduce gap on mobile */
-          .modulos-section > div > div {
+          .modulos-grid {
+            grid-template-columns: 1fr !important;
             gap: 1rem !important;
+          }
+
+          .modulo-card {
+            padding: 1.5rem 1.25rem !important;
           }
         }
 
         @media (max-width: 480px) {
           .modulos-section {
-            padding: 1.5rem 0.75rem !important;
-          }
-
-          /* Ensure good touch targets */
-          button, a {
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 1.75rem 0.875rem !important;
           }
         }
       `}</style>
