@@ -212,8 +212,8 @@ export default function Sidebar({ profile }: SidebarProps) {
           onClick={() => setMobileOpen(false)}
           className="mobile-overlay"
           style={{
-            position: 'fixed', inset: 0, background: 'rgba(0,0,0,.6)',
-            zIndex: 99, backdropFilter: 'blur(2px)',
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,.55)',
+            zIndex: 55, backdropFilter: 'blur(2px)',
           }}
         />
       )}
@@ -230,25 +230,26 @@ export default function Sidebar({ profile }: SidebarProps) {
         transition: 'transform .28s cubic-bezier(.4,0,.2,1)',
       }}>
 
-      {/* Mobile close button */}
+      {/* Mobile close button — DENTRO do drawer (top-right) */}
       <button
         onClick={() => setMobileOpen(false)}
         className="mobile-close-btn"
         aria-label="Fechar menu"
         style={{
-          position: 'absolute', top: '1rem', right: '-3rem',
-          width: 40, height: 40, borderRadius: '50%',
-          background: '#0f172a', border: '1px solid rgba(255,255,255,.2)',
+          position: 'absolute', top: 12, right: 12,
+          width: 36, height: 36, borderRadius: 10,
+          background: 'rgba(255,255,255,.06)',
+          border: '1px solid rgba(255,255,255,.12)',
           color: '#fff', cursor: 'pointer',
           alignItems: 'center', justifyContent: 'center',
-          zIndex: 101,
+          zIndex: 2,
         }}
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
 
       {/* ── Brand ─────────────────────────────────────────────── */}
-      <div style={{
+      <div className="sidebar-brand" style={{
         padding: '1.1rem 1.1rem .9rem',
         borderBottom: '1px solid rgba(255,255,255,.05)',
       }}>
@@ -431,12 +432,20 @@ export default function Sidebar({ profile }: SidebarProps) {
         visibility: hidden !important;
         pointer-events: none !important;
       }
-      @media (max-width: 768px) {
+      @media (max-width: 900px) {
         #main-sidebar {
+          width: min(86vw, 320px) !important;
+          height: 100dvh !important;
+          min-height: 100dvh !important;
+          padding-top: env(safe-area-inset-top);
           transform: translateX(-100%);
+          z-index: 60 !important;
         }
         #main-sidebar.mobile-open {
           transform: translateX(0) !important;
+        }
+        #main-sidebar .sidebar-brand {
+          padding-right: 60px; /* abre espaço pro botão close */
         }
         .mobile-close-btn {
           display: flex !important;
@@ -444,6 +453,12 @@ export default function Sidebar({ profile }: SidebarProps) {
           pointer-events: auto !important;
         }
         .mobile-overlay { display: block !important; }
+        /* tap targets dos itens de menu */
+        #main-sidebar nav a,
+        #main-sidebar nav > div[style*="opacity"] {
+          min-height: 44px;
+          font-size: .9rem !important;
+        }
       }
     `}</style>
     </>

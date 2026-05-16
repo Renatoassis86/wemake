@@ -132,7 +132,16 @@ export function PipelineKanban({ negociacoes, stages, userId, onUpdate }: Props)
   }
 
   return (
-    <div className="pipeline-board" style={{
+    <>
+    <div className="mp-kanban-hint" style={{
+      display: 'none', alignItems: 'center', gap: '.4rem',
+      marginBottom: '.5rem', fontSize: '.7rem', color: '#64748b',
+      fontFamily: 'var(--font-montserrat,sans-serif)',
+    }}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      Arraste para o lado para ver mais colunas
+    </div>
+    <div className="pipeline-board mp-kanban-scroll" style={{
       display: 'grid',
       gridTemplateColumns: `repeat(${stages.length}, minmax(0, 1fr))`,
       gap: '.75rem',
@@ -318,5 +327,6 @@ export function PipelineKanban({ negociacoes, stages, userId, onUpdate }: Props)
         [draggable]:active { cursor: grabbing !important; }
       `}</style>
     </div>
+    </>
   )
 }

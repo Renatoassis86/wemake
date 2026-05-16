@@ -104,10 +104,10 @@ export default async function EscolasPage({ searchParams }: Props) {
         }
       />
 
-      <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div className="mp-page-padding-x" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
         {/* ── KPI pills clicáveis ─────────────────────────────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem' }}>
+        <div className="mp-kpi-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem' }}>
           {kpis.map(k => {
             const cor = CLASSIF_COR[k.classif]
             const isActive = classif === k.classif
@@ -321,8 +321,8 @@ export default async function EscolasPage({ searchParams }: Props) {
           ) : (
             /* ── Tabela premium ─────────────────────────────────── */
             <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 8px rgba(15,23,42,.05)' }}>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <div className="mp-escolas-table-wrap" style={{ overflowX: 'auto' }}>
+                <table className="mp-escolas-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr style={{ background: '#0f172a' }}>
                       {['Escola', 'Localidade', 'Contato', 'Alunos', 'Potencial', 'Status', 'Último contato', ''].map(col => (

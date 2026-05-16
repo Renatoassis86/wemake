@@ -64,7 +64,7 @@ export default function PreCadastroActions({ registro }: Props) {
 
   return (
     <>
-      <div style={{ display: 'inline-flex', gap: '.4rem' }}>
+      <div className="mp-precad-actions" style={{ display: 'inline-flex', gap: '.4rem' }}>
         <button
           type="button"
           onClick={() => { setForm(registro); setErro(null); setEditOpen(true) }}
@@ -93,7 +93,7 @@ export default function PreCadastroActions({ registro }: Props) {
 
       {/* MODAL DE EXCLUSÃO */}
       {confirmDelete && (
-        <Modal onClose={() => !pending && setConfirmDelete(false)}>
+        <Modal onClose={() => !pending && setConfirmDelete(false)} fullscreen={false}>
           <div style={{ padding: '1.5rem', maxWidth: 440 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', marginBottom: '1rem' }}>
               <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -124,7 +124,7 @@ export default function PreCadastroActions({ registro }: Props) {
       {/* MODAL DE EDIÇÃO */}
       {editOpen && (
         <Modal onClose={() => !pending && setEditOpen(false)}>
-          <div style={{ padding: '1.5rem', width: 'min(720px, 92vw)', maxHeight: '85vh', overflowY: 'auto' }}>
+          <div className="mp-modal-body" style={{ padding: '1.5rem', width: 'min(720px, 92vw)', maxHeight: '85vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
                 Editar pré-cadastro
@@ -208,10 +208,11 @@ export default function PreCadastroActions({ registro }: Props) {
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
-function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+function Modal({ children, onClose, fullscreen = true }: { children: React.ReactNode; onClose: () => void; fullscreen?: boolean }) {
   return (
     <div
       onClick={onClose}
+      className="mp-modal-overlay"
       style={{
         position: 'fixed', inset: 0, zIndex: 1000,
         background: 'rgba(15,23,42,.55)', backdropFilter: 'blur(3px)',
@@ -221,6 +222,7 @@ function Modal({ children, onClose }: { children: React.ReactNode; onClose: () =
     >
       <div
         onClick={e => e.stopPropagation()}
+        className={fullscreen ? 'mp-modal-fs' : undefined}
         style={{
           background: '#fff', borderRadius: 14, boxShadow: '0 20px 60px rgba(15,23,42,.35)',
         }}

@@ -54,6 +54,7 @@ export function EscolasToolbar({ q: initialQ, estado: initialEstado, classif, vi
   return (
     <form
       ref={formRef}
+      className="mp-toolbar"
       style={{
         background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12,
         padding: '.85rem 1.1rem', boxShadow: '0 1px 3px rgba(0,0,0,.04)',
@@ -190,7 +191,7 @@ export function EscolasToolbar({ q: initialQ, estado: initialEstado, classif, vi
       )}
 
       {/* View toggle */}
-      <div style={{
+      <div className="mp-view-toggle" style={{
         marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 2,
         background: '#f1f5f9', borderRadius: 8, padding: 3,
       }}>

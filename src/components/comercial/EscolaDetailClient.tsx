@@ -36,7 +36,7 @@ export function EscolaDetailClient({ escolaId, registros, negociacoes, tarefas, 
 
   return (
     <div>
-      <div style={{ display: 'flex', borderBottom: '2px solid var(--border)', marginBottom: '1.5rem' }}>
+      <div className="mp-escola-tabs" style={{ display: 'flex', borderBottom: '2px solid var(--border)', marginBottom: '1.5rem' }}>
         {TABS.map(tab => (
           <button key={tab.id} onClick={() => setActive(tab.id)}
             style={{
