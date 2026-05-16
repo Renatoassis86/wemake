@@ -182,20 +182,20 @@ export default function CalculadoraPage() {
         {/* ── Explicação ──────────────────────────────────────── */}
         <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius: 16, padding: '1.25rem 1.75rem', marginBottom: '1.5rem', display: 'flex', gap: '2rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
           <div style={{ flex: 1 }}>
-            <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#d97706', marginBottom: '.35rem' }}>
+            <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.35rem' }}>
               ✦ Lógica de cálculo
             </div>
             <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '.5rem' }}>
               Preço final = custo + comissão + taxas Eskolare + manutenção rateada
             </div>
             <div style={{ fontSize: '.78rem', color: 'rgba(255,255,255,.55)', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)' }}>
-              A manutenção da loja online (<strong style={{ color: '#d97706' }}>R$ {MANUTENCAO_TOTAL}</strong> fixo · {MESES_LOJA} meses) é dividida proporcionalmente
+              A manutenção da loja online (<strong style={{ color: '#4A7FDB' }}>R$ {MANUTENCAO_TOTAL}</strong> fixo · {MESES_LOJA} meses) é dividida proporcionalmente
               pela quantidade total de alunos de todos os segmentos ativos. Cada aluno absorve sua fração.
               Quanto mais alunos, menor o custo individual de manutenção.
             </div>
           </div>
-          <div style={{ background: 'rgba(217,119,6,.12)', border: '1px solid rgba(217,119,6,.25)', borderRadius: 10, padding: '1rem 1.25rem', minWidth: 220, flexShrink: 0 }}>
-            <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.62rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#d97706', marginBottom: '.6rem' }}>
+          <div style={{ background: 'rgba(74,127,219,.12)', border: '1px solid rgba(74,127,219,.25)', borderRadius: 10, padding: '1rem 1.25rem', minWidth: 220, flexShrink: 0 }}>
+            <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.62rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#4A7FDB', marginBottom: '.6rem' }}>
               Manutenção da loja
             </div>
             {[
@@ -235,7 +235,7 @@ export default function CalculadoraPage() {
           {totalAlunos > 0 && (
             <div style={{ marginTop: '.85rem', fontSize: '.75rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
               Total de alunos nos segmentos ativos: <strong style={{ color: '#0f172a' }}>{totalAlunos}</strong>
-              {' · '}Manutenção por aluno: <strong style={{ color: '#d97706' }}>{fmt(MANUTENCAO_TOTAL / totalAlunos)}</strong>
+              {' · '}Manutenção por aluno: <strong style={{ color: '#4A7FDB' }}>{fmt(MANUTENCAO_TOTAL / totalAlunos)}</strong>
             </div>
           )}
         </div>
@@ -254,15 +254,15 @@ export default function CalculadoraPage() {
 
               return (
                 <div key={s.id} style={{
-                  background: '#fff', border: `1.5px solid ${herdando ? '#e2e8f0' : '#d97706'}`,
+                  background: '#fff', border: `1.5px solid ${herdando ? '#e2e8f0' : '#4A7FDB'}`,
                   borderRadius: 14, marginBottom: '1rem', overflow: 'hidden',
-                  boxShadow: herdando ? '0 1px 4px rgba(15,23,42,.04)' : '0 4px 16px rgba(217,119,6,.12)',
+                  boxShadow: herdando ? '0 1px 4px rgba(15,23,42,.04)' : '0 4px 16px rgba(74,127,219,.12)',
                   opacity: herdando ? .75 : 1,
                 }}>
                   {/* Header */}
                   <div style={{ background: herdando ? '#fafafa' : '#0f172a', padding: '.85rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '.65rem' }}>
-                      <div style={{ width: 28, height: 28, borderRadius: 7, background: herdando ? '#e2e8f0' : '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.72rem', fontWeight: 800, color: '#fff', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                      <div style={{ width: 28, height: 28, borderRadius: 7, background: herdando ? '#e2e8f0' : '#4A7FDB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.72rem', fontWeight: 800, color: '#fff', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                         {idx + 1}
                       </div>
                       <span style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.82rem', fontWeight: 800, color: herdando ? '#475569' : '#fff' }}>{s.label}</span>
@@ -274,7 +274,7 @@ export default function CalculadoraPage() {
                       <label style={{ display: 'flex', alignItems: 'center', gap: '.5rem', cursor: 'pointer' }}>
                         <span style={{ fontSize: '.72rem', color: herdando ? '#475569' : 'rgba(255,255,255,.6)', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Mesmo valor</span>
                         <div onClick={() => update(s.id, 'igualPrimeiro', !s.igualPrimeiro)}
-                          style={{ width: 36, height: 20, borderRadius: 10, cursor: 'pointer', background: s.igualPrimeiro ? '#d97706' : '#cbd5e1', position: 'relative', transition: 'background .2s' }}>
+                          style={{ width: 36, height: 20, borderRadius: 10, cursor: 'pointer', background: s.igualPrimeiro ? '#4A7FDB' : '#cbd5e1', position: 'relative', transition: 'background .2s' }}>
                           <div style={{ position: 'absolute', top: 2, left: s.igualPrimeiro ? 18 : 2, width: 16, height: 16, borderRadius: '50%', background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,.2)', transition: 'left .2s' }} />
                         </div>
                       </label>
@@ -309,7 +309,7 @@ export default function CalculadoraPage() {
                                   padding: '3px 9px', borderRadius: 5, border: 'none', cursor: 'pointer',
                                   fontSize: '.68rem', fontWeight: 800, transition: 'all .15s',
                                   fontFamily: 'var(--font-montserrat,sans-serif)',
-                                  background: s.comissaoTipo === t.v ? '#d97706' : 'transparent',
+                                  background: s.comissaoTipo === t.v ? '#4A7FDB' : 'transparent',
                                   color: s.comissaoTipo === t.v ? '#fff' : '#64748b',
                                 }}>
                                 {t.l}
@@ -382,11 +382,11 @@ export default function CalculadoraPage() {
           <div style={{ marginBottom: '2rem' }}>
             <button onClick={handleCalcular} style={{
               width: '100%', maxWidth: 400, padding: '.9rem 2rem',
-              background: 'linear-gradient(135deg, #d97706, #b45309)',
+              background: 'linear-gradient(135deg, #4A7FDB, #2563b8)',
               color: '#fff', fontWeight: 800, fontSize: '1rem',
               border: 'none', borderRadius: 9999, cursor: 'pointer',
               fontFamily: 'var(--font-montserrat,sans-serif)',
-              boxShadow: '0 6px 20px rgba(217,119,6,.4)', letterSpacing: '.02em', display: 'block',
+              boxShadow: '0 6px 20px rgba(74,127,219,.4)', letterSpacing: '.02em', display: 'block',
             }}>
               Calcular Preços por Segmento →
             </button>
@@ -409,9 +409,9 @@ export default function CalculadoraPage() {
                 if (!r) return null
                 const ref = s.igualPrimeiro && primeiroAtivo ? primeiroAtivo : s
                 return (
-                  <div key={s.id} style={{ background: '#fff', border: '1px solid #e2e8f0', borderTop: '4px solid #d97706', borderRadius: 16, overflow: 'hidden', boxShadow: '0 4px 16px rgba(15,23,42,.08)' }}>
+                  <div key={s.id} style={{ background: '#fff', border: '1px solid #e2e8f0', borderTop: '4px solid #4A7FDB', borderRadius: 16, overflow: 'hidden', boxShadow: '0 4px 16px rgba(15,23,42,.08)' }}>
                     <div style={{ background: '#0f172a', padding: '1rem 1.25rem' }}>
-                      <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#d97706', marginBottom: '.2rem' }}>Segmento</div>
+                      <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.2rem' }}>Segmento</div>
                       <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{s.label}</div>
                       <div style={{ fontSize: '.68rem', color: 'rgba(255,255,255,.4)', marginTop: '.15rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
                         {r.qtd_alunos} aluno{r.qtd_alunos !== 1 ? 's' : ''} · manutenção: {fmt(r.manutencao_por_aluno)}/aluno
@@ -427,7 +427,7 @@ export default function CalculadoraPage() {
                       ].map(m => (
                         <div key={m.label} style={{ background: m.bg, padding: '.85rem 1rem', borderRight: '1px solid #f1f5f9', borderBottom: '1px solid #f1f5f9' }}>
                           <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>{m.label}</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: (m as any).big ? '1.3rem' : '1.1rem', fontWeight: 800, color: (m as any).big ? '#d97706' : '#0f172a', lineHeight: 1 }}>{m.value}</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: (m as any).big ? '1.3rem' : '1.1rem', fontWeight: 800, color: (m as any).big ? '#4A7FDB' : '#0f172a', lineHeight: 1 }}>{m.value}</div>
                           <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.2rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{m.sub}</div>
                         </div>
                       ))}
@@ -451,7 +451,7 @@ export default function CalculadoraPage() {
             {/* Tabela comparativa */}
             <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 8px rgba(15,23,42,.05)', marginBottom: '1.5rem' }}>
               <div style={{ background: '#0f172a', padding: '1rem 1.5rem' }}>
-                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#d97706' }}>
+                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB' }}>
                   Resumo comparativo por segmento
                 </div>
               </div>
@@ -485,7 +485,7 @@ export default function CalculadoraPage() {
                           </td>
                           <td style={{ padding: '.75rem 1rem', fontSize: '.82rem', color: '#dc2626', fontFamily: 'var(--font-inter,sans-serif)' }}>{fmt(r.taxa_fixa_eskolare)}</td>
                           <td style={{ padding: '.75rem 1rem', fontSize: '.82rem', color: '#0ea5e9', fontFamily: 'var(--font-inter,sans-serif)' }}>{fmt(r.manutencao_por_aluno)}</td>
-                          <td style={{ padding: '.75rem 1rem', fontWeight: 800, color: '#d97706', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem' }}>{fmt(r.preco_final)}</td>
+                          <td style={{ padding: '.75rem 1rem', fontWeight: 800, color: '#4A7FDB', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem' }}>{fmt(r.preco_final)}</td>
                           <td style={{ padding: '.75rem 1rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-cormorant,serif)', fontSize: '.95rem', whiteSpace: 'nowrap' }}>
                             {ref.parcelas === 1 ? 'À vista' : `${ref.parcelas}x ${fmt(r.valor_parcela)}`}
                           </td>
@@ -501,7 +501,7 @@ export default function CalculadoraPage() {
                     })}
                     {/* Linha de totais */}
                     <tr style={{ background: '#0f172a' }}>
-                      <td style={{ padding: '.75rem 1rem', fontWeight: 700, fontSize: '.78rem', color: '#d97706', fontFamily: 'var(--font-montserrat,sans-serif)' }}>TOTAL</td>
+                      <td style={{ padding: '.75rem 1rem', fontWeight: 700, fontSize: '.78rem', color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>TOTAL</td>
                       <td style={{ padding: '.75rem 1rem', textAlign: 'center', fontWeight: 800, color: '#fff', fontFamily: 'var(--font-cormorant,serif)', fontSize: '.95rem' }}>{totalAlunos}</td>
                       <td colSpan={4} style={{ padding: '.75rem 1rem', fontSize: '.72rem', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-inter,sans-serif)' }}>
                         Manutenção total: {fmt(MANUTENCAO_TOTAL)} / {totalAlunos} alunos = {fmt(MANUTENCAO_TOTAL / totalAlunos)}/aluno
@@ -517,7 +517,7 @@ export default function CalculadoraPage() {
 
             {/* Tabela de taxas */}
             <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, padding: '1.1rem 1.5rem', boxShadow: '0 1px 4px rgba(15,23,42,.05)' }}>
-              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#d97706', marginBottom: '.75rem' }}>
+              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#4A7FDB', marginBottom: '.75rem' }}>
                 Taxas Eskolare aplicadas
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem' }}>

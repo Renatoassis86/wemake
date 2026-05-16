@@ -50,7 +50,7 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
             <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.4rem', fontWeight: 700, color: '#0f172a', marginBottom: '.5rem' }}>Banco não configurado</h3>
             <p style={{ fontSize: '.875rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '1.5rem' }}>Execute o SQL e depois importe os dados.</p>
             <div style={{ display: 'flex', gap: '.75rem', justifyContent: 'center' }}>
-              <a href="https://supabase.com/dashboard/project/lyisdsnocroocxfblvqf/sql/new" target="_blank" rel="noopener noreferrer" style={{ background: '#d97706', color: '#fff', padding: '.6rem 1.5rem', borderRadius: 9999, textDecoration: 'none', fontWeight: 700, fontSize: '.82rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+              <a href="https://supabase.com/dashboard/project/lyisdsnocroocxfblvqf/sql/new" target="_blank" rel="noopener noreferrer" style={{ background: '#4A7FDB', color: '#fff', padding: '.6rem 1.5rem', borderRadius: 9999, textDecoration: 'none', fontWeight: 700, fontSize: '.82rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                 Criar tabelas (SQL)
               </a>
               <Link href="/importacao" style={{ border: '1.5px solid #e2e8f0', background: '#fff', color: '#475569', padding: '.6rem 1.5rem', borderRadius: 9999, textDecoration: 'none', fontWeight: 600, fontSize: '.82rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
@@ -165,10 +165,10 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
             <Link href="/importacao" style={{
               display: 'inline-flex', alignItems: 'center', gap: '.4rem',
               padding: '.45rem 1rem', borderRadius: 9999,
-              background: '#d97706', color: '#fff', textDecoration: 'none',
+              background: '#4A7FDB', color: '#fff', textDecoration: 'none',
               fontSize: '.78rem', fontWeight: 700,
               fontFamily: 'var(--font-montserrat,sans-serif)',
-              boxShadow: '0 4px 12px rgba(217,119,6,.3)',
+              boxShadow: '0 4px 12px rgba(74,127,219,.3)',
             }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
               Importar Dados
@@ -207,7 +207,7 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
               label: 'Vinculados a Escola',
               val: (totalComEscola ?? 0).toLocaleString('pt-BR'),
               sub: `${(totalGeral ?? 0) - (totalComEscola ?? 0)} sem escola identificada`,
-              cor: '#d97706', bg: '#fffbeb', border: '#fde68a',
+              cor: '#4A7FDB', bg: '#fffbeb', border: '#fde68a',
               icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
             },
           ].map(k => (
@@ -228,7 +228,7 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
             { label: 'Decisores', n: totalDecisores ?? 0, total: totalGeral ?? 0, cor: '#dc2626' },
             { label: 'Com E-mail', n: totalComEmail ?? 0, total: totalGeral ?? 0, cor: '#2563eb' },
             { label: 'Com Telefone', n: totalComTel ?? 0, total: totalGeral ?? 0, cor: '#16a34a' },
-            { label: 'Com Escola', n: totalComEscola ?? 0, total: totalGeral ?? 0, cor: '#d97706' },
+            { label: 'Com Escola', n: totalComEscola ?? 0, total: totalGeral ?? 0, cor: '#4A7FDB' },
             { label: 'Sem Contato', n: totalSemContato ?? 0, total: totalGeral ?? 0, cor: '#94a3b8' },
           ].map(m => {
             const p = m.total > 0 ? Math.round((m.n / m.total) * 100) : 0
@@ -309,7 +309,7 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
                 <a key={u} href={buildUrl({ uf: u })} style={{
                   padding: '.3rem .55rem', borderRadius: 7, textDecoration: 'none',
                   fontSize: '.68rem', fontWeight: uf === u ? 700 : 400,
-                  background: uf === u ? '#d97706' : '#f1f5f9',
+                  background: uf === u ? '#4A7FDB' : '#f1f5f9',
                   color: uf === u ? '#fff' : '#475569',
                   fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
                 }}>{u}</a>
@@ -319,7 +319,7 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
                 <a key={u} href={buildUrl({ uf: u })} style={{
                   padding: '.3rem .55rem', borderRadius: 7, textDecoration: 'none',
                   fontSize: '.68rem', fontWeight: uf === u ? 700 : 400,
-                  background: uf === u ? '#d97706' : '#f1f5f9',
+                  background: uf === u ? '#4A7FDB' : '#f1f5f9',
                   color: uf === u ? '#fff' : '#475569',
                   fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
                 }}>{u}</a>

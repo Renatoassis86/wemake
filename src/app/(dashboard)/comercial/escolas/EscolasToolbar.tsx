@@ -83,11 +83,11 @@ export function EscolasToolbar({ q: initialQ, estado: initialEstado, classif, vi
             width: '100%', paddingLeft: 32, paddingRight: searchVal ? 32 : 12,
             paddingTop: 8, paddingBottom: 8,
             fontSize: '.82rem',
-            border: `1.5px solid ${focusSearch ? '#d97706' : '#e2e8f0'}`,
+            border: `1.5px solid ${focusSearch ? '#4A7FDB' : '#e2e8f0'}`,
             borderRadius: 8, outline: 'none', color: '#0f172a',
             background: '#f8fafc',
             fontFamily: 'var(--font-inter,sans-serif)',
-            boxShadow: focusSearch ? '0 0 0 3px rgba(217,119,6,.12)' : 'none',
+            boxShadow: focusSearch ? '0 0 0 3px rgba(74,127,219,.12)' : 'none',
             transition: 'border-color .15s, box-shadow .15s',
           }}
         />
@@ -133,7 +133,7 @@ export function EscolasToolbar({ q: initialQ, estado: initialEstado, classif, vi
                 {/* Ir direto para ficha */}
                 <Link href={`/comercial/escolas/${e.id}`}
                   onMouseDown={ev => ev.stopPropagation()}
-                  style={{ width: 24, height: 24, borderRadius: 6, background: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', flexShrink: 0 }}
+                  style={{ width: 24, height: 24, borderRadius: 6, background: '#4A7FDB', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', flexShrink: 0 }}
                   title="Ver ficha">
                   <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
                 </Link>

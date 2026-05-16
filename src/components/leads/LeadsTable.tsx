@@ -44,7 +44,7 @@ interface Props {
 const FONTE_COR: Record<string, { label: string; cor: string; bg: string; border: string }> = {
   ciecc_2025: { label: '1º CIECC 2025', cor: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' },
   ciecc_2026: { label: '2º CIECC 2026', cor: '#2563eb', bg: '#eff6ff', border: '#bfdbfe' },
-  crm:        { label: 'CRM Education', cor: '#d97706', bg: '#fffbeb', border: '#fde68a' },
+  crm:        { label: 'CRM Education', cor: '#4A7FDB', bg: '#fffbeb', border: '#fde68a' },
   oikos:      { label: 'Oikos Live',    cor: '#0d9488', bg: '#f0fdfa', border: '#99f6e4' },
   outro:      { label: 'Outro',         cor: '#64748b', bg: '#f8fafc', border: '#e2e8f0' },
 }
@@ -60,7 +60,7 @@ const TIPO_COR = (t: string | null) => {
   const v = t.toLowerCase()
   if (v.includes('gestor'))      return '#7c3aed'
   if (v.includes('diretor'))     return '#2563eb'
-  if (v.includes('mantenedor'))  return '#d97706'
+  if (v.includes('mantenedor'))  return '#4A7FDB'
   if (v.includes('coordenador')) return '#0d9488'
   return '#64748b'
 }
@@ -97,7 +97,7 @@ function ModalEditar({ lead, onClose, onSaved }: { lead: Lead; onClose: () => vo
         {/* Header */}
         <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', padding: '1.1rem 1.5rem', borderRadius: '18px 18px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontSize: '.58rem', fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#d97706', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>Editar Lead</div>
+            <div style={{ fontSize: '.58rem', fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>Editar Lead</div>
             <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{lead.nome ?? 'Sem nome'}</div>
           </div>
           <button onClick={onClose} style={{ width: 30, height: 30, borderRadius: 7, border: '1px solid rgba(255,255,255,.15)', background: 'rgba(255,255,255,.08)', color: '#fff', cursor: 'pointer', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
@@ -107,7 +107,7 @@ function ModalEditar({ lead, onClose, onSaved }: { lead: Lead; onClose: () => vo
 
           {/* ── Responsável / Contato ── */}
           <div>
-            <div style={{ fontSize: '.6rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#d97706', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.6rem', paddingBottom: '.4rem', borderBottom: '2px solid #fde68a' }}>
+            <div style={{ fontSize: '.6rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.6rem', paddingBottom: '.4rem', borderBottom: '2px solid #fde68a' }}>
               Contato Principal
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.75rem' }}>
@@ -210,7 +210,7 @@ function ModalEditar({ lead, onClose, onSaved }: { lead: Lead; onClose: () => vo
           {erro && <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 8, padding: '.6rem .9rem', fontSize: '.78rem', color: '#dc2626', fontFamily: 'var(--font-inter,sans-serif)' }}>{erro}</div>}
 
           <div style={{ display: 'flex', gap: '.75rem', paddingTop: '.25rem' }}>
-            <button onClick={handleSave} disabled={saving} style={{ flex: 1, padding: '.7rem', borderRadius: 9999, border: 'none', background: saving ? '#e2e8f0' : 'linear-gradient(135deg, #d97706, #b45309)', color: saving ? '#94a3b8' : '#fff', fontWeight: 700, fontSize: '.875rem', cursor: saving ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: saving ? 'none' : '0 4px 14px rgba(217,119,6,.35)' }}>
+            <button onClick={handleSave} disabled={saving} style={{ flex: 1, padding: '.7rem', borderRadius: 9999, border: 'none', background: saving ? '#e2e8f0' : 'linear-gradient(135deg, #4A7FDB, #2563b8)', color: saving ? '#94a3b8' : '#fff', fontWeight: 700, fontSize: '.875rem', cursor: saving ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: saving ? 'none' : '0 4px 14px rgba(74,127,219,.35)' }}>
               {saving ? 'Salvando...' : 'Salvar alterações'}
             </button>
             <button onClick={onClose} style={{ padding: '.7rem 1.5rem', borderRadius: 9999, border: '1.5px solid #e2e8f0', background: '#fff', color: '#64748b', fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
@@ -259,7 +259,7 @@ function ModalEmail({ destinatarios, onClose }: {
         {/* Header */}
         <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', padding: '1.1rem 1.5rem', borderRadius: '18px 18px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontSize: '.58rem', fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#d97706', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>
+            <div style={{ fontSize: '.58rem', fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>
               Enviar E-mail
             </div>
             <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>
@@ -310,7 +310,7 @@ function ModalEmail({ destinatarios, onClose }: {
               {/* Toggle HTML/Texto */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '.4rem', cursor: 'pointer', fontSize: '.78rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                  <input type="checkbox" checked={isHtml} onChange={e => setIsHtml(e.target.checked)} style={{ accentColor: '#d97706' }} />
+                  <input type="checkbox" checked={isHtml} onChange={e => setIsHtml(e.target.checked)} style={{ accentColor: '#4A7FDB' }} />
                   Formato HTML
                 </label>
                 {isHtml && (
@@ -459,7 +459,7 @@ export function LeadsTable({ leads: initialLeads, total, pagina, totalPaginas, q
                 {/* Checkbox selecionar todos */}
                 <th style={{ padding: '.65rem .75rem', width: 36 }}>
                   <input type="checkbox" checked={todosSelecionados} onChange={selecionarTodos}
-                    style={{ width: 15, height: 15, cursor: 'pointer', accentColor: '#d97706' }}
+                    style={{ width: 15, height: 15, cursor: 'pointer', accentColor: '#4A7FDB' }}
                     title="Selecionar todos com e-mail" />
                 </th>
                 {['#', 'Nome', 'Tipo / Cargo', 'Escola', 'Contato', 'Cidade/UF', 'Fonte', 'Ações'].map((col, i) => (
@@ -495,7 +495,7 @@ export function LeadsTable({ leads: initialLeads, total, pagina, totalPaginas, q
                     <td style={{ padding: '.7rem .75rem', textAlign: 'center', verticalAlign: 'middle' }}>
                       {lead.email ? (
                         <input type="checkbox" checked={isSel} onChange={() => toggleSelecionar(lead.id)}
-                          style={{ width: 15, height: 15, cursor: 'pointer', accentColor: '#d97706' }} />
+                          style={{ width: 15, height: 15, cursor: 'pointer', accentColor: '#4A7FDB' }} />
                       ) : (
                         <span style={{ color: '#e2e8f0', fontSize: '.6rem' }}>—</span>
                       )}
@@ -643,7 +643,7 @@ export function LeadsTable({ leads: initialLeads, total, pagina, totalPaginas, q
                 const p = Math.max(1, Math.min(pagina - 2, totalPaginas - 4)) + i
                 if (p < 1 || p > totalPaginas) return null
                 return (
-                  <a key={p} href={buildUrl({ pagina: String(p) })} style={{ width: 30, height: 30, borderRadius: 7, border: `1.5px solid ${pagina === p ? '#d97706' : '#e2e8f0'}`, background: pagina === p ? '#d97706' : '#fff', color: pagina === p ? '#fff' : '#475569', fontSize: '.72rem', fontWeight: pagina === p ? 700 : 400, textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <a key={p} href={buildUrl({ pagina: String(p) })} style={{ width: 30, height: 30, borderRadius: 7, border: `1.5px solid ${pagina === p ? '#4A7FDB' : '#e2e8f0'}`, background: pagina === p ? '#4A7FDB' : '#fff', color: pagina === p ? '#fff' : '#475569', fontSize: '.72rem', fontWeight: pagina === p ? 700 : 400, textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {p}
                   </a>
                 )

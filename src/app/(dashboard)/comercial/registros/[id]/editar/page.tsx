@@ -25,11 +25,11 @@ const card: React.CSSProperties = {
   background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16,
   marginBottom: '1.5rem', overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.06)',
 }
-const secHdr = (c = '#d97706'): React.CSSProperties => ({
+const secHdr = (c = '#4A7FDB'): React.CSSProperties => ({
   padding: '1rem 1.75rem', borderBottom: '1px solid #f1f5f9',
   background: '#fafafa', display: 'flex', alignItems: 'center', gap: '.65rem',
 })
-const dot = (c = '#d97706'): React.CSSProperties => ({
+const dot = (c = '#4A7FDB'): React.CSSProperties => ({
   width: 28, height: 28, borderRadius: 7, flexShrink: 0, background: c,
   display: 'flex', alignItems: 'center', justifyContent: 'center',
 })
@@ -156,8 +156,8 @@ export default async function RegistroEditar({ params }: Props) {
 
           {/* Diagnóstico */}
           <div style={card}>
-            <div style={secHdr('#d97706')}>
-              <div style={{ ...dot('#d97706'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={secHdr('#4A7FDB')}>
+              <div style={{ ...dot('#4A7FDB'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
               </div>
               <div style={secTitle}>Diagnóstico Comercial</div>
@@ -189,7 +189,7 @@ export default async function RegistroEditar({ params }: Props) {
                   <label key={o.value} style={{ display: 'flex', alignItems: 'center', gap: '.65rem', padding: '.75rem 1rem', background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 10, cursor: 'pointer', fontSize: '.82rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
                     <input type="checkbox" name="encaminhamentos" value={o.value}
                       defaultChecked={Array.isArray(r.encaminhamentos) && r.encaminhamentos.includes(o.value)}
-                      style={{ width: 16, height: 16, accentColor: '#d97706', flexShrink: 0 }} />
+                      style={{ width: 16, height: 16, accentColor: '#4A7FDB', flexShrink: 0 }} />
                     <span style={{ color: '#334155', fontWeight: 500 }}>{o.label}</span>
                   </label>
                 ))}
@@ -236,7 +236,7 @@ export default async function RegistroEditar({ params }: Props) {
 
           {/* Ações */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem 1.75rem', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16 }}>
-            <button type="submit" style={{ background: 'linear-gradient(135deg, #d97706, #b45309)', color: '#fff', padding: '.7rem 2rem', borderRadius: 9999, border: 'none', cursor: 'pointer', fontSize: '.875rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 14px rgba(217,119,6,.35)' }}>
+            <button type="submit" style={{ background: 'linear-gradient(135deg, #4A7FDB, #2563b8)', color: '#fff', padding: '.7rem 2rem', borderRadius: 9999, border: 'none', cursor: 'pointer', fontSize: '.875rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 14px rgba(74,127,219,.35)' }}>
               Salvar Alterações
             </button>
             <Link href={`/comercial/escolas/${r.escola_id}`} style={{ padding: '.7rem 1.5rem', borderRadius: 9999, border: '1.5px solid #e2e8f0', background: '#fff', color: '#64748b', textDecoration: 'none', fontSize: '.875rem', fontWeight: 600, fontFamily: 'var(--font-montserrat,sans-serif)' }}>

@@ -48,12 +48,12 @@ const HORAS = Array.from({ length: 24 }, (_, i) => i)
 const TIPOS = [
   { value: 'reuniao',   label: 'Reunião',         cor: '#2563eb' },
   { value: 'ligacao',   label: 'Ligação',          cor: '#7c3aed' },
-  { value: 'visita',    label: 'Visita Presencial', cor: '#d97706' },
+  { value: 'visita',    label: 'Visita Presencial', cor: '#4A7FDB' },
   { value: 'interno',   label: 'Interno We Make',      cor: '#16a34a' },
   { value: 'outro',     label: 'Outro',            cor: '#64748b' },
 ]
 
-const CORES = ['#2563eb','#7c3aed','#d97706','#16a34a','#dc2626','#0891b2','#db2777','#ea580c','#64748b']
+const CORES = ['#2563eb','#7c3aed','#4A7FDB','#16a34a','#dc2626','#0891b2','#db2777','#ea580c','#64748b']
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 function pad(n: number) { return String(n).padStart(2, '0') }
@@ -89,7 +89,7 @@ function getStatusColor(status: string) {
   switch (status) {
     case 'aceito':   return { bg: '#f0fdf4', color: '#16a34a', border: '#86efac' }
     case 'recusado': return { bg: '#fef2f2', color: '#dc2626', border: '#fca5a5' }
-    case 'talvez':   return { bg: '#fffbeb', color: '#d97706', border: '#fde68a' }
+    case 'talvez':   return { bg: '#fffbeb', color: '#4A7FDB', border: '#fde68a' }
     default:         return { bg: '#f1f5f9', color: '#64748b', border: '#e2e8f0' }
   }
 }
@@ -206,7 +206,7 @@ function ModalEvento({
           borderRadius: '18px 18px 0 0',
         }}>
           <div>
-            <div style={{ fontSize: '.6rem', fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#d97706', marginBottom: '.25rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+            <div style={{ fontSize: '.6rem', fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#4A7FDB', marginBottom: '.25rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
               ✦ {isEdicao ? 'Editar Evento' : 'Novo Evento'}
             </div>
             <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 700, color: '#fff' }}>
@@ -259,7 +259,7 @@ function ModalEvento({
             <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', marginBottom: '.6rem' }}>
               <label style={{ fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Data e Hora</label>
               <label style={{ display: 'flex', alignItems: 'center', gap: '.35rem', cursor: 'pointer', fontSize: '.75rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                <input type="checkbox" checked={diaInteiro} onChange={e => setDiaInteiro(e.target.checked)} style={{ accentColor: '#d97706' }} />
+                <input type="checkbox" checked={diaInteiro} onChange={e => setDiaInteiro(e.target.checked)} style={{ accentColor: '#4A7FDB' }} />
                 Dia inteiro
               </label>
             </div>
@@ -704,10 +704,10 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
           <button onClick={() => setModalCriar(true)} style={{
             display: 'flex', alignItems: 'center', gap: '.4rem',
             padding: '.5rem 1.1rem', borderRadius: 9999, border: 'none',
-            background: 'linear-gradient(135deg, #d97706, #b45309)',
+            background: 'linear-gradient(135deg, #4A7FDB, #2563b8)',
             color: '#fff', fontWeight: 700, fontSize: '.78rem', cursor: 'pointer',
             fontFamily: 'var(--font-montserrat,sans-serif)',
-            boxShadow: '0 4px 14px rgba(217,119,6,.35)',
+            boxShadow: '0 4px 14px rgba(74,127,219,.35)',
           }}>
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Novo Evento
@@ -763,7 +763,7 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
                     <div style={{
                       width: 26, height: 26, borderRadius: '50%', marginBottom: '.3rem',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      background: isHoje ? '#d97706' : 'transparent',
+                      background: isHoje ? '#4A7FDB' : 'transparent',
                       color: isHoje ? '#fff' : isWeekend ? '#94a3b8' : '#334155',
                       fontSize: '.78rem', fontWeight: isHoje ? 700 : 500,
                       fontFamily: 'var(--font-montserrat,sans-serif)',
@@ -846,12 +846,12 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
                 <div key={g.data} style={{ display: 'flex', gap: '1.25rem', marginBottom: '1.5rem' }}>
                   {/* Coluna de data */}
                   <div style={{ minWidth: 70, textAlign: 'right', paddingTop: '.35rem' }}>
-                    <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', color: isHoje ? '#d97706' : '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', letterSpacing: '.06em' }}>
+                    <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', color: isHoje ? '#4A7FDB' : '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', letterSpacing: '.06em' }}>
                       {DIAS_SEMANA_ABREV[d.getDay()]}
                     </div>
                     <div style={{
                       fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, lineHeight: 1,
-                      color: isHoje ? '#d97706' : '#0f172a',
+                      color: isHoje ? '#4A7FDB' : '#0f172a',
                     }}>
                       {pad(d.getDate())}
                     </div>
@@ -894,7 +894,7 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
                               </span>
                             )}
                             {ev.escola && (
-                              <span style={{ fontSize: '.65rem', background: '#fffbeb', color: '#d97706', border: '1px solid #fde68a', padding: '.1rem .4rem', borderRadius: 99, fontWeight: 600, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                              <span style={{ fontSize: '.65rem', background: '#fffbeb', color: '#4A7FDB', border: '1px solid #fde68a', padding: '.1rem .4rem', borderRadius: 99, fontWeight: 600, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                                 {ev.escola.nome.slice(0, 20)}
                               </span>
                             )}
@@ -977,13 +977,13 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
                       background: isHoje ? '#fffbeb' : '#fafafa',
                       borderLeft: '1px solid #f1f5f9',
                     }}>
-                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: isHoje ? '#d97706' : '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: isHoje ? '#4A7FDB' : '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                         {DIAS_SEMANA_ABREV[d.getDay()]}
                       </div>
                       <div style={{
                         width: 28, height: 28, borderRadius: '50%', margin: '.15rem auto 0',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        background: isHoje ? '#d97706' : 'transparent',
+                        background: isHoje ? '#4A7FDB' : 'transparent',
                         color: isHoje ? '#fff' : '#334155',
                         fontSize: '.85rem', fontWeight: isHoje ? 700 : 600,
                         fontFamily: 'var(--font-montserrat,sans-serif)',

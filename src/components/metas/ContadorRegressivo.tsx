@@ -50,7 +50,7 @@ export function ContadorRegressivo() {
       {/* Label */}
       <div style={{
         fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em',
-        color: '#d97706', marginBottom: '.65rem', textAlign: 'center',
+        color: '#4A7FDB', marginBottom: '.65rem', textAlign: 'center',
         fontFamily: 'var(--font-montserrat,sans-serif)',
       }}>
         ✦ Prazo — Agosto 2026
@@ -66,7 +66,7 @@ export function ContadorRegressivo() {
         ].map(({ val, label }) => (
           <div key={label} style={{ textAlign: 'center' }}>
             <div style={{
-              background: 'rgba(217,119,6,.25)', border: '1px solid rgba(217,119,6,.35)',
+              background: 'rgba(74,127,219,.25)', border: '1px solid rgba(74,127,219,.35)',
               borderRadius: 8, padding: '.4rem .2rem',
               fontFamily: 'var(--font-cormorant,serif)',
               fontSize: label === 'dias' ? '1.5rem' : '1.25rem',
@@ -97,7 +97,7 @@ export function ContadorRegressivo() {
             const passado = Math.max(0, Date.now() - inicio)
             const pct    = Math.min(100, Math.round((passado / total) * 100))
             return (
-              <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, #d97706, #f59e0b)', borderRadius: 3 }} />
+              <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, #4A7FDB, #f59e0b)', borderRadius: 3 }} />
             )
           })()}
         </div>

@@ -14,7 +14,7 @@ interface Props { searchParams: Promise<{ escola?: string }> }
 const ETAPAS = [
   { id: 'cadastro',     label: 'Cadastro',       desc: 'Escola registrada',              cor: '#6366f1', num: 1  },
   { id: 'prospeccao',   label: 'Prospecção',      desc: 'Primeiro contato',               cor: '#8b5cf6', num: 2  },
-  { id: 'qualificacao', label: 'Qualificação',    desc: 'Diagnóstico e perfil',           cor: '#d97706', num: 3  },
+  { id: 'qualificacao', label: 'Qualificação',    desc: 'Diagnóstico e perfil',           cor: '#4A7FDB', num: 3  },
   { id: 'apresentacao', label: 'Apresentação',    desc: 'Apresentação Paideia',           cor: '#f59e0b', num: 4  },
   { id: 'proposta',     label: 'Proposta',        desc: 'Proposta enviada',               cor: '#10b981', num: 5  },
   { id: 'negociacao',   label: 'Negociação',      desc: 'Ajustes contratuais',            cor: '#14b8a6', num: 6  },
@@ -126,7 +126,7 @@ function IconEdit({ size = 13, cor = '#64748b' }: { size?: number; cor?: string 
   )
 }
 
-function IconFlag({ size = 16, cor = '#d97706' }: { size?: number; cor?: string }) {
+function IconFlag({ size = 16, cor = '#4A7FDB' }: { size?: number; cor?: string }) {
   return (
     <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke={cor} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
       <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
@@ -172,7 +172,7 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
 
   const idxAtual = ETAPAS.findIndex(e => e.id === etapaAtual)
   const progresso = idxAtual >= 0 ? Math.round(((idxAtual + 1) / ETAPAS.length) * 100) : 0
-  const progressoCor = idxAtual >= ETAPAS.length - 1 ? '#16a34a' : '#d97706'
+  const progressoCor = idxAtual >= ETAPAS.length - 1 ? '#16a34a' : '#4A7FDB'
 
   const etapasContratuais = [
     { label: 'Formulário enviado',  done: !!contrato?.formulario_enviado  },
@@ -247,7 +247,7 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
                 position: 'absolute', right: -40, top: -40,
                 width: 260, height: 260,
                 borderRadius: '50%',
-                background: 'rgba(217,119,6,.06)',
+                background: 'rgba(74,127,219,.06)',
                 pointerEvents: 'none',
               }} />
               <div style={{
@@ -262,12 +262,12 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
                 <div style={{ flex: 1, minWidth: 220 }}>
                   <div style={{
                     fontSize: '.6rem', fontWeight: 700, letterSpacing: '.12em',
-                    color: '#d97706', marginBottom: '.5rem',
+                    color: '#4A7FDB', marginBottom: '.5rem',
                     fontFamily: 'var(--font-montserrat,sans-serif)',
                     textTransform: 'uppercase',
                     display: 'flex', alignItems: 'center', gap: '.4rem',
                   }}>
-                    <svg viewBox="0 0 24 24" width={10} height={10} fill="#d97706" stroke="none">
+                    <svg viewBox="0 0 24 24" width={10} height={10} fill="#4A7FDB" stroke="none">
                       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                     </svg>
                     Jornada Comercial
@@ -403,7 +403,7 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
                       height: '100%', borderRadius: 4,
                       background: idxAtual >= ETAPAS.length - 1
                         ? 'linear-gradient(90deg, #16a34a, #15803d)'
-                        : 'linear-gradient(90deg, #d97706, #f59e0b)',
+                        : 'linear-gradient(90deg, #4A7FDB, #f59e0b)',
                       width: `${progresso}%`,
                       transition: 'width 1s ease',
                       boxShadow: `0 0 8px ${progressoCor}50`,
@@ -514,7 +514,7 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
                             <div style={{ flexShrink: 0, padding: '0 .1rem', marginTop: '-2rem' }}>
                               <IconArrowRight
                                 size={14}
-                                cor={idxAtual >= idx + 1 ? '#d97706' : '#e2e8f0'}
+                                cor={idxAtual >= idx + 1 ? '#4A7FDB' : '#e2e8f0'}
                               />
                             </div>
                           )}
@@ -628,7 +628,7 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
                             <div style={{ flexShrink: 0, padding: '0 .1rem', marginTop: '-2rem' }}>
                               <IconArrowRight
                                 size={14}
-                                cor={idxAtual >= idx + 1 ? '#d97706' : '#e2e8f0'}
+                                cor={idxAtual >= idx + 1 ? '#4A7FDB' : '#e2e8f0'}
                               />
                             </div>
                           )}
@@ -902,11 +902,11 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
                           width: 42, height: 42, borderRadius: '50%',
                           background: etapaAtual === 'arquivado'
                             ? 'linear-gradient(135deg, #16a34a, #15803d)'
-                            : 'linear-gradient(135deg, #d97706, #b45309)',
+                            : 'linear-gradient(135deg, #4A7FDB, #2563b8)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           boxShadow: etapaAtual === 'arquivado'
                             ? '0 4px 14px #16a34a40'
-                            : '0 4px 14px #d9770640',
+                            : '0 4px 14px #4A7FDB40',
                         }}>
                           <IconFlag size={16} cor="#fff" />
                         </div>
@@ -915,7 +915,7 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
                         flex: 1,
                         background: etapaAtual === 'arquivado' ? '#f0fdf4' : '#fffbeb',
                         border: `1px solid ${etapaAtual === 'arquivado' ? '#86efac' : '#fcd34d'}`,
-                        borderLeft: `4px solid ${etapaAtual === 'arquivado' ? '#16a34a' : '#d97706'}`,
+                        borderLeft: `4px solid ${etapaAtual === 'arquivado' ? '#16a34a' : '#4A7FDB'}`,
                         borderRadius: 12,
                         padding: '1rem 1.25rem',
                       }}>
@@ -1172,7 +1172,7 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
                     </span>
                     <span style={{
                       fontSize: '.65rem', fontWeight: 700,
-                      color: etapasContratuais.filter(e => e.done).length === 8 ? '#15803d' : '#d97706',
+                      color: etapasContratuais.filter(e => e.done).length === 8 ? '#15803d' : '#4A7FDB',
                       fontFamily: 'var(--font-montserrat,sans-serif)',
                       background: etapasContratuais.filter(e => e.done).length === 8 ? '#f0fdf4' : '#fffbeb',
                       border: `1px solid ${etapasContratuais.filter(e => e.done).length === 8 ? '#86efac' : '#fcd34d'}`,
@@ -1248,7 +1248,7 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
                         </div>
                         <div style={{
                           fontFamily: 'var(--font-cormorant,serif)',
-                          fontSize: '1.5rem', fontWeight: 700, color: '#b45309',
+                          fontSize: '1.5rem', fontWeight: 700, color: '#2563b8',
                           lineHeight: 1,
                         }}>
                           {formatCurrency(contrato.valor_total_calculado)}
@@ -1364,7 +1364,7 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
                       </span>
                       <span style={{
                         fontFamily: 'var(--font-cormorant,serif)',
-                        fontSize: '1.35rem', fontWeight: 700, color: '#b45309', lineHeight: 1,
+                        fontSize: '1.35rem', fontWeight: 700, color: '#2563b8', lineHeight: 1,
                       }}>
                         {formatCurrency(escola.potencial_financeiro ?? 0)}
                       </span>

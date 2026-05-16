@@ -186,7 +186,7 @@ export default async function MetasPage() {
           boxShadow: '0 8px 32px rgba(15,23,42,.2)',
         }}>
           <div>
-            <div style={{ fontSize: '.62rem', fontWeight: 800, letterSpacing: '.12em', textTransform: 'uppercase', color: '#d97706', marginBottom: '.5rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+            <div style={{ fontSize: '.62rem', fontWeight: 800, letterSpacing: '.12em', textTransform: 'uppercase', color: '#4A7FDB', marginBottom: '.5rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
               ✦ Planejamento Estratégico
             </div>
             <h2 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.8rem', fontWeight: 700, color: '#fff', lineHeight: 1.1, marginBottom: '.6rem' }}>
@@ -222,7 +222,7 @@ export default async function MetasPage() {
             valor={qtdEscolasNovas}
             meta={`${METAS.escolas_novas_meta} novas (total: ${METAS.escolas_total_meta})`}
             pct={pctEscolas}
-            cor="#d97706"
+            cor="#4A7FDB"
             bg="#fffbeb"
             border="#fde68a"
             sub={`Contratos assinados · ${qtdEscolasMinuta > 0 ? `+${qtdEscolasMinuta} em minuta (pipeline)` : 'nenhuma em minuta ainda'}`}
@@ -257,7 +257,7 @@ export default async function MetasPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', marginBottom: '1.25rem', padding: '1rem 1.25rem', background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)', borderRadius: 12, border: '1px solid #e2e8f0' }}>
               {[
                 { n: '2.000', label: 'Base atual\n(25 escolas parceiras)', cor: '#64748b', bg: '#f1f5f9' },
-                { n: '+1.000', label: 'Crescimento Fund. I\n(escolas já parceiras)', cor: '#d97706', bg: '#fffbeb' },
+                { n: '+1.000', label: 'Crescimento Fund. I\n(escolas já parceiras)', cor: '#4A7FDB', bg: '#fffbeb' },
                 { n: '+2.000', label: 'Novas parcerias\n(infantil + fundamental)', cor: '#7c3aed', bg: '#f5f3ff' },
                 { n: '= 5.000', label: 'Meta total\nalunos 2027', cor: '#16a34a', bg: '#f0fdf4' },
               ].map((item, i) => (
@@ -288,7 +288,7 @@ export default async function MetasPage() {
                   meta:  METAS.alunos_fund1_meta, // meta: +1.000
                   progAtual: alunosFund1Anteriores,
                   desc: '+1.000 alunos do 1º ao 5º Ano nas escolas já parceiras',
-                  cor: '#d97706',
+                  cor: '#4A7FDB',
                   bg: '#fffbeb',
                   nota: 'Adesão ao material Fund. I (1º ao 5º ano) pelas escolas atuais',
                   badge: null,
@@ -346,7 +346,7 @@ export default async function MetasPage() {
                   <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.75rem', fontWeight: 700, color: '#0f172a' }}>Progresso Rumo à Meta de 5.000 Alunos</div>
                   <div style={{ fontSize: '.7rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.15rem' }}>
                     Base confirmada: <strong style={{ color: '#16a34a' }}>2.000</strong> +
-                    Fund.I crescimento: <strong style={{ color: '#d97706' }}>{alunosFund1Anteriores}</strong> +
+                    Fund.I crescimento: <strong style={{ color: '#4A7FDB' }}>{alunosFund1Anteriores}</strong> +
                     Novas parcerias: <strong style={{ color: '#7c3aed' }}>{alunosNovasEscolas}</strong> =
                     <strong style={{ color: '#0f172a' }}> {(METAS.alunos_atuais + alunosFund1Anteriores + alunosNovasEscolas).toLocaleString('pt-BR')}</strong> alunos
                   </div>
@@ -361,7 +361,7 @@ export default async function MetasPage() {
               <BarraMeta pct={pctAlunos} cor="#16a34a" height={14} />
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '.5rem' }}>
                 <span style={{ fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                  Faltam <strong style={{ color: '#d97706' }}>{Math.max(0, METAS.alunos_total_meta - (METAS.alunos_atuais + alunosFund1Anteriores + alunosNovasEscolas)).toLocaleString('pt-BR')}</strong> alunos novos para atingir a meta
+                  Faltam <strong style={{ color: '#4A7FDB' }}>{Math.max(0, METAS.alunos_total_meta - (METAS.alunos_atuais + alunosFund1Anteriores + alunosNovasEscolas)).toLocaleString('pt-BR')}</strong> alunos novos para atingir a meta
                 </span>
                 <span style={{ fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Meta: {METAS.alunos_total_meta.toLocaleString('pt-BR')} alunos</span>
               </div>
@@ -390,7 +390,7 @@ export default async function MetasPage() {
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.55rem 0', borderBottom: i < registrosRecentes.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
                   <div style={{
                     width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
-                    background: r.classificacao === 'quente' ? '#ef4444' : r.classificacao === 'morno' ? '#d97706' : '#6366f1',
+                    background: r.classificacao === 'quente' ? '#ef4444' : r.classificacao === 'morno' ? '#4A7FDB' : '#6366f1',
                   }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '.78rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -403,7 +403,7 @@ export default async function MetasPage() {
                   <span style={{
                     fontSize: '.6rem', fontWeight: 700, padding: '.1rem .4rem', borderRadius: 99, flexShrink: 0,
                     background: r.classificacao === 'quente' ? '#fef2f2' : r.classificacao === 'morno' ? '#fffbeb' : '#eef2ff',
-                    color: r.classificacao === 'quente' ? '#dc2626' : r.classificacao === 'morno' ? '#d97706' : '#6366f1',
+                    color: r.classificacao === 'quente' ? '#dc2626' : r.classificacao === 'morno' ? '#4A7FDB' : '#6366f1',
                     fontFamily: 'var(--font-montserrat,sans-serif)',
                   }}>
                     {r.classificacao}
@@ -421,19 +421,19 @@ export default async function MetasPage() {
           <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.06)' }}>
             <div style={{ padding: '1rem 1.4rem', borderBottom: '1px solid #f1f5f9', background: '#fafafa', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem' }}>
-                <div style={{ width: 26, height: 26, borderRadius: 7, background: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ width: 26, height: 26, borderRadius: 7, background: '#4A7FDB', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 </div>
                 <span style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a' }}>Novas Escolas Captadas</span>
               </div>
-              <span style={{ fontSize: '.65rem', background: '#fffbeb', color: '#d97706', border: '1px solid #fde68a', padding: '.15rem .55rem', borderRadius: 99, fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+              <span style={{ fontSize: '.65rem', background: '#fffbeb', color: '#4A7FDB', border: '1px solid #fde68a', padding: '.15rem .55rem', borderRadius: 99, fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                 {qtdEscolasNovas} / {METAS.escolas_novas_meta}
               </span>
             </div>
             <div style={{ padding: '1rem 1.4rem' }}>
               {escolasNovasRecentes.length > 0 ? escolasNovasRecentes.map((e: any, i) => (
                 <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.55rem 0', borderBottom: i < escolasNovasRecentes.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
-                  <div style={{ width: 28, height: 28, borderRadius: 7, background: '#fffbeb', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: 'var(--font-cormorant,serif)', fontSize: '.9rem', fontWeight: 700, color: '#d97706' }}>
+                  <div style={{ width: 28, height: 28, borderRadius: 7, background: '#fffbeb', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: 'var(--font-cormorant,serif)', fontSize: '.9rem', fontWeight: 700, color: '#4A7FDB' }}>
                     {i + 1}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -465,7 +465,7 @@ export default async function MetasPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem' }}>
             {[
               { label: 'Reuniões Únicas',         atual: totalReunioes,         meta: METAS.reunioes_meta,        cor: '#2563eb', unidade: 'reuniões',  sub: '' },
-              { label: 'Contratos Assinados',     atual: qtdEscolasNovas,       meta: METAS.escolas_novas_meta,   cor: '#d97706', unidade: 'escolas',   sub: `${qtdEscolasMinuta} em minuta` },
+              { label: 'Contratos Assinados',     atual: qtdEscolasNovas,       meta: METAS.escolas_novas_meta,   cor: '#4A7FDB', unidade: 'escolas',   sub: `${qtdEscolasMinuta} em minuta` },
               { label: 'Crescimento Fund.I',       atual: alunosFund1Anteriores, meta: METAS.alunos_fund1_meta,    cor: '#0d9488', unidade: 'alunos',    sub: 'escolas parceiras atuais' },
               { label: 'Alunos via Contratos',    atual: alunosNovasEscolas,    meta: METAS.alunos_novas_meta,    cor: '#7c3aed', unidade: 'alunos',    sub: `${qtdEscolasNovas} contratos` },
             ].map(m => {

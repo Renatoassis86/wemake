@@ -18,7 +18,7 @@ const S = {
 
 const CLASSIF_COR = {
   quente: { bg: '#fef2f2', text: '#dc2626', dot: '#dc2626', border: '#fca5a5' },
-  morno:  { bg: '#fffbeb', text: '#d97706', dot: '#f59e0b', border: '#fcd34d' },
+  morno:  { bg: '#fffbeb', text: '#4A7FDB', dot: '#f59e0b', border: '#fcd34d' },
   frio:   { bg: '#eff6ff', text: '#2563eb', dot: '#60a5fa', border: '#93c5fd' },
 } as Record<string, { bg: string; text: string; dot: string; border: string }>
 
@@ -64,9 +64,9 @@ export default async function LeadsPage({ searchParams }: Props) {
         actions={
           <Link href="/comercial/escolas/nova" style={{
             display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-            background: '#d97706', color: '#fff', padding: '.45rem 1rem',
+            background: '#4A7FDB', color: '#fff', padding: '.45rem 1rem',
             borderRadius: 9999, fontSize: '.82rem', fontWeight: 700,
-            textDecoration: 'none', boxShadow: '0 4px 12px rgba(217,119,6,.3)',
+            textDecoration: 'none', boxShadow: '0 4px 12px rgba(74,127,219,.3)',
             fontFamily: 'var(--font-montserrat,sans-serif)',
           }}>
             <Plus size={14} /> Novo Lead
@@ -179,7 +179,7 @@ export default async function LeadsPage({ searchParams }: Props) {
                       </div>
                       <div style={{ background: '#fffbeb', borderRadius: 8, padding: '.65rem .85rem', border: '1px solid #fef3c7' }}>
                         <div style={{ fontSize: '.6rem', color: '#92400e', textTransform: 'uppercase', letterSpacing: '.05em', fontFamily: 'var(--font-montserrat,sans-serif)', fontWeight: 700, marginBottom: '.2rem' }}>Potencial</div>
-                        <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#d97706' }}>{formatCurrency(e.potencial_financeiro ?? 0)}</div>
+                        <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#4A7FDB' }}>{formatCurrency(e.potencial_financeiro ?? 0)}</div>
                       </div>
                     </div>
 
@@ -204,7 +204,7 @@ export default async function LeadsPage({ searchParams }: Props) {
                           : 'Sem interações'}
                       </div>
                       <div style={{ display: 'flex', gap: '.35rem' }}>
-                        <Link href={`/comercial/registros/novo?escola=${e.id}`} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 7, background: '#d97706', color: '#fff', textDecoration: 'none', fontSize: '1rem', fontWeight: 700 }} title="Novo registro">+</Link>
+                        <Link href={`/comercial/registros/novo?escola=${e.id}`} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 7, background: '#4A7FDB', color: '#fff', textDecoration: 'none', fontSize: '1rem', fontWeight: 700 }} title="Novo registro">+</Link>
                         <Link href={`/comercial/escolas/${e.id}`} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 7, background: '#f1f5f9', color: '#475569', textDecoration: 'none', fontSize: '.75rem', fontWeight: 700 }} title="Ver ficha">→</Link>
                       </div>
                     </div>
@@ -228,7 +228,7 @@ export default async function LeadsPage({ searchParams }: Props) {
             <p style={{ fontSize: '.85rem', color: '#475569', marginBottom: '1.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
               Cadastre escolas para começar a gerenciar seus leads.
             </p>
-            <Link href="/comercial/escolas/nova" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: '#d97706', color: '#fff', padding: '.55rem 1.25rem', borderRadius: 9999, textDecoration: 'none', fontSize: '.85rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+            <Link href="/comercial/escolas/nova" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: '#4A7FDB', color: '#fff', padding: '.55rem 1.25rem', borderRadius: 9999, textDecoration: 'none', fontSize: '.85rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
               <Plus size={14} /> Cadastrar Lead
             </Link>
           </div>

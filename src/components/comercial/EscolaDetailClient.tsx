@@ -42,9 +42,9 @@ export function EscolaDetailClient({ escolaId, registros, negociacoes, tarefas, 
             style={{
               padding: '.65rem 1.1rem', fontSize: '.82rem',
               fontWeight: active === tab.id ? 700 : 500,
-              color: active === tab.id ? '#d97706' : 'var(--text-s)',
+              color: active === tab.id ? '#4A7FDB' : 'var(--text-s)',
               background: 'none', border: 'none', cursor: 'pointer',
-              borderBottom: `2px solid ${active === tab.id ? '#d97706' : 'transparent'}`,
+              borderBottom: `2px solid ${active === tab.id ? '#4A7FDB' : 'transparent'}`,
               marginBottom: -2, transition: 'all .15s',
               fontFamily: 'var(--font-montserrat,sans-serif)',
               display: 'flex', alignItems: 'center', gap: '.35rem',
@@ -74,7 +74,7 @@ export function EscolaDetailClient({ escolaId, registros, negociacoes, tarefas, 
             <div style={{ position: 'relative' }}>
               <div style={{ position: 'absolute', left: 19, top: 0, bottom: 0, width: 2, background: 'linear-gradient(to bottom, #e2e8f0, #f1f5f9)' }} />
               {registros.map((r: any, idx: number) => {
-                const cor = r.classificacao === 'quente' ? '#ef4444' : r.classificacao === 'morno' ? '#d97706' : '#6366f1'
+                const cor = r.classificacao === 'quente' ? '#ef4444' : r.classificacao === 'morno' ? '#4A7FDB' : '#6366f1'
                 return (
                   <div key={r.id} style={{ display: 'flex', gap: '1rem', marginBottom: idx < registros.length - 1 ? '1.25rem' : 0, position: 'relative', zIndex: 1 }}>
                     <div style={{ flexShrink: 0, paddingTop: '.2rem' }}>
@@ -121,7 +121,7 @@ export function EscolaDetailClient({ escolaId, registros, negociacoes, tarefas, 
               <div className="card-body">
                 <div style={{ fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>{LABEL.stage?.[n.stage] ?? n.stage}</div>
                 <div style={{ fontSize: '.75rem', color: 'var(--text-s)' }}>{formatDate(n.updated_at)}</div>
-                {n.valor_estimado && <div style={{ fontWeight: 800, color: '#d97706', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem' }}>{formatCurrency(n.valor_estimado)}</div>}
+                {n.valor_estimado && <div style={{ fontWeight: 800, color: '#4A7FDB', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem' }}>{formatCurrency(n.valor_estimado)}</div>}
               </div>
             </div>
           )) : <div className="empty-state"><h3>Nenhuma negociacao</h3></div>}
@@ -156,7 +156,7 @@ export function EscolaDetailClient({ escolaId, registros, negociacoes, tarefas, 
           {tarefas.length > 0 ? tarefas.map((t: any) => {
             const vencida = t.vencimento && new Date(t.vencimento) < new Date()
             return (
-              <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.75rem 1rem', marginBottom: '.5rem', background: vencida ? '#fef2f2' : '#fff', border: `1px solid ${vencida ? '#fca5a5' : '#e2e8f0'}`, borderLeft: `4px solid ${vencida ? '#dc2626' : '#d97706'}`, borderRadius: 10 }}>
+              <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.75rem 1rem', marginBottom: '.5rem', background: vencida ? '#fef2f2' : '#fff', border: `1px solid ${vencida ? '#fca5a5' : '#e2e8f0'}`, borderLeft: `4px solid ${vencida ? '#dc2626' : '#4A7FDB'}`, borderRadius: 10 }}>
                 <form action={concluirTarefaEscola.bind(null, t.id) as any}>
                   <button type="submit" style={{ width: 22, height: 22, borderRadius: '50%', cursor: 'pointer', border: '2px solid #94a3b8', background: 'none' }} />
                 </form>
@@ -188,7 +188,7 @@ export function EscolaDetailClient({ escolaId, registros, negociacoes, tarefas, 
             </div>
           </form>
           {notas.length > 0 ? notas.map((n: any) => (
-            <div key={n.id} style={{ padding: '.85rem 1rem', marginBottom: '.5rem', background: '#fff', border: '1px solid #e2e8f0', borderLeft: n.fixada ? '4px solid #d97706' : '4px solid #e2e8f0', borderRadius: 10 }}>
+            <div key={n.id} style={{ padding: '.85rem 1rem', marginBottom: '.5rem', background: '#fff', border: '1px solid #e2e8f0', borderLeft: n.fixada ? '4px solid #4A7FDB' : '4px solid #e2e8f0', borderRadius: 10 }}>
               <div style={{ fontSize: '.875rem', lineHeight: 1.6, color: '#334155' }}>{n.texto}</div>
               <div style={{ fontSize: '.68rem', color: 'var(--text-s)', marginTop: '.4rem' }}>{formatDate(n.created_at)}</div>
             </div>

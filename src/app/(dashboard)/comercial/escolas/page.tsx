@@ -15,7 +15,7 @@ interface Props {
 
 const CLASSIF_COR: Record<string, { bg: string; text: string; dot: string; border: string }> = {
   quente: { bg: '#fef2f2', text: '#dc2626', dot: '#dc2626', border: '#fca5a5' },
-  morno:  { bg: '#fffbeb', text: '#d97706', dot: '#f59e0b', border: '#fcd34d' },
+  morno:  { bg: '#fffbeb', text: '#4A7FDB', dot: '#f59e0b', border: '#fcd34d' },
   frio:   { bg: '#eff6ff', text: '#2563eb', dot: '#60a5fa', border: '#93c5fd' },
 }
 
@@ -93,9 +93,9 @@ export default async function EscolasPage({ searchParams }: Props) {
             <MigrarLeadsBtn />
             <Link href="/comercial/escolas/nova" style={{
               display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-              background: '#d97706', color: '#fff', padding: '.45rem 1rem',
+              background: '#4A7FDB', color: '#fff', padding: '.45rem 1rem',
               borderRadius: 9999, fontSize: '.82rem', fontWeight: 700,
-              textDecoration: 'none', boxShadow: '0 4px 12px rgba(217,119,6,.3)',
+              textDecoration: 'none', boxShadow: '0 4px 12px rgba(74,127,219,.3)',
               fontFamily: 'var(--font-montserrat,sans-serif)',
             }}>
               <Plus size={14} /> Nova Escola
@@ -281,7 +281,7 @@ export default async function EscolasPage({ searchParams }: Props) {
                         </div>
                         <div style={{ background: '#fffbeb', borderRadius: 8, padding: '.5rem .75rem', border: '1px solid #fef3c7' }}>
                           <div style={{ fontSize: '.6rem', color: '#92400e', textTransform: 'uppercase', letterSpacing: '.05em', fontFamily: 'var(--font-montserrat,sans-serif)', fontWeight: 700 }}>Potencial</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#d97706', lineHeight: 1.2 }}>{formatCurrency(e.potencial_financeiro ?? 0)}</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#4A7FDB', lineHeight: 1.2 }}>{formatCurrency(e.potencial_financeiro ?? 0)}</div>
                         </div>
                       </div>
 
@@ -436,7 +436,7 @@ export default async function EscolasPage({ searchParams }: Props) {
                               <Link href={`/comercial/registros/novo?escola=${e.id}`} style={{
                                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                                 width: 28, height: 28, borderRadius: 7,
-                                background: '#d97706', color: '#fff', textDecoration: 'none',
+                                background: '#4A7FDB', color: '#fff', textDecoration: 'none',
                                 fontSize: '1rem', fontWeight: 700,
                                 transition: 'background .15s',
                               }} title="Novo registro"
@@ -491,7 +491,7 @@ export default async function EscolasPage({ searchParams }: Props) {
                     )}
                     {page < totalPages && (
                       <Link href={`?page=${page + 1}&q=${q}&estado=${estado}&classif=${classif}&view=${view}`}
-                        style={{ padding: '6px 14px', borderRadius: 7, background: '#d97706', color: '#fff', fontSize: '.78rem', fontWeight: 700, textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 2px 8px rgba(217,119,6,.25)' }}>
+                        style={{ padding: '6px 14px', borderRadius: 7, background: '#4A7FDB', color: '#fff', fontSize: '.78rem', fontWeight: 700, textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 2px 8px rgba(74,127,219,.25)' }}>
                         Próxima →
                       </Link>
                     )}
@@ -521,11 +521,11 @@ export default async function EscolasPage({ searchParams }: Props) {
             </p>
             <Link href="/comercial/escolas/nova" style={{
               display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-              background: '#d97706', color: '#fff', padding: '.55rem 1.25rem',
+              background: '#4A7FDB', color: '#fff', padding: '.55rem 1.25rem',
               borderRadius: 9999, textDecoration: 'none',
               fontSize: '.85rem', fontWeight: 700,
               fontFamily: 'var(--font-montserrat,sans-serif)',
-              boxShadow: '0 4px 14px rgba(217,119,6,.3)',
+              boxShadow: '0 4px 14px rgba(74,127,219,.3)',
             }}>
               <Plus size={14} /> Nova Escola
             </Link>

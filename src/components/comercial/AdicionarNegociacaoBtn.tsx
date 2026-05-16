@@ -101,10 +101,10 @@ export function AdicionarNegociacaoBtn({ escolas, userId, onSuccess }: Props) {
       <button onClick={() => setAberto(true)} style={{
         display: 'inline-flex', alignItems: 'center', gap: '.4rem',
         padding: '.45rem 1.1rem', borderRadius: 9999, border: 'none',
-        background: 'linear-gradient(135deg, #d97706, #b45309)',
+        background: 'linear-gradient(135deg, #4A7FDB, #2563b8)',
         color: '#fff', fontWeight: 700, fontSize: '.78rem',
         cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)',
-        boxShadow: '0 4px 12px rgba(217,119,6,.35)',
+        boxShadow: '0 4px 12px rgba(74,127,219,.35)',
       }}>
         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Adicionar Escola ao Pipeline
@@ -119,7 +119,7 @@ export function AdicionarNegociacaoBtn({ escolas, userId, onSuccess }: Props) {
             {/* Header */}
             <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', padding: '1.1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
-                <div style={{ fontSize: '.6rem', fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#d97706', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>Pipeline Comercial</div>
+                <div style={{ fontSize: '.6rem', fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>Pipeline Comercial</div>
                 <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.25rem', fontWeight: 700, color: '#fff' }}>Adicionar escola ao pipeline</div>
               </div>
               <button onClick={() => setAberto(false)} style={{ width: 30, height: 30, borderRadius: 7, border: '1px solid rgba(255,255,255,.15)', background: 'rgba(255,255,255,.08)', color: '#fff', cursor: 'pointer', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
@@ -178,9 +178,9 @@ export function AdicionarNegociacaoBtn({ escolas, userId, onSuccess }: Props) {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '.4rem' }}>
                   {STAGES.map(s => (
                     <button key={s.id} type="button" onClick={() => setStage(s.id)} style={{
-                      padding: '.45rem .5rem', borderRadius: 8, border: `1.5px solid ${stage === s.id ? '#d97706' : '#e2e8f0'}`,
+                      padding: '.45rem .5rem', borderRadius: 8, border: `1.5px solid ${stage === s.id ? '#4A7FDB' : '#e2e8f0'}`,
                       background: stage === s.id ? '#fffbeb' : '#f8fafc',
-                      color: stage === s.id ? '#d97706' : '#475569',
+                      color: stage === s.id ? '#4A7FDB' : '#475569',
                       fontSize: '.7rem', fontWeight: stage === s.id ? 700 : 400,
                       cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)',
                       transition: 'all .1s',
@@ -210,11 +210,11 @@ export function AdicionarNegociacaoBtn({ escolas, userId, onSuccess }: Props) {
               <div style={{ display: 'flex', gap: '.75rem', paddingTop: '.25rem' }}>
                 <button onClick={handleSalvar} disabled={salvando || !escolaSel} style={{
                   flex: 1, padding: '.75rem', borderRadius: 9999, border: 'none',
-                  background: !escolaSel || salvando ? '#e2e8f0' : 'linear-gradient(135deg, #d97706, #b45309)',
+                  background: !escolaSel || salvando ? '#e2e8f0' : 'linear-gradient(135deg, #4A7FDB, #2563b8)',
                   color: !escolaSel || salvando ? '#94a3b8' : '#fff',
                   fontWeight: 700, fontSize: '.875rem', cursor: !escolaSel || salvando ? 'not-allowed' : 'pointer',
                   fontFamily: 'var(--font-montserrat,sans-serif)',
-                  boxShadow: !escolaSel || salvando ? 'none' : '0 4px 14px rgba(217,119,6,.35)',
+                  boxShadow: !escolaSel || salvando ? 'none' : '0 4px 14px rgba(74,127,219,.35)',
                 }}>
                   {salvando ? 'Adicionando...' : 'Adicionar ao Pipeline'}
                 </button>

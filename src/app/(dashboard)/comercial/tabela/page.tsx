@@ -9,7 +9,7 @@ const CLASSIF_RANK: Record<string, number> = { quente: 3, morno: 2, frio: 1 }
 
 const CLASSIF_STYLE: Record<string, { bg: string; text: string; border: string; dot: string }> = {
   quente: { bg: '#fef2f2', text: '#dc2626', border: '#fca5a5', dot: '#dc2626' },
-  morno:  { bg: '#fffbeb', text: '#d97706', border: '#fcd34d', dot: '#f59e0b' },
+  morno:  { bg: '#fffbeb', text: '#4A7FDB', border: '#fcd34d', dot: '#f59e0b' },
   frio:   { bg: '#eff6ff', text: '#2563eb', border: '#93c5fd', dot: '#60a5fa' },
 }
 
@@ -64,9 +64,9 @@ export default async function TabelaPage() {
         actions={
           <Link href="/comercial/escolas/nova" style={{
             display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-            padding: '.45rem 1rem', borderRadius: 9999, background: '#d97706',
+            padding: '.45rem 1rem', borderRadius: 9999, background: '#4A7FDB',
             color: '#fff', textDecoration: 'none', fontSize: '.78rem', fontWeight: 700,
-            fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 12px rgba(217,119,6,.3)',
+            fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 12px rgba(74,127,219,.3)',
           }}>
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Nova Escola
@@ -79,9 +79,9 @@ export default async function TabelaPage() {
         {/* ── KPIs ──────────────────────────────────────────────── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,minmax(0,1fr))', gap: '.85rem', marginBottom: '1.5rem' }}>
           {[
-            { label: 'Total Escolas',   value: rows.length,                  cor: '#d97706', bg: '#fffbeb', border: '#fcd34d' },
+            { label: 'Total Escolas',   value: rows.length,                  cor: '#4A7FDB', bg: '#fffbeb', border: '#fcd34d' },
             { label: 'Leads Quentes',   value: totalQuentes,                 cor: '#dc2626', bg: '#fef2f2', border: '#fca5a5' },
-            { label: 'Leads Mornos',    value: totalMornos,                  cor: '#d97706', bg: '#fffbeb', border: '#fcd34d' },
+            { label: 'Leads Mornos',    value: totalMornos,                  cor: '#4A7FDB', bg: '#fffbeb', border: '#fcd34d' },
             { label: 'Leads Frios',     value: totalFrios,                   cor: '#2563eb', bg: '#eff6ff', border: '#93c5fd' },
             { label: 'Potencial Total', value: formatCurrency(potencialTotal), cor: '#16a34a', bg: '#f0fdf4', border: '#86efac' },
           ].map(k => (
@@ -102,7 +102,7 @@ export default async function TabelaPage() {
             </span>
             {[
               { label: 'Quentes', cor: '#dc2626', n: totalQuentes },
-              { label: 'Mornos',  cor: '#d97706', n: totalMornos  },
+              { label: 'Mornos',  cor: '#4A7FDB', n: totalMornos  },
               { label: 'Frios',   cor: '#2563eb', n: totalFrios   },
             ].map(r => (
               <div key={r.label} style={{ display: 'flex', alignItems: 'center', gap: '.35rem', fontSize: '.75rem', fontFamily: 'var(--font-inter,sans-serif)', color: '#64748b' }}>
@@ -145,7 +145,7 @@ export default async function TabelaPage() {
                         <td style={{ padding: '.8rem .9rem', textAlign: 'center', verticalAlign: 'middle' }}>
                           <div style={{
                             width: 28, height: 28, borderRadius: '50%', margin: '0 auto',
-                            background: idx < 3 ? (idx === 0 ? '#fbbf24' : idx === 1 ? '#94a3b8' : '#d97706') : '#f1f5f9',
+                            background: idx < 3 ? (idx === 0 ? '#fbbf24' : idx === 1 ? '#94a3b8' : '#4A7FDB') : '#f1f5f9',
                             color: idx < 3 ? '#fff' : '#64748b',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             fontSize: '.72rem', fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)',
@@ -256,7 +256,7 @@ export default async function TabelaPage() {
                             {/* + Registro */}
                             <Link href={`/comercial/registros/novo?escola=${r.id}`}
                               title="Novo registro"
-                              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 7, background: '#d97706', color: '#fff', textDecoration: 'none', flexShrink: 0 }}>
+                              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 7, background: '#4A7FDB', color: '#fff', textDecoration: 'none', flexShrink: 0 }}>
                               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                             </Link>
                             {/* Ver ficha */}
@@ -288,7 +288,7 @@ export default async function TabelaPage() {
               <p style={{ fontSize: '.85rem', color: '#475569', marginBottom: '1.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
                 Cadastre a primeira escola para começar a rankear seus leads.
               </p>
-              <Link href="/comercial/escolas/nova" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: '#d97706', color: '#fff', padding: '.55rem 1.25rem', borderRadius: 9999, textDecoration: 'none', fontSize: '.85rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+              <Link href="/comercial/escolas/nova" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: '#4A7FDB', color: '#fff', padding: '.55rem 1.25rem', borderRadius: 9999, textDecoration: 'none', fontSize: '.85rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Cadastrar Escola
               </Link>
@@ -301,7 +301,7 @@ export default async function TabelaPage() {
               <div style={{ fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
                 <strong style={{ color: '#0f172a' }}>{rows.length}</strong> escolas ·{' '}
                 <strong style={{ color: '#dc2626' }}>{totalQuentes}</strong> quentes ·{' '}
-                <strong style={{ color: '#d97706' }}>{totalMornos}</strong> mornos ·{' '}
+                <strong style={{ color: '#4A7FDB' }}>{totalMornos}</strong> mornos ·{' '}
                 <strong style={{ color: '#2563eb' }}>{totalFrios}</strong> frios
               </div>
               <div style={{ fontSize: '.72rem', fontWeight: 700, color: '#16a34a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>

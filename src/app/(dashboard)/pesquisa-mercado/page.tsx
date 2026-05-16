@@ -9,7 +9,7 @@ interface Props { searchParams: Promise<{ ano?: string; tipo?: string; uf?: stri
 function TabelaLeads({ leads }: { leads: any[] }) {
   const TIPO_COR: Record<string, { bg: string; cor: string; border: string }> = {
     gestor:      { bg: '#fef2f2', cor: '#dc2626', border: '#fca5a5' },
-    mantenedor:  { bg: '#fffbeb', cor: '#d97706', border: '#fde68a' },
+    mantenedor:  { bg: '#fffbeb', cor: '#4A7FDB', border: '#fde68a' },
     diretor:     { bg: '#eff6ff', cor: '#2563eb', border: '#bfdbfe' },
     coordenador: { bg: '#f5f3ff', cor: '#7c3aed', border: '#ddd6fe' },
   }
@@ -39,7 +39,7 @@ function TabelaLeads({ leads }: { leads: any[] }) {
         <span style={{ fontSize: '.62rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.06em', fontFamily: 'var(--font-montserrat,sans-serif)', marginRight: '.25rem' }}>Por Estado:</span>
         {ufsOrdenadas.slice(0, 12).map(([uf, items]) => (
           <span key={uf} style={{ fontSize: '.65rem', fontWeight: 700, background: '#fff', border: '1px solid #e2e8f0', color: '#475569', padding: '.15rem .5rem', borderRadius: 99, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
-            {uf} <span style={{ color: '#d97706' }}>{items.length}</span>
+            {uf} <span style={{ color: '#4A7FDB' }}>{items.length}</span>
           </span>
         ))}
         {ufsOrdenadas.length > 12 && <span style={{ fontSize: '.62rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)' }}>+{ufsOrdenadas.length - 12} estados</span>}
@@ -139,7 +139,7 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
           <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 18, padding: '3rem 2.5rem', maxWidth: 560, margin: '0 auto', boxShadow: '0 2px 8px rgba(15,23,42,.05)' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
               <div style={{ width: 60, height: 60, borderRadius: 14, background: '#fffbeb', border: '2px solid #fde68a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4A7FDB" strokeWidth="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
               </div>
             </div>
             <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 700, color: '#0f172a', marginBottom: '.5rem' }}>Dados não importados ainda</h3>
@@ -148,7 +148,7 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
             </p>
             <div style={{ display: 'flex', gap: '.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
               <a href="https://supabase.com/dashboard/project/lyisdsnocroocxfblvqf/sql/new" target="_blank" rel="noopener noreferrer"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: '#d97706', color: '#fff', padding: '.6rem 1.5rem', borderRadius: 9999, textDecoration: 'none', fontWeight: 700, fontSize: '.82rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: '#4A7FDB', color: '#fff', padding: '.6rem 1.5rem', borderRadius: 9999, textDecoration: 'none', fontWeight: 700, fontSize: '.82rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                 1. Criar tabelas (SQL)
               </a>
               <Link href="/importacao" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', border: '1.5px solid #e2e8f0', background: '#fff', color: '#475569', padding: '.6rem 1.5rem', borderRadius: 9999, textDecoration: 'none', fontWeight: 600, fontSize: '.82rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
@@ -404,7 +404,7 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
                 {
                   label: 'Escolas Identificadas', val: kpiLeads.totalEscolas.toLocaleString('pt-BR'),
                   sub: `${kpiLeads.totalContatos.toLocaleString('pt-BR')} contatos vinculados`,
-                  cor: '#d97706', bg: '#fffbeb', border: '#fde68a',
+                  cor: '#4A7FDB', bg: '#fffbeb', border: '#fde68a',
                   icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
                 },
                 {
@@ -432,7 +432,7 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
                 { label: '2º CIECC 2026', val: kpiLeads.por2026.toLocaleString('pt-BR'), sub: 'participações', cor: '#2563eb', bg: '#eff6ff', border: '#bfdbfe' },
                 { label: 'Oikos Live', val: kpiLeads.totalOikos.toLocaleString('pt-BR'), sub: 'leads captados', cor: '#0d9488', bg: '#f0fdfa', border: '#99f6e4' },
                 { label: 'Promotores NPS', val: kpiLeads.npsPromotor.toLocaleString('pt-BR'), sub: 'NPS 9–10 (alto interesse)', cor: '#16a34a', bg: '#f0fdf4', border: '#86efac' },
-                { label: 'Interesse Alto We Make', val: kpiLeads.interesseAlto.toLocaleString('pt-BR'), sub: 'declaram muito interesse', cor: '#d97706', bg: '#fffbeb', border: '#fde68a' },
+                { label: 'Interesse Alto We Make', val: kpiLeads.interesseAlto.toLocaleString('pt-BR'), sub: 'declaram muito interesse', cor: '#4A7FDB', bg: '#fffbeb', border: '#fde68a' },
               ].map(k => (
                 <div key={k.label} style={{ background: k.bg, border: `1.5px solid ${k.border}`, borderTop: `3px solid ${k.cor}`, borderRadius: 12, padding: '.85rem 1rem' }}>
                   <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: k.cor, fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.25rem' }}>{k.label}</div>
@@ -452,7 +452,7 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
                 </div>
                 {kpiLeads.porUFTop.map(({ uf, n }, i) => {
                   const pct = kpiLeads.totalPessoas > 0 ? Math.round(n/kpiLeads.totalPessoas*100) : 0
-                  const cores = ['#dc2626','#d97706','#2563eb','#7c3aed','#0d9488','#64748b']
+                  const cores = ['#dc2626','#4A7FDB','#2563eb','#7c3aed','#0d9488','#64748b']
                   const c = cores[i] ?? '#64748b'
                   return (
                     <div key={uf} style={{ marginBottom: '.55rem' }}>
@@ -503,10 +503,10 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
           </div>
         ) : tabelaLeadsOk ? (
           <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 14, padding: '1.25rem 1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A7FDB" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             <div>
               <div style={{ fontWeight: 700, fontSize: '.85rem', color: '#92400e', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Banco de leads criado mas ainda vazio</div>
-              <div style={{ fontSize: '.78rem', color: '#d97706', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.2rem' }}>
+              <div style={{ fontSize: '.78rem', color: '#4A7FDB', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.2rem' }}>
                 Execute o script <code style={{ background: '#fef3c7', padding: '.1rem .3rem', borderRadius: 4 }}>python importar_leads.py</code> para importar os dados das planilhas CIECC e Oikos Live.
               </div>
             </div>
@@ -518,7 +518,7 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
           {[
             { label: 'Inscritos 2025',  val: total2025.toLocaleString('pt-BR'),    cor: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' },
             { label: 'Inscritos 2026',  val: total2026.toLocaleString('pt-BR'),    cor: '#2563eb', bg: '#eff6ff', border: '#bfdbfe' },
-            { label: 'Escolas 2025',    val: totalEscolas2025.toLocaleString('pt-BR'), cor: '#d97706', bg: '#fffbeb', border: '#fde68a' },
+            { label: 'Escolas 2025',    val: totalEscolas2025.toLocaleString('pt-BR'), cor: '#4A7FDB', bg: '#fffbeb', border: '#fde68a' },
             { label: 'Escolas 2026',    val: totalEscolas2026.toLocaleString('pt-BR'), cor: '#0d9488', bg: '#f0fdfa', border: '#99f6e4' },
             { label: 'Leads Decisores 2026', val: totalLeads2026.toLocaleString('pt-BR'),  cor: '#dc2626', bg: '#fef2f2', border: '#fca5a5' },
           ].map(k => (
@@ -553,7 +553,7 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
             </Link>
             {ufsUnicas.slice(0, 10).map(uf => (
               <Link key={uf} href={`/pesquisa-mercado?ano=${anoFiltro}&tipo=${tipoFiltro}&uf=${uf}`}
-                style={{ padding: '.3rem .7rem', borderRadius: 7, textDecoration: 'none', fontSize: '.72rem', fontWeight: ufFiltro === uf ? 700 : 500, background: ufFiltro === uf ? '#d97706' : '#f1f5f9', color: ufFiltro === uf ? '#fff' : '#475569', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                style={{ padding: '.3rem .7rem', borderRadius: 7, textDecoration: 'none', fontSize: '.72rem', fontWeight: ufFiltro === uf ? 700 : 500, background: ufFiltro === uf ? '#4A7FDB' : '#f1f5f9', color: ufFiltro === uf ? '#fff' : '#475569', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                 {uf}
               </Link>
             ))}
@@ -570,7 +570,7 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
               {[
                 { label: 'NPS Médio', val: npsMedia, sub: `${npsValidos.length} respostas`, cor: '#2563eb' },
                 { label: 'CSI Médio', val: csiMedia, sub: `${csiValidos.length} respostas`, cor: '#16a34a' },
-                { label: 'Com Escola', val: comEscola.length.toString(), sub: `de ${todos.length} inscritos`, cor: '#d97706' },
+                { label: 'Com Escola', val: comEscola.length.toString(), sub: `de ${todos.length} inscritos`, cor: '#4A7FDB' },
                 { label: 'Filtrado', val: todos.length.toString(), sub: 'registros visíveis', cor: '#64748b' },
               ].map(k => (
                 <div key={k.label} style={{ background: '#f8fafc', borderRadius: 10, padding: '.85rem', textAlign: 'center' }}>
@@ -608,10 +608,10 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
               <div key={v} style={{ marginBottom: '.5rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '.2rem' }}>
                   <span style={{ fontSize: '.68rem', color: '#334155', fontFamily: 'var(--font-inter,sans-serif)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: '.5rem' }}>{String(v).slice(0, 30)}</span>
-                  <span style={{ fontSize: '.68rem', fontWeight: 700, color: '#d97706', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{n}</span>
+                  <span style={{ fontSize: '.68rem', fontWeight: 700, color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{n}</span>
                 </div>
                 <div style={{ height: 5, background: '#f1f5f9', borderRadius: 3, overflow: 'hidden' }}>
-                  <div style={{ height: '100%', background: '#d97706', width: `${pct(n, comEscola.length)}%`, borderRadius: 3 }} />
+                  <div style={{ height: '100%', background: '#4A7FDB', width: `${pct(n, comEscola.length)}%`, borderRadius: 3 }} />
                 </div>
               </div>
             ))}
@@ -676,7 +676,7 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
                       <td style={{ padding: '.65rem .85rem', fontSize: '.68rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.tipo_inscricao ?? '—'}</td>
                       <td style={{ padding: '.65rem .85rem', textAlign: 'center' }}>
                         {r.nps != null ? (
-                          <span style={{ fontWeight: 800, fontSize: '.82rem', color: r.nps >= 9 ? '#16a34a' : r.nps >= 7 ? '#d97706' : '#dc2626', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{r.nps}</span>
+                          <span style={{ fontWeight: 800, fontSize: '.82rem', color: r.nps >= 9 ? '#16a34a' : r.nps >= 7 ? '#4A7FDB' : '#dc2626', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{r.nps}</span>
                         ) : <span style={{ color: '#cbd5e1', fontSize: '.72rem' }}>—</span>}
                       </td>
                       <td style={{ padding: '.65rem .85rem', fontSize: '.68rem', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

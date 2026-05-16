@@ -93,7 +93,7 @@ export function AdminActions({ roleOptions, profiles }: Props) {
       <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 8px rgba(15,23,42,.06)' }}>
         {/* Header */}
         <div style={{ background: '#0f172a', padding: '1.1rem 1.5rem' }}>
-          <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#d97706', marginBottom: '.25rem' }}>
+          <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.25rem' }}>
             ✦ Novo Membro
           </div>
           <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.15rem', fontWeight: 700, color: '#fff' }}>
@@ -161,11 +161,11 @@ export function AdminActions({ roleOptions, profiles }: Props) {
 
             <button type="submit" disabled={criando} style={{
               width: '100%', padding: '.8rem',
-              background: criando ? '#94a3b8' : 'linear-gradient(135deg, #d97706, #b45309)',
+              background: criando ? '#94a3b8' : 'linear-gradient(135deg, #4A7FDB, #2563b8)',
               color: '#fff', fontWeight: 700, fontSize: '.875rem',
               border: 'none', borderRadius: 9999, cursor: criando ? 'not-allowed' : 'pointer',
               fontFamily: 'var(--font-montserrat,sans-serif)',
-              boxShadow: criando ? 'none' : '0 4px 14px rgba(217,119,6,.3)',
+              boxShadow: criando ? 'none' : '0 4px 14px rgba(74,127,219,.3)',
               transition: 'all .2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem',
             }}>
               {criando ? (
@@ -184,7 +184,7 @@ export function AdminActions({ roleOptions, profiles }: Props) {
           ════════════════════════════════════════════════════════ */}
       <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 8px rgba(15,23,42,.05)' }}>
         <div style={{ background: '#0f172a', padding: '1rem 1.5rem' }}>
-          <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#d97706', marginBottom: '.2rem' }}>
+          <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.2rem' }}>
             Equipe Comercial
           </div>
           <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>
@@ -209,7 +209,7 @@ export function AdminActions({ roleOptions, profiles }: Props) {
                 {/* Avatar */}
                 <div style={{
                   width: 42, height: 42, borderRadius: '50%', flexShrink: 0,
-                  background: 'linear-gradient(135deg, #d97706, #b45309)',
+                  background: 'linear-gradient(135deg, #4A7FDB, #2563b8)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   color: '#fff', fontSize: '.82rem', fontWeight: 800,
                   fontFamily: 'var(--font-montserrat,sans-serif)', opacity: p.is_active ? 1 : .5,
@@ -288,7 +288,7 @@ export function AdminActions({ roleOptions, profiles }: Props) {
             {/* Modal header */}
             <div style={{ background: '#0f172a', padding: '1.25rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
-                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#d97706', marginBottom: '.2rem' }}>
+                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.2rem' }}>
                   Editando usuário
                 </div>
                 <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>
@@ -355,11 +355,11 @@ export function AdminActions({ roleOptions, profiles }: Props) {
                 <div style={{ display: 'flex', gap: '.75rem' }}>
                   <button type="submit" disabled={editando2} style={{
                     flex: 1, padding: '.8rem',
-                    background: editando2 ? '#94a3b8' : 'linear-gradient(135deg, #d97706, #b45309)',
+                    background: editando2 ? '#94a3b8' : 'linear-gradient(135deg, #4A7FDB, #2563b8)',
                     color: '#fff', fontWeight: 700, fontSize: '.875rem',
                     border: 'none', borderRadius: 9999, cursor: editando2 ? 'not-allowed' : 'pointer',
                     fontFamily: 'var(--font-montserrat,sans-serif)',
-                    boxShadow: editando2 ? 'none' : '0 4px 14px rgba(217,119,6,.3)',
+                    boxShadow: editando2 ? 'none' : '0 4px 14px rgba(74,127,219,.3)',
                   }}>
                     {editando2 ? 'Salvando...' : 'Salvar Alterações'}
                   </button>

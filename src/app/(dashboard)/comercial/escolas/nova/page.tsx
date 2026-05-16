@@ -11,11 +11,11 @@ const card: React.CSSProperties = {
   marginBottom: '1.5rem', overflow: 'hidden',
   boxShadow: '0 1px 4px rgba(15,23,42,.06)',
 }
-const cardHeader = (color = '#d97706'): React.CSSProperties => ({
+const cardHeader = (color = '#4A7FDB'): React.CSSProperties => ({
   padding: '1rem 1.75rem', borderBottom: '1px solid #f1f5f9',
   background: '#fafafa', display: 'flex', alignItems: 'center', gap: '.65rem',
 })
-const dot = (color = '#d97706'): React.CSSProperties => ({
+const dot = (color = '#4A7FDB'): React.CSSProperties => ({
   width: 28, height: 28, borderRadius: 7, flexShrink: 0,
   background: `linear-gradient(135deg, ${color}, ${color}cc)`,
   display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.9rem',
@@ -106,7 +106,7 @@ export default async function EscolaNova({ searchParams }: Props) {
             <div style={cardBody}>
               <div style={grid2}>
                 <div style={{ gridColumn: 'span 2' }}>
-                  <label style={label}>Nome da Escola <span style={{ color: '#d97706' }}>*</span></label>
+                  <label style={label}>Nome da Escola <span style={{ color: '#4A7FDB' }}>*</span></label>
                   <input name="nome" style={input} required placeholder="Nome completo da escola" />
                 </div>
                 <div>
@@ -308,7 +308,7 @@ export default async function EscolaNova({ searchParams }: Props) {
 
           {/* ── 5. GESTÃO COMERCIAL ────────────────────────────── */}
           <div style={card}>
-            <div style={cardHeader('#d97706')}>
+            <div style={cardHeader('#4A7FDB')}>
               <div style={dot()}><svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='#fff' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'><line x1='18' y1='20' x2='18' y2='10'/><line x1='12' y1='20' x2='12' y2='4'/><line x1='6' y1='20' x2='6' y2='14'/></svg></div>
               <div style={sectionTitle}>Gestão Comercial</div>
             </div>
@@ -347,12 +347,12 @@ export default async function EscolaNova({ searchParams }: Props) {
             borderRadius: 16,
           }}>
             <button type="submit" style={{
-              background: 'linear-gradient(135deg, #d97706, #b45309)',
+              background: 'linear-gradient(135deg, #4A7FDB, #2563b8)',
               color: '#fff', padding: '.7rem 2rem',
               borderRadius: 9999, border: 'none', cursor: 'pointer',
               fontSize: '.875rem', fontWeight: 700,
               fontFamily: 'var(--font-montserrat,sans-serif)',
-              boxShadow: '0 4px 14px rgba(217,119,6,.35)',
+              boxShadow: '0 4px 14px rgba(74,127,219,.35)',
               letterSpacing: '.01em',
             }}>
               Cadastrar Escola
@@ -367,7 +367,7 @@ export default async function EscolaNova({ searchParams }: Props) {
               Cancelar
             </Link>
             <span style={{ fontSize: '.72rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)', marginLeft: 'auto' }}>
-              Campos com <span style={{ color: '#d97706', fontWeight: 700 }}>*</span> são obrigatórios
+              Campos com <span style={{ color: '#4A7FDB', fontWeight: 700 }}>*</span> são obrigatórios
             </span>
           </div>
 

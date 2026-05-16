@@ -185,7 +185,7 @@ export function EscolaSelector({ escolas, escolaId, basePath, placeholder, extra
                   fontSize: '.72rem',
                   fontWeight: 700,
                   textTransform: 'uppercase',
-                  color: '#d97706',
+                  color: '#4A7FDB',
                   letterSpacing: '.05em',
                   background: '#fef3c7',
                   borderBottom: '1px solid #fcd34d',
@@ -195,7 +195,7 @@ export function EscolaSelector({ escolas, escolaId, basePath, placeholder, extra
                   alignItems: 'center',
                 }}>
                   <span>◈ Banco de Leads</span>
-                  <span style={{ background: '#d97706', color: '#fff', borderRadius: 99, padding: '.1rem .5rem', fontSize: '.65rem' }}>{lead_filtrado.length}</span>
+                  <span style={{ background: '#4A7FDB', color: '#fff', borderRadius: 99, padding: '.1rem .5rem', fontSize: '.65rem' }}>{lead_filtrado.length}</span>
                 </div>
                 {lead_filtrado.map(e => (
                   <div

@@ -17,8 +17,8 @@ export function CheckboxPaideia({ defaultChecked = false, label = 'A escola é P
         onClick={() => setChecked(!checked)}
         style={{
           width: 20, height: 20, borderRadius: 5, cursor: 'pointer', flexShrink: 0,
-          background: checked ? '#d97706' : '#fff',
-          border: `2px solid ${checked ? '#d97706' : '#cbd5e1'}`,
+          background: checked ? '#4A7FDB' : '#fff',
+          border: `2px solid ${checked ? '#4A7FDB' : '#cbd5e1'}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           transition: 'all .15s',
         }}

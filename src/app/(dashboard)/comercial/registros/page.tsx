@@ -35,7 +35,7 @@ export default async function RegistrosPage({ searchParams }: Props) {
 
   const CLASSIF_COR: Record<string, { bg: string; text: string; dot: string; border: string }> = {
     quente: { bg: '#fef2f2', text: '#dc2626', dot: '#dc2626', border: '#fca5a5' },
-    morno:  { bg: '#fffbeb', text: '#d97706', dot: '#f59e0b', border: '#fcd34d' },
+    morno:  { bg: '#fffbeb', text: '#4A7FDB', dot: '#f59e0b', border: '#fcd34d' },
     frio:   { bg: '#eff6ff', text: '#2563eb', dot: '#60a5fa', border: '#93c5fd' },
   }
 
@@ -53,7 +53,7 @@ export default async function RegistrosPage({ searchParams }: Props) {
         title="Registros de Interação"
         subtitle={`${count ?? 0} registro${(count ?? 0) !== 1 ? 's' : ''}`}
         actions={
-          <Link href="/comercial/registros/novo" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: '#d97706', color: '#fff', padding: '.45rem 1rem', borderRadius: 9999, fontSize: '.82rem', fontWeight: 700, textDecoration: 'none', boxShadow: '0 4px 12px rgba(217,119,6,.3)', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+          <Link href="/comercial/registros/novo" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: '#4A7FDB', color: '#fff', padding: '.45rem 1rem', borderRadius: 9999, fontSize: '.82rem', fontWeight: 700, textDecoration: 'none', boxShadow: '0 4px 12px rgba(74,127,219,.3)', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
             <Plus size={14} /> Novo Registro
           </Link>
         }
@@ -177,7 +177,7 @@ export default async function RegistrosPage({ searchParams }: Props) {
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
               </svg>
               <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', color: '#0f172a', marginBottom: '.4rem' }}>Nenhum registro encontrado</h3>
-              <Link href="/comercial/registros/novo" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: '#d97706', color: '#fff', padding: '.55rem 1.25rem', borderRadius: 9999, textDecoration: 'none', fontSize: '.85rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', marginTop: '.75rem' }}>
+              <Link href="/comercial/registros/novo" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: '#4A7FDB', color: '#fff', padding: '.55rem 1.25rem', borderRadius: 9999, textDecoration: 'none', fontSize: '.85rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', marginTop: '.75rem' }}>
                 <Plus size={14} /> Novo Registro
               </Link>
             </div>
@@ -191,7 +191,7 @@ export default async function RegistrosPage({ searchParams }: Props) {
               </span>
               <div style={{ display: 'flex', gap: '.5rem' }}>
                 {page > 1 && <Link href={`?page=${page - 1}&q=${q}&classif=${classif}`} style={{ padding: '6px 14px', borderRadius: 7, border: '1px solid #e2e8f0', background: '#fff', fontSize: '.78rem', color: '#475569', textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>← Anterior</Link>}
-                {page < totalPages && <Link href={`?page=${page + 1}&q=${q}&classif=${classif}`} style={{ padding: '6px 14px', borderRadius: 7, background: '#d97706', color: '#fff', fontSize: '.78rem', fontWeight: 700, textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Próxima →</Link>}
+                {page < totalPages && <Link href={`?page=${page + 1}&q=${q}&classif=${classif}`} style={{ padding: '6px 14px', borderRadius: 7, background: '#4A7FDB', color: '#fff', fontSize: '.78rem', fontWeight: 700, textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Próxima →</Link>}
               </div>
             </div>
           )}

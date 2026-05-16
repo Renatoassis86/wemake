@@ -170,7 +170,7 @@ const ClassifIcon = ({ classificacao }: { classificacao: string | null }) => {
 
 const classifStyles: Record<string, { bg: string; color: string; border: string; label: string }> = {
   quente: { bg: '#fef2f2', color: '#dc2626', border: '#fca5a5', label: 'Quente' },
-  morno:  { bg: '#fffbeb', color: '#d97706', border: '#fcd34d', label: 'Morno'  },
+  morno:  { bg: '#fffbeb', color: '#4A7FDB', border: '#fcd34d', label: 'Morno'  },
   frio:   { bg: '#eff6ff', color: '#2563eb', border: '#93c5fd', label: 'Frio'   },
 }
 
@@ -339,7 +339,7 @@ export default async function EscolaDetalhe({ params }: Props) {
         }}>
           <div style={{
             position: 'absolute', top: -60, right: -60, width: 260, height: 260,
-            borderRadius: '50%', background: 'rgba(217,119,6,.08)',
+            borderRadius: '50%', background: 'rgba(74,127,219,.08)',
           }} />
           <div style={{
             position: 'absolute', bottom: -40, left: '30%', width: 180, height: 180,
@@ -415,9 +415,9 @@ export default async function EscolaDetalhe({ params }: Props) {
                 {e.escola_paideia && (
                   <span style={{
                     ...badgeBase,
-                    background: 'rgba(217,119,6,.2)',
+                    background: 'rgba(74,127,219,.2)',
                     color: '#fbbf24',
-                    border: '1px solid rgba(217,119,6,.35)',
+                    border: '1px solid rgba(74,127,219,.35)',
                   }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
@@ -516,7 +516,7 @@ export default async function EscolaDetalhe({ params }: Props) {
                     {e.site && (
                       <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem', fontSize: '.83rem' }}>
                         <IconGlobe />
-                        <a href={e.site} target="_blank" rel="noreferrer" style={{ color: '#d97706', textDecoration: 'none' }}>
+                        <a href={e.site} target="_blank" rel="noreferrer" style={{ color: '#4A7FDB', textDecoration: 'none' }}>
                           Visitar site
                         </a>
                       </span>
@@ -656,7 +656,7 @@ export default async function EscolaDetalhe({ params }: Props) {
                       fontFamily: 'var(--font-cormorant, serif)',
                       fontSize: '1.8rem',
                       fontWeight: 700,
-                      color: '#d97706',
+                      color: '#4A7FDB',
                       lineHeight: 1,
                     }}>
                       {formatCurrency(pot)}
@@ -671,11 +671,11 @@ export default async function EscolaDetalhe({ params }: Props) {
                         }}>
                           <div style={{
                             width: `${e.probabilidade_atual}%`, height: '100%',
-                            background: 'linear-gradient(90deg, #f59e0b, #d97706)',
+                            background: 'linear-gradient(90deg, #f59e0b, #4A7FDB)',
                             borderRadius: 999,
                           }} />
                         </div>
-                        <span style={{ fontSize: '.9rem', fontWeight: 700, color: '#d97706', fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+                        <span style={{ fontSize: '.9rem', fontWeight: 700, color: '#4A7FDB', fontFamily: 'var(--font-montserrat, sans-serif)' }}>
                           {e.probabilidade_atual}%
                         </span>
                       </div>
@@ -764,9 +764,9 @@ export default async function EscolaDetalhe({ params }: Props) {
                   href={`/comercial/registros/novo?escola=${id}`}
                   style={{
                     ...actionBtnBase,
-                    background: 'linear-gradient(135deg, #d97706, #b45309)',
+                    background: 'linear-gradient(135deg, #4A7FDB, #2563b8)',
                     color: '#fff',
-                    boxShadow: '0 2px 8px rgba(217,119,6,.25)',
+                    boxShadow: '0 2px 8px rgba(74,127,219,.25)',
                   }}
                 >
                   <IconPlus /> Registrar Interacao

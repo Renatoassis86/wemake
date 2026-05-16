@@ -19,11 +19,11 @@ const card: React.CSSProperties = {
   background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16,
   marginBottom: '1.5rem', overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.06)',
 }
-const secHdr = (color = '#d97706'): React.CSSProperties => ({
+const secHdr = (color = '#4A7FDB'): React.CSSProperties => ({
   padding: '1rem 1.75rem', borderBottom: '1px solid #f1f5f9',
   background: '#fafafa', display: 'flex', alignItems: 'center', gap: '.65rem',
 })
-const dot = (c = '#d97706'): React.CSSProperties => ({
+const dot = (c = '#4A7FDB'): React.CSSProperties => ({
   width: 28, height: 28, borderRadius: 7, flexShrink: 0, background: c,
   display: 'flex', alignItems: 'center', justifyContent: 'center',
 })
@@ -124,7 +124,7 @@ export default async function ContratosPage({ searchParams }: Props) {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
           {[
             { label: 'Contratos Assinados', value: assinados, sub: 'concluídos', color: '#16a34a', bg: '#f0fdf4', border: '#86efac' },
-            { label: 'Aguardando Assinatura', value: enviados, sub: 'enviados', color: '#d97706', bg: '#fffbeb', border: '#fcd34d' },
+            { label: 'Aguardando Assinatura', value: enviados, sub: 'enviados', color: '#4A7FDB', bg: '#fffbeb', border: '#fcd34d' },
             { label: 'Meta de Alunos', value: `${pct_alunos}%`, sub: `${total_alunos} / ${META_ALUNOS}`, color: '#2563eb', bg: '#eff6ff', border: '#93c5fd' },
             { label: 'Meta de Receita', value: `${pct_receita}%`, sub: formatCurrency(total_receita), color: '#7c3aed', bg: '#f5f3ff', border: '#c4b5fd' },
           ].map(k => (
@@ -192,7 +192,7 @@ export default async function ContratosPage({ searchParams }: Props) {
             {/* Escola selecionada — header informativo */}
             <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius: 14, padding: '1.25rem 1.75rem', marginBottom: '1.5rem', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <div style={{ fontSize: '.65rem', color: '#d97706', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>
+                <div style={{ fontSize: '.65rem', color: '#4A7FDB', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>
                   ✦ Editando Contrato
                 </div>
                 <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.4rem', fontWeight: 700 }}>{escola.nome}</div>
@@ -299,7 +299,7 @@ export default async function ContratosPage({ searchParams }: Props) {
                   {(c?.valor_total_calculado > 0 || c?.valor_total > 0) && (
                     <div style={{ background: '#fffbeb', border: '1px solid #fef3c7', borderRadius: 10, padding: '.85rem 1rem', textAlign: 'center' }}>
                       <div style={{ fontSize: '.65rem', color: '#92400e', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>Valor Total Estimado</div>
-                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: '#d97706' }}>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: '#4A7FDB' }}>
                         {formatCurrency(c.valor_total_calculado ?? c.valor_total ?? 0)}
                       </div>
                     </div>
@@ -310,7 +310,7 @@ export default async function ContratosPage({ searchParams }: Props) {
 
             {/* Ações */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem 1.75rem', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, marginBottom: '2rem' }}>
-              <button type="submit" style={{ background: 'linear-gradient(135deg, #d97706, #b45309)', color: '#fff', padding: '.7rem 2rem', borderRadius: 9999, border: 'none', cursor: 'pointer', fontSize: '.875rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 14px rgba(217,119,6,.35)' }}>
+              <button type="submit" style={{ background: 'linear-gradient(135deg, #4A7FDB, #2563b8)', color: '#fff', padding: '.7rem 2rem', borderRadius: 9999, border: 'none', cursor: 'pointer', fontSize: '.875rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 14px rgba(74,127,219,.35)' }}>
                 Salvar Contrato
               </button>
               <Link href={`/comercial/escolas/${escolaId}`} style={{ padding: '.7rem 1.5rem', borderRadius: 9999, border: '1.5px solid #e2e8f0', background: '#fff', color: '#64748b', textDecoration: 'none', fontSize: '.875rem', fontWeight: 600, fontFamily: 'var(--font-montserrat,sans-serif)' }}>

@@ -64,9 +64,9 @@ export default async function ExportsPage() {
         actions={
           <Link href="/formulario" target="_blank" style={{
             display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-            padding: '.45rem 1rem', borderRadius: 9999, background: '#d97706',
+            padding: '.45rem 1rem', borderRadius: 9999, background: '#4A7FDB',
             color: '#fff', textDecoration: 'none', fontSize: '.78rem', fontWeight: 700,
-            fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 12px rgba(217,119,6,.3)',
+            fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 12px rgba(74,127,219,.3)',
           }}>
             <ExternalLink size={13} /> Formulário Público
           </Link>
@@ -78,7 +78,7 @@ export default async function ExportsPage() {
         {/* ── KPIs ──────────────────────────────────────────────── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem', marginBottom: '1.75rem' }}>
           {[
-            { label: 'Formulários Recebidos', value: totalFormularios, cor: '#d97706', bg: '#fffbeb', border: '#fcd34d', icon: <ClipboardList size={18} style={{ color: '#64748b' }} /> },
+            { label: 'Formulários Recebidos', value: totalFormularios, cor: '#4A7FDB', bg: '#fffbeb', border: '#fcd34d', icon: <ClipboardList size={18} style={{ color: '#64748b' }} /> },
             { label: 'Alunos Mapeados (Fund I)', value: totalAlunos, cor: '#0ea5e9', bg: '#f0f9ff', border: '#bae6fd', icon: <FileText size={18} style={{ color: '#64748b' }} /> },
             { label: 'Documentos Oficiais', value: 2, cor: '#16a34a', bg: '#f0fdf4', border: '#86efac', icon: <FileCheck size={18} style={{ color: '#64748b' }} /> },
           ].map(k => (
@@ -98,7 +98,7 @@ export default async function ExportsPage() {
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 8px rgba(15,23,42,.05)', marginBottom: '1.5rem' }}>
           <div style={{ background: '#0f172a', padding: '1rem 1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#d97706', marginBottom: '.2rem' }}>
+              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.2rem' }}>
                 Biblioteca de Documentos
               </div>
               <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>
@@ -189,9 +189,9 @@ export default async function ExportsPage() {
         </div>
 
         {/* ── Formulário público — link ──────────────────────────── */}
-        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderLeft: '4px solid #d97706', borderRadius: 16, padding: '1.25rem 1.75rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', boxShadow: '0 2px 8px rgba(15,23,42,.05)' }}>
+        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderLeft: '4px solid #4A7FDB', borderRadius: 16, padding: '1.25rem 1.75rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', boxShadow: '0 2px 8px rgba(15,23,42,.05)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div style={{ width: 44, height: 44, borderRadius: 10, background: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 10, background: '#4A7FDB', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <ClipboardList size={20} color="#fff" />
             </div>
             <div>
@@ -202,7 +202,7 @@ export default async function ExportsPage() {
             </div>
           </div>
           <div style={{ display: 'flex', gap: '.5rem' }}>
-            <Link href="/formulario" target="_blank" style={{ display: 'inline-flex', alignItems: 'center', gap: '.35rem', padding: '.5rem 1.1rem', borderRadius: 9999, background: '#d97706', color: '#fff', textDecoration: 'none', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 12px rgba(217,119,6,.3)' }}>
+            <Link href="/formulario" target="_blank" style={{ display: 'inline-flex', alignItems: 'center', gap: '.35rem', padding: '.5rem 1.1rem', borderRadius: 9999, background: '#4A7FDB', color: '#fff', textDecoration: 'none', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 12px rgba(74,127,219,.3)' }}>
               <ExternalLink size={13} /> Abrir Formulário
             </Link>
           </div>
@@ -212,7 +212,7 @@ export default async function ExportsPage() {
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 8px rgba(15,23,42,.05)' }}>
           <div style={{ background: '#0f172a', padding: '1rem 1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#d97706', marginBottom: '.2rem' }}>Formulários Recebidos</div>
+              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.2rem' }}>Formulários Recebidos</div>
               <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>
                 {totalFormularios} pré-cadastro{totalFormularios !== 1 ? 's' : ''} preenchido{totalFormularios !== 1 ? 's' : ''}
               </div>

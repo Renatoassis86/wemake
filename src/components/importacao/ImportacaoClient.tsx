@@ -5,7 +5,7 @@ import { useState, useRef } from 'react'
 const FONTES = [
   { value: 'ciecc_2026', label: '2º CIECC 2026',  cor: '#2563eb', desc: 'Banco_Unificado_CIECC_2026.xlsx' },
   { value: 'ciecc_2025', label: '1º CIECC 2025',  cor: '#7c3aed', desc: 'Prover 2025.xlsx' },
-  { value: 'crm',        label: 'CRM Education',  cor: '#d97706', desc: 'Education_CRM_FINAL.xlsx' },
+  { value: 'crm',        label: 'CRM Education',  cor: '#4A7FDB', desc: 'Education_CRM_FINAL.xlsx' },
   { value: 'oikos',      label: 'Oikos Live',      cor: '#0d9488', desc: 'Leads captados via RD Station' },
   { value: 'outro',      label: 'Outra planilha',  cor: '#64748b', desc: 'Qualquer planilha .xlsx/.csv' },
 ]
@@ -167,7 +167,7 @@ export function ImportacaoClient() {
                   <label style={lbl}>Filtrar por tipo de inscrição</label>
                   <div style={{ fontSize: '.68rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.15rem' }}>
                     Selecione um ou mais tipos. Os tipos exatos serão lidos da planilha após o upload.
-                    {tiposSel.size === 0 && <span style={{ color: '#d97706', marginLeft: '.3rem' }}>Nenhum selecionado = importa todos os tipos.</span>}
+                    {tiposSel.size === 0 && <span style={{ color: '#4A7FDB', marginLeft: '.3rem' }}>Nenhum selecionado = importa todos os tipos.</span>}
                   </div>
                 </div>
                 {tiposSel.size > 0 && (
@@ -186,7 +186,7 @@ export function ImportacaoClient() {
                   {[
                     { label: 'Gestores de escola',      termo: 'gestor',      cor: '#7c3aed' },
                     { label: 'Diretores de escola',     termo: 'diretor',     cor: '#2563eb' },
-                    { label: 'Mantenedores de escola',  termo: 'mantenedor',  cor: '#d97706' },
+                    { label: 'Mantenedores de escola',  termo: 'mantenedor',  cor: '#4A7FDB' },
                     { label: 'Coordenadores',           termo: 'coordenador', cor: '#0d9488' },
                   ].map(({ label, termo, cor }) => {
                     // Verificar quais tipos da planilha contém esse termo
@@ -334,7 +334,7 @@ export function ImportacaoClient() {
               {[
                 { label: 'Selecionar Todos',  action: () => selecionarGrupo('todos'),                                        cor: '#0f172a' },
                 { label: 'Só Mapeadas',        action: () => { setColSel(new Set()); setTimeout(() => selecionarGrupo('fixo'), 0) },   cor: '#16a34a' },
-                { label: 'Só Extras',          action: () => { setColSel(new Set()); setTimeout(() => selecionarGrupo('extra'), 0) },  cor: '#d97706' },
+                { label: 'Só Extras',          action: () => { setColSel(new Set()); setTimeout(() => selecionarGrupo('extra'), 0) },  cor: '#4A7FDB' },
                 { label: 'Desmarcar Todos',    action: () => setColSel(new Set()),                                           cor: '#dc2626' },
               ].map(b => (
                 <button key={b.label} onClick={b.action} style={{ padding: '.35rem .85rem', borderRadius: 7, border: `1.5px solid ${b.cor}25`, background: b.cor + '10', color: b.cor, fontSize: '.68rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap' }}>
@@ -466,7 +466,7 @@ export function ImportacaoClient() {
                 <span style={{ fontSize: '.68rem', color: '#1e293b', fontFamily: 'var(--font-inter,sans-serif)' }}><strong>Mapeado</strong> — coluna própria no banco</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}>
-                <div style={{ width: 10, height: 10, borderRadius: 3, background: '#d97706' }} />
+                <div style={{ width: 10, height: 10, borderRadius: 3, background: '#4A7FDB' }} />
                 <span style={{ fontSize: '.68rem', color: '#1e293b', fontFamily: 'var(--font-inter,sans-serif)' }}><strong>Extra</strong> — salvo em JSON pesquisável</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}>
@@ -516,8 +516,8 @@ export function ImportacaoClient() {
               {colunasFiltradas.some(c => preview.mapeadas[c]?.tipo === 'extra') && (
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.6rem', paddingBottom: '.5rem', borderBottom: '2px solid #fde68a' }}>
-                    <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#d97706' }} />
-                    <span style={{ fontSize: '.62rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#d97706', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                    <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#4A7FDB' }} />
+                    <span style={{ fontSize: '.62rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                       Campos extras → dados JSON ({colunasFiltradas.filter(c => preview.mapeadas[c]?.tipo === 'extra').length})
                     </span>
                   </div>
@@ -528,7 +528,7 @@ export function ImportacaoClient() {
                         <div key={col} onClick={() => toggleCol(col)} style={{ display: 'flex', alignItems: 'center', gap: '.55rem', padding: '.45rem .7rem', cursor: 'pointer', borderRadius: 8, border: `1.5px solid ${sel ? '#fcd34d' : '#e2e8f0'}`, background: sel ? '#fffbeb' : '#fafafa', transition: 'all .1s', userSelect: 'none' as const }}
                           onMouseEnter={e => { if (!sel) { e.currentTarget.style.background = '#fffbeb'; e.currentTarget.style.borderColor = '#fcd34d' } }}
                           onMouseLeave={e => { if (!sel) { e.currentTarget.style.background = '#fafafa'; e.currentTarget.style.borderColor = '#e2e8f0' } }}>
-                          <div style={{ width: 15, height: 15, borderRadius: 3, border: `2px solid ${sel ? '#d97706' : '#d1d5db'}`, background: sel ? '#d97706' : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all .1s' }}>
+                          <div style={{ width: 15, height: 15, borderRadius: 3, border: `2px solid ${sel ? '#4A7FDB' : '#d1d5db'}`, background: sel ? '#4A7FDB' : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all .1s' }}>
                             {sel && <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.5"><polyline points="20 6 9 17 4 12"/></svg>}
                           </div>
                           <div style={{ flex: 1, minWidth: 0 }}>
@@ -665,7 +665,7 @@ export function ImportacaoClient() {
               {[
                 { label: 'Selecionar Todos',  action: () => selecionarGrupo('todos'),   cor: '#0f172a' },
                 { label: 'Só Mapeadas',        action: () => { setColSel(new Set()); selecionarGrupo('fixo') },  cor: '#16a34a' },
-                { label: 'Só Extras',          action: () => { setColSel(new Set()); selecionarGrupo('extra') }, cor: '#d97706' },
+                { label: 'Só Extras',          action: () => { setColSel(new Set()); selecionarGrupo('extra') }, cor: '#4A7FDB' },
                 { label: 'Desmarcar Todos',    action: () => setColSel(new Set()),       cor: '#dc2626' },
               ].map(b => (
                 <button key={b.label} onClick={b.action} style={{ padding: '.25rem .7rem', borderRadius: 6, border: `1px solid ${b.cor}30`, background: b.cor + '10', color: b.cor, fontSize: '.65rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap' }}>
@@ -712,8 +712,8 @@ export function ImportacaoClient() {
               {/* Separador: Extras */}
               {colunasFiltradas.some(c => preview.mapeadas[c]?.tipo === 'extra') && (
                 <div style={{ padding: '.45rem .85rem', background: '#fffbeb', borderTop: '1px solid #fde68a', borderBottom: '1px solid #fde68a', display: 'flex', alignItems: 'center', gap: '.4rem' }}>
-                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#d97706' }} />
-                  <span style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#d97706', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#4A7FDB' }} />
+                  <span style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                     Campos extras → dados_extras (JSONB)
                   </span>
                 </div>
@@ -724,7 +724,7 @@ export function ImportacaoClient() {
                   <div key={col} onClick={() => toggleCol(col)} style={{ display: 'flex', alignItems: 'center', gap: '.65rem', padding: '.55rem .85rem', cursor: 'pointer', borderBottom: '1px solid #f8fafc', background: sel ? '#fffbeb' : '#fff', transition: 'background .1s' }}
                     onMouseEnter={e => { if (!sel) e.currentTarget.style.background = '#f8fafc' }}
                     onMouseLeave={e => { if (!sel) e.currentTarget.style.background = '#fff' }}>
-                    <div style={{ width: 16, height: 16, borderRadius: 4, border: `2px solid ${sel ? '#d97706' : '#d1d5db'}`, background: sel ? '#d97706' : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <div style={{ width: 16, height: 16, borderRadius: 4, border: `2px solid ${sel ? '#4A7FDB' : '#d1d5db'}`, background: sel ? '#4A7FDB' : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       {sel && <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -760,7 +760,7 @@ export function ImportacaoClient() {
                 <span style={{ fontSize: '.72rem', color: '#1e293b', fontFamily: 'var(--font-inter,sans-serif)' }}><strong>Campo mapeado</strong> — vai para coluna própria no banco</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-                <div style={{ width: 10, height: 10, borderRadius: 2, background: '#d97706' }} />
+                <div style={{ width: 10, height: 10, borderRadius: 2, background: '#4A7FDB' }} />
                 <span style={{ fontSize: '.72rem', color: '#1e293b', fontFamily: 'var(--font-inter,sans-serif)' }}><strong>Campo extra</strong> — armazenado como JSON (pesquisável)</span>
               </div>
             </div>
@@ -821,10 +821,10 @@ export function ImportacaoClient() {
       {etapa === 'resultado' && resultado && (
         <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-            <div style={{ width: 72, height: 72, borderRadius: '50%', background: resultado.erros === 0 ? '#f0fdf4' : '#fffbeb', border: `3px solid ${resultado.erros === 0 ? '#16a34a' : '#d97706'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 72, height: 72, borderRadius: '50%', background: resultado.erros === 0 ? '#f0fdf4' : '#fffbeb', border: `3px solid ${resultado.erros === 0 ? '#16a34a' : '#4A7FDB'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {resultado.erros === 0
                 ? <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                : <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>}
+                : <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4A7FDB" strokeWidth="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>}
             </div>
           </div>
 
@@ -840,7 +840,7 @@ export function ImportacaoClient() {
               { label: 'Total',       val: resultado.total,               cor: '#64748b' },
               { label: 'Inseridos',   val: resultado.inseridos,            cor: '#16a34a' },
               { label: 'Atualizados', val: resultado.atualizados ?? 0,     cor: '#2563eb' },
-              { label: 'Ignorados',   val: resultado.ignorados ?? 0,       cor: '#d97706' },
+              { label: 'Ignorados',   val: resultado.ignorados ?? 0,       cor: '#4A7FDB' },
               { label: 'Erros',       val: resultado.erros,                cor: resultado.erros > 0 ? '#dc2626' : '#94a3b8' },
             ].map(k => (
               <div key={k.label} style={{ background: '#fff', border: `1.5px solid ${k.cor}30`, borderTop: `3px solid ${k.cor}`, borderRadius: 12, padding: '1rem' }}>

@@ -1,19 +1,20 @@
 @import "tailwindcss";
 
 /* ================================================================
-   CVE Gestão Comercial — Design System v2
+   We Make — Gestão Comercial — Design System v2
    Fontes: Cormorant Garamond (serif) + Montserrat + Inter (sans)
-   Paleta: Slate-900 dark sidebar + Amber gold + Navy #003366
+   Paleta: Slate-900 dark sidebar + Ciano #5FE3D0 + Azul #4A7FDB
    Inspirado em: Salesforce, HubSpot, Pipedrive, Linear
    ================================================================ */
 
 :root {
-  /* Brand */
-  --amber:        #d97706;
-  --amber-light:  #f59e0b;
-  --amber-dark:   #b45309;
-  --brand-blue:   #003366;
-  --brand-blue-m: #1e4d8c;
+  /* Brand — We Make */
+  --amber:        #4A7FDB;       /* legacy alias mantido para nao quebrar utilities; agora azul We Make */
+  --amber-light:  #5FE3D0;       /* ciano accent */
+  --amber-dark:   #2563b8;       /* azul escuro hover */
+  --brand-cyan:   #5FE3D0;
+  --brand-blue:   #4A7FDB;
+  --brand-blue-m: #2563b8;
   --brand-blue-l: #dbeafe;
 
   /* Slate scale */
@@ -46,7 +47,7 @@
   /* Semantic colors */
   --success:      #16a34a;
   --success-bg:   #f0fdf4;
-  --warning:      #d97706;
+  --warning:      #f59e0b;       /* warning fica âmbar suave (avisos, nao brand) */
   --warning-bg:   #fffbeb;
   --danger:       #dc2626;
   --danger-bg:    #fef2f2;
@@ -203,9 +204,9 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   .btn:active { transform: translateY(1px); }
   .btn-primary {
     background: var(--amber); color: #fff; border-color: var(--amber);
-    box-shadow: 0 4px 14px rgba(217,119,6,.3);
+    box-shadow: 0 4px 14px rgba(74,127,219,.3);
   }
-  .btn-primary:hover { background: var(--amber-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(217,119,6,.4); color: #fff; }
+  .btn-primary:hover { background: var(--amber-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(74,127,219,.4); color: #fff; }
   .btn-secondary { background: var(--brand-blue); color: #fff; }
   .btn-secondary:hover { background: var(--brand-blue-m); color: #fff; transform: translateY(-1px); }
   .btn-outline { background: transparent; color: var(--amber); border-color: var(--amber); }
@@ -261,7 +262,7 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   }
   .form-control:focus {
     border-color: var(--amber);
-    box-shadow: 0 0 0 3px rgba(217,119,6,.12);
+    box-shadow: 0 0 0 3px rgba(74,127,219,.12);
   }
   select.form-control { cursor: pointer; }
   textarea.form-control { resize: vertical; min-height: 100px; }
@@ -304,7 +305,7 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   .nav-item:hover { background: rgba(255,255,255,.08); color: rgba(255,255,255,.95); }
   .nav-item.active {
     background: linear-gradient(135deg, var(--amber), var(--amber-dark));
-    color: #fff; box-shadow: 0 4px 12px rgba(217,119,6,.35);
+    color: #fff; box-shadow: 0 4px 12px rgba(74,127,219,.35);
   }
   .nav-item.wip { opacity: .45; pointer-events: none; }
   .nav-wip-tag {

@@ -62,15 +62,15 @@ export default function ComercialLoginPage() {
         />
         <a href="/" style={{
           display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-          background: '#d97706', color: '#fff',
+          background: '#4A7FDB', color: '#fff',
           padding: '.45rem 1.1rem', borderRadius: 9999,
           fontSize: '.78rem', fontWeight: 700, textDecoration: 'none',
-          letterSpacing: '.03em', boxShadow: '0 4px 14px rgba(217,119,6,.4)',
+          letterSpacing: '.03em', boxShadow: '0 4px 14px rgba(74,127,219,.4)',
           transition: 'all .2s',
           fontFamily: 'var(--font-montserrat, sans-serif)',
         }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#b45309'; e.currentTarget.style.transform = 'translateY(-1px)' }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#d97706'; e.currentTarget.style.transform = 'translateY(0)' }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#2563b8'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#4A7FDB'; e.currentTarget.style.transform = 'translateY(0)' }}
         >
           <ArrowRight size={14} style={{ transform: 'rotate(180deg)' }} />
           Voltar ao Hub
@@ -140,7 +140,7 @@ export default function ComercialLoginPage() {
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '.4rem',
               background: 'rgba(15,23,42,.7)',
-              border: '1px solid rgba(217,119,6,.4)',
+              border: '1px solid rgba(74,127,219,.4)',
               backdropFilter: 'blur(8px)',
               borderRadius: 9999, padding: '.3rem .9rem',
               marginBottom: '1.5rem',
@@ -173,20 +173,20 @@ export default function ComercialLoginPage() {
             </p>
 
             <div style={{
-              background: 'linear-gradient(135deg, rgba(217,119,6,.18) 0%, rgba(217,119,6,.08) 100%)',
-              border: '1px solid rgba(217,119,6,.35)',
-              borderLeft: '4px solid #d97706',
+              background: 'linear-gradient(135deg, rgba(74,127,219,.18) 0%, rgba(74,127,219,.08) 100%)',
+              border: '1px solid rgba(74,127,219,.35)',
+              borderLeft: '4px solid #4A7FDB',
               borderRadius: 14, padding: '1.35rem 1.5rem',
               backdropFilter: 'blur(8px)',
               maxWidth: 500,
-              boxShadow: '0 8px 32px rgba(217,119,6,.12)',
+              boxShadow: '0 8px 32px rgba(74,127,219,.12)',
             }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
                 <div style={{
                   width: 46, height: 46, borderRadius: 12, flexShrink: 0,
-                  background: 'linear-gradient(135deg, #d97706, #b45309)',
+                  background: 'linear-gradient(135deg, #4A7FDB, #2563b8)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 4px 12px rgba(217,119,6,.4)',
+                  boxShadow: '0 4px 12px rgba(74,127,219,.4)',
                 }}>
                   <BarChart3 size={21} color="#fff" />
                 </div>
@@ -219,10 +219,10 @@ export default function ComercialLoginPage() {
 
                   <a href="/" style={{
                     display: 'inline-flex', alignItems: 'center', gap: '.45rem',
-                    background: '#d97706', color: '#fff',
+                    background: '#4A7FDB', color: '#fff',
                     padding: '.55rem 1.25rem', borderRadius: 9999,
                     fontSize: '.8rem', fontWeight: 700, textDecoration: 'none',
-                    boxShadow: '0 4px 16px rgba(217,119,6,.45)',
+                    boxShadow: '0 4px 16px rgba(74,127,219,.45)',
                     fontFamily: 'var(--font-montserrat, sans-serif)',
                     letterSpacing: '.01em',
                   }}>
@@ -245,7 +245,7 @@ export default function ComercialLoginPage() {
             <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
               <div style={{
                 fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
-                textTransform: 'uppercase', color: '#d97706', marginBottom: '.65rem',
+                textTransform: 'uppercase', color: '#4A7FDB', marginBottom: '.65rem',
                 fontFamily: 'var(--font-montserrat, sans-serif)',
               }}>
                 ✦ Acesso Restrito Equipe Interna
@@ -292,7 +292,7 @@ export default function ComercialLoginPage() {
                     transition: 'border-color .15s, box-shadow .15s',
                     fontFamily: 'var(--font-inter, sans-serif)',
                   }}
-                  onFocus={e => { e.target.style.borderColor = '#d97706'; e.target.style.boxShadow = '0 0 0 3px rgba(217,119,6,.15)' }}
+                  onFocus={e => { e.target.style.borderColor = '#4A7FDB'; e.target.style.boxShadow = '0 0 0 3px rgba(74,127,219,.15)' }}
                   onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,.1)'; e.target.style.boxShadow = 'none' }}
                 />
               </div>
@@ -318,7 +318,7 @@ export default function ComercialLoginPage() {
                       transition: 'border-color .15s, box-shadow .15s',
                       fontFamily: 'var(--font-inter, sans-serif)',
                     }}
-                    onFocus={e => { e.target.style.borderColor = '#d97706'; e.target.style.boxShadow = '0 0 0 3px rgba(217,119,6,.15)' }}
+                    onFocus={e => { e.target.style.borderColor = '#4A7FDB'; e.target.style.boxShadow = '0 0 0 3px rgba(74,127,219,.15)' }}
                     onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,.1)'; e.target.style.boxShadow = 'none' }}
                   />
                   <button type="button" onClick={() => setShowPass(!showPass)} style={{
@@ -334,17 +334,17 @@ export default function ComercialLoginPage() {
 
               <button type="submit" disabled={loading} style={{
                 marginTop: '.25rem', width: '100%', padding: '.85rem',
-                background: loading ? 'rgba(217,119,6,.4)' : '#d97706',
+                background: loading ? 'rgba(74,127,219,.4)' : '#4A7FDB',
                 color: '#fff', fontWeight: 700, fontSize: '.9rem',
-                border: '1px solid rgba(217,119,6,.5)',
+                border: '1px solid rgba(74,127,219,.5)',
                 borderRadius: 9999, cursor: loading ? 'not-allowed' : 'pointer',
                 transition: 'all .2s',
-                boxShadow: loading ? 'none' : '0 4px 16px rgba(217,119,6,.4)',
+                boxShadow: loading ? 'none' : '0 4px 16px rgba(74,127,219,.4)',
                 fontFamily: 'var(--font-montserrat, sans-serif)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem',
               }}
-                onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#b45309'; e.currentTarget.style.transform = 'translateY(-1px)' }}}
-                onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#d97706'; e.currentTarget.style.transform = 'translateY(0)' }}}
+                onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#2563b8'; e.currentTarget.style.transform = 'translateY(-1px)' }}}
+                onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#4A7FDB'; e.currentTarget.style.transform = 'translateY(0)' }}}
               >
                 {loading ? 'Entrando...' : <><span>Entrar na Plataforma</span> <ArrowRight size={16} /></>}
               </button>
@@ -363,15 +363,15 @@ export default function ComercialLoginPage() {
             <a href="/" style={{
               display: 'flex', alignItems: 'center', gap: '.5rem',
               padding: '.7rem 1rem', borderRadius: 10,
-              border: '1px solid rgba(217,119,6,.25)',
-              background: 'rgba(217,119,6,.08)',
+              border: '1px solid rgba(74,127,219,.25)',
+              background: 'rgba(74,127,219,.08)',
               color: '#fcd34d', textDecoration: 'none',
               fontSize: '.78rem', fontWeight: 600,
               transition: 'all .2s',
               fontFamily: 'var(--font-montserrat, sans-serif)',
             }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(217,119,6,.15)'; e.currentTarget.style.borderColor = 'rgba(217,119,6,.5)' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(217,119,6,.08)'; e.currentTarget.style.borderColor = 'rgba(217,119,6,.25)' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(74,127,219,.15)'; e.currentTarget.style.borderColor = 'rgba(74,127,219,.5)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(74,127,219,.08)'; e.currentTarget.style.borderColor = 'rgba(74,127,219,.25)' }}
             >
               <ArrowRight size={15} style={{ flexShrink: 0, transform: 'rotate(180deg)' }} />
               <span>Voltar ao Hub Principal →</span>
@@ -421,7 +421,7 @@ export default function ComercialLoginPage() {
                     onMouseEnter={e => e.currentTarget.style.color = '#fbbf24'}
                     onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,.45)'}
                   >
-                    <span style={{ color: '#d97706', flexShrink: 0 }}>{item.icon}</span>
+                    <span style={{ color: '#4A7FDB', flexShrink: 0 }}>{item.icon}</span>
                     {item.label}
                   </a>
                 ))}
@@ -431,7 +431,7 @@ export default function ComercialLoginPage() {
             <div>
               <div style={{
                 fontSize: '.65rem', fontWeight: 700, letterSpacing: '.1em',
-                textTransform: 'uppercase', color: '#d97706', marginBottom: '1rem',
+                textTransform: 'uppercase', color: '#4A7FDB', marginBottom: '1rem',
                 fontFamily: 'var(--font-montserrat, sans-serif)',
               }}>
                 Módulos da Plataforma
@@ -456,7 +456,7 @@ export default function ComercialLoginPage() {
             <div>
               <div style={{
                 fontSize: '.65rem', fontWeight: 700, letterSpacing: '.1em',
-                textTransform: 'uppercase', color: '#d97706', marginBottom: '1rem',
+                textTransform: 'uppercase', color: '#4A7FDB', marginBottom: '1rem',
                 fontFamily: 'var(--font-montserrat, sans-serif)',
               }}>
                 Links Úteis

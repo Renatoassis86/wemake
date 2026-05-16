@@ -13,7 +13,7 @@ const card: React.CSSProperties = {
 
 const CLASSIF_STYLE: Record<string, { bg: string; text: string; border: string; dot: string; topBar: string }> = {
   quente: { bg: '#fef2f2', text: '#dc2626', border: '#fca5a5', dot: '#dc2626', topBar: '#dc2626' },
-  morno:  { bg: '#fffbeb', text: '#d97706', border: '#fcd34d', dot: '#f59e0b', topBar: '#d97706' },
+  morno:  { bg: '#fffbeb', text: '#4A7FDB', border: '#fcd34d', dot: '#f59e0b', topBar: '#4A7FDB' },
   frio:   { bg: '#eff6ff', text: '#2563eb', border: '#93c5fd', dot: '#60a5fa', topBar: '#2563eb' },
 }
 
@@ -60,7 +60,7 @@ export default async function ComercialDashboard() {
   const kpis = [
     { label: 'Total de Escolas',   value: totalEscolas ?? 0, sub: 'parceiros ativos',     cor: '#2563eb', bg: '#eff6ff', border: '#93c5fd', href: '/comercial/escolas' },
     { label: 'Leads Quentes',      value: leadsQuentes ?? 0, sub: 'alta probabilidade',    cor: '#dc2626', bg: '#fef2f2', border: '#fca5a5', href: '/comercial/leads' },
-    { label: 'Leads Mornos',       value: leadsMornos  ?? 0, sub: 'em negociação ativa',   cor: '#d97706', bg: '#fffbeb', border: '#fcd34d', href: '/comercial/leads' },
+    { label: 'Leads Mornos',       value: leadsMornos  ?? 0, sub: 'em negociação ativa',   cor: '#4A7FDB', bg: '#fffbeb', border: '#fcd34d', href: '/comercial/leads' },
     { label: 'Registros (30 dias)',value: registrosMes ?? 0, sub: 'interações recentes',   cor: '#0d9488', bg: '#f0fdfa', border: '#99f6e4', href: '/comercial/registros' },
   ]
 
@@ -71,7 +71,7 @@ export default async function ComercialDashboard() {
         subtitle={`Atualizado hoje, ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })}`}
         actions={
           <div style={{ display: 'flex', gap: '.5rem' }}>
-            <Link href="/comercial/registros/novo" style={{ display: 'inline-flex', alignItems: 'center', gap: '.35rem', padding: '.45rem 1rem', borderRadius: 9999, background: '#d97706', color: '#fff', textDecoration: 'none', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 12px rgba(217,119,6,.3)' }}>
+            <Link href="/comercial/registros/novo" style={{ display: 'inline-flex', alignItems: 'center', gap: '.35rem', padding: '.45rem 1rem', borderRadius: 9999, background: '#4A7FDB', color: '#fff', textDecoration: 'none', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 12px rgba(74,127,219,.3)' }}>
               <Plus size={13} /> Novo Registro
             </Link>
             <Link href="/comercial/escolas/nova" style={{ display: 'inline-flex', alignItems: 'center', gap: '.35rem', padding: '.45rem 1rem', borderRadius: 9999, border: '1.5px solid #e2e8f0', background: '#fff', color: '#475569', textDecoration: 'none', fontSize: '.78rem', fontWeight: 600, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
@@ -103,7 +103,7 @@ export default async function ComercialDashboard() {
           <div style={card}>
             <div style={{ background: '#0f172a', padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>Últimas Interações</div>
-              <Link href="/comercial/registros" style={{ fontSize: '.72rem', color: '#d97706', fontWeight: 600, textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+              <Link href="/comercial/registros" style={{ fontSize: '.72rem', color: '#4A7FDB', fontWeight: 600, textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                 Ver todas →
               </Link>
             </div>
@@ -143,7 +143,7 @@ export default async function ComercialDashboard() {
               <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block', margin: '0 auto .75rem' }}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                 <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', color: '#0f172a', marginBottom: '.35rem' }}>Sem registros ainda</div>
-                <Link href="/comercial/registros/novo" style={{ display: 'inline-flex', alignItems: 'center', gap: '.3rem', background: '#d97706', color: '#fff', padding: '.45rem 1rem', borderRadius: 9999, textDecoration: 'none', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', marginTop: '.35rem' }}>
+                <Link href="/comercial/registros/novo" style={{ display: 'inline-flex', alignItems: 'center', gap: '.3rem', background: '#4A7FDB', color: '#fff', padding: '.45rem 1rem', borderRadius: 9999, textDecoration: 'none', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', marginTop: '.35rem' }}>
                   <Plus size={13} /> Criar primeiro registro
                 </Link>
               </div>
@@ -225,7 +225,7 @@ export default async function ComercialDashboard() {
         {/* ── Acesso rápido aos módulos ─────────────────────────── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem' }}>
           {[
-            { label: 'Nova Escola',       href: '/comercial/escolas/nova',    cor: '#d97706', desc: 'Cadastrar parceiro' },
+            { label: 'Nova Escola',       href: '/comercial/escolas/nova',    cor: '#4A7FDB', desc: 'Cadastrar parceiro' },
             { label: 'Novo Registro',     href: '/comercial/registros/novo',  cor: '#0d9488', desc: 'Registrar interação' },
             { label: 'Ver Pipeline',      href: '/comercial/pipeline',        cor: '#7c3aed', desc: 'Kanban de negociações' },
             { label: 'Jornada Visual',    href: '/comercial/jornada-visual',  cor: '#2563eb', desc: 'Infográfico do processo' },

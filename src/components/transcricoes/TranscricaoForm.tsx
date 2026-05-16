@@ -36,7 +36,7 @@ const PLATAFORMAS = [
   { value: 'meet',        label: 'Google Meet',     cor: '#0d9488' },
   { value: 'zoom',        label: 'Zoom',            cor: '#2563eb' },
   { value: 'teams',       label: 'Microsoft Teams', cor: '#7c3aed' },
-  { value: 'presencial',  label: 'Presencial',      cor: '#d97706' },
+  { value: 'presencial',  label: 'Presencial',      cor: '#4A7FDB' },
   { value: 'outro',       label: 'Outro',           cor: '#64748b' },
 ]
 
@@ -183,10 +183,10 @@ export function TranscricaoForm({ escolas, transcricoes: inicial, userId }: Prop
         <button onClick={() => { setMostrarForm(true); setErro(''); setOk('') }} style={{
           display: 'inline-flex', alignItems: 'center', gap: '.4rem',
           padding: '.55rem 1.25rem', borderRadius: 9999, border: 'none',
-          background: 'linear-gradient(135deg, #d97706, #b45309)',
+          background: 'linear-gradient(135deg, #4A7FDB, #2563b8)',
           color: '#fff', fontWeight: 700, fontSize: '.82rem', cursor: 'pointer',
           fontFamily: 'var(--font-montserrat,sans-serif)',
-          boxShadow: '0 4px 14px rgba(217,119,6,.35)',
+          boxShadow: '0 4px 14px rgba(74,127,219,.35)',
         }}>
           <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Nova Transcrição
@@ -216,7 +216,7 @@ export function TranscricaoForm({ escolas, transcricoes: inicial, userId }: Prop
             {/* Header */}
             <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', padding: '1.25rem 1.5rem', borderRadius: '18px 18px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
-                <div style={{ fontSize: '.6rem', fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#d97706', marginBottom: '.2rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                <div style={{ fontSize: '.6rem', fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#4A7FDB', marginBottom: '.2rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                   ✦ Nova Transcrição
                 </div>
                 <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 700, color: '#fff' }}>
@@ -361,11 +361,11 @@ export function TranscricaoForm({ escolas, transcricoes: inicial, userId }: Prop
               <div style={{ display: 'flex', gap: '.75rem', paddingTop: '.25rem' }}>
                 <button type="submit" disabled={saving || uploadando} style={{
                   flex: 1, padding: '.75rem', borderRadius: 9999, border: 'none',
-                  background: (saving || uploadando) ? '#e2e8f0' : 'linear-gradient(135deg, #d97706, #b45309)',
+                  background: (saving || uploadando) ? '#e2e8f0' : 'linear-gradient(135deg, #4A7FDB, #2563b8)',
                   color: (saving || uploadando) ? '#94a3b8' : '#fff',
                   fontWeight: 700, fontSize: '.875rem', cursor: (saving || uploadando) ? 'not-allowed' : 'pointer',
                   fontFamily: 'var(--font-montserrat,sans-serif)',
-                  boxShadow: (saving || uploadando) ? 'none' : '0 4px 14px rgba(217,119,6,.35)',
+                  boxShadow: (saving || uploadando) ? 'none' : '0 4px 14px rgba(74,127,219,.35)',
                 }}>
                   {uploadando ? 'Enviando arquivos...' : saving ? 'Salvando...' : 'Salvar Transcrição'}
                 </button>
@@ -397,7 +397,7 @@ export function TranscricaoForm({ escolas, transcricoes: inicial, userId }: Prop
           <button onClick={() => setMostrarForm(true)} style={{
             display: 'inline-flex', alignItems: 'center', gap: '.4rem',
             padding: '.55rem 1.25rem', borderRadius: 9999, border: 'none',
-            background: '#d97706', color: '#fff', fontWeight: 700, fontSize: '.82rem',
+            background: '#4A7FDB', color: '#fff', fontWeight: 700, fontSize: '.82rem',
             cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)',
           }}>
             Registrar Primeira Transcrição
@@ -441,7 +441,7 @@ export function TranscricaoForm({ escolas, transcricoes: inicial, userId }: Prop
                         {plat.label}
                       </span>
                       {t.escola?.nome && (
-                        <span style={{ fontSize: '.68rem', background: '#fffbeb', color: '#d97706', border: '1px solid #fde68a', padding: '.1rem .4rem', borderRadius: 99, fontWeight: 600, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                        <span style={{ fontSize: '.68rem', background: '#fffbeb', color: '#4A7FDB', border: '1px solid #fde68a', padding: '.1rem .4rem', borderRadius: 99, fontWeight: 600, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                           {t.escola.nome}
                         </span>
                       )}

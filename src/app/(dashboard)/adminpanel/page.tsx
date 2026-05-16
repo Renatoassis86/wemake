@@ -39,7 +39,7 @@ export default async function AdminpanelPage() {
         {/* KPIs */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem', marginBottom: '1.75rem' }}>
           {[
-            { label: 'Total',    value: profiles?.length ?? 0, cor: '#d97706', bg: '#fffbeb', border: '#fcd34d' },
+            { label: 'Total',    value: profiles?.length ?? 0, cor: '#4A7FDB', bg: '#fffbeb', border: '#fcd34d' },
             { label: 'Ativos',   value: ativos,   cor: '#16a34a', bg: '#f0fdf4', border: '#86efac' },
             { label: 'Inativos', value: inativos, cor: '#dc2626', bg: '#fef2f2', border: '#fca5a5' },
             { label: 'Gerentes', value: gerentes, cor: '#7c3aed', bg: '#f5f3ff', border: '#c4b5fd' },
@@ -67,7 +67,7 @@ export default async function AdminpanelPage() {
             <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '.65rem' }}>
               {profiles?.map((p: any) => (
                 <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '.85rem 1rem', background: '#f8fafc', borderRadius: 10, border: '1px solid #f1f5f9' }}>
-                  <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg,#d97706,#b45309)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '.78rem', fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)', flexShrink: 0 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg,#4A7FDB,#2563b8)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '.78rem', fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)', flexShrink: 0 }}>
                     {(p.full_name || p.email).split(' ').slice(0,2).map((n: string) => n[0]).join('').toUpperCase()}
                   </div>
                   <div style={{ flex: 1 }}>
@@ -85,7 +85,7 @@ export default async function AdminpanelPage() {
         {isGerente && (
           <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 8px rgba(15,23,42,.05)' }}>
             <div style={{ background: '#0f172a', padding: '1rem 1.75rem', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-              <div style={{ width: 30, height: 30, background: '#d97706', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 30, height: 30, background: '#4A7FDB', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               </div>
               <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#fff' }}>Registro de Atividades (Audit Log)</div>

@@ -12,19 +12,19 @@ export default function SobrePage() {
           borderRadius: 20, padding: '2.5rem 3rem', marginBottom: '2rem',
           position: 'relative', overflow: 'hidden',
         }}>
-          <div style={{ position: 'absolute', top: -40, right: -40, width: 200, height: 200, borderRadius: '50%', background: 'rgba(217,119,6,.08)', pointerEvents: 'none' }} />
-          <div style={{ position: 'absolute', bottom: -60, right: 80, width: 140, height: 140, borderRadius: '50%', background: 'rgba(217,119,6,.05)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', top: -40, right: -40, width: 200, height: 200, borderRadius: '50%', background: 'rgba(74,127,219,.08)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', bottom: -60, right: 80, width: 140, height: 140, borderRadius: '50%', background: 'rgba(74,127,219,.05)', pointerEvents: 'none' }} />
 
           <div style={{ position: 'relative', zIndex: 1, maxWidth: 640 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: 'rgba(217,119,6,.15)', border: '1px solid rgba(217,119,6,.3)', borderRadius: 9999, padding: '.3rem .85rem', marginBottom: '1.25rem' }}>
-              <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#d97706' }} />
-              <span style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#d97706', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: 'rgba(74,127,219,.15)', border: '1px solid rgba(74,127,219,.3)', borderRadius: 9999, padding: '.3rem .85rem', marginBottom: '1.25rem' }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#4A7FDB' }} />
+              <span style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                 Plataforma Interna · Equipe Comercial
               </span>
             </div>
             <h1 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 700, color: '#fff', lineHeight: 1.15, marginBottom: '.85rem' }}>
               Gestão comercial inteligente<br />
-              <span style={{ color: '#d97706' }}>para transformar parcerias em impacto</span>
+              <span style={{ color: '#4A7FDB' }}>para transformar parcerias em impacto</span>
             </h1>
             <p style={{ fontSize: '.9rem', color: 'rgba(255,255,255,.65)', lineHeight: 1.7, fontFamily: 'var(--font-inter,sans-serif)', maxWidth: 520 }}>
               O We Make Gestão Comercial foi desenvolvido exclusivamente para a equipe da We Make. Centraliza escolas, negociações, contratos e análises em um único ambiente seguro, ágil e focado em resultados.
@@ -39,7 +39,7 @@ export default function SobrePage() {
               ['Seguro', 'acesso por perfil'],
             ].map(([val, sub]) => (
               <div key={val}>
-                <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#d97706', lineHeight: 1 }}>{val}</div>
+                <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#4A7FDB', lineHeight: 1 }}>{val}</div>
                 <div style={{ fontSize: '.68rem', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-montserrat,sans-serif)', marginTop: '.2rem', textTransform: 'uppercase', letterSpacing: '.05em' }}>{sub}</div>
               </div>
             ))}
@@ -48,11 +48,11 @@ export default function SobrePage() {
 
         {/* ── PROPÓSITO + JUSTIFICATIVA ────────────────────────── */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '1.25rem' }}>
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.75rem', boxShadow: '0 2px 8px rgba(15,23,42,.05)', borderTop: '3px solid #d97706' }}>
+          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.75rem', boxShadow: '0 2px 8px rgba(15,23,42,.05)', borderTop: '3px solid #4A7FDB' }}>
             <div style={{ width: 40, height: 40, borderRadius: 10, background: '#fffbeb', border: '1px solid #fcd34d', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
             </div>
-            <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#d97706', marginBottom: '.5rem' }}>
+            <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.5rem' }}>
               Propósito
             </div>
             <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', marginBottom: '.65rem', lineHeight: 1.25 }}>
@@ -86,7 +86,7 @@ export default function SobrePage() {
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
             </div>
             <div>
-              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#d97706' }}>Módulos Disponíveis</div>
+              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB' }}>Módulos Disponíveis</div>
               <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.15rem', fontWeight: 700, color: '#0f172a' }}>Tudo que você precisa para vender mais</div>
             </div>
           </div>
@@ -117,12 +117,12 @@ export default function SobrePage() {
 
         {/* ── MISSÃO, VISÃO E VALORES ─────────────────────────── */}
         <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius: 16, padding: '1.75rem 2rem', marginBottom: '1.25rem' }}>
-          <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#d97706', marginBottom: '1.25rem' }}>
+          <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '1.25rem' }}>
             Identidade da We Make
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.75rem' }}>
-            <div style={{ background: 'rgba(255,255,255,.05)', borderRadius: 12, padding: '1.25rem', borderLeft: '3px solid #d97706' }}>
-              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#d97706', marginBottom: '.5rem' }}>Missão</div>
+            <div style={{ background: 'rgba(255,255,255,.05)', borderRadius: 12, padding: '1.25rem', borderLeft: '3px solid #4A7FDB' }}>
+              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.5rem' }}>Missão</div>
               <p style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.05rem', fontStyle: 'italic', color: '#fff', lineHeight: 1.55 }}>
                 Conduzir pessoas ao deslumbramento a partir de uma educação cristã de excelência.
               </p>
@@ -173,7 +173,7 @@ export default function SobrePage() {
               { num: '03', title: 'Parcerias fortalecidas', desc: 'Histórico completo de cada escola para um atendimento mais consultivo e próximo.' },
             ].map(i => (
               <div key={i.num} style={{ padding: '1.1rem', background: '#f8fafc', borderRadius: 12, border: '1px solid #f1f5f9' }}>
-                <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '2rem', fontWeight: 800, color: '#d97706', lineHeight: 1, marginBottom: '.5rem' }}>{i.num}</div>
+                <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '2rem', fontWeight: 800, color: '#4A7FDB', lineHeight: 1, marginBottom: '.5rem' }}>{i.num}</div>
                 <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.82rem', fontWeight: 700, color: '#0f172a', marginBottom: '.3rem' }}>{i.title}</div>
                 <div style={{ fontSize: '.75rem', color: '#64748b', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)' }}>{i.desc}</div>
               </div>
@@ -189,8 +189,8 @@ export default function SobrePage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '2.5rem 0 2rem' }}>
           <div style={{ flex: 1, height: 1, background: 'linear-gradient(to right, transparent, #e2e8f0)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', padding: '.4rem 1rem', background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 9999 }}>
-            <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#d97706' }} />
-            <span style={{ fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#d97706', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#4A7FDB' }} />
+            <span style={{ fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
               Parceria Educacional
             </span>
           </div>
@@ -205,20 +205,20 @@ export default function SobrePage() {
           overflow: 'hidden', position: 'relative',
         }}>
           {/* Ornamentos de fundo */}
-          <div style={{ position: 'absolute', top: -30, right: -30, width: 160, height: 160, borderRadius: '50%', background: 'rgba(217,119,6,.06)', pointerEvents: 'none' }} />
-          <div style={{ position: 'absolute', bottom: -20, left: 40, width: 100, height: 100, borderRadius: '50%', background: 'rgba(217,119,6,.04)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', top: -30, right: -30, width: 160, height: 160, borderRadius: '50%', background: 'rgba(74,127,219,.06)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', bottom: -20, left: 40, width: 100, height: 100, borderRadius: '50%', background: 'rgba(74,127,219,.04)', pointerEvents: 'none' }} />
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2.5rem', alignItems: 'center', position: 'relative', zIndex: 1 }}>
             {/* Texto */}
             <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: 'rgba(217,119,6,.12)', border: '1px solid rgba(217,119,6,.3)', borderRadius: 9999, padding: '.3rem .85rem', marginBottom: '1rem' }}>
-                <span style={{ fontSize: '.62rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#b45309', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: 'rgba(74,127,219,.12)', border: '1px solid rgba(74,127,219,.3)', borderRadius: 9999, padding: '.3rem .85rem', marginBottom: '1rem' }}>
+                <span style={{ fontSize: '.62rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#2563b8', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                   ✦ Sistema de Ensino We Make
                 </span>
               </div>
               <h2 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: 'clamp(1.6rem, 2.5vw, 2rem)', fontWeight: 700, color: '#0f172a', lineHeight: 1.15, marginBottom: '.85rem' }}>
                 Educando para<br />
-                <span style={{ color: '#d97706' }}>a eternidade</span>
+                <span style={{ color: '#4A7FDB' }}>a eternidade</span>
               </h2>
               <p style={{ fontSize: '.875rem', color: '#475569', lineHeight: 1.75, fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '1.25rem' }}>
                 O homem, criado à imagem e semelhança de Deus, não nasce pronto. É uma criatura em potência, chamada a realizar-se pela assimilação do Bom, do Belo e do Verdadeiro. É exatamente isso que uma verdadeira educação faz: conduz o homem à Grande Conversa.
@@ -241,8 +241,8 @@ export default function SobrePage() {
                 <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
                   <defs>
                     <radialGradient id="glow1" cx="50%" cy="70%" r="55%">
-                      <stop offset="0%" stopColor="#d97706" stopOpacity="0.18" />
-                      <stop offset="100%" stopColor="#d97706" stopOpacity="0" />
+                      <stop offset="0%" stopColor="#4A7FDB" stopOpacity="0.18" />
+                      <stop offset="100%" stopColor="#4A7FDB" stopOpacity="0" />
                     </radialGradient>
                     <radialGradient id="glow2" cx="30%" cy="40%" r="35%">
                       <stop offset="0%" stopColor="#60a5fa" stopOpacity="0.12" />
@@ -291,16 +291,16 @@ export default function SobrePage() {
                   ))}
 
                   {/* Porta principal */}
-                  <rect x="185" y="195" width="30" height="45" rx="3" fill="#0f172a" stroke="#d97706" strokeWidth="1.5"/>
+                  <rect x="185" y="195" width="30" height="45" rx="3" fill="#0f172a" stroke="#4A7FDB" strokeWidth="1.5"/>
                   <rect x="187" y="197" width="12" height="41" rx="2" fill="#1e3a6b"/>
                   <rect x="201" y="197" width="12" height="41" rx="2" fill="#1e3a6b"/>
                   {/* Maçaneta */}
-                  <circle cx="199" cy="220" r="2" fill="#d97706"/>
-                  <circle cx="201" cy="220" r="2" fill="#d97706"/>
+                  <circle cx="199" cy="220" r="2" fill="#4A7FDB"/>
+                  <circle cx="201" cy="220" r="2" fill="#4A7FDB"/>
 
                   {/* Bandeira no topo */}
-                  <line x1="200" y1="30" x2="200" y2="58" stroke="#d97706" strokeWidth="1.5"/>
-                  <polygon points="200,32 218,37 200,42" fill="#d97706" opacity="0.9"/>
+                  <line x1="200" y1="30" x2="200" y2="58" stroke="#4A7FDB" strokeWidth="1.5"/>
+                  <polygon points="200,32 218,37 200,42" fill="#4A7FDB" opacity="0.9"/>
 
                   {/* Caminho / calçada */}
                   <path d="M172,240 L172,268 L228,268 L228,240" fill="#162d5a" stroke="#2d5a9e" strokeWidth="1"/>
@@ -317,7 +317,7 @@ export default function SobrePage() {
                   ))}
 
                   {/* Placa da escola */}
-                  <rect x="145" y="250" width="110" height="18" rx="4" fill="#d97706" opacity="0.85"/>
+                  <rect x="145" y="250" width="110" height="18" rx="4" fill="#4A7FDB" opacity="0.85"/>
                   <text x="200" y="263" textAnchor="middle" fill="white" fontSize="7.5" fontFamily="Arial, sans-serif" fontWeight="bold" letterSpacing="0.5">ESCOLA PARCEIRA</text>
 
                   {/* Chão / gramado */}
@@ -325,7 +325,7 @@ export default function SobrePage() {
                 </svg>
 
                 {/* Badge flutuante */}
-                <div style={{ position: 'absolute', bottom: 16, left: 16, background: 'rgba(217,119,6,.92)', backdropFilter: 'blur(8px)', borderRadius: 99, padding: '.4rem .9rem', display: 'flex', alignItems: 'center', gap: '.35rem' }}>
+                <div style={{ position: 'absolute', bottom: 16, left: 16, background: 'rgba(74,127,219,.92)', backdropFilter: 'blur(8px)', borderRadius: 99, padding: '.4rem .9rem', display: 'flex', alignItems: 'center', gap: '.35rem' }}>
                   <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#fff' }} />
                   <span style={{ fontSize: '.6rem', fontWeight: 800, color: '#fff', fontFamily: 'var(--font-montserrat,sans-serif)', letterSpacing: '.06em', textTransform: 'uppercase' }}>Parceria Educacional</span>
                 </div>
@@ -348,7 +348,7 @@ export default function SobrePage() {
               titulo: 'Cristão',
               ref: '2 Timóteo 3.15',
               desc: 'Tem como fundamento a Bíblia, onde se encontra a referência para todo conhecimento, a fim de que o homem se torne apto para toda boa obra.',
-              cor: '#d97706', bg: '#fffbeb', border: '#fde68a',
+              cor: '#4A7FDB', bg: '#fffbeb', border: '#fde68a',
             },
             {
               icone: '◈',
@@ -399,13 +399,13 @@ export default function SobrePage() {
                 {/* Interface da plataforma */}
                 {/* Header */}
                 <rect x="40" y="30" width="240" height="28" rx="8" fill="#1e3a5f" />
-                <circle cx="56" cy="44" r="5" fill="#d97706" opacity="0.8" />
+                <circle cx="56" cy="44" r="5" fill="#4A7FDB" opacity="0.8" />
                 <rect x="70" y="40" width="80" height="8" rx="4" fill="rgba(255,255,255,0.2)" />
                 {/* Cards de conteúdo */}
                 {[0,1,2].map(i => (
                   <g key={i}>
                     <rect x={52 + i*80} y={72} width={68} height={88} rx="6" fill="#1e293b" stroke="#334155" strokeWidth="1" />
-                    <rect x={58 + i*80} y={80} width={56} height={36} rx="4" fill={['#d97706','#2563eb','#16a34a'][i]} opacity="0.3" />
+                    <rect x={58 + i*80} y={80} width={56} height={36} rx="4" fill={['#4A7FDB','#2563eb','#16a34a'][i]} opacity="0.3" />
                     {[0,1,2].map(j => (
                       <rect key={j} x={58 + i*80} y={122 + j*9} width={j===1?40:50} height={4} rx="2" fill="rgba(255,255,255,0.15)" />
                     ))}
@@ -415,7 +415,7 @@ export default function SobrePage() {
                 <rect x="145" y="200" width="30" height="20" rx="2" fill="#334155" />
                 <rect x="110" y="218" width="100" height="8" rx="4" fill="#334155" />
                 {/* Badge de acesso demo */}
-                <rect x="60" y="240" width="200" height="28" rx="14" fill="#d97706" opacity="0.9" />
+                <rect x="60" y="240" width="200" height="28" rx="14" fill="#4A7FDB" opacity="0.9" />
                 <text x="160" y="259" textAnchor="middle" fill="white" fontSize="9" fontFamily="Arial, sans-serif" fontWeight="bold">
                   ACESSO DEMONSTRAÇÃO — 48H
                 </text>
@@ -424,7 +424,7 @@ export default function SobrePage() {
 
             {/* Lado direito — O que está disponível */}
             <div style={{ padding: '2rem 2rem 2rem 1.5rem' }}>
-              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#d97706', marginBottom: '.75rem' }}>
+              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4A7FDB', marginBottom: '.75rem' }}>
                 O que está disponível
               </div>
               <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.4rem', fontWeight: 700, color: '#0f172a', marginBottom: '1.1rem', lineHeight: 1.2 }}>
@@ -454,12 +454,12 @@ export default function SobrePage() {
         <div style={{
           background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a5f 100%)',
           borderRadius: 20, padding: '2rem 2.5rem', marginBottom: '1.5rem',
-          border: '1px solid rgba(217,119,6,.2)',
+          border: '1px solid rgba(74,127,219,.2)',
           boxShadow: '0 8px 32px rgba(15,23,42,.2)',
           position: 'relative', overflow: 'hidden',
         }}>
           {/* Ornamentos */}
-          <div style={{ position: 'absolute', top: -50, right: -50, width: 200, height: 200, borderRadius: '50%', background: 'rgba(217,119,6,.06)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', top: -50, right: -50, width: 200, height: 200, borderRadius: '50%', background: 'rgba(74,127,219,.06)', pointerEvents: 'none' }} />
           <div style={{ position: 'absolute', bottom: -30, left: 30, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,.03)', pointerEvents: 'none' }} />
 
           <div style={{ position: 'relative', zIndex: 1 }}>
@@ -467,9 +467,9 @@ export default function SobrePage() {
 
               {/* Texto esquerdo */}
               <div style={{ flex: 1, minWidth: 300 }}>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: 'rgba(217,119,6,.2)', border: '1px solid rgba(217,119,6,.4)', borderRadius: 9999, padding: '.3rem .85rem', marginBottom: '1rem' }}>
-                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#d97706', animation: 'pulse 2s infinite' }} />
-                  <span style={{ fontSize: '.6rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#d97706', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: 'rgba(74,127,219,.2)', border: '1px solid rgba(74,127,219,.4)', borderRadius: 9999, padding: '.3rem .85rem', marginBottom: '1rem' }}>
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#4A7FDB', animation: 'pulse 2s infinite' }} />
+                  <span style={{ fontSize: '.6rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                     Acesso Temporário — 48 Horas
                   </span>
                 </div>
@@ -486,14 +486,14 @@ export default function SobrePage() {
 
               {/* Card de credenciais */}
               <div style={{ background: 'rgba(255,255,255,.07)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,.12)', borderRadius: 16, padding: '1.5rem', minWidth: 280, flexShrink: 0 }}>
-                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.62rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#d97706', marginBottom: '1rem' }}>
+                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.62rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4A7FDB', marginBottom: '1rem' }}>
                   🔐 Dados de Acesso
                 </div>
 
                 {/* Link */}
                 <div style={{ marginBottom: '.85rem' }}>
                   <div style={{ fontSize: '.6rem', fontWeight: 700, color: 'rgba(255,255,255,.35)', textTransform: 'uppercase', letterSpacing: '.07em', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Link</div>
-                  <a href="https://hub.cidadeviva.education/hub/login?t=professor" target="_blank" rel="noopener noreferrer" style={{ fontSize: '.72rem', color: '#d97706', fontFamily: 'var(--font-inter,sans-serif)', textDecoration: 'none', wordBreak: 'break-all' as const, display: 'flex', alignItems: 'center', gap: '.3rem' }}>
+                  <a href="https://hub.cidadeviva.education/hub/login?t=professor" target="_blank" rel="noopener noreferrer" style={{ fontSize: '.72rem', color: '#4A7FDB', fontFamily: 'var(--font-inter,sans-serif)', textDecoration: 'none', wordBreak: 'break-all' as const, display: 'flex', alignItems: 'center', gap: '.3rem' }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     hub.cidadeviva.education/hub/login?t=professor
                   </a>
@@ -522,11 +522,11 @@ export default function SobrePage() {
                 {/* Botão acessar */}
                 <a href="https://hub.cidadeviva.education/hub/login?t=professor" target="_blank" rel="noopener noreferrer" style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.45rem',
-                  background: 'linear-gradient(135deg, #d97706, #b45309)',
+                  background: 'linear-gradient(135deg, #4A7FDB, #2563b8)',
                   color: '#fff', padding: '.7rem 1rem', borderRadius: 9999,
                   textDecoration: 'none', fontWeight: 700, fontSize: '.78rem',
                   fontFamily: 'var(--font-montserrat,sans-serif)',
-                  boxShadow: '0 4px 14px rgba(217,119,6,.4)',
+                  boxShadow: '0 4px 14px rgba(74,127,219,.4)',
                 }}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
                   Acessar Plataforma Demo
@@ -536,7 +536,7 @@ export default function SobrePage() {
 
             {/* Aviso de prazo */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '.65rem', background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 10, padding: '.75rem 1rem', marginTop: '1.25rem' }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4A7FDB" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
               <span style={{ fontSize: '.72rem', color: 'rgba(255,255,255,.5)', fontFamily: 'var(--font-inter,sans-serif)' }}>
                 Para novas visualizações ou acesso em outros momentos, será necessário realizar uma <strong style={{ color: 'rgba(255,255,255,.7)' }}>nova solicitação</strong> conforme o avanço da negociação. Nossa equipe estará à disposição.
               </span>

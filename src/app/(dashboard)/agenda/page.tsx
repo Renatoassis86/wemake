@@ -57,7 +57,7 @@ export default async function AgendaPage() {
           }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
               <div style={{ width: 60, height: 60, borderRadius: 16, background: '#fffbeb', border: '2px solid #fde68a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4A7FDB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               </div>
             </div>
             <h2 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 700, color: '#0f172a', marginBottom: '.5rem' }}>
@@ -72,11 +72,11 @@ export default async function AgendaPage() {
               rel="noopener noreferrer"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '.5rem',
-                background: 'linear-gradient(135deg, #d97706, #b45309)',
+                background: 'linear-gradient(135deg, #4A7FDB, #2563b8)',
                 color: '#fff', padding: '.7rem 1.75rem', borderRadius: 9999,
                 textDecoration: 'none', fontWeight: 700, fontSize: '.875rem',
                 fontFamily: 'var(--font-montserrat,sans-serif)',
-                boxShadow: '0 4px 14px rgba(217,119,6,.35)',
+                boxShadow: '0 4px 14px rgba(74,127,219,.35)',
               }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
               Abrir SQL Editor do Supabase
@@ -85,7 +85,7 @@ export default async function AgendaPage() {
               <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', marginBottom: '.4rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                 Arquivo SQL a executar:
               </div>
-              <code style={{ fontSize: '.78rem', color: '#d97706', fontFamily: 'monospace' }}>
+              <code style={{ fontSize: '.78rem', color: '#4A7FDB', fontFamily: 'monospace' }}>
                 supabase/add_agenda.sql
               </code>
             </div>

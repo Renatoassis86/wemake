@@ -13,13 +13,13 @@ interface Props { searchParams: Promise<{ escola?: string }> }
 // ── Helpers de cor por classificação ────────────────────────────────────────
 function corClassificacao(c: string | null | undefined) {
   if (c === 'quente') return '#ef4444'
-  if (c === 'morno')  return '#d97706'
+  if (c === 'morno')  return '#4A7FDB'
   return '#3b82f6'
 }
 
 function bgClassificacao(c: string | null | undefined) {
   if (c === 'quente') return 'rgba(239,68,68,0.10)'
-  if (c === 'morno')  return 'rgba(217,119,6,0.10)'
+  if (c === 'morno')  return 'rgba(74,127,219,0.10)'
   return 'rgba(59,130,246,0.10)'
 }
 
@@ -220,8 +220,8 @@ function CurvaEngajamento({ registros }: { registros: any[] }) {
     >
       <defs>
         <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#d97706" stopOpacity="0.30"/>
-          <stop offset="100%" stopColor="#d97706" stopOpacity="0.02"/>
+          <stop offset="0%" stopColor="#4A7FDB" stopOpacity="0.30"/>
+          <stop offset="100%" stopColor="#4A7FDB" stopOpacity="0.02"/>
         </linearGradient>
       </defs>
       {/* Grade horizontal */}
@@ -238,7 +238,7 @@ function CurvaEngajamento({ registros }: { registros: any[] }) {
       {/* Área preenchida */}
       <path d={areaPath} fill="url(#areaGrad)"/>
       {/* Linha de tendência */}
-      <polyline points={polyline} fill="none" stroke="#d97706" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"/>
+      <polyline points={polyline} fill="none" stroke="#4A7FDB" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"/>
       {/* Pontos */}
       {pts.map((p, i) => (
         <g key={i}>
@@ -408,12 +408,12 @@ export default async function JornadaPage({ searchParams }: Props) {
                 <div style={{ animation: 'fadeInUp .4s ease' }}>
                   <div style={{
                     fontSize: '.72rem', fontWeight: 700, letterSpacing: '.12em',
-                    color: '#d97706', textTransform: 'uppercase',
+                    color: '#4A7FDB', textTransform: 'uppercase',
                     fontFamily: 'var(--font-montserrat,sans-serif)',
                     marginBottom: '.75rem',
                     display: 'flex', alignItems: 'center', gap: '.4rem',
                   }}>
-                    <svg viewBox="0 0 8 8" width={8} height={8} fill="#d97706"><polygon points="4,0 5.4,2.6 8,3.1 6,5 6.5,7.6 4,6.3 1.5,7.6 2,5 0,3.1 2.6,2.6"/></svg>
+                    <svg viewBox="0 0 8 8" width={8} height={8} fill="#4A7FDB"><polygon points="4,0 5.4,2.6 8,3.1 6,5 6.5,7.6 4,6.3 1.5,7.6 2,5 0,3.1 2.6,2.6"/></svg>
                     Jornada de Relacionamento
                   </div>
                   <h2 style={{
@@ -438,7 +438,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                     fontFamily: 'var(--font-cormorant,serif)',
                     fontSize: '1.1rem', fontStyle: 'italic',
                     color: 'rgba(255,255,255,0.7)',
-                    borderLeft: '3px solid #d97706',
+                    borderLeft: '3px solid #4A7FDB',
                     paddingLeft: '.85rem',
                     lineHeight: 1.5,
                   }}>
@@ -483,7 +483,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                         Probabilidade
                       </span>
                     </div>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#d97706', fontFamily: 'var(--font-cormorant,serif)', lineHeight: 1 }}>
+                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#4A7FDB', fontFamily: 'var(--font-cormorant,serif)', lineHeight: 1 }}>
                       {escola.probabilidade_atual ?? 0}%
                     </div>
                   </div>
@@ -911,13 +911,13 @@ export default async function JornadaPage({ searchParams }: Props) {
                   {!parceiro && !assinado && (
                     <div style={{
                       background: 'linear-gradient(135deg, #fffbeb, #fef3c7)',
-                      border: '2px solid #d97706',
+                      border: '2px solid #4A7FDB',
                       borderRadius: 16, padding: '1.5rem',
                       display: 'flex', alignItems: 'center', gap: '1rem',
                     }}>
                       <div style={{
                         width: 48, height: 48, borderRadius: '50%',
-                        background: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        background: '#4A7FDB', display: 'flex', alignItems: 'center', justifyContent: 'center',
                         flexShrink: 0,
                       }}>
                         <IconTrend size={22} cor="#ffffff"/>
@@ -1013,7 +1013,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
                       {tarefas.slice(0, 5).map((t: any) => {
                         const vencida = t.vencimento && new Date(t.vencimento + 'T00:00:00') < hoje
-                        const corPrio = t.prioridade === 'urgente' ? '#ef4444' : t.prioridade === 'alta' ? '#f97316' : t.prioridade === 'media' ? '#d97706' : '#64748b'
+                        const corPrio = t.prioridade === 'urgente' ? '#ef4444' : t.prioridade === 'alta' ? '#f97316' : t.prioridade === 'media' ? '#4A7FDB' : '#64748b'
                         return (
                           <div key={t.id} style={{
                             padding: '.55rem .65rem',
@@ -1094,7 +1094,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                         {n.valor_estimado && (
                           <div style={{
                             fontSize: '1rem', fontWeight: 800,
-                            color: '#d97706', fontFamily: 'var(--font-cormorant,serif)',
+                            color: '#4A7FDB', fontFamily: 'var(--font-cormorant,serif)',
                             lineHeight: 1,
                           }}>
                             {formatCurrency(n.valor_estimado)}
@@ -1110,7 +1110,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                             <div style={{
                               height: '100%', borderRadius: 2,
                               width: `${n.probabilidade}%`,
-                              background: n.probabilidade >= 70 ? '#10b981' : n.probabilidade >= 40 ? '#d97706' : '#94a3b8',
+                              background: n.probabilidade >= 70 ? '#10b981' : n.probabilidade >= 40 ? '#4A7FDB' : '#94a3b8',
                             }}/>
                           </div>
                         </div>

@@ -7,7 +7,7 @@ import { moverNegociacao, removerDoQuadro } from './pipeline-actions'
 const STAGE_COLORS: Record<string, string> = {
   prospeccao:   '#6366f1',
   qualificacao: '#8b5cf6',
-  apresentacao: '#d97706',
+  apresentacao: '#4A7FDB',
   proposta:     '#f59e0b',
   negociacao:   '#0ea5e9',
   fechamento:   '#16a34a',
@@ -50,7 +50,7 @@ function getInitials(name: string) {
 }
 
 function nameColor(name: string) {
-  const colors = ['#6366f1','#8b5cf6','#d97706','#0ea5e9','#16a34a','#dc2626','#7c3aed','#db2777']
+  const colors = ['#6366f1','#8b5cf6','#4A7FDB','#0ea5e9','#16a34a','#dc2626','#7c3aed','#db2777']
   let h = 0
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffffffff
   return colors[Math.abs(h) % colors.length]
