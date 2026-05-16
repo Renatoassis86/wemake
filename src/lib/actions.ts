@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/public'
 import { calcPotencial, calcProbabilidade, calcClassificacao } from '@/types/database'
 import type { StageNegociacao } from '@/types/database'
 
@@ -695,8 +696,8 @@ export async function enviarFormularioPublico(formData: FormData): Promise<Actio
     // IMPORTANTE: usar client publico (sem cookies) — caso contrario o ssr
     // client pode ler cookies de sessao residuais e operar como uma role
     // sem permissao de INSERT, em vez de anon.
-    const { createPublicClient } = await import('@/lib/supabase/public')
     const supabase = createPublicClient()
+    console.log('[enviarFormularioPublico] using public anon client (no cookies)')
 
     const toNum = (k: string) => parseInt(formData.get(k) as string) || 0
 
