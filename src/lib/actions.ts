@@ -692,7 +692,11 @@ export async function upsertContrato(formData: FormData) {
  */
 export async function enviarFormularioPublico(formData: FormData): Promise<ActionResult> {
   try {
-    const supabase = await createClient()
+    // IMPORTANTE: usar client publico (sem cookies) — caso contrario o ssr
+    // client pode ler cookies de sessao residuais e operar como uma role
+    // sem permissao de INSERT, em vez de anon.
+    const { createPublicClient } = await import('@/lib/supabase/public')
+    const supabase = createPublicClient()
 
     const toNum = (k: string) => parseInt(formData.get(k) as string) || 0
 
