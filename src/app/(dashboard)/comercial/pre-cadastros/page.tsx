@@ -208,7 +208,7 @@ export default async function PreCadastrosPage() {
         }
       />
 
-      <div style={{ padding: '0 2rem 2rem' }}>
+      <div className="mp-page-padding-x" style={{ padding: '0 2rem 2rem' }}>
         {error && (
           <div style={{
             background: '#fef2f2', border: '1px solid #fca5a5', color: '#991b1b',
@@ -236,13 +236,13 @@ export default async function PreCadastrosPage() {
         {!error && registros.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '.85rem' }}>
             {registros.map(r => (
-              <article key={r.id} style={{
+              <article key={r.id} className="mp-precad-card" style={{
                 background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14,
                 padding: '1.1rem 1.25rem',
                 boxShadow: '0 1px 3px rgba(15,23,42,.04)',
               }}>
                 {/* Header da escola */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap', marginBottom: '.5rem' }}>
+                <div className="mp-precad-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap', marginBottom: '.5rem' }}>
                   <div style={{ flex: '1 1 320px', minWidth: 0 }}>
                     <h3 style={{
                       fontSize: '1.05rem', fontWeight: 700, color: '#0f172a',
@@ -265,7 +265,7 @@ export default async function PreCadastrosPage() {
                 </div>
 
                 {/* Linha de info principal */}
-                <div style={{
+                <div className="mp-precad-info-grid" style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
                   gap: '.5rem 1rem',

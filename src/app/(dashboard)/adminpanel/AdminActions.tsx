@@ -124,7 +124,7 @@ export function AdminActions({ roleOptions, profiles }: Props) {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="mp-stack-mobile" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div>
                 <label style={lbl}>Cargo / Perfil</label>
                 <select name="role" style={inp} defaultValue="consultor">
@@ -196,7 +196,7 @@ export function AdminActions({ roleOptions, profiles }: Props) {
           {profiles.map(p => {
             const roleStyle = ROLE_COLORS[p.role] ?? ROLE_COLORS.readonly
             return (
-              <div key={p.id} style={{
+              <div key={p.id} className="mp-admin-user-card" style={{
                 display: 'flex', alignItems: 'center', gap: '1rem',
                 padding: '1rem 1.1rem',
                 background: p.is_active ? '#fff' : '#fafafa',
@@ -218,7 +218,7 @@ export function AdminActions({ roleOptions, profiles }: Props) {
                 </div>
 
                 {/* Info */}
-                <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="mp-admin-user-info" style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 700, fontSize: '.875rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {p.full_name || '(sem nome)'}
                   </div>
@@ -228,7 +228,7 @@ export function AdminActions({ roleOptions, profiles }: Props) {
                 </div>
 
                 {/* Badges */}
-                <div style={{ display: 'flex', gap: '.35rem', alignItems: 'center', flexShrink: 0 }}>
+                <div className="mp-admin-user-badges" style={{ display: 'flex', gap: '.35rem', alignItems: 'center', flexShrink: 0 }}>
                   <span style={{
                     background: roleStyle.bg, color: roleStyle.text, border: `1px solid ${roleStyle.border}`,
                     padding: '.2rem .6rem', borderRadius: 9999,
@@ -273,14 +273,14 @@ export function AdminActions({ roleOptions, profiles }: Props) {
           MODAL DE EDIÇÃO
           ════════════════════════════════════════════════════════ */}
       {editando && (
-        <div style={{
+        <div className="mp-modal-overlay" style={{
           position: 'fixed', inset: 0, zIndex: 9999,
           background: 'rgba(15,23,42,.6)',
           backdropFilter: 'blur(4px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           padding: '1rem',
         }} onClick={e => { if (e.target === e.currentTarget) setEditando(null) }}>
-          <div style={{
+          <div className="mp-modal-fs" style={{
             background: '#fff', borderRadius: 20, width: '100%', maxWidth: 480,
             boxShadow: '0 24px 64px rgba(0,0,0,.4)',
             overflow: 'hidden',
@@ -301,7 +301,7 @@ export function AdminActions({ roleOptions, profiles }: Props) {
             </div>
 
             {/* Modal form */}
-            <form onSubmit={handleEditar} style={{ padding: '1.5rem' }}>
+            <form onSubmit={handleEditar} className="mp-modal-body" style={{ padding: '1.5rem' }}>
               {/* email oculto — identifica o usuário */}
               <input type="hidden" name="email" value={editando.email} />
 
@@ -317,7 +317,7 @@ export function AdminActions({ roleOptions, profiles }: Props) {
                   <input name="full_name" style={inp} required defaultValue={editando.full_name} />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="mp-stack-mobile" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div>
                     <label style={lbl}>Cargo / Perfil</label>
                     <select name="role" style={inp} defaultValue={editando.role}>

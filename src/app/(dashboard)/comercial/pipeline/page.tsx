@@ -54,7 +54,7 @@ export default async function PipelinePage({ searchParams }: Props) {
         }
       />
 
-      <div style={{ padding: '1rem 1.25rem' }}>
+      <div className="mp-page-padding-x" style={{ padding: '1rem 1.25rem' }}>
         {/* PipelineBoard é Client Component — busca dados diretamente no browser, sem cache SSR */}
         <PipelineBoard
           escolas={escolas ?? []}

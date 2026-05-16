@@ -81,10 +81,10 @@ export default async function ComercialDashboard() {
         }
       />
 
-      <div style={{ padding: '1.75rem 2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <div className="mp-page-padding-x" style={{ padding: '1.75rem 2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
         {/* ── KPI Cards ──────────────────────────────────────────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem' }}>
+        <div className="mp-kpi-grid-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem' }}>
           {kpis.map(k => (
             <Link key={k.label} href={k.href} style={{ textDecoration: 'none', display: 'block', background: k.bg, border: `1.5px solid ${k.border}`, borderTop: `3px solid ${k.cor}`, borderRadius: 14, padding: '1.1rem 1.25rem', boxShadow: '0 1px 4px rgba(15,23,42,.04)', transition: 'box-shadow .2s, transform .2s' }}
             >
@@ -97,7 +97,7 @@ export default async function ComercialDashboard() {
 
 
         {/* ── Conteúdo principal: 2 colunas ─────────────────────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+        <div className="mp-stack-mobile" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
 
           {/* Últimas Interações */}
           <div style={card}>
@@ -223,7 +223,7 @@ export default async function ComercialDashboard() {
         )}
 
         {/* ── Acesso rápido aos módulos ─────────────────────────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem' }}>
+        <div className="mp-kpi-grid-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem' }}>
           {[
             { label: 'Nova Escola',       href: '/comercial/escolas/nova',    cor: '#4A7FDB', desc: 'Cadastrar parceiro' },
             { label: 'Novo Registro',     href: '/comercial/registros/novo',  cor: '#0d9488', desc: 'Registrar interação' },

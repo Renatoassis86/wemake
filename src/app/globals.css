@@ -922,3 +922,202 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
 /* Dark mode support — we use light theme on /formulario page (white background)
    so do not override inputs globally. Pages with dark background style their
    own inputs explicitly. */
+
+/* ============================================================
+   DASHBOARD MOBILE — added by mobile-premium workstream B
+   ============================================================ */
+
+.dashboard-content { margin-left: var(--sidebar-w, 250px); }
+
+@media (max-width: 900px) {
+  .dashboard-content {
+    margin-left: 0 !important;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
+  }
+  /* impede scroll horizontal acidental na pagina inteira */
+  html, body { overflow-x: hidden; }
+}
+
+/* ── KPIs grid (comercial dashboard + adminpanel) ─────────── */
+@media (max-width: 900px) {
+  .mp-kpi-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+  .mp-kpi-grid-3 { grid-template-columns: repeat(2, 1fr) !important; }
+  .mp-kpi-grid-2-col { grid-template-columns: 1fr !important; }
+  .mp-section-padding { padding: 1.25rem 1rem !important; }
+  .mp-page-padding-x  { padding-left: 1rem !important; padding-right: 1rem !important; }
+  .mp-stack-mobile { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .mp-kpi-grid-4 { grid-template-columns: 1fr !important; }
+}
+
+/* ── Pre-cadastros: cards em mobile ───────────────────────── */
+@media (max-width: 768px) {
+  .mp-precad-card { padding: 1rem !important; }
+  .mp-precad-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: .5rem !important;
+  }
+  .mp-precad-info-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .mp-precad-actions {
+    flex-direction: row !important;
+    width: 100%;
+    gap: .5rem !important;
+  }
+  .mp-precad-actions > button {
+    flex: 1;
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+  }
+}
+
+/* ── Modais full-screen em mobile ─────────────────────────── */
+@media (max-width: 768px) {
+  .mp-modal-fs {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .mp-modal-overlay {
+    padding: 0 !important;
+    align-items: stretch !important;
+  }
+  .mp-modal-body {
+    flex: 1;
+    overflow-y: auto;
+  }
+}
+
+/* ── Escolas: toolbar/lista ───────────────────────────────── */
+@media (max-width: 768px) {
+  .mp-toolbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .mp-toolbar > * { width: 100%; max-width: 100% !important; }
+  .mp-toolbar input,
+  .mp-toolbar select,
+  .mp-toolbar button {
+    min-height: 44px !important;
+    font-size: .9rem !important;
+  }
+  .mp-toolbar .mp-view-toggle { margin-left: 0 !important; }
+  /* Tabela de escolas vira cards */
+  .mp-escolas-table thead { display: none !important; }
+  .mp-escolas-table,
+  .mp-escolas-table tbody,
+  .mp-escolas-table tr,
+  .mp-escolas-table td {
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+  }
+  .mp-escolas-table tr {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+    margin-bottom: .65rem !important;
+    padding: .75rem !important;
+  }
+  .mp-escolas-table td {
+    padding: .35rem 0 !important;
+    border: none !important;
+  }
+  .mp-escolas-table-wrap { overflow-x: visible !important; }
+}
+
+/* ── Escola detail: hero + grid ───────────────────────────── */
+@media (max-width: 900px) {
+  .mp-escola-hero { padding: 1.25rem 1rem 1rem !important; }
+  .mp-escola-hero-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .mp-escola-main-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .mp-escola-main-grid > div:last-child {
+    position: static !important;
+  }
+  .mp-escola-overview {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  .mp-escola-alunos-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .mp-escola-main-padding { padding: 1rem !important; }
+}
+@media (max-width: 480px) {
+  .mp-escola-alunos-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── EscolaDetailClient: tabs scroll horizontal ───────────── */
+@media (max-width: 768px) {
+  .mp-escola-tabs {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    flex-wrap: nowrap !important;
+  }
+  .mp-escola-tabs::-webkit-scrollbar { display: none; }
+  .mp-escola-tabs > button {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    min-height: 44px;
+  }
+}
+
+/* ── Pipeline Kanban: scroll horizontal ───────────────────── */
+@media (max-width: 900px) {
+  .mp-kanban-scroll {
+    display: flex !important;
+    grid-template-columns: none !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    padding-bottom: .5rem;
+  }
+  .mp-kanban-scroll > div {
+    min-width: 280px !important;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+  .mp-kanban-hint {
+    display: flex !important;
+  }
+}
+.mp-kanban-hint { display: none; }
+
+/* ── Adminpanel ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .mp-admin-create-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .mp-admin-user-card {
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+  }
+  .mp-admin-user-info { flex-basis: calc(100% - 60px); min-width: 0; }
+  .mp-admin-user-badges {
+    flex-basis: 100%;
+    margin-left: 0 !important;
+    margin-top: .5rem;
+    flex-wrap: wrap;
+  }
+  .mp-admin-audit-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+  .mp-admin-audit-wrap table { min-width: 640px; }
+}
+
+/* ── Tipografia responsiva de section title ──────────────── */
+.mp-section-title { font-size: clamp(1rem, 4vw, 1.3rem); }

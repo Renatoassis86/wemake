@@ -170,7 +170,7 @@ export function PipelineBoard({ escolas, userId, viewMode, filtroResp }: Props) 
 
           {/* Ganhos / Perdidos */}
           {(ganhos.length > 0 || perdidos.length > 0) && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1.25rem' }}>
+            <div className="mp-stack-mobile" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1.25rem' }}>
               {[
                 { label: 'Ganhos',   items: ganhos,   cor: '#16a34a', bg: '#f0fdf4', border: '#86efac' },
                 { label: 'Perdidos', items: perdidos, cor: '#dc2626', bg: '#fef2f2', border: '#fca5a5' },

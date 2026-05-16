@@ -35,7 +35,7 @@ export default async function AdminpanelPage() {
   return (
     <div>
       <PageHeader title="Gestão de Usuários" subtitle={isGerente ? 'Criar, editar e gerenciar a equipe' : 'Visualização'} />
-      <div style={{ padding: '2rem 2.5rem' }}>
+      <div className="mp-page-padding-x" style={{ padding: '2rem 2.5rem' }}>
 
         {/* Aviso acesso restrito */}
         {!isGerente && (
@@ -49,7 +49,7 @@ export default async function AdminpanelPage() {
         )}
 
         {/* KPIs */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem', marginBottom: '1.75rem' }}>
+        <div className="mp-kpi-grid-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem', marginBottom: '1.75rem' }}>
           {[
             { label: 'Total',    value: profiles?.length ?? 0, cor: '#4A7FDB', bg: '#fffbeb', border: '#fcd34d' },
             { label: 'Ativos',   value: ativos,   cor: '#16a34a', bg: '#f0fdf4', border: '#86efac' },
@@ -65,7 +65,7 @@ export default async function AdminpanelPage() {
 
         {isGerente ? (
           /* Layout 2 colunas: criar (esq) + lista com editar inline (dir) */
-          <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: '1.5rem', alignItems: 'start', marginBottom: '3rem' }}>
+          <div className="mp-admin-create-grid" style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: '1.5rem', alignItems: 'start', marginBottom: '3rem' }}>
             <AdminActions roleOptions={ROLE_OPTIONS} profiles={profiles ?? []} />
           </div>
         ) : (
@@ -102,7 +102,7 @@ export default async function AdminpanelPage() {
               </div>
               <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#fff' }}>Registro de Atividades (Audit Log)</div>
             </div>
-            <div style={{ overflowX: 'auto' }}>
+            <div className="mp-admin-audit-wrap" style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>

@@ -327,7 +327,7 @@ export default async function EscolaDetalhe({ params }: Props) {
     <div style={{ fontFamily: 'var(--font-inter, sans-serif)' }}>
 
       {/* ── HERO HEADER ─────────────────────────────────────────────────────── */}
-      <div style={{
+      <div className="mp-escola-hero" style={{
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a5f 100%)',
         padding: '2rem 2rem 1.75rem',
         position: 'relative',
@@ -429,7 +429,7 @@ export default async function EscolaDetalhe({ params }: Props) {
             </div>
 
             {/* right: action buttons — Editar e Excluir apenas */}
-            <div style={{ display: 'flex', gap: '.65rem', alignItems: 'center', flexShrink: 0 }}>
+            <div className="mp-escola-hero-actions" style={{ display: 'flex', gap: '.65rem', alignItems: 'center', flexShrink: 0 }}>
               <Link
                 href={`/comercial/escolas/${id}/editar`}
                 style={{
@@ -456,8 +456,8 @@ export default async function EscolaDetalhe({ params }: Props) {
       </div>
 
       {/* ── MAIN CONTENT ────────────────────────────────────────────────────── */}
-      <div style={{ padding: '1.75rem 2rem', maxWidth: 1280, margin: '0 auto' }}>
-        <div style={{
+      <div className="mp-escola-main-padding" style={{ padding: '1.75rem 2rem', maxWidth: 1280, margin: '0 auto' }}>
+        <div className="mp-escola-main-grid" style={{
           display: 'grid',
           gridTemplateColumns: '1fr 340px',
           gap: '1.5rem',
@@ -472,7 +472,7 @@ export default async function EscolaDetalhe({ params }: Props) {
               <div style={cardHeaderStyle}>
                 <span style={cardTitleStyle}>Visao Geral</span>
               </div>
-              <div style={{ ...cardBodyStyle, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.5rem' }}>
+              <div className="mp-escola-overview" style={{ ...cardBodyStyle, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.5rem' }}>
 
                 {/* Endereco */}
                 <div>
@@ -566,7 +566,7 @@ export default async function EscolaDetalhe({ params }: Props) {
               <div style={cardBodyStyle}>
 
                 {/* KPI boxes — Segmentos Detalhados */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem', marginBottom: '1.5rem' }}>
+                <div className="mp-escola-alunos-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem', marginBottom: '1.5rem' }}>
                   
                   {/* Infantil */}
                   <div style={{ background: '#fff7ed', border: '1.5px solid #fed7aa', borderRadius: 14, padding: '1rem' }}>

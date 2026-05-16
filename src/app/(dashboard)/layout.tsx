@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import Sidebar from '@/components/layout/Sidebar'
+import DashboardTopbar from '@/components/layout/DashboardTopbar'
 import type { Profile } from '@/types/database'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -40,8 +41,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <Sidebar profile={profile} />
       <div
         className="dashboard-content"
-        style={{ marginLeft: 'var(--sidebar-w)', flex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}
+        style={{ flex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}
       >
+        <DashboardTopbar />
         {children}
       </div>
     </div>
