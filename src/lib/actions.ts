@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createPublicClient } from '@/lib/supabase/public'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { calcPotencial, calcProbabilidade, calcClassificacao } from '@/types/database'
 import type { StageNegociacao } from '@/types/database'
 
@@ -693,11 +694,10 @@ export async function upsertContrato(formData: FormData) {
  */
 export async function enviarFormularioPublico(formData: FormData): Promise<ActionResult> {
   try {
-    // IMPORTANTE: usar client publico (sem cookies) — caso contrario o ssr
-    // client pode ler cookies de sessao residuais e operar como uma role
-    // sem permissao de INSERT, em vez de anon.
-    const supabase = createPublicClient()
-    console.log('[enviarFormularioPublico] using public anon client (no cookies)')
+    // Server-side action — usa service_role para gravar com seguranca
+    // (bypassa RLS). Como roda no servidor, a chave nunca é exposta.
+    const supabase = createAdminClient()
+    console.log('[enviarFormularioPublico] using admin client (service_role)')
 
     const toNum = (k: string) => parseInt(formData.get(k) as string) || 0
 
