@@ -748,13 +748,13 @@ export default function TutorialPage() {
             Fale com Renato Assis para suporte técnico ou dúvidas sobre a plataforma.
           </p>
           <div style={{ display: 'flex', gap: '.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="https://wa.me/5583986048784" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', padding: '.55rem 1.25rem', borderRadius: 9999, background: '#16a34a', color: '#fff', textDecoration: 'none', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+            <a href="https://wa.me/5583996541530" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', padding: '.55rem 1.25rem', borderRadius: 9999, background: '#16a34a', color: '#fff', textDecoration: 'none', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              WhatsApp (83) 98604-8784
+              WhatsApp (83) 99654-1530
             </a>
-            <a href="mailto:comercial@wemake.org" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', padding: '.55rem 1.25rem', borderRadius: 9999, border: '1px solid rgba(255,255,255,.2)', background: 'rgba(255,255,255,.06)', color: '#fff', textDecoration: 'none', fontSize: '.78rem', fontWeight: 600, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+            <a href="mailto:contato@wemake.tec.br" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', padding: '.55rem 1.25rem', borderRadius: 9999, border: '1px solid rgba(255,255,255,.2)', background: 'rgba(255,255,255,.06)', color: '#fff', textDecoration: 'none', fontSize: '.78rem', fontWeight: 600, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              comercial@wemake.org
+              contato@wemake.tec.br
             </a>
           </div>
         </div>

@@ -59,8 +59,8 @@ export default function LoginPage() {
           setMobileMenuOpen={setMobileMenuOpen}
           menuItems={[
             { label: 'Início', href: '/' },
-            { label: 'Sobre We Make', href: 'https://wemake.com.br' },
-            { label: 'Contato', href: 'mailto:comercial@wemake.org' },
+            { label: 'Sobre We Make', href: 'https://wemake.tec.br' },
+            { label: 'Contato', href: 'mailto:contato@wemake.tec.br' },
           ]}
           cta={{ label: 'Formulário da Escola', href: '/formulario' }}
         />
@@ -366,7 +366,7 @@ export default function LoginPage() {
                 }}>E-mail</label>
                 <input
                   type="email" value={email} onChange={e => setEmail(e.target.value)}
-                  required autoFocus placeholder="seu@wemake.org"
+                  required autoFocus placeholder="seu@wemake.tec.br"
                   style={{
                     width: '100%', padding: '.75rem 1rem',
                     background: 'rgba(255,255,255,.06)',
@@ -498,9 +498,9 @@ export default function LoginPage() {
               {/* Contatos */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '.6rem' }}>
                 {[
-                  { icon: <Mail size={14} />, label: 'comercial@wemake.org', href: 'mailto:comercial@wemake.org' },
-                  { icon: <Phone size={14} />, label: '(83) 98604-8784', href: 'tel:+5583986048784' },
-                  { icon: <MessageCircle size={14} />, label: 'WhatsApp Comercial', href: 'https://wa.me/5583986048784' },
+                  { icon: <Mail size={14} />, label: 'contato@wemake.tec.br', href: 'mailto:contato@wemake.tec.br' },
+                  { icon: <Phone size={14} />, label: '(83) 99654-1530', href: 'tel:+5583996541530' },
+                  { icon: <MessageCircle size={14} />, label: 'WhatsApp Comercial', href: 'https://wa.me/5583996541530' },
                   { icon: <span style={{fontSize:'14px'}}>📷</span>, label: '@wemakebr', href: 'https://instagram.com/wemakebr' },
                 ].map(item => (
                   <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" style={{
@@ -556,7 +556,7 @@ export default function LoginPage() {
                 Links Úteis
               </div>
               {[
-                { label: 'We Make', href: 'https://wemake.org/' },
+                { label: 'We Make', href: 'https://wemake.tec.br/' },
                 { label: 'Gestão Comercial', href: '/' },
                 { label: 'Gestão de Contratos', href: '/' },
                 { label: 'Formulário de Pré-Cadastro', href: '/formulario' },

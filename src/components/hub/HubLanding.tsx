@@ -420,17 +420,17 @@ export default function HubLanding() {
                 Transformando educação através da tecnologia e inovação comercial.
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '.6rem' }}>
-                <a href="mailto:comercial@wemake.org" style={{
+                <a href="mailto:contato@wemake.tec.br" style={{
                   color: 'rgba(255,255,255,.45)', textDecoration: 'none',
                   fontSize: '.85rem', fontFamily: 'var(--font-inter,sans-serif)',
                 }}>
-                  📧 comercial@wemake.org
+                  📧 contato@wemake.tec.br
                 </a>
-                <a href="https://wemake.com.br" target="_blank" rel="noopener noreferrer" style={{
+                <a href="https://wemake.tec.br" target="_blank" rel="noopener noreferrer" style={{
                   color: 'rgba(255,255,255,.45)', textDecoration: 'none',
                   fontSize: '.85rem', fontFamily: 'var(--font-inter,sans-serif)',
                 }}>
-                  🌐 wemake.com.br
+                  🌐 wemake.tec.br
                 </a>
               </div>
             </div>
@@ -463,7 +463,7 @@ export default function HubLanding() {
               }}>
                 Links
               </h4>
-              <a href="https://wemake.com.br" target="_blank" rel="noopener noreferrer" style={{
+              <a href="https://wemake.tec.br" target="_blank" rel="noopener noreferrer" style={{
                 display: 'block', color: 'rgba(255,255,255,.4)', textDecoration: 'none',
                 fontSize: '.85rem', padding: '.2rem 0', fontFamily: 'var(--font-inter,sans-serif)',
               }}>

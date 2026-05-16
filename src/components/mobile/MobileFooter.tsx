@@ -29,7 +29,7 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
     {
       title: 'Links Úteis',
       items: [
-        { label: 'We Make', href: 'https://wemake.com.br' },
+        { label: 'We Make', href: 'https://wemake.tec.br' },
         { label: 'Plataforma', href: '/login' },
         { label: 'Formulário', href: '/formulario' },
         { label: 'Contato', href: '#contato' },
@@ -72,7 +72,7 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
             Contatos
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <a href="mailto:comercial@wemake.org" style={{
+            <a href="mailto:contato@wemake.tec.br" style={{
               display: 'flex',
               alignItems: 'center',
               gap: '0.75rem',
@@ -86,9 +86,9 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
               onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,.5)'}
             >
               <Mail size={16} style={{ flexShrink: 0, color: '#5FE3D0' }} />
-              comercial@wemake.org
+              contato@wemake.tec.br
             </a>
-            <a href="tel:+5583986048784" style={{
+            <a href="tel:+5583996541530" style={{
               display: 'flex',
               alignItems: 'center',
               gap: '0.75rem',
@@ -102,9 +102,9 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
               onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,.5)'}
             >
               <Phone size={16} style={{ flexShrink: 0, color: '#5FE3D0' }} />
-              (83) 98604-8784
+              (83) 99654-1530
             </a>
-            <a href="https://wa.me/5583986048784" target="_blank" rel="noopener noreferrer" style={{
+            <a href="https://wa.me/5583996541530" target="_blank" rel="noopener noreferrer" style={{
               display: 'flex',
               alignItems: 'center',
               gap: '0.75rem',

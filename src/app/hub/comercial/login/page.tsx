@@ -282,7 +282,7 @@ export default function ComercialLoginPage() {
                 }}>E-mail</label>
                 <input
                   type="email" value={email} onChange={e => setEmail(e.target.value)}
-                  required autoFocus placeholder="seu@cidadeviva.org"
+                  required autoFocus placeholder="seu@wemake.tec.br"
                   style={{
                     width: '100%', padding: '.75rem 1rem',
                     background: 'rgba(255,255,255,.06)',
@@ -407,10 +407,10 @@ export default function ComercialLoginPage() {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '.6rem' }}>
                 {[
-                  { icon: <Mail size={14} />, label: 'comercial@wemake.org', href: 'mailto:comercial@wemake.org' },
-                  { icon: <Phone size={14} />, label: '(83) 98604-8784', href: 'tel:+5583986048784' },
-                  { icon: <MessageCircle size={14} />, label: 'WhatsApp', href: 'https://wa.me/5583986048784' },
-                  { icon: <span style={{fontSize:'14px'}}>📷</span>, label: '@wemakebr', href: 'https://instagram.com/cidadeviva.education' },
+                  { icon: <Mail size={14} />, label: 'contato@wemake.tec.br', href: 'mailto:contato@wemake.tec.br' },
+                  { icon: <Phone size={14} />, label: '(83) 99654-1530', href: 'tel:+5583996541530' },
+                  { icon: <MessageCircle size={14} />, label: 'WhatsApp', href: 'https://wa.me/5583996541530' },
+                  { icon: <span style={{fontSize:'14px'}}>📷</span>, label: '@wemake', href: 'https://instagram.com/wemake' },
                 ].map(item => (
                   <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" style={{
                     display: 'flex', alignItems: 'center', gap: '.5rem',
@@ -462,7 +462,7 @@ export default function ComercialLoginPage() {
                 Links Úteis
               </div>
               {[
-                { label: 'We Make', href: 'https://cidadeviva.org/' },
+                { label: 'We Make', href: 'https://wemake.tec.br/' },
                 { label: 'Hub de Plataformas', href: '/' },
                 { label: 'Gestão de Contratos', href: '/hub/contratos/login' },
                 { label: 'FICV Faculdade', href: 'https://ficv.edu.br/' },

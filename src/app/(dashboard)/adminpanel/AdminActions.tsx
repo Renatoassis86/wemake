@@ -111,7 +111,7 @@ export function AdminActions({ roleOptions, profiles }: Props) {
 
             <div>
               <label style={lbl}>E-mail *</label>
-              <input name="email" type="email" style={inp} required placeholder="email@cidadeviva.org" />
+              <input name="email" type="email" style={inp} required placeholder="email@wemake.tec.br" />
             </div>
 
             {/* Senha temporária info */}
