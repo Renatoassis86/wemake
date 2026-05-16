@@ -191,10 +191,17 @@ export default function FormularioPublico() {
 
         console.log('✅ SUCESSO! Dados salvos no banco de dados')
 
-        // Aguarda 8 segundos para usuario ver a mensagem
+        // Limpa rascunhos pra a página recarregar em branco
+        try {
+          localStorage.removeItem('formulario_rascunho_auto')
+          localStorage.removeItem('formulario_rascunho')
+        } catch {}
+
+        // 5s com a mensagem visível, depois esconde e recarrega a página
         setTimeout(() => {
-          window.location.href = '/formulario/obrigado'
-        }, 8000)
+          setFeedback(null)
+          window.location.reload()
+        }, 5000)
       } else {
         setLoading(false)
         const errorMsg = result?.error || 'Erro desconhecido ao salvar'
