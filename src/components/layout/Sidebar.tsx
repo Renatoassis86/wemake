@@ -13,7 +13,7 @@ import {
   Package, FlaskConical, BarChart2, Download,
   Bot, DollarSign, Table2, Info, FileSignature, ClipboardList,
   ExternalLink, GitBranch, Target, CalendarDays, FileAudio,
-  Upload, TrendingUp, Database, BookOpen
+  Upload, Database, BookOpen
 } from 'lucide-react'
 
 interface SidebarProps { profile: Profile | null }
@@ -22,7 +22,7 @@ interface SidebarProps { profile: Profile | null }
 
 const NAV_CRM = [
   { href: '/comercial',                label: 'Dashboard',     icon: LayoutDashboard },
-  { href: '/comercial/pre-cadastros',  label: 'Pré-cadastros', icon: ClipboardList   },
+  { href: '/comercial/pre-cadastros',  label: 'Dados Proposta Comercial', icon: ClipboardList   },
   { href: '/comercial/escolas',        label: 'Escolas',       icon: School          },
   { href: '/comercial/registros',      label: 'Registros',     icon: FileText        },
 ]
@@ -41,7 +41,6 @@ const NAV_TOOLS = [
   { href: '/transcricoes',        label: 'Transcrições',     icon: FileAudio       },
   { href: '/leads-banco',         label: 'Banco de Leads',   icon: Database        },
   { href: '/importacao',          label: 'Importar Dados',   icon: Upload          },
-  { href: '/pesquisa-mercado',    label: 'Pesquisa CIECC',   icon: TrendingUp      },
   { href: '/calculadora',         label: 'Calculadora',      icon: Calculator      },
   { href: '/exports',             label: 'Downloads',        icon: Download        },
 ]

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import PageHeader from '@/components/layout/PageHeader'
 import { ROLE_OPTIONS } from '@/types/database'
@@ -9,11 +10,22 @@ export default async function AdminpanelPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const [{ data: me }, { data: profiles }, { data: logs }] = await Promise.all([
-    supabase.from('profiles').select('role').eq('id', user.id).single(),
-    supabase.from('profiles').select('*').order('full_name'),
-    supabase.from('audit_log').select('*').order('created_at', { ascending: false }).limit(20)
+  // Schema We Make: tabela é `usuarios` (não `profiles`). Mapeamos para o shape esperado pelo AdminActions.
+  const admin = createAdminClient()
+  const [{ data: me }, { data: usuariosRaw }, { data: logs }] = await Promise.all([
+    admin.from('usuarios').select('role').eq('id', user.id).single(),
+    admin.from('usuarios').select('*').order('nome_completo'),
+    admin.from('audit_log').select('*').order('created_at', { ascending: false }).limit(20),
   ])
+
+  const profiles = (usuariosRaw ?? []).map((u: any) => ({
+    id:        u.id,
+    email:     u.email,
+    full_name: u.nome_completo ?? u.email,
+    role:      u.role ?? 'consultor',
+    is_active: u.ativo ?? true,
+    phone:     u.cargo?.startsWith('Tel: ') ? u.cargo.slice(5) : null,
+  }))
 
   const isGerente = me?.role === 'gerente'
   const ativos    = profiles?.filter((p: any) => p.is_active)?.length  ?? 0

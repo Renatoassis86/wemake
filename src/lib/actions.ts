@@ -824,20 +824,23 @@ export async function criarUsuario(formData: FormData): Promise<ActionResult> {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { success: false, error: 'Não autenticado' }
 
-  const { data: me } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-  if (me?.role !== 'gerente') return { success: false, error: 'Apenas gerentes podem criar usuários' }
-
-  const email    = formData.get('email') as string
-  const fullName = formData.get('full_name') as string
-  const role     = formData.get('role') as string || 'consultor'
-  const isActive = formData.get('is_active') !== 'false'
-  const phone    = formData.get('phone') as string || null
-  const password = formData.get('password') as string || 'Senha@2026'   // senha temporária
-
+  // Schema We Make: tabela é `usuarios` (não `profiles`). Lê com admin pra escapar de RLS no próprio perfil.
   const { createAdminClient } = await import('@/lib/supabase/admin')
   const admin = createAdminClient()
 
-  // 1. Verificar se já existe no Auth
+  const { data: me } = await admin.from('usuarios').select('role').eq('id', user.id).single()
+  if (me?.role !== 'gerente') return { success: false, error: 'Apenas gerentes podem criar usuários' }
+
+  const email    = (formData.get('email') as string || '').trim().toLowerCase()
+  const fullName = (formData.get('full_name') as string || '').trim()
+  const role     = (formData.get('role') as string) || 'consultor'
+  const isActive = formData.get('is_active') !== 'false'
+  const phone    = (formData.get('phone') as string) || null
+  const password = (formData.get('password') as string) || 'Senha@2026'
+
+  if (!email || !fullName) return { success: false, error: 'Nome completo e e-mail são obrigatórios' }
+
+  // 1. Verifica se já existe no Auth
   const { data: lista } = await admin.auth.admin.listUsers()
   const jaExiste = lista?.users?.find(u => u.email === email)
 
@@ -845,30 +848,28 @@ export async function criarUsuario(formData: FormData): Promise<ActionResult> {
 
   if (jaExiste) {
     userId = jaExiste.id
-    // Atualizar metadata se necessário
     await admin.auth.admin.updateUserById(userId, {
-      user_metadata: { full_name: fullName },
+      user_metadata: { nome: fullName },
     })
   } else {
-    // Criar novo usuário no Auth
     const { data: authData, error: authErr } = await admin.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
-      user_metadata: { full_name: fullName },
+      user_metadata: { nome: fullName },
     })
     if (authErr) return { success: false, error: authErr.message }
     userId = authData.user.id
   }
 
-  // 2. Criar/atualizar perfil
-  const { error: profileErr } = await admin.from('profiles').upsert({
-    id:        userId,
+  // 2. Upsert na tabela `usuarios` (telefone vira cargo se não houver coluna phone)
+  const { error: profileErr } = await admin.from('usuarios').upsert({
+    id:             userId,
     email,
-    full_name: fullName,
+    nome_completo:  fullName,
     role,
-    is_active: isActive,
-    phone,
+    ativo:          isActive,
+    cargo:          phone ? `Tel: ${phone}` : null,
   }, { onConflict: 'id' })
 
   if (profileErr) return { success: false, error: profileErr.message }
@@ -878,36 +879,91 @@ export async function criarUsuario(formData: FormData): Promise<ActionResult> {
 }
 
 /**
- * Atualiza perfil de usuário existente.
+ * Atualiza perfil de usuário existente na tabela `usuarios`.
  */
 export async function upsertProfile(formData: FormData): Promise<ActionResult> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { success: false, error: 'Não autenticado' }
 
-  const { data: me } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  const { createAdminClient } = await import('@/lib/supabase/admin')
+  const admin = createAdminClient()
+
+  const { data: me } = await admin.from('usuarios').select('role').eq('id', user.id).single()
   if (me?.role !== 'gerente') return { success: false, error: 'Sem permissão' }
 
-  const email    = formData.get('email') as string
-  const fullName = formData.get('full_name') as string
+  const email    = (formData.get('email') as string || '').trim().toLowerCase()
+  const fullName = (formData.get('full_name') as string || '').trim()
   const role     = formData.get('role') as string
   const isActive = formData.get('is_active') === 'true'
-  const phone    = formData.get('phone') as string || null
+  const phone    = (formData.get('phone') as string) || null
 
-  // Verificar se o profile existe
-  const { data: existing } = await supabase.from('profiles').select('id').eq('email', email).single()
+  const { data: existing } = await admin.from('usuarios').select('id').eq('email', email).single()
 
   if (!existing) {
-    // Profile não existe — redirecionar para criarUsuario
     return { success: false, error: `Usuário com e-mail "${email}" não existe. Use "Criar Novo Usuário".` }
   }
 
-  const { error } = await supabase
-    .from('profiles')
-    .update({ full_name: fullName, role, is_active: isActive, phone })
+  const { error } = await admin
+    .from('usuarios')
+    .update({
+      nome_completo: fullName,
+      role,
+      ativo:         isActive,
+      cargo:         phone ? `Tel: ${phone}` : null,
+    })
     .eq('email', email)
 
   if (error) return { success: false, error: error.message }
+  revalidatePath('/adminpanel')
+  return { success: true }
+}
+
+/**
+ * Exclui usuário (perfil + conta de auth).
+ */
+export async function excluirUsuario(userId: string): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado' }
+  if (user.id === userId) return { success: false, error: 'Você não pode excluir a própria conta' }
+
+  const { createAdminClient } = await import('@/lib/supabase/admin')
+  const admin = createAdminClient()
+
+  const { data: me } = await admin.from('usuarios').select('role').eq('id', user.id).single()
+  if (me?.role !== 'gerente') return { success: false, error: 'Sem permissão' }
+
+  // Remove perfil primeiro pra evitar trigger ressuscitar
+  await admin.from('usuarios').delete().eq('id', userId)
+  const { error } = await admin.auth.admin.deleteUser(userId)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/adminpanel')
+  return { success: true }
+}
+
+/**
+ * Reseta a senha do usuário para uma nova senha definida pelo gerente.
+ */
+export async function resetarSenhaUsuario(userId: string, novaSenha: string): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado' }
+
+  if (!novaSenha || novaSenha.length < 6) {
+    return { success: false, error: 'A senha deve ter pelo menos 6 caracteres' }
+  }
+
+  const { createAdminClient } = await import('@/lib/supabase/admin')
+  const admin = createAdminClient()
+
+  const { data: me } = await admin.from('usuarios').select('role').eq('id', user.id).single()
+  if (me?.role !== 'gerente') return { success: false, error: 'Sem permissão' }
+
+  const { error } = await admin.auth.admin.updateUserById(userId, { password: novaSenha })
+  if (error) return { success: false, error: error.message }
+
   revalidatePath('/adminpanel')
   return { success: true }
 }

@@ -1,6 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import PageHeader from '@/components/layout/PageHeader'
 import { ClipboardList, MapPin, Mail, Phone, FileText, CalendarDays, GraduationCap } from 'lucide-react'
+import PreCadastroActions from './PreCadastroActions'
 
 interface PreCadastro {
   id: string
@@ -199,7 +200,7 @@ export default async function PreCadastrosPage() {
   return (
     <div>
       <PageHeader
-        title="Pré-cadastros recebidos"
+        title="Dados Proposta Comercial"
         subtitle={
           error
             ? `Erro ao carregar: ${error.message}`
@@ -315,6 +316,11 @@ export default async function PreCadastrosPage() {
 
                 {/* Detalhes expansíveis */}
                 <RowDetails r={r} />
+
+                {/* Ações: editar / excluir */}
+                <div style={{ marginTop: '.75rem', paddingTop: '.65rem', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'flex-end' }}>
+                  <PreCadastroActions registro={r} />
+                </div>
               </article>
             ))}
           </div>
