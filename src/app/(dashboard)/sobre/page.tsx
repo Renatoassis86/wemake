@@ -120,38 +120,51 @@ export default function SobrePage() {
           <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '1.25rem' }}>
             Identidade da We Make
           </div>
+          {/* Quem somos — frase institucional */}
+          <div style={{ background: 'rgba(95,227,208,.06)', borderRadius: 12, padding: '1.25rem 1.5rem', borderLeft: '3px solid #5FE3D0', marginBottom: '1.5rem' }}>
+            <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#5FE3D0', marginBottom: '.5rem' }}>Quem somos</div>
+            <p style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.05rem', fontStyle: 'italic', color: '#fff', lineHeight: 1.55 }}>
+              We Make — <em>“nós fazemos”</em> — é uma empresa criada com o objetivo de pensar, estudar, produzir e ensinar tecnologia a partir da Cosmovisão Cristã, com comprometimento com uma educação escolar distintamente cristã, que prima pela Verdade, Beleza e Bondade.
+            </p>
+          </div>
+
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.75rem' }}>
             <div style={{ background: 'rgba(255,255,255,.05)', borderRadius: 12, padding: '1.25rem', borderLeft: '3px solid #4A7FDB' }}>
               <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.5rem' }}>Missão</div>
               <p style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.05rem', fontStyle: 'italic', color: '#fff', lineHeight: 1.55 }}>
-                Conduzir pessoas ao deslumbramento a partir de uma educação cristã de excelência.
+                Promover uma Educação Tecnológica de excelência, pensando, estudando, produzindo e ensinando tecnologia com liberdade e responsabilidade em resposta a Deus.
               </p>
             </div>
             <div style={{ background: 'rgba(255,255,255,.05)', borderRadius: 12, padding: '1.25rem', borderLeft: '3px solid rgba(255,255,255,.2)' }}>
               <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: 'rgba(255,255,255,.5)', marginBottom: '.5rem' }}>Visão</div>
               <p style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.05rem', fontStyle: 'italic', color: 'rgba(255,255,255,.8)', lineHeight: 1.55 }}>
-                Ser uma ponte que resgata o melhor do passado, educando mentes e corações para a contemplação, a virtude e a glória de Deus.
+                Ser uma empresa de referência em Educação Tecnológica fundamentada na Cosmovisão Cristã.
               </p>
             </div>
           </div>
 
           <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: 'rgba(255,255,255,.4)', marginBottom: '1rem' }}>
-            Valores Organizacionais
+            Valores
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
             {[
-              { eixo: 'Cristão', cor: '#f59e0b', valores: ['Piedade', 'Sabedoria', 'Amor', 'Cosmovisão'] },
-              { eixo: 'Pedagógico', cor: '#60a5fa', valores: ['Liberdade', 'Excelência', 'Integralidade', 'Beleza', 'Tradição', 'Verdade'] },
-              { eixo: 'Inovação', cor: '#34d399', valores: ['Estética', 'Criatividade', 'Regionalidade', 'Tecnologia', 'Experiência'] },
-              { eixo: 'Organizacional', cor: '#c084fc', valores: ['Transparência', 'Prudência', 'Mordomia', 'Comprometimento'] },
+              { eixo: 'Cosmovisão Cristã',    cor: '#5FE3D0', desc: 'Toda atividade humana parte da resposta a Deus, criador e mantenedor de todas as coisas.' },
+              { eixo: 'Mordomia',             cor: '#4A7FDB', desc: 'Cuidado responsável e consciente dos recursos, talentos e tempo confiados a nós.' },
+              { eixo: 'Inovação Criacional',  cor: '#34d399', desc: 'Inovar com criatividade e propósito, refletindo o caráter criador de Deus.' },
+              { eixo: 'Transformação Integral', cor: '#c084fc', desc: 'Formação completa que alcança a pessoa em todas as suas dimensões.' },
             ].map(e => (
               <div key={e.eixo} style={{ background: 'rgba(255,255,255,.04)', borderRadius: 10, padding: '1rem', borderTop: `2px solid ${e.cor}` }}>
-                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: e.cor, marginBottom: '.6rem' }}>{e.eixo}</div>
-                {e.valores.map(v => (
-                  <div key={v} style={{ fontSize: '.75rem', color: 'rgba(255,255,255,.65)', padding: '.2rem 0', borderBottom: '1px solid rgba(255,255,255,.05)', fontFamily: 'var(--font-inter,sans-serif)' }}>{v}</div>
-                ))}
+                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: e.cor, marginBottom: '.5rem' }}>{e.eixo}</div>
+                <div style={{ fontSize: '.78rem', color: 'rgba(255,255,255,.7)', lineHeight: 1.55, fontFamily: 'var(--font-inter,sans-serif)' }}>{e.desc}</div>
               </div>
             ))}
+          </div>
+
+          {/* Mandato Cultural — citação de fechamento */}
+          <div style={{ marginTop: '1.5rem', padding: '1rem 1.25rem', background: 'rgba(255,255,255,.03)', borderRadius: 10, borderLeft: '2px solid rgba(255,255,255,.2)' }}>
+            <p style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '.95rem', fontStyle: 'italic', color: 'rgba(255,255,255,.6)', lineHeight: 1.6, margin: 0 }}>
+              Compreendemos a tecnologia não como um fim em si mesma, mas como parte do Mandato Cultural.
+            </p>
           </div>
         </div>
 
