@@ -19,6 +19,7 @@ import sys
 URL = 'https://wemake-romh.vercel.app/formulario'
 SUPABASE_URL = 'https://vpacgvqkrkzskrzpsydg.supabase.co'
 SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwYWNndnFrcmt6c2tyenBzeWRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1OTIyNjAsImV4cCI6MjA5NDE2ODI2MH0.NNjL1i7XoQzUGYgelW4s6l0XW9d9UA_gX8ZcTkWphRU'
+SUPABASE_SVC = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwYWNndnFrcmt6c2tyenBzeWRnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODU5MjI2MCwiZXhwIjoyMDk0MTY4MjYwfQ.oQK6ILLnyu-MIC-J240rl26DIK7U84qGpCyrduO5DFU'
 MARCA = f'TESTE-ROBO-{int(time.time())}'  # marca unica para localizar depois
 
 # Dados de teste
@@ -59,14 +60,14 @@ DADOS = {
 CHECKBOXES = ['seg_infantil', 'seg_fundamental_1', 'seg_fundamental_2', 'seg_ensino_medio']
 
 
-def supabase_count():
-    """Retorna a contagem total da tabela form_precadastro_wemake."""
+def supabase_count_svc():
+    """Conta com service_role (bypassa RLS de SELECT)."""
     r = requests.head(
         f'{SUPABASE_URL}/rest/v1/form_precadastro_wemake',
         params={'select': 'id'},
         headers={
-            'apikey': SUPABASE_KEY,
-            'Authorization': f'Bearer {SUPABASE_KEY}',
+            'apikey': SUPABASE_SVC,
+            'Authorization': f'Bearer {SUPABASE_SVC}',
             'Prefer': 'count=exact',
         },
         timeout=10,
@@ -76,11 +77,11 @@ def supabase_count():
 
 
 def supabase_find_by_marca(marca):
-    """Tenta encontrar o registro pela marca usada na razao_social."""
+    """Tenta encontrar o registro pela marca usada na razao_social (service_role)."""
     r = requests.get(
         f'{SUPABASE_URL}/rest/v1/form_precadastro_wemake',
         params={'select': '*', 'razao_social': f'ilike.*{marca}*'},
-        headers={'apikey': SUPABASE_KEY, 'Authorization': f'Bearer {SUPABASE_KEY}'},
+        headers={'apikey': SUPABASE_SVC, 'Authorization': f'Bearer {SUPABASE_SVC}'},
         timeout=10,
     )
     return r.json() if r.ok else None
@@ -116,8 +117,8 @@ def main():
     print('=' * 60)
 
     print(f'\n[1] Contagem antes do teste...')
-    antes = supabase_count()
-    print(f'    Registros na tabela: {antes}')
+    antes = supabase_count_svc()
+    print(f'    Registros na tabela (via service_role): {antes}')
 
     print(f'\n[2] Abrindo navegador headless e acessando {URL}')
     opts = Options()
@@ -188,8 +189,8 @@ def main():
         driver.quit()
 
     print('\n[6] Verificando se chegou ao Supabase...')
-    depois = supabase_count()
-    print(f'    Registros agora: {depois}  (delta: {depois - antes})')
+    depois = supabase_count_svc()
+    print(f'    Registros agora (service_role): {depois}  (delta: {depois - antes})')
 
     registros = supabase_find_by_marca(MARCA)
     if registros:

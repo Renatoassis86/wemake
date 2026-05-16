@@ -21,9 +21,10 @@ interface SidebarProps { profile: Profile | null }
 // ── Nav groups ───────────────────────────────────────────────────────────────
 
 const NAV_CRM = [
-  { href: '/comercial',           label: 'Dashboard',        icon: LayoutDashboard },
-  { href: '/comercial/escolas',   label: 'Escolas',          icon: School          },
-  { href: '/comercial/registros', label: 'Registros',        icon: FileText        },
+  { href: '/comercial',                label: 'Dashboard',     icon: LayoutDashboard },
+  { href: '/comercial/pre-cadastros',  label: 'Pré-cadastros', icon: ClipboardList   },
+  { href: '/comercial/escolas',        label: 'Escolas',       icon: School          },
+  { href: '/comercial/registros',      label: 'Registros',     icon: FileText        },
 ]
 
 const NAV_PROCESS = [
@@ -93,9 +94,9 @@ function NavItem({ href, label, icon: Icon, active, badge, external, wip }: NavI
     letterSpacing: '.005em',
     position: 'relative',
     background: active
-      ? 'linear-gradient(135deg, rgba(217,119,6,.9), rgba(180,83,9,.85))'
+      ? 'linear-gradient(135deg, rgba(95,227,208,.85), rgba(74,143,231,.85))'
       : 'transparent',
-    boxShadow: active ? '0 2px 10px rgba(217,119,6,.3)' : 'none',
+    boxShadow: active ? '0 2px 10px rgba(74,143,231,.3)' : 'none',
     opacity: wip ? .4 : 1,
     pointerEvents: wip ? 'none' : 'auto',
   }
@@ -118,7 +119,7 @@ function NavItem({ href, label, icon: Icon, active, badge, external, wip }: NavI
 
       {badge !== undefined && (
         <span style={{
-          marginLeft: 'auto', background: active ? 'rgba(255,255,255,.25)' : '#d97706',
+          marginLeft: 'auto', background: active ? 'rgba(255,255,255,.25)' : '#4A7FDB',
           color: '#fff', fontSize: '.58rem', fontWeight: 800, padding: '.1rem .4rem',
           borderRadius: 99, minWidth: 18, textAlign: 'center',
         }}>
@@ -202,7 +203,7 @@ export default function Sidebar({ profile }: SidebarProps) {
 
   const isGerente = profile?.role === 'gerente'
   // Gestão de Usuários visível apenas para o administrador principal
-  const isAdmin = profile?.email === 'renato.consultoria@cidadeviva.org'
+  const isAdmin = profile?.email === 'contato@wemake.tec.br' || profile?.email === 'renato086@gmail.com'
 
   return (
     <>
@@ -278,7 +279,7 @@ export default function Sidebar({ profile }: SidebarProps) {
       <nav style={{ flex: 1, overflowY: 'auto', padding: '.5rem 0 1rem' }}>
 
         {/* ── Sobre + Tutorial — primeiras abas ────────────────── */}
-        <NavItem href="/sobre"    label="Plataforma Education" icon={Info}     active={isActive('/sobre')} />
+        <NavItem href="/sobre"    label="Plataforma We Make" icon={Info}     active={isActive('/sobre')} />
         <NavItem href="/tutorial" label="Tutorial"     icon={BookOpen} active={isActive('/tutorial')} />
         <NavDivider />
 
@@ -359,10 +360,10 @@ export default function Sidebar({ profile }: SidebarProps) {
             {/* Avatar */}
             <div style={{
               width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
-              background: 'linear-gradient(135deg, #d97706, #b45309)',
+              background: 'linear-gradient(135deg, #5FE3D0, #4A7FDB)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: '#fff', fontSize: '.72rem', fontWeight: 700,
-              overflow: 'hidden', boxShadow: '0 0 0 2px rgba(217,119,6,.25)',
+              overflow: 'hidden', boxShadow: '0 0 0 2px rgba(74,143,231,.25)',
               fontFamily: 'var(--font-montserrat, sans-serif)',
             }}>
               {profile.avatar_url
