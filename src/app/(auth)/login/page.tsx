@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Eye, EyeOff, ArrowRight, ClipboardList, Phone, Mail, MessageCircle } from 'lucide-react'
+import { Eye, EyeOff, ArrowRight, ArrowLeft, ClipboardList, Phone, Mail, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import MobileNav from '@/components/mobile/MobileNav'
 import MobileFooter from '@/components/mobile/MobileFooter'
 
@@ -104,19 +105,37 @@ export default function LoginPage() {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         background: 'linear-gradient(to bottom, rgba(15,23,42,.9) 0%, transparent 100%)',
       }} className="desktop-header">
-        <Image
-          src="/images/we-make-1.png"
-          alt="We Make"
-          width={160}
-          height={44}
-          style={{ objectFit: 'contain', opacity: 0.92, width: 'auto', height: 'auto' }}
-          priority
-        />
-        <a href="/formulario" style={{
-          display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-          background: '#5FE3D0', color: '#0f172a',
-          padding: '.45rem 1.1rem', borderRadius: 9999,
-          fontSize: '.78rem', fontWeight: 700, textDecoration: 'none',
+        <Link href="/" aria-label="Voltar à página inicial" style={{ display: 'inline-flex', alignItems: 'center' }}>
+          <Image
+            src="/images/we-make-1.png"
+            alt="We Make"
+            width={160}
+            height={44}
+            style={{ objectFit: 'contain', opacity: 0.92, width: 'auto', height: 'auto', cursor: 'pointer' }}
+            priority
+          />
+        </Link>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '.6rem' }}>
+          <Link href="/" style={{
+            display: 'inline-flex', alignItems: 'center', gap: '.35rem',
+            background: 'rgba(255,255,255,.08)', color: 'rgba(255,255,255,.85)',
+            padding: '.45rem 1rem', borderRadius: 9999,
+            fontSize: '.78rem', fontWeight: 600, textDecoration: 'none',
+            border: '1px solid rgba(255,255,255,.15)',
+            fontFamily: 'var(--font-montserrat, sans-serif)',
+            transition: 'all .15s',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,.14)'; e.currentTarget.style.color = '#fff' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,.08)'; e.currentTarget.style.color = 'rgba(255,255,255,.85)' }}
+          >
+            <ArrowLeft size={14} />
+            Voltar ao início
+          </Link>
+          <a href="/formulario" style={{
+            display: 'inline-flex', alignItems: 'center', gap: '.4rem',
+            background: '#5FE3D0', color: '#0f172a',
+            padding: '.45rem 1.1rem', borderRadius: 9999,
+            fontSize: '.78rem', fontWeight: 700, textDecoration: 'none',
           letterSpacing: '.03em', boxShadow: '0 4px 14px rgba(95,227,208,.4)',
           transition: 'all .2s',
           fontFamily: 'var(--font-montserrat, sans-serif)',
@@ -124,9 +143,10 @@ export default function LoginPage() {
           onMouseEnter={e => { e.currentTarget.style.background = '#4A7FDB'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.transform = 'translateY(-1px)' }}
           onMouseLeave={e => { e.currentTarget.style.background = '#5FE3D0'; e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.transform = 'translateY(0)' }}
         >
-          <ClipboardList size={14} />
-          Formulário da Escola
-        </a>
+            <ClipboardList size={14} />
+            Formulário da Escola
+          </a>
+        </div>
       </header>
 
       {/* ══════════════════════════════════════════════════════════
