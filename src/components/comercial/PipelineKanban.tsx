@@ -68,10 +68,24 @@ export function PipelineKanban({ negociacoes, stages, userId, onUpdate }: Props)
   const dragStageRef = useRef<string | null>(null)
 
   async function handleRemover(negId: string) {
+    const neg = negs.find(n => n.id === negId)
+    const nome = neg?.escola?.nome ?? 'esta negociação'
+    if (!confirm(`Excluir definitivamente a negociação de "${nome}"? Esta ação não pode ser desfeita.`)) return
+
     setRemoving(negId)
+    // Optimistic update
+    const snapshot = negs
     setNegs(prev => prev.filter(n => n.id !== negId))
-    await removerDoQuadro(negId)
+
+    const r = await removerDoQuadro(negId)
     setRemoving(null)
+
+    if (!r.success) {
+      // Rollback se falhar
+      setNegs(snapshot)
+      alert(`Não foi possível excluir: ${r.error ?? 'erro desconhecido'}`)
+      return
+    }
     onUpdate?.()
   }
 

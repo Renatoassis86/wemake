@@ -23,7 +23,7 @@ export async function removerDoQuadro(id: string): Promise<{ success: boolean; e
 
   const { error } = await supabase
     .from('negociacoes')
-    .update({ ativa: false })
+    .delete()
     .eq('id', id)
 
   if (error) return { success: false, error: error.message }
