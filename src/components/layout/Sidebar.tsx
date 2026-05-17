@@ -41,16 +41,16 @@ const NAV_TOOLS = [
   { href: '/transcricoes',        label: 'Transcrições',     icon: FileAudio       },
   { href: '/leads-banco',         label: 'Banco de Leads',   icon: Database        },
   { href: '/importacao',          label: 'Importar Dados',   icon: Upload          },
-  { href: '/calculadora',         label: 'Calculadora',      icon: Calculator      },
   { href: '/exports',             label: 'Downloads',        icon: Download        },
 ]
 
 const NAV_WIP = [
-  { href: '/estoque',    label: 'Estoque',       icon: Package    },
-  { href: '/amostras',   label: 'Amostras',      icon: FlaskConical },
-  { href: '/dashboards', label: 'BI / Analytics',icon: BarChart2  },
-  { href: '/ai-bob',     label: 'ALMA — IA',     icon: Bot        },
-  { href: '/financeiro', label: 'Financeiro',    icon: DollarSign },
+  { href: '/calculadora', label: 'Calculadora',   icon: Calculator },
+  { href: '/estoque',     label: 'Estoque',       icon: Package    },
+  { href: '/amostras',    label: 'Amostras',      icon: FlaskConical },
+  { href: '/dashboards',  label: 'BI / Analytics',icon: BarChart2  },
+  { href: '/ai-bob',      label: 'ALMA — IA',     icon: Bot        },
+  { href: '/financeiro',  label: 'Financeiro',    icon: DollarSign },
 ]
 
 // ── Subcomponents ─────────────────────────────────────────────────────────────

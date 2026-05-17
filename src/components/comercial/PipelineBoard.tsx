@@ -38,32 +38,54 @@ export function PipelineBoard({ escolas, userId, viewMode, filtroResp }: Props) 
     setErroDb(null)
     const supabase = createClient()
 
-    // Busca negociações — sem nenhum filtro para ver TUDO que o RLS permite
-    const { data: negs, error: errNegs, count } = await supabase
+    // 1. Negociações cruas (sem embed — a FK pode não estar declarada no schema)
+    const { data: negs, error: errNegs } = await supabase
       .from('negociacoes')
-      .select('*, escola:escolas(id, nome, cidade, estado), responsavel:profiles!negociacoes_responsavel_id_fkey(id, full_name, role)', { count: 'exact' })
+      .select('*')
       .order('created_at', { ascending: false })
-
-    const { data: profs } = await supabase
-      .from('profiles')
-      .select('id, full_name')
-      .eq('is_active', true)
-      .in('role', ['gerente','supervisor','consultor'])
-      .order('full_name')
 
     if (errNegs) {
       setErroDb(`Erro ao carregar: ${errNegs.message}`)
       setNegociacoes([])
-    } else {
-      const VALIDOS = ['prospeccao','qualificacao','apresentacao','proposta','negociacao','fechamento','ganho','perdido']
-      const normalizados = (negs ?? []).map((n: any) => ({
-        ...n,
-        stage: VALIDOS.includes(n.stage) ? n.stage : 'prospeccao'
-      }))
-      setNegociacoes(normalizados)
+      setProfiles([])
+      setLoading(false)
+      return
     }
 
-    setProfiles(profs ?? [])
+    // 2. Carrega escolas e usuários referenciados em paralelo (join manual no client)
+    const escolaIds = Array.from(new Set((negs ?? []).map(n => n.escola_id).filter(Boolean)))
+    const respIds = Array.from(new Set((negs ?? []).map(n => n.responsavel_id).filter(Boolean)))
+
+    const [escolasRes, usuariosRes, profsRes] = await Promise.all([
+      escolaIds.length
+        ? supabase.from('escolas').select('id, nome, cidade, estado').in('id', escolaIds)
+        : Promise.resolve({ data: [] as any[] }),
+      respIds.length
+        ? supabase.from('usuarios').select('id, nome_completo, role').in('id', respIds)
+        : Promise.resolve({ data: [] as any[] }),
+      supabase.from('usuarios')
+        .select('id, nome_completo')
+        .eq('ativo', true)
+        .in('role', ['gerente', 'supervisor', 'consultor'])
+        .order('nome_completo'),
+    ])
+
+    const escolaById = new Map((escolasRes.data ?? []).map((e: any) => [e.id, e]))
+    const usuarioById = new Map((usuariosRes.data ?? []).map((u: any) => [u.id, u]))
+
+    const VALIDOS = ['prospeccao','qualificacao','apresentacao','proposta','negociacao','fechamento','ganho','perdido']
+    const normalizados = (negs ?? []).map((n: any) => {
+      const u = usuarioById.get(n.responsavel_id)
+      return {
+        ...n,
+        stage: VALIDOS.includes(n.stage) ? n.stage : 'prospeccao',
+        escola: escolaById.get(n.escola_id) ?? null,
+        responsavel: u ? { id: u.id, full_name: u.nome_completo, role: u.role } : null,
+      }
+    })
+
+    setNegociacoes(normalizados)
+    setProfiles((profsRes.data ?? []).map((u: any) => ({ id: u.id, full_name: u.nome_completo })))
     setLoading(false)
   }, [userId])
 
