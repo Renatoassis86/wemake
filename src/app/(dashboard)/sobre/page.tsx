@@ -353,42 +353,6 @@ export default function SobrePage() {
           </div>
         </div>
 
-        {/* ── Os 3 pilares — Cristão, Clássico, Bilíngue ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
-          {[
-            {
-              icone: '✝',
-              titulo: 'Cristão',
-              ref: '2 Timóteo 3.15',
-              desc: 'Tem como fundamento a Bíblia, onde se encontra a referência para todo conhecimento, a fim de que o homem se torne apto para toda boa obra.',
-              cor: '#4A7FDB', bg: '#fffbeb', border: '#fde68a',
-            },
-            {
-              icone: '◈',
-              titulo: 'Clássico',
-              ref: 'Trivium e Quadrivium',
-              desc: 'Recupera a tradição pedagógica ocidental: Gramática, Lógica e Retórica formam mentes capazes de pensar, argumentar e se expressar com excelência.',
-              cor: '#2563eb', bg: '#eff6ff', border: '#bfdbfe',
-            },
-            {
-              icone: '◎',
-              titulo: 'Bilíngue',
-              ref: 'Inglês integrado ao currículo',
-              desc: 'O idioma é aprendido de forma integrada ao conteúdo pedagógico, não como disciplina isolada, formando comunicadores fluentes e pensadores globais.',
-              cor: '#16a34a', bg: '#f0fdf4', border: '#86efac',
-            },
-          ].map(p => (
-            <div key={p.titulo} style={{ background: p.bg, border: `1.5px solid ${p.border}`, borderRadius: 16, padding: '1.5rem', borderTop: `3px solid ${p.cor}` }}>
-              <div style={{ width: 36, height: 36, borderRadius: 9, background: p.cor, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '1rem', fontWeight: 700, marginBottom: '.85rem' }}>
-                {p.icone}
-              </div>
-              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: p.cor, marginBottom: '.3rem' }}>{p.titulo}</div>
-              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0f172a', marginBottom: '.5rem' }}>{p.ref}</div>
-              <p style={{ fontSize: '.78rem', color: '#475569', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)' }}>{p.desc}</p>
-            </div>
-          ))}
-        </div>
-
         {/* ── O que está na plataforma digital ── */}
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 20, overflow: 'hidden', marginBottom: '1.5rem', boxShadow: '0 2px 12px rgba(15,23,42,.06)' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', alignItems: 'center' }}>
