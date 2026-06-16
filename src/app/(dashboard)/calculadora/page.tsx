@@ -217,6 +217,7 @@ function InlineNum({ value, onChange, prefix, suffix, min = 0, step = 1, style }
 // ══════════════════════════════════════════════════════════════════
 export default function CalculadoraPage() {
   const [tab, setTab] = useState<'sistema' | 'comodato'>('sistema')
+  const [incluiComodato, setIncluiComodato] = useState(false)
 
   // ── Parâmetros do Sistema (todos editáveis) ──────────────────────
   const [sp, setSp] = useState<SisParams>(DEFAULT_SIS)
@@ -659,6 +660,134 @@ export default function CalculadoraPage() {
               <div style={{ marginTop: '.65rem', fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
                 Selecionado: <strong style={{ color: '#2563eb' }}>{parcelas}x de {R$(sis.anual / parcelas)}</strong> · por aluno/mês: <strong style={{ color: '#2563eb' }}>{R$(sis.anual / parcelas / alunos)}</strong>
               </div>
+            </Card>
+
+            {/* 8. Fechamento do Orçamento */}
+            <Card style={{ border: `2px solid ${incluiComodato ? '#4A7FDB' : '#e2e8f0'}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                <div>
+                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#0f172a', marginBottom: '.25rem' }}>Fechamento do Orcamento</div>
+                  <div style={{ fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>Este orcamento inclui comodato de equipamentos?</div>
+                </div>
+                <div style={{ display: 'flex', gap: '.5rem' }}>
+                  {[
+                    { v: false, l: 'Somente curriculo' },
+                    { v: true,  l: 'Curriculo + Comodato' },
+                  ].map(opt => (
+                    <button
+                      key={String(opt.v)}
+                      onClick={() => setIncluiComodato(opt.v)}
+                      style={{
+                        padding: '.55rem 1.1rem', borderRadius: 8, cursor: 'pointer',
+                        fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.75rem', fontWeight: 700,
+                        border: `1.5px solid ${incluiComodato === opt.v ? '#0f172a' : '#e2e8f0'}`,
+                        background: incluiComodato === opt.v ? '#0f172a' : '#f8fafc',
+                        color: incluiComodato === opt.v ? '#fff' : '#64748b',
+                      }}
+                    >
+                      {opt.l}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Resumo somente curriculo */}
+              {!incluiComodato && (
+                <div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '.75rem' }}>
+                    <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
+                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Valor / aluno / ano</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#4A7FDB', lineHeight: 1 }}>{R$(sis.valorFinal)}</div>
+                      <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{sis.f.nome}</div>
+                    </div>
+                    <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
+                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Valor / aluno / mes</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{R$(sis.valorFinal / 12)}</div>
+                      <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{R$(sis.valorFinal)}/ano ÷ 12</div>
+                    </div>
+                    <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
+                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Parcela escola ({parcelas}x)</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{R$(sis.anual / parcelas)}</div>
+                      <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{R$(sis.anual)}/ano ÷ {parcelas}x</div>
+                    </div>
+                  </div>
+                  <Nota t={`Orcamento somente curriculo. Valor anual: ${R$(sis.anual)} (${alunos} alunos x ${R$(sis.valorFinal)}). Comodato de equipamentos NAO incluido.`} />
+                </div>
+              )}
+
+              {/* Resumo curriculo + comodato */}
+              {incluiComodato && (
+                <div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '1rem' }}>
+                    {/* Curriculo */}
+                    <div style={{ background: '#f8fafc', padding: '.85rem 1.1rem' }}>
+                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.5rem' }}>Curriculo (sistema)</div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.35rem' }}>
+                        <div>
+                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Anual / aluno</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#4A7FDB' }}>{R$(sis.valorFinal)}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Mensal / aluno</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#4A7FDB' }}>{R$(sis.valorFinal / 12)}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Anual total</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>{R$(sis.anual)}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Parcela ({parcelas}x)</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>{R$(sis.anual / parcelas)}</div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Comodato */}
+                    <div style={{ background: '#f0f9ff', padding: '.85rem 1.1rem' }}>
+                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.5rem' }}>Comodato (equipamentos)</div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.35rem' }}>
+                        <div>
+                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Total investimento</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0369a1' }}>{R$(com.D14)}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Parcela ({com.parcelas}x)</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0369a1' }}>{R$(com.parcelaMensal)}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Mensal / aluno</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0369a1' }}>{R$(com.valorPorAlunoMes)}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Faixa</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0369a1' }}>{com.faixaLabel}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Total combinado */}
+                  <div style={{ background: '#0f172a', borderRadius: 10, padding: '1.1rem 1.5rem', display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px' }}>
+                    <div style={{ padding: '.75rem 1rem' }}>
+                      <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Total / aluno / mes</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: '#fff', lineHeight: 1 }}>{R$(totalAluMes)}</div>
+                      <div style={{ fontSize: '.6rem', color: 'rgba(255,255,255,.3)', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>curriculo {R$(alunoMesSis)} + comodato {R$(com.valorPorAlunoMes)}</div>
+                    </div>
+                    <div style={{ padding: '.75rem 1rem' }}>
+                      <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Total / aluno / ano</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: '#5FE3D0', lineHeight: 1 }}>{R$(totalAluMes * 12)}</div>
+                      <div style={{ fontSize: '.6rem', color: 'rgba(255,255,255,.3)', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{R$(totalAluMes)}/mes x 12</div>
+                    </div>
+                    <div style={{ padding: '.75rem 1rem' }}>
+                      <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Parcela mensal escola</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: '#f59e0b', lineHeight: 1 }}>{R$(parcelaTotal)}</div>
+                      <div style={{ fontSize: '.6rem', color: 'rgba(255,255,255,.3)', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>curriculo {parcelas}x + comodato {com.parcelas}x</div>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: '.65rem' }}>
+                    <Nota t={`Curriculo: ${alunos} al. x ${R$(sis.valorFinal)}/ano ÷ 12 = ${R$(alunoMesSis)}/al./mes. Comodato: ${R$(com.D14)} ÷ ${com.parcelas}x ÷ ${alunos} al. = ${R$(com.valorPorAlunoMes)}/al./mes. Total: ${R$(totalAluMes)}/al./mes.`} />
+                  </div>
+                </div>
+              )}
             </Card>
           </div>
         )}
