@@ -169,7 +169,7 @@ const NOTA: React.CSSProperties = {
 }
 
 // ── Mini-componentes ──────────────────────────────────────────────
-function Nota({ t }: { t: string }) { return <div style={NOTA}>📝 {t}</div> }
+function Nota({ t }: { t: string }) { return <div style={NOTA}>{t}</div> }
 
 function SecTitle({ n, title }: { n: number; title: string }) {
   return (
@@ -363,7 +363,7 @@ export default function CalculadoraPage() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: showSisAdv ? '1rem' : 0 }}>
                 <SecTitle n={2} title="Parâmetros e pesos (editáveis)" />
                 <button onClick={() => setShowSisAdv(v => !v)} style={{ padding: '.4rem .9rem', borderRadius: 8, border: '1.5px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', fontSize: '.72rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#475569' }}>
-                  {showSisAdv ? 'Fechar ▲' : 'Editar ▼'}
+                  {showSisAdv ? 'Fechar' : 'Editar'}
                 </button>
               </div>
               {showSisAdv && (
@@ -429,7 +429,7 @@ export default function CalculadoraPage() {
                         {sp.faixas.map((f, idx) => (
                           <tr key={f.nome} style={{ background: idx % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f1f5f9' }}>
                             <td style={{ padding: '.6rem .85rem', fontWeight: 700, fontSize: '.82rem', fontFamily: 'var(--font-montserrat,sans-serif)', color: alunos >= f.min && alunos <= f.max ? '#2563eb' : '#0f172a' }}>
-                              {f.nome} {alunos >= f.min && alunos <= f.max && <span style={{ fontSize: '.6rem', background: '#dbeafe', color: '#1d4ed8', padding: '.1rem .35rem', borderRadius: 99, marginLeft: '.3rem' }}>← atual</span>}
+                              {f.nome} {alunos >= f.min && alunos <= f.max && <span style={{ fontSize: '.6rem', background: '#dbeafe', color: '#1d4ed8', padding: '.1rem .35rem', borderRadius: 99, marginLeft: '.3rem' }}>atual</span>}
                             </td>
                             <td style={{ padding: '.5rem .85rem' }}><InlineNum value={f.min} onChange={v => updFaixa(idx, 'min', v)} min={1} /></td>
                             <td style={{ padding: '.5rem .85rem' }}><InlineNum value={f.max} onChange={v => updFaixa(idx, 'max', v)} min={1} /></td>
@@ -445,7 +445,7 @@ export default function CalculadoraPage() {
                   </div>
 
                   <div style={{ display: 'flex', gap: '.75rem' }}>
-                    <button onClick={() => setSp(DEFAULT_SIS)} style={{ padding: '.45rem 1rem', borderRadius: 8, border: '1.5px solid #e2e8f0', background: '#fff', cursor: 'pointer', fontSize: '.72rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#64748b' }}>↺ Restaurar padrão</button>
+                    <button onClick={() => setSp(DEFAULT_SIS)} style={{ padding: '.45rem 1rem', borderRadius: 8, border: '1.5px solid #e2e8f0', background: '#fff', cursor: 'pointer', fontSize: '.72rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#64748b' }}>Restaurar padrao</button>
                   </div>
                 </div>
               )}
@@ -455,26 +455,90 @@ export default function CalculadoraPage() {
             <Card>
               <SecTitle n={3} title="Scores dos fatores (0 a 1 cada)" />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                {[
-                  { label: 'Score 1 — Escala', peso: sp.wEscala, score: sis.s1, mem: `1 − (${alunos} − ${sis.f.min}) ÷ (${sis.f.max} − ${sis.f.min}) = ${dec(sis.s1)}`, nota: 'Mais alunos dentro da faixa → score menor → preço mais próximo do piso.' },
-                  { label: 'Score 2 — Ticket', peso: sp.wTicket, score: sis.s2, mem: `MIN(1 ; ${R$(ticket)} ÷ ${R$(sp.ticketMax)}) = ${dec(sis.s2)} · Perfil: ${sis.ticketLabel}`, nota: 'Ticket maior → escola premium → pode pagar mais.' },
-                  { label: 'Score 3 — Complexidade', peso: sp.wCompl, score: sis.s3, mem: segs === 3 || altaCompl ? '3 seg/alta compl → 1,000' : segs === 2 ? '2 seg → 0,500' : '1 seg → 0,000', nota: 'Mais segmentos = maior estrutura de entrega = preço maior.' },
-                  { label: 'Score 4 — Fidelidade', peso: sp.wFid, score: sis.s4, mem: situacao === 'Renovação 2º ciclo+' ? 'Renov 2º+ → 0,400' : situacao === 'Renovação 1º ciclo' ? 'Renov 1º → 0,700' : 'Novo → 1,000', nota: 'Renovação = benefício implícito — escola fiel paga menos.' },
-                ].map(s => (
-                  <div key={s.label} style={{ background: '#f8fafc', borderRadius: 10, padding: '1rem', border: '1px solid #e2e8f0' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.6rem' }}>
-                      <div>
-                        <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>{s.label} <span style={{ color: '#94a3b8' }}>({pct(s.peso)})</span></div>
-                        <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: scoreClr(s.score) }}>{dec(s.score)}</div>
-                      </div>
-                      <div style={{ width: 46, height: 46, borderRadius: '50%', border: `3px solid ${scoreClr(s.score)}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '.75rem', color: scoreClr(s.score), fontFamily: 'var(--font-montserrat,sans-serif)' }}>{pct(s.score)}</div>
+
+                {/* Score 1 — Escala */}
+                <div style={{ background: '#f8fafc', borderRadius: 10, padding: '1rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
+                    <div>
+                      <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Score 1 — Escala <span style={{ color: '#94a3b8' }}>({pct(sp.wEscala)})</span></div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: scoreClr(sis.s1) }}>{dec(sis.s1)}</div>
                     </div>
-                    <div style={{ background: '#e2e8f0', borderRadius: 99, height: 5, overflow: 'hidden', marginBottom: '.55rem' }}>
-                      <div style={{ height: '100%', width: `${s.score * 100}%`, background: scoreClr(s.score), borderRadius: 99, transition: 'width .3s' }} />
-                    </div>
-                    <div style={{ fontSize: '.68rem', color: '#475569', lineHeight: 1.5, fontFamily: 'var(--font-inter,sans-serif)' }}><strong>Memória:</strong> {s.mem}<br />{s.nota}</div>
+                    <div style={{ width: 46, height: 46, borderRadius: '50%', border: `3px solid ${scoreClr(sis.s1)}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '.75rem', color: scoreClr(sis.s1), fontFamily: 'var(--font-montserrat,sans-serif)' }}>{pct(sis.s1)}</div>
                   </div>
-                ))}
+                  <div style={{ background: '#e2e8f0', borderRadius: 99, height: 5, overflow: 'hidden', marginBottom: '.65rem' }}>
+                    <div style={{ height: '100%', width: `${sis.s1 * 100}%`, background: scoreClr(sis.s1), borderRadius: 99, transition: 'width .3s' }} />
+                  </div>
+                  <div style={{ fontSize: '.7rem', color: '#1e293b', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '.5rem' }}>
+                    <strong>Formula:</strong> 1 − ({alunos} − {sis.f.min}) ÷ ({sis.f.max} − {sis.f.min}) = <strong style={{ color: scoreClr(sis.s1) }}>{dec(sis.s1)}</strong>
+                  </div>
+                  <div style={{ fontSize: '.68rem', color: '#475569', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)', borderTop: '1px solid #e2e8f0', paddingTop: '.5rem' }}>
+                    <strong>Regra (35% do score):</strong> Escola com mais alunos dentro da faixa recebe score MENOR, levando o preco em direcao ao PISO. Escola com menos alunos recebe score MAIOR, levando em direcao ao TETO. Premissa: volume = poder de barganha = preco menor.<br />
+                    <strong>Faixa atual:</strong> {sis.f.nome} ({sis.f.min}–{sis.f.max} alunos). Score varia de 1,000 (1 aluno) a 0,000 ({sis.f.max} alunos).
+                  </div>
+                </div>
+
+                {/* Score 2 — Ticket */}
+                <div style={{ background: '#f8fafc', borderRadius: 10, padding: '1rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
+                    <div>
+                      <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Score 2 — Ticket medio <span style={{ color: '#94a3b8' }}>({pct(sp.wTicket)})</span></div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: scoreClr(sis.s2) }}>{dec(sis.s2)}</div>
+                    </div>
+                    <div style={{ width: 46, height: 46, borderRadius: '50%', border: `3px solid ${scoreClr(sis.s2)}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '.75rem', color: scoreClr(sis.s2), fontFamily: 'var(--font-montserrat,sans-serif)' }}>{pct(sis.s2)}</div>
+                  </div>
+                  <div style={{ background: '#e2e8f0', borderRadius: 99, height: 5, overflow: 'hidden', marginBottom: '.65rem' }}>
+                    <div style={{ height: '100%', width: `${sis.s2 * 100}%`, background: scoreClr(sis.s2), borderRadius: 99, transition: 'width .3s' }} />
+                  </div>
+                  <div style={{ fontSize: '.7rem', color: '#1e293b', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '.5rem' }}>
+                    <strong>Formula:</strong> MIN(1 ; {R$(ticket)} / {R$(sp.ticketMax)}) = <strong style={{ color: scoreClr(sis.s2) }}>{dec(sis.s2)}</strong> — Perfil: <strong>{sis.ticketLabel}</strong>
+                  </div>
+                  <div style={{ fontSize: '.68rem', color: '#475569', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)', borderTop: '1px solid #e2e8f0', paddingTop: '.5rem' }}>
+                    <strong>Regra (30% do score):</strong> Mensalidade que a escola cobra dos pais. Ticket maior = escola com maior capacidade de pagamento = score maior = preco proximo do TETO. Ticket acima de {R$(sp.ticketMax)} = score maximo (1,000).<br />
+                    <strong>Perfis:</strong> Popular (&lt;R$400) · Media-baixa (R$400–R$800) · Padrao (R$800–{R$(sp.ticketMax)}) · Premium (&gt;{R$(sp.ticketMax)}).
+                  </div>
+                </div>
+
+                {/* Score 3 — Complexidade */}
+                <div style={{ background: '#f8fafc', borderRadius: 10, padding: '1rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
+                    <div>
+                      <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Score 3 — Complexidade <span style={{ color: '#94a3b8' }}>({pct(sp.wCompl)})</span></div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: scoreClr(sis.s3) }}>{dec(sis.s3)}</div>
+                    </div>
+                    <div style={{ width: 46, height: 46, borderRadius: '50%', border: `3px solid ${scoreClr(sis.s3)}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '.75rem', color: scoreClr(sis.s3), fontFamily: 'var(--font-montserrat,sans-serif)' }}>{pct(sis.s3)}</div>
+                  </div>
+                  <div style={{ background: '#e2e8f0', borderRadius: 99, height: 5, overflow: 'hidden', marginBottom: '.65rem' }}>
+                    <div style={{ height: '100%', width: `${sis.s3 * 100}%`, background: scoreClr(sis.s3), borderRadius: 99, transition: 'width .3s' }} />
+                  </div>
+                  <div style={{ fontSize: '.7rem', color: '#1e293b', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '.5rem' }}>
+                    <strong>Formula:</strong> {segs === 3 || altaCompl ? '3 segmentos / alta complexidade = score 1,000 (maximo)' : segs === 2 ? '2 segmentos = score 0,500' : '1 segmento = score 0,000 (minimo)'}
+                  </div>
+                  <div style={{ fontSize: '.68rem', color: '#475569', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)', borderTop: '1px solid #e2e8f0', paddingTop: '.5rem' }}>
+                    <strong>Regra (20% do score):</strong> Numero de ciclos escolares atendidos (ex: infantil, fundamental I, fundamental II). Mais segmentos = maior estrutura de entrega (mais formacao, visitas, materiais) = custo operacional maior = preco mais proximo do TETO.<br />
+                    <strong>Escala:</strong> 1 seg = 0,000 · 2 seg = 0,500 · 3 seg = 1,000. "Alta complexidade: SIM" forca score 1,000 independente do numero de segmentos.
+                  </div>
+                </div>
+
+                {/* Score 4 — Fidelidade */}
+                <div style={{ background: '#f8fafc', borderRadius: 10, padding: '1rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
+                    <div>
+                      <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Score 4 — Fidelidade <span style={{ color: '#94a3b8' }}>({pct(sp.wFid)})</span></div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: scoreClr(sis.s4) }}>{dec(sis.s4)}</div>
+                    </div>
+                    <div style={{ width: 46, height: 46, borderRadius: '50%', border: `3px solid ${scoreClr(sis.s4)}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '.75rem', color: scoreClr(sis.s4), fontFamily: 'var(--font-montserrat,sans-serif)' }}>{pct(sis.s4)}</div>
+                  </div>
+                  <div style={{ background: '#e2e8f0', borderRadius: 99, height: 5, overflow: 'hidden', marginBottom: '.65rem' }}>
+                    <div style={{ height: '100%', width: `${sis.s4 * 100}%`, background: scoreClr(sis.s4), borderRadius: 99, transition: 'width .3s' }} />
+                  </div>
+                  <div style={{ fontSize: '.7rem', color: '#1e293b', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '.5rem' }}>
+                    <strong>Formula:</strong> {situacao === 'Renovação 2º ciclo+' ? 'Renovacao 2º ciclo ou mais = score 0,400 (maior beneficio de fidelidade)' : situacao === 'Renovação 1º ciclo' ? 'Renovacao 1º ciclo = score 0,700 (beneficio moderado)' : 'Contrato novo = score 1,000 (sem beneficio de fidelidade)'}
+                  </div>
+                  <div style={{ fontSize: '.68rem', color: '#475569', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)', borderTop: '1px solid #e2e8f0', paddingTop: '.5rem' }}>
+                    <strong>Regra (15% do score):</strong> Situacao do contrato com a escola. Renovacao = desconto implicito por lealdade — escola fiel paga menos que escola nova. Score menor = preco mais proximo do PISO. Quanto mais ciclos de renovacao, maior o beneficio.<br />
+                    <strong>Escala:</strong> Novo = 1,000 (preco cheio) · Renovacao 1° ciclo = 0,700 · Renovacao 2° ciclo+ = 0,400 (preco mais baixo possivel dentro da faixa).
+                  </div>
+                </div>
               </div>
               <div style={{ background: '#0f172a', borderRadius: 10, padding: '1.1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
                 <div>
@@ -486,7 +550,7 @@ export default function CalculadoraPage() {
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '.7rem', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '.2rem' }}>Navega entre</div>
-                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.85rem', fontWeight: 800, color: '#5FE3D0' }}>{R$(sis.f.piso)} ↔ {R$(sp.teto)}</div>
+                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.85rem', fontWeight: 800, color: '#5FE3D0' }}>{R$(sis.f.piso)} a {R$(sp.teto)}</div>
                   <div style={{ fontSize: '.65rem', color: 'rgba(255,255,255,.3)', marginTop: '.1rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{sis.f.nome} · piso {R$(sis.f.piso)}</div>
                 </div>
               </div>
@@ -497,17 +561,17 @@ export default function CalculadoraPage() {
               <SecTitle n={4} title="Equação central — memória de cálculo" />
               <div style={{ display: 'flex', flexDirection: 'column', gap: '.75rem' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
-                  <KV label="① Piso da faixa" value={R$(sis.f.piso)} sub={`${sis.f.nome}: ${sis.f.min}–${sis.f.max} alunos`} />
-                  <KV label="② Amplitude × Score" value={R$(sis.valorBruto - sis.f.piso)} sub={`(${R$(sp.teto)} − ${R$(sis.f.piso)}) × ${dec(sis.scoreFinal)}`} />
-                  <KV label="③ Valor bruto" value={R$(sis.valorBruto)} sub="Piso + amplitude × score" color="#4A7FDB" />
+                  <KV label="(1) Piso da faixa" value={R$(sis.f.piso)} sub={`${sis.f.nome}: ${sis.f.min}–${sis.f.max} alunos`} />
+                  <KV label="(2) Amplitude x Score" value={R$(sis.valorBruto - sis.f.piso)} sub={`(${R$(sp.teto)} - ${R$(sis.f.piso)}) x ${dec(sis.scoreFinal)}`} />
+                  <KV label="(3) Valor bruto" value={R$(sis.valorBruto)} sub="Piso + amplitude x score" color="#4A7FDB" />
                 </div>
                 <Nota t={`${R$(sis.f.piso)} + (${R$(sp.teto)} − ${R$(sis.f.piso)}) × ${dec(sis.scoreFinal)} = ${R$(sis.valorBruto)}/aluno/ano`} />
 
                 {desconto > 0 && (
                   <>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
-                      <KV label="④ Desconto aplicado" value={`−${desconto}%`} sub={`−${R$(sis.valorBruto * desconto / 100)}`} color="#dc2626" />
-                      <KV label="⑤ Valor com desconto" value={R$(sis.valorDesc)} sub="Antes da proteção do piso" />
+                      <KV label="(4) Desconto aplicado" value={`-${desconto}%`} sub={`-${R$(sis.valorBruto * desconto / 100)}`} color="#dc2626" />
+                      <KV label="(5) Valor com desconto" value={R$(sis.valorDesc)} sub="Antes da protecao do piso" />
                     </div>
                     <Nota t={`${R$(sis.valorBruto)} × (1 − ${desconto}%) = ${R$(sis.valorDesc)}. Desconto máximo sem furar o piso: ${sis.descMax.toFixed(1)}%.`} />
                   </>
@@ -515,12 +579,12 @@ export default function CalculadoraPage() {
 
                 <div style={{ background: sis.valorFinal <= sis.f.piso ? '#fef3c7' : '#f0fdf4', border: `1.5px solid ${sis.valorFinal <= sis.f.piso ? '#fde68a' : '#86efac'}`, borderRadius: 10, padding: '1rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', marginBottom: '.3rem' }}>⑥ Proteção piso — MAX(piso, valor_com_desconto)</div>
+                    <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', marginBottom: '.3rem' }}>(6) Protecao piso — MAX(piso, valor_com_desconto)</div>
                     <div style={{ fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.75rem', color: '#475569', marginBottom: '.2rem' }}>
                       MAX({R$(sis.f.piso)}, {R$(sis.valorDesc)}) = <strong>{R$(sis.valorFinal)}</strong>
                     </div>
                     <div style={{ fontSize: '.68rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                      {sis.valorFinal <= sis.f.piso ? '⚠ Desconto limitado pelo piso — valor travado no mínimo' : '✓ Desconto válido — não ultrapassou o piso'}
+                      {sis.valorFinal <= sis.f.piso ? 'Atencao: desconto limitado pelo piso — valor travado no minimo' : 'OK: desconto valido — nao ultrapassou o piso'}
                     </div>
                   </div>
                   <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: sis.valorFinal <= sis.f.piso ? '#d97706' : '#16a34a' }}>{R$(sis.valorFinal)}</div>
@@ -547,7 +611,7 @@ export default function CalculadoraPage() {
                 <SecTitle n={6} title="Governança do desconto" />
                 <div style={{ background: govBg(sis.gov.status), border: `1.5px solid ${govBorder(sis.gov.status)}`, borderRadius: 10, padding: '1rem 1.25rem', marginBottom: '.85rem' }}>
                   <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', color: govClr(sis.gov.status), marginBottom: '.3rem' }}>
-                    {desconto === 0 ? '— Sem desconto' : `Desconto ${desconto}%`}
+                    {desconto === 0 ? 'Sem desconto' : `Desconto ${desconto}%`}
                   </div>
                   <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: govClr(sis.gov.status) }}>{sis.gov.label}</div>
                 </div>
@@ -560,7 +624,7 @@ export default function CalculadoraPage() {
                   <div key={r.range} style={{ display: 'flex', alignItems: 'center', gap: '.65rem', padding: '.45rem .7rem', borderRadius: 7, background: r.ativo ? govBg(r.s) : '#f8fafc', border: `1px solid ${r.ativo ? govBorder(r.s) : '#e2e8f0'}`, marginBottom: '.35rem' }}>
                     <div style={{ width: 7, height: 7, borderRadius: '50%', background: govClr(r.s), flexShrink: 0 }} />
                     <div style={{ fontSize: '.72rem', fontFamily: 'var(--font-inter,sans-serif)', flex: 1 }}><strong style={{ fontFamily: 'var(--font-montserrat,sans-serif)' }}>{r.range}</strong> · {r.label}</div>
-                    {r.ativo && <span style={{ fontSize: '.6rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: govClr(r.s) }}>← atual</span>}
+                    {r.ativo && <span style={{ fontSize: '.6rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: govClr(r.s) }}>atual</span>}
                   </div>
                 ))}
               </Card>
@@ -580,11 +644,11 @@ export default function CalculadoraPage() {
                       const pm = sis.anual / n; const pa = pm / alunos; const ativo = n === parcelas
                       return (
                         <tr key={n} onClick={() => setParcelas(n)} style={{ background: ativo ? '#eff6ff' : n % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', outline: ativo ? '2px solid #4A7FDB' : 'none', outlineOffset: -1 }}>
-                          <td style={{ padding: '.7rem 1rem', fontWeight: 800, fontSize: '.88rem', color: ativo ? '#2563eb' : '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{ativo ? '▶ ' : ''}{n}x</td>
+                          <td style={{ padding: '.7rem 1rem', fontWeight: 800, fontSize: '.88rem', color: ativo ? '#2563eb' : '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{n}x</td>
                           <td style={{ padding: '.7rem 1rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: ativo ? '#2563eb' : '#0f172a' }}>{R$(pm)}</td>
                           <td style={{ padding: '.7rem 1rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#475569' }}>{R$(pa)}</td>
                           <td style={{ padding: '.7rem 1rem', fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                            {desconto === 0 ? '— Livre' : desconto <= 5 ? 'Comercial' : desconto <= 10 ? 'Gerência — Renato' : 'Diretoria — Dênis'}
+                            {desconto === 0 ? 'Livre' : desconto <= 5 ? 'Comercial' : desconto <= 10 ? 'Gerencia — Renato' : 'Diretoria — Denis'}
                           </td>
                         </tr>
                       )
@@ -620,7 +684,7 @@ export default function CalculadoraPage() {
                 <div>
                   <label style={LBL}>Nº de alunos</label>
                   <input type="number" min={1} value={alunos} onChange={e => setAlunos(+e.target.value || 1)} style={INP} />
-                  <div style={NOTA}>≤100 → 48 parcelas · 101–300 → 36x · 301–500 → 24x · 500+ → 12x</div>
+                  <div style={NOTA}>Ate 100 alunos: 48 parcelas · 101-300: 36x · 301-500: 24x · acima de 500: 12x</div>
                 </div>
                 <div>
                   <label style={LBL}>Alunos na maior sala</label>
@@ -656,7 +720,7 @@ export default function CalculadoraPage() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <SecTitle n={2} title="Tabela de equipamentos — edite diretamente" />
                 <button onClick={() => setEquip(DEFAULT_EQUIP)} style={{ padding: '.4rem .9rem', borderRadius: 8, border: '1.5px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', fontSize: '.72rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#475569' }}>
-                  ↺ Restaurar padrão
+                  Restaurar padrao
                 </button>
               </div>
               <div style={{ overflowX: 'auto' }}>
@@ -750,7 +814,7 @@ export default function CalculadoraPage() {
                     return (
                       <tr key={idx} style={{ background: ativo ? '#eff6ff' : idx % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f1f5f9', outline: ativo ? '2px solid #4A7FDB' : 'none', outlineOffset: -1 }}>
                         <td style={{ padding: '.6rem .85rem', fontWeight: 700, fontSize: '.88rem', color: ativo ? '#2563eb' : '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
-                          {ativo ? '▶ ' : ''}{t.parcelas}x
+                          {t.parcelas}x
                         </td>
                         <td style={{ padding: '.6rem .85rem', fontSize: '.82rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)' }}>{faixa}</td>
                         <td style={{ padding: '.5rem .85rem', minWidth: 120 }}>
@@ -765,11 +829,11 @@ export default function CalculadoraPage() {
                 </tbody>
               </table>
               <div style={{ marginTop: '.65rem' }}>
-                <Nota t="Taxas são aplicadas sobre a soma dos preços UNITÁRIOS × anos de contrato. A linha ▶ é a faixa ativa com base no número de alunos." />
+                <Nota t="Taxas sao aplicadas sobre a soma dos precos UNITARIOS x anos de contrato. A linha em destaque e a faixa ativa com base no numero de alunos." />
               </div>
               <div style={{ marginTop: '.5rem' }}>
                 <button onClick={() => setCp(DEFAULT_COM)} style={{ padding: '.4rem .9rem', borderRadius: 8, border: '1.5px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', fontSize: '.72rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#475569' }}>
-                  ↺ Restaurar taxas padrão
+                  Restaurar taxas padrao
                 </button>
               </div>
             </Card>
