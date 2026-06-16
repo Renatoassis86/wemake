@@ -145,31 +145,6 @@ function calcComodato(
 }
 
 // ══════════════════════════════════════════════════════════════════
-// ESKOLARE — lógica original preservada
-// ══════════════════════════════════════════════════════════════════
-const TAXA_PLAT = 0.015; const TAXA_FIXA = 0.30; const MIN_PARC = 30
-const MANUT_MES = 70; const MANUT_MESES = 3; const MANUT_TOTAL = 210
-
-const SEG_LIST = [
-  { id: 'inf2', label: 'Infantil 2' }, { id: 'inf3', label: 'Infantil 3' },
-  { id: 'inf4', label: 'Infantil 4' }, { id: 'inf5', label: 'Infantil 5' },
-  { id: 'f1a1', label: '1º Ano Fund I' }, { id: 'f1a2', label: '2º Ano Fund I' },
-  { id: 'f1a3', label: '3º Ano Fund I' }, { id: 'f1a4', label: '4º Ano Fund I' },
-  { id: 'f1a5', label: '5º Ano Fund I' },
-]
-
-function calcEsk(custo: number, ct: 'pct'|'abs', cp: number, ca: number, parc: number, qa: number, ta: number) {
-  const tc  = parc === 1 ? 0.0289 : parc <= 6 ? 0.0299 : 0.0369
-  const com = ct === 'pct' ? custo * (cp / 100) : ca
-  const liq = custo + com
-  const mau = ta > 0 && qa > 0 ? (MANUT_TOTAL * (qa / ta)) / qa : 0
-  const tf  = TAXA_FIXA * parc; const den = 1 - TAXA_PLAT - tc
-  const pr  = Math.ceil(((liq + tf + mau) / den) * 100) / 100
-  const pv  = Math.round((pr / parc) * 100) / 100
-  return { com, liq, mau, tc, tf, pr, pv, lr: pr * den - tf - mau, ok: pv >= MIN_PARC }
-}
-
-// ══════════════════════════════════════════════════════════════════
 // ESTILOS COMUNS
 // ══════════════════════════════════════════════════════════════════
 const INP: React.CSSProperties = {
@@ -241,7 +216,7 @@ function InlineNum({ value, onChange, prefix, suffix, min = 0, step = 1, style }
 // COMPONENTE PRINCIPAL
 // ══════════════════════════════════════════════════════════════════
 export default function CalculadoraPage() {
-  const [tab, setTab] = useState<'sistema' | 'comodato' | 'eskolare'>('sistema')
+  const [tab, setTab] = useState<'sistema' | 'comodato'>('sistema')
 
   // ── Parâmetros do Sistema (todos editáveis) ──────────────────────
   const [sp, setSp] = useState<SisParams>(DEFAULT_SIS)
@@ -284,22 +259,6 @@ export default function CalculadoraPage() {
   const totalAluMes  = alunoMesSis + com.valorPorAlunoMes
   const parcelaTotal = sis.anual / parcelas + com.parcelaMensal
 
-  // ── Eskolare state ─────────────────────────────────────────────
-  const [eseg, setEseg] = useState(
-    SEG_LIST.map((s, i) => ({ ...s, ativo: i < 2, igual: i > 0, custo: 600, ct: 'pct' as 'pct'|'abs', cp: 20, ca: 0, qa: 30, parc: 12 }))
-  )
-  const [ecalc, setEcalc] = useState<Record<string, ReturnType<typeof calcEsk>>>({})
-  const [efeito, setEfeito] = useState(false)
-  const eativos  = eseg.filter(s => s.ativo)
-  const eprim    = eativos[0]
-  const etotal   = eativos.reduce((a, s) => a + (s.igual && eprim && s.id !== eprim.id ? eprim.qa : s.qa), 0)
-  const eupd     = (id: string, f: string, v: any) => { setEseg(p => p.map(s => s.id === id ? { ...s, [f]: v } : s)); setEfeito(false) }
-  const ecalcular = () => {
-    const r: Record<string, ReturnType<typeof calcEsk>> = {}
-    eativos.forEach(s => { const ref = s.igual && eprim && s.id !== eprim.id ? eprim : s; r[s.id] = calcEsk(ref.custo, ref.ct, ref.cp, ref.ca, ref.parc, ref.qa, etotal) })
-    setEcalc(r); setEfeito(true)
-  }
-
   // ── Helpers visuais ───────────────────────────────────────────
   const scoreClr  = (v: number) => v >= 0.7 ? '#16a34a' : v >= 0.4 ? '#d97706' : '#dc2626'
   const govClr    = (s: string) => s === 'error' ? '#dc2626' : s === 'warn' ? '#d97706' : '#16a34a'
@@ -329,7 +288,6 @@ export default function CalculadoraPage() {
         <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1.75rem', flexWrap: 'wrap' }}>
           <button style={tabStyle('sistema')}  onClick={() => setTab('sistema')}>We Make — Sistema</button>
           <button style={tabStyle('comodato')} onClick={() => setTab('comodato')}>Comodato de Equipamentos</button>
-          <button style={tabStyle('eskolare')} onClick={() => setTab('eskolare')}>Eskolare</button>
         </div>
 
         {/* ══════════════════════════════════════════════════════
@@ -856,165 +814,6 @@ export default function CalculadoraPage() {
           </div>
         )}
 
-        {/* ══════════════════════════════════════════════════════
-            TAB: ESKOLARE
-            ══════════════════════════════════════════════════════ */}
-        {tab === 'eskolare' && (
-          <div>
-            <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius: 14, padding: '1.1rem 1.5rem', marginBottom: '1.5rem', display: 'flex', gap: '2rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.35rem' }}>Lógica de cálculo</div>
-                <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '.5rem' }}>Preço = custo + comissão + taxas Eskolare + manutenção rateada</div>
-                <div style={{ fontSize: '.78rem', color: 'rgba(255,255,255,.55)', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)' }}>
-                  Manutenção da loja (<strong style={{ color: '#4A7FDB' }}>R${MANUT_TOTAL}</strong> fixo · {MANUT_MESES} meses) dividida pelos alunos totais.
-                </div>
-              </div>
-              <div style={{ background: 'rgba(74,127,219,.12)', border: '1px solid rgba(74,127,219,.25)', borderRadius: 10, padding: '1rem 1.25rem', minWidth: 190 }}>
-                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.62rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#4A7FDB', marginBottom: '.6rem' }}>Manutenção da loja</div>
-                {[['R$70/mês', '3 meses'], ['Total fixo', 'R$210'], ['Alunos', `${etotal || '?'}`], ['Por aluno', etotal > 0 ? R$(MANUT_TOTAL / etotal) : '—']].map(([l, v]) => (
-                  <div key={String(l)} style={{ display: 'flex', justifyContent: 'space-between', padding: '.2rem 0', borderBottom: '1px solid rgba(255,255,255,.06)', fontSize: '.75rem' }}>
-                    <span style={{ color: 'rgba(255,255,255,.5)', fontFamily: 'var(--font-inter,sans-serif)' }}>{l}</span>
-                    <span style={{ fontWeight: 700, color: '#fff', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{v}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <Card style={{ marginBottom: '1.25rem' }}>
-              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a', marginBottom: '1rem' }}>1. Segmentos ativos</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.5rem' }}>
-                {eseg.map(s => (
-                  <button key={s.id} onClick={() => eupd(s.id, 'ativo', !s.ativo)} style={{ padding: '6px 16px', borderRadius: 9999, cursor: 'pointer', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', background: s.ativo ? '#0f172a' : '#f1f5f9', color: s.ativo ? '#fff' : '#64748b', border: `1.5px solid ${s.ativo ? '#0f172a' : '#e2e8f0'}` }}>
-                    {s.ativo ? '✓ ' : ''}{s.label}
-                  </button>
-                ))}
-              </div>
-              {etotal > 0 && <div style={{ marginTop: '.75rem', fontSize: '.75rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>Total: <strong>{etotal}</strong> alunos · Manutenção/aluno: <strong style={{ color: '#4A7FDB' }}>{R$(MANUT_TOTAL / etotal)}</strong></div>}
-            </Card>
-
-            {eativos.length > 0 && (
-              <div style={{ marginBottom: '1.25rem' }}>
-                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a', marginBottom: '1rem' }}>2. Parâmetros por segmento</div>
-                {eativos.map((s, idx) => {
-                  const ip = idx === 0; const herd = !ip && s.igual; const ref = herd && eprim ? eprim : s
-                  return (
-                    <div key={s.id} style={{ background: '#fff', border: `1.5px solid ${herd ? '#e2e8f0' : '#4A7FDB'}`, borderRadius: 14, marginBottom: '1rem', overflow: 'hidden', opacity: herd ? .75 : 1 }}>
-                      <div style={{ background: herd ? '#fafafa' : '#0f172a', padding: '.85rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '.65rem' }}>
-                          <div style={{ width: 28, height: 28, borderRadius: 7, background: herd ? '#e2e8f0' : '#4A7FDB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.72rem', fontWeight: 800, color: '#fff', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{idx + 1}</div>
-                          <span style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.82rem', fontWeight: 800, color: herd ? '#475569' : '#fff' }}>{s.label}</span>
-                          {herd && <span style={{ fontSize: '.65rem', background: '#dbeafe', color: '#1d4ed8', padding: '.15rem .5rem', borderRadius: 99, fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>Mesmo que {eprim?.label}</span>}
-                        </div>
-                        {!ip && (
-                          <label style={{ display: 'flex', alignItems: 'center', gap: '.5rem', cursor: 'pointer' }}>
-                            <span style={{ fontSize: '.72rem', color: herd ? '#475569' : 'rgba(255,255,255,.6)', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Mesmo valor</span>
-                            <div onClick={() => eupd(s.id, 'igual', !s.igual)} style={{ width: 36, height: 20, borderRadius: 10, cursor: 'pointer', background: s.igual ? '#4A7FDB' : '#cbd5e1', position: 'relative', transition: 'background .2s' }}>
-                              <div style={{ position: 'absolute', top: 2, left: s.igual ? 18 : 2, width: 16, height: 16, borderRadius: '50%', background: '#fff', transition: 'left .2s' }} />
-                            </div>
-                          </label>
-                        )}
-                      </div>
-                      {!herd ? (
-                        <div style={{ padding: '1.1rem 1.25rem', display: 'grid', gridTemplateColumns: '1fr 1.4fr 1fr 1fr', gap: '1rem', alignItems: 'end' }}>
-                          <div>
-                            <label style={LBL}>Custo do Livro (R$)</label>
-                            <input type="number" min={0} step={0.01} value={s.custo} onChange={e => eupd(s.id, 'custo', parseFloat(e.target.value) || 0)} style={INP} />
-                          </div>
-                          <div>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '.35rem' }}>
-                              <label style={{ ...LBL, marginBottom: 0 }}>Comissão</label>
-                              <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: 7, padding: 2, gap: 1 }}>
-                                {[{ v: 'pct', l: '%' }, { v: 'abs', l: 'R$' }].map(t => (
-                                  <button key={t.v} type="button" onClick={() => eupd(s.id, 'ct', t.v)} style={{ padding: '3px 9px', borderRadius: 5, border: 'none', cursor: 'pointer', fontSize: '.68rem', fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)', background: s.ct === t.v ? '#4A7FDB' : 'transparent', color: s.ct === t.v ? '#fff' : '#64748b' }}>{t.l}</button>
-                                ))}
-                              </div>
-                            </div>
-                            {s.ct === 'pct'
-                              ? <div style={{ position: 'relative' }}><input type="number" min={0} max={100} step={0.1} value={s.cp} onChange={e => eupd(s.id, 'cp', parseFloat(e.target.value) || 0)} style={{ ...INP, paddingRight: '2.5rem' }} /><span style={{ position: 'absolute', right: '.85rem', top: '50%', transform: 'translateY(-50%)', fontSize: '.85rem', color: '#94a3b8', fontWeight: 700, pointerEvents: 'none' }}>%</span></div>
-                              : <div style={{ position: 'relative' }}><span style={{ position: 'absolute', left: '.85rem', top: '50%', transform: 'translateY(-50%)', fontSize: '.78rem', color: '#94a3b8', fontWeight: 700, pointerEvents: 'none' }}>R$</span><input type="number" min={0} step={0.01} value={s.ca} onChange={e => eupd(s.id, 'ca', parseFloat(e.target.value) || 0)} style={{ ...INP, paddingLeft: '2.25rem' }} /></div>}
-                          </div>
-                          <div>
-                            <label style={LBL}>Qtd. Alunos</label>
-                            <input type="number" min={1} value={s.qa} onChange={e => eupd(s.id, 'qa', parseInt(e.target.value) || 1)} style={{ ...INP, textAlign: 'center', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700 }} />
-                          </div>
-                          <div>
-                            <label style={LBL}>Parcelas</label>
-                            <select value={s.parc} onChange={e => eupd(s.id, 'parc', parseInt(e.target.value))} style={INP}>
-                              {Array.from({ length: 12 }, (_, i) => i + 1).map(n => <option key={n} value={n}>{n === 1 ? 'À vista' : `${n}x`}</option>)}
-                            </select>
-                          </div>
-                        </div>
-                      ) : eprim && (
-                        <div style={{ padding: '.6rem 1.25rem', display: 'flex', gap: '1.5rem', fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                          <span>Custo: <strong>{R$(eprim.custo)}</strong></span>
-                          <span>Comissão: <strong>{eprim.ct === 'pct' ? `${eprim.cp}%` : R$(eprim.ca)}</strong></span>
-                          <span>Alunos: <strong>{eprim.qa}</strong></span>
-                          <span>Parcelas: <strong>{eprim.parc === 1 ? 'À vista' : `${eprim.parc}x`}</strong></span>
-                        </div>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-
-            {eativos.length > 0 && (
-              <button onClick={ecalcular} style={{ width: '100%', maxWidth: 400, padding: '.9rem 2rem', background: 'linear-gradient(135deg, #4A7FDB, #2563b8)', color: '#fff', fontWeight: 800, fontSize: '1rem', border: 'none', borderRadius: 9999, cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 6px 20px rgba(74,127,219,.4)', display: 'block', marginBottom: '2rem' }}>
-                Calcular Preços por Segmento →
-              </button>
-            )}
-
-            {efeito && Object.keys(ecalc).length > 0 && (
-              <div>
-                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a', marginBottom: '1.25rem' }}>3. Resultados por segmento</div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: '1.1rem' }}>
-                  {eativos.map(s => {
-                    const r = ecalc[s.id]; if (!r) return null
-                    const ref = s.igual && eprim ? eprim : s
-                    return (
-                      <div key={s.id} style={{ background: '#fff', border: '1px solid #e2e8f0', borderTop: '4px solid #4A7FDB', borderRadius: 16, overflow: 'hidden', boxShadow: '0 4px 16px rgba(15,23,42,.08)' }}>
-                        <div style={{ background: '#0f172a', padding: '1rem 1.25rem' }}>
-                          <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.2rem' }}>Segmento</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>{s.label}</div>
-                          <div style={{ fontSize: '.68rem', color: 'rgba(255,255,255,.4)', marginTop: '.15rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{s.igual && eprim ? eprim.qa : s.qa} alunos · manut: {R$(r.mau)}/aluno</div>
-                        </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderBottom: '1px solid #f1f5f9' }}>
-                          {[
-                            { label: 'Custo Aquisição', value: R$(r.liq - r.com), sub: 'escola paga', bg: '#f8fafc' },
-                            { label: 'Comissão', value: R$(r.com), sub: ref.ct === 'pct' ? `${ref.cp}%` : 'fixo', bg: '#f5f3ff' },
-                            { label: 'Manutenção', value: R$(r.mau), sub: 'rateada', bg: '#eff6ff' },
-                            { label: 'Preço ao Pai', value: R$(r.pr), sub: ref.parc === 1 ? 'à vista' : `${ref.parc}x de ${R$(r.pv)}`, bg: '#fffbeb', big: true },
-                          ].map(m => (
-                            <div key={m.label} style={{ background: m.bg, padding: '.85rem 1rem', borderRight: '1px solid #f1f5f9', borderBottom: '1px solid #f1f5f9' }}>
-                              <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>{m.label}</div>
-                              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: (m as any).big ? '1.3rem' : '1.1rem', fontWeight: 800, color: (m as any).big ? '#4A7FDB' : '#0f172a', lineHeight: 1 }}>{m.value}</div>
-                              <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.2rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{m.sub}</div>
-                            </div>
-                          ))}
-                        </div>
-                        <div style={{ padding: '.85rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div>
-                            <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.15rem' }}>Líquido Real</div>
-                            <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#16a34a' }}>{R$(r.lr)}</div>
-                          </div>
-                          {r.ok
-                            ? <span style={{ background: '#f0fdf4', color: '#16a34a', border: '1px solid #86efac', padding: '.25rem .75rem', borderRadius: 99, fontSize: '.65rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>✓ Válido</span>
-                            : <span style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fca5a5', padding: '.25rem .75rem', borderRadius: 99, fontSize: '.65rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>⚠ Parcela &lt; R$30</span>}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
-            {eativos.length === 0 && (
-              <div style={{ textAlign: 'center', padding: '4rem 2rem', color: '#94a3b8' }}>
-                <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.2rem', color: '#0f172a', marginBottom: '.4rem' }}>Selecione pelo menos um segmento</h3>
-                <p style={{ fontSize: '.85rem', fontFamily: 'var(--font-inter,sans-serif)' }}>Clique nos botões acima para ativar os segmentos.</p>
-              </div>
-            )}
-          </div>
-        )}
 
       </div>
     </div>
