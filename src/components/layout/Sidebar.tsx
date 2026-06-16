@@ -42,10 +42,10 @@ const NAV_TOOLS = [
   { href: '/leads-banco',         label: 'Banco de Leads',   icon: Database        },
   { href: '/importacao',          label: 'Importar Dados',   icon: Upload          },
   { href: '/exports',             label: 'Downloads',        icon: Download        },
+  { href: '/calculadora',         label: 'Calculadora',      icon: Calculator      },
 ]
 
 const NAV_WIP = [
-  { href: '/calculadora', label: 'Calculadora',   icon: Calculator },
   { href: '/estoque',     label: 'Estoque',       icon: Package    },
   { href: '/amostras',    label: 'Amostras',      icon: FlaskConical },
   { href: '/dashboards',  label: 'BI / Analytics',icon: BarChart2  },
