@@ -137,10 +137,18 @@ function calcComodato(
   const valorPorAlunoMes = parcelaMensal / (alunos || 1)
 
   return {
+  // Contrato é sempre anosContrato×12 meses. A escola paga parcelaMensal por todos esses meses.
+  // O comParcelas (faixa) apenas define o valor da parcela (D14 ÷ comParcelas).
+  const mesesContrato      = anosContrato * 12
+  const valorTotalContrato = parcelaMensal * mesesContrato         // total recebido da escola
+  const resultado          = valorTotalContrato - D14              // lucro no comodato
+  const retorno            = D14 > 0 ? resultado / D14 : 0
+
+  return {
     qtdNB, parcelas, faixaLabel, txMan, txAdmin,
     sumUnit, C12, C13, itens: itensComQty, D14,
     parcelaMensal, valorPorAlunoMes,
-    valorTotalContrato: D14 * anosContrato,
+    mesesContrato, valorTotalContrato, resultado, retorno,
   }
 }
 
@@ -992,12 +1000,45 @@ export default function CalculadoraPage() {
             {/* 4. Resultado Comodato */}
             <Card>
               <SecTitle n={4} title="Resultado — comodato" />
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '.75rem' }}>
-                <KV label="Total do investimento" value={R$(com.D14)} sub="equipamentos + manutenção" big />
-                <KV label="Parcela mensal" value={R$(com.parcelaMensal)} sub={`${R$(com.D14)} ÷ ${com.parcelas} parcelas`} color="#4A7FDB" big />
-                <KV label="Por aluno / mês" value={R$(com.valorPorAlunoMes)} sub={`${R$(com.parcelaMensal)} ÷ ${alunos} alunos`} color="#7c3aed" big />
+
+              {/* Investimento + parcela */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '.6rem' }}>
+                <KV label="Total do investimento (D14)" value={R$(com.D14)} sub="equipamentos + manutenção" big />
+                <KV label="Parcela mensal" value={R$(com.parcelaMensal)} sub={`${R$(com.D14)} ÷ ${com.parcelas}x`} color="#4A7FDB" big />
+                <KV label="Por aluno / mês" value={R$(com.valorPorAlunoMes)} sub={`${R$(com.parcelaMensal)} ÷ ${alunos} al.`} color="#7c3aed" big />
               </div>
               <Nota t={`${R$(com.D14)} ÷ ${com.parcelas} parcelas = ${R$(com.parcelaMensal)}/mês · Por aluno: ${R$(com.parcelaMensal)} ÷ ${alunos} alunos = ${R$(com.valorPorAlunoMes)}/aluno/mês`} />
+
+              {/* Valor total do contrato e resultado */}
+              <div style={{ marginTop: '.85rem' }}>
+                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#64748b', marginBottom: '.5rem' }}>
+                  Visao economica do contrato ({anosContrato} anos = {com.mesesContrato} meses)
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
+                  <KV
+                    label="Valor total do contrato"
+                    value={R$(com.valorTotalContrato)}
+                    sub={`${R$(com.parcelaMensal)}/mês × ${com.mesesContrato} meses`}
+                    color="#0f172a"
+                    big
+                  />
+                  <KV
+                    label="Resultado apos investimento"
+                    value={R$(com.resultado)}
+                    sub={`${R$(com.valorTotalContrato)} − ${R$(com.D14)}`}
+                    color={com.resultado >= 0 ? '#16a34a' : '#dc2626'}
+                    big
+                  />
+                  <KV
+                    label="Retorno sobre investimento"
+                    value={`${(com.retorno * 100).toFixed(1)}%`}
+                    sub={com.parcelas < 48 ? `${48 - com.parcelas} meses de margem pos-amortizacao` : `amortizacao em ${com.mesesContrato} meses — sem margem`}
+                    color={com.retorno > 0 ? '#7c3aed' : '#94a3b8'}
+                    big
+                  />
+                </div>
+                <Nota t={`Escola paga ${R$(com.parcelaMensal)}/mes por ${com.mesesContrato} meses (${anosContrato} anos). Equipamento amortizado em ${com.parcelas} meses. Resultado = receita total − investimento.`} />
+              </div>
             </Card>
 
             {/* 5. Resumo Combinado */}
