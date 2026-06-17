@@ -234,8 +234,9 @@ export default function CalculadoraPage() {
   const [altaCompl, setAltaCompl] = useState(false)
   const [situacao,  setSituacao]  = useState('Novo')
   const [desconto,  setDesconto]  = useState(0)
-  const [parcelas,  setParcelas]  = useState(4)
-  const [maiorSala, setMaiorSala] = useState(20)
+  const [parcelas,     setParcelas]     = useState(4)
+  const [anosContrato, setAnosContrato] = useState(4)
+  const [maiorSala,    setMaiorSala]    = useState(20)
 
   // ── Equipamentos do Comodato (todos editáveis) ─────────────────
   const [equip, setEquip] = useState<EquipItem[]>(DEFAULT_EQUIP)
@@ -252,13 +253,16 @@ export default function CalculadoraPage() {
     [alunos, ticket, segs, altaCompl, situacao, desconto, sp]
   )
   const com = useMemo(
-    () => calcComodato(alunos, maiorSala, parcelas, equip, cp),
-    [alunos, maiorSala, parcelas, equip, cp]
+    () => calcComodato(alunos, maiorSala, anosContrato, equip, cp),
+    [alunos, maiorSala, anosContrato, equip, cp]
   )
 
-  const alunoMesSis  = sis.valorFinal / 12
-  const totalAluMes  = alunoMesSis + com.valorPorAlunoMes
-  const parcelaTotal = sis.anual / parcelas + com.parcelaMensal
+  const alunoMesSis       = sis.valorFinal / 12
+  const totalAluMes       = alunoMesSis + com.valorPorAlunoMes
+  // Mensalidade real da escola = curriculo mensal + comodato mensal (sempre base 12x, como o Excel)
+  const mensalidadeEscola = sis.anual / 12 + com.parcelaMensal
+  // Parcela curriculo conforme parcelas selecionadas
+  const parcelaCurriculo  = sis.anual / parcelas
 
   // ── Helpers visuais ───────────────────────────────────────────
   const scoreClr  = (v: number) => v >= 0.7 ? '#16a34a' : v >= 0.4 ? '#d97706' : '#dc2626'
@@ -354,7 +358,7 @@ export default function CalculadoraPage() {
                 <div>
                   <label style={LBL}>Qtd. parcelas (4–12)</label>
                   <input type="number" min={4} max={12} value={parcelas} onChange={e => setParcelas(Math.min(12, Math.max(4, +e.target.value || 4)))} style={INP} />
-                  <div style={NOTA}>Default 4x. CEO pode ampliar até 12x. Também = anos do comodato.</div>
+                  <div style={NOTA}>Frequência de pagamento do currículo. Independente do prazo do comodato (definido na aba Comodato).</div>
                 </div>
               </div>
             </Card>
@@ -778,9 +782,9 @@ export default function CalculadoraPage() {
                       <div style={{ fontSize: '.6rem', color: 'rgba(255,255,255,.3)', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{R$(totalAluMes)}/mes x 12</div>
                     </div>
                     <div style={{ padding: '.75rem 1rem' }}>
-                      <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Parcela mensal escola</div>
-                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: '#f59e0b', lineHeight: 1 }}>{R$(parcelaTotal)}</div>
-                      <div style={{ fontSize: '.6rem', color: 'rgba(255,255,255,.3)', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>curriculo {parcelas}x + comodato {com.parcelas}x</div>
+                      <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Mensalidade escola (total)</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: '#f59e0b', lineHeight: 1 }}>{R$(mensalidadeEscola)}</div>
+                      <div style={{ fontSize: '.6rem', color: 'rgba(255,255,255,.3)', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>curriculo 12x {R$(sis.anual/12)} + comodato {R$(com.parcelaMensal)}</div>
                     </div>
                   </div>
                   <div style={{ marginTop: '.65rem' }}>
@@ -821,9 +825,9 @@ export default function CalculadoraPage() {
                   <div style={NOTA}>Define notebooks: ⌈{maiorSala} ÷ 2⌉ = {com.qtdNB} unidades. Padrão: 20 alunos.</div>
                 </div>
                 <div>
-                  <label style={LBL}>Anos de contrato (= parcelas sistema)</label>
-                  <input type="number" min={1} max={12} value={parcelas} onChange={e => setParcelas(Math.min(12, Math.max(1, +e.target.value || 4)))} style={INP} />
-                  <div style={NOTA}>Usado para calcular manutenção total ao longo do contrato.</div>
+                  <label style={LBL}>Prazo do contrato comodato (anos)</label>
+                  <input type="number" min={1} max={10} value={anosContrato} onChange={e => setAnosContrato(Math.min(10, Math.max(1, +e.target.value || 4)))} style={INP} />
+                  <div style={NOTA}>Padrão 4 anos. Manutenção = txMan × equip_unitário × anos. Independente das parcelas do currículo.</div>
                 </div>
               </div>
 
@@ -911,7 +915,7 @@ export default function CalculadoraPage() {
                       <td style={{ padding: '.6rem .65rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '.95rem', fontWeight: 700, color: '#92400e' }}>{R$(com.C12)}</td>
                       <td style={{ padding: '.6rem .65rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#92400e' }}>{R$(com.C12)}</td>
                       <td style={{ padding: '.6rem .65rem', fontSize: '.65rem', color: '#92400e', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                        {pct(com.txMan)} × {R$(com.sumUnit)} × {parcelas} anos
+                        {pct(com.txMan)} × {R$(com.sumUnit)} × {anosContrato} anos
                       </td>
                     </tr>
                     {/* Total */}
@@ -924,8 +928,8 @@ export default function CalculadoraPage() {
                 </table>
               </div>
               <div style={{ marginTop: '.75rem', display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
-                <Nota t={`*Manutenção = ${pct(com.txMan)} × ${R$(com.sumUnit)} (soma preços unitários) × ${parcelas} anos = ${R$(com.C12)}`} />
-                <Nota t={`Taxa admin (separada, não no total): ${pct(com.txAdmin)} × (${R$(com.sumUnit)} + ${R$(com.C12)}) × ${parcelas} anos = ${R$(com.C13)}`} />
+                <Nota t={`*Manutenção = ${pct(com.txMan)} × ${R$(com.sumUnit)} (soma preços unitários) × ${anosContrato} anos = ${R$(com.C12)}`} />
+                <Nota t={`Taxa admin (separada, não no total): ${pct(com.txAdmin)} × (${R$(com.sumUnit)} + ${R$(com.C12)}) × ${anosContrato} anos = ${R$(com.C13)}`} />
               </div>
             </Card>
 
@@ -989,7 +993,7 @@ export default function CalculadoraPage() {
                   { label: 'Sistema We Make', value: R$(alunoMesSis), sub: `${R$(sis.valorFinal)}/ano ÷ 12`, color: '#4A7FDB' },
                   { label: 'Comodato Equip.', value: R$(com.valorPorAlunoMes), sub: `${R$(com.parcelaMensal)}/mês ÷ ${alunos} al.`, color: '#5FE3D0' },
                   { label: 'Total / aluno / mês', value: R$(totalAluMes), sub: `${R$(totalAluMes * 12)}/aluno/ano`, color: '#fff', big: true },
-                  { label: 'Parcela escola / mês', value: R$(parcelaTotal), sub: `sistema ${parcelas}x + comodato ${com.parcelas}x`, color: '#f59e0b' },
+                  { label: 'Mensalidade escola', value: R$(mensalidadeEscola), sub: `curriculo 12x + comodato ${com.parcelas}x`, color: '#f59e0b' },
                 ].map(k => (
                   <div key={k.label} style={{ padding: '1rem 1.1rem', background: 'rgba(255,255,255,.04)' }}>
                     <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>{k.label}</div>
