@@ -257,12 +257,14 @@ export default function CalculadoraPage() {
     [alunos, maiorSala, anosContrato, equip, cp]
   )
 
+  // Com comodato ativo: currículo é sempre 12x (mensal) — regra de negócio
+  const parcelasCurriculo = incluiComodato ? 12 : parcelas
   const alunoMesSis       = sis.valorFinal / 12
   const totalAluMes       = alunoMesSis + com.valorPorAlunoMes
-  // Mensalidade real da escola = curriculo mensal + comodato mensal (sempre base 12x, como o Excel)
+  // Mensalidade escola = curriculo 12x + comodato mensal (base sempre mensal quando há comodato)
   const mensalidadeEscola = sis.anual / 12 + com.parcelaMensal
-  // Parcela curriculo conforme parcelas selecionadas
-  const parcelaCurriculo  = sis.anual / parcelas
+  // Parcela curriculo conforme regra ativa
+  const parcelaCurriculo  = sis.anual / parcelasCurriculo
 
   // ── Helpers visuais ───────────────────────────────────────────
   const scoreClr  = (v: number) => v >= 0.7 ? '#16a34a' : v >= 0.4 ? '#d97706' : '#dc2626'
@@ -638,18 +640,31 @@ export default function CalculadoraPage() {
             {/* 7. Parcelamento */}
             <Card>
               <SecTitle n={7} title="Painel de parcelamento — 4x a 12x" />
-              <Nota t={`Valor anual total: ${R$(sis.anual)} (${alunos} alunos × ${R$(sis.valorFinal)}/ano). Clique em uma linha para selecionar.`} />
-              <div style={{ overflowX: 'auto', marginTop: '1rem' }}>
+              {incluiComodato ? (
+                <div style={{ background: '#eff6ff', border: '1.5px solid #bfdbfe', borderRadius: 8, padding: '.7rem 1rem', marginBottom: '.85rem', display: 'flex', alignItems: 'center', gap: '.6rem' }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#2563eb', flexShrink: 0 }} />
+                  <div style={{ fontSize: '.73rem', fontFamily: 'var(--font-inter,sans-serif)', color: '#1d4ed8', lineHeight: 1.4 }}>
+                    <strong>Comodato ativo — curriculo fixado em 12x (mensal).</strong> O parcelamento do curriculo e sempre mensal quando ha comodato, independente da selecao abaixo.
+                  </div>
+                </div>
+              ) : (
+                <Nota t={`Valor anual total: ${R$(sis.anual)} (${alunos} alunos × ${R$(sis.valorFinal)}/ano). Clique em uma linha para selecionar.`} />
+              )}
+              <div style={{ overflowX: 'auto', marginTop: '.75rem' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr>{['Parcelas', 'Parcela mensal', 'Por aluno/mês', 'Governança'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
                   </thead>
                   <tbody>
                     {Array.from({ length: 9 }, (_, i) => i + 4).map(n => {
-                      const pm = sis.anual / n; const pa = pm / alunos; const ativo = n === parcelas
+                      const pm = sis.anual / n; const pa = pm / alunos
+                      const ativo = incluiComodato ? n === 12 : n === parcelas
+                      const locked = incluiComodato && n !== 12
                       return (
-                        <tr key={n} onClick={() => setParcelas(n)} style={{ background: ativo ? '#eff6ff' : n % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', outline: ativo ? '2px solid #4A7FDB' : 'none', outlineOffset: -1 }}>
-                          <td style={{ padding: '.7rem 1rem', fontWeight: 800, fontSize: '.88rem', color: ativo ? '#2563eb' : '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{n}x</td>
+                        <tr key={n} onClick={() => !incluiComodato && setParcelas(n)} style={{ background: ativo ? '#eff6ff' : n % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f1f5f9', cursor: incluiComodato ? 'default' : 'pointer', outline: ativo ? '2px solid #4A7FDB' : 'none', outlineOffset: -1, opacity: locked ? 0.4 : 1 }}>
+                          <td style={{ padding: '.7rem 1rem', fontWeight: 800, fontSize: '.88rem', color: ativo ? '#2563eb' : '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                            {n}x{ativo && incluiComodato ? ' (fixo)' : ''}
+                          </td>
                           <td style={{ padding: '.7rem 1rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: ativo ? '#2563eb' : '#0f172a' }}>{R$(pm)}</td>
                           <td style={{ padding: '.7rem 1rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#475569' }}>{R$(pa)}</td>
                           <td style={{ padding: '.7rem 1rem', fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
@@ -662,7 +677,10 @@ export default function CalculadoraPage() {
                 </table>
               </div>
               <div style={{ marginTop: '.65rem', fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                Selecionado: <strong style={{ color: '#2563eb' }}>{parcelas}x de {R$(sis.anual / parcelas)}</strong> · por aluno/mês: <strong style={{ color: '#2563eb' }}>{R$(sis.anual / parcelas / alunos)}</strong>
+                {incluiComodato
+                  ? <><strong style={{ color: '#2563eb' }}>12x (mensal)</strong> de {R$(sis.anual / 12)} · por aluno/mês: <strong style={{ color: '#2563eb' }}>{R$(sis.anual / 12 / alunos)}</strong> — fixo pela regra do comodato</>
+                  : <>Selecionado: <strong style={{ color: '#2563eb' }}>{parcelas}x de {R$(sis.anual / parcelas)}</strong> · por aluno/mês: <strong style={{ color: '#2563eb' }}>{R$(sis.anual / parcelas / alunos)}</strong></>
+                }
               </div>
             </Card>
 
@@ -710,12 +728,12 @@ export default function CalculadoraPage() {
                       <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{R$(sis.valorFinal)}/ano ÷ 12</div>
                     </div>
                     <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
-                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Parcela escola ({parcelas}x)</div>
-                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{R$(sis.anual / parcelas)}</div>
-                      <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{R$(sis.anual)}/ano ÷ {parcelas}x</div>
+                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Parcela escola ({parcelasCurriculo}x)</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{R$(parcelaCurriculo)}</div>
+                      <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{R$(sis.anual)}/ano ÷ {parcelasCurriculo}x</div>
                     </div>
                   </div>
-                  <Nota t={`Orcamento somente curriculo. Valor anual: ${R$(sis.anual)} (${alunos} alunos x ${R$(sis.valorFinal)}). Comodato de equipamentos NAO incluido.`} />
+                  <Nota t={`Somente curriculo — parcela ${parcelasCurriculo}x de ${R$(parcelaCurriculo)}. Sem comodato. Para incluir equipamentos, selecione "Curriculo + Comodato" acima.`} />
                 </div>
               )}
 
@@ -740,8 +758,8 @@ export default function CalculadoraPage() {
                           <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>{R$(sis.anual)}</div>
                         </div>
                         <div>
-                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Parcela ({parcelas}x)</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>{R$(sis.anual / parcelas)}</div>
+                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Parcela (12x)</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>{R$(sis.anual / 12)}</div>
                         </div>
                       </div>
                     </div>
