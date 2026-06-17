@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { BancoSearch } from './BancoSearch'
 
 const FONTES = [
   { value: 'ciecc_2026', label: '2º CIECC 2026',  cor: '#2563eb', desc: 'Banco_Unificado_CIECC_2026.xlsx' },
   { value: 'ciecc_2025', label: '1º CIECC 2025',  cor: '#7c3aed', desc: 'Prover 2025.xlsx' },
-  { value: 'crm',        label: 'CRM Education',  cor: '#4A7FDB', desc: 'Education_CRM_FINAL.xlsx' },
-  { value: 'oikos',      label: 'Oikos Live',      cor: '#0d9488', desc: 'Leads captados via RD Station' },
+  { value: 'banco',      label: 'Banco de Dados',  cor: '#0f172a', desc: 'Buscar escola ou pessoa no banco' },
   { value: 'outro',      label: 'Outra planilha',  cor: '#64748b', desc: 'Qualquer planilha .xlsx/.csv' },
 ]
 
@@ -45,6 +45,7 @@ export function ImportacaoClient() {
   const [tiposSel,     setTiposSel]    = useState<Set<string>>(new Set())
   // Se a fonte é CIECC, mostra o filtro de tipos
   const isCIECC = fonte === 'ciecc_2025' || fonte === 'ciecc_2026'
+  const isBanco = fonte === 'banco'
   const inputRef = useRef<HTMLInputElement>(null)
 
   const fonteAtual = FONTES.find(f => f.value === fonte)!
@@ -249,41 +250,50 @@ export function ImportacaoClient() {
             </div>
           )}
 
-          {/* Upload */}
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.5rem', boxShadow: '0 1px 4px rgba(15,23,42,.04)' }}>
-            <label style={lbl}>Arquivo Excel ou CSV</label>
-            <div
-              onClick={() => inputRef.current?.click()}
-              onDragOver={e => { e.preventDefault(); e.currentTarget.style.borderColor = fonteAtual.cor }}
-              onDragLeave={e => { e.currentTarget.style.borderColor = arquivo ? fonteAtual.cor : '#e2e8f0' }}
-              onDrop={e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) setArquivo(f) }}
-              style={{ border: `2px dashed ${arquivo ? fonteAtual.cor : '#e2e8f0'}`, borderRadius: 12, padding: '2.5rem', textAlign: 'center', cursor: 'pointer', background: arquivo ? fonteAtual.cor + '06' : '#fafafa', transition: 'all .15s' }}>
-              <input ref={inputRef} type="file" accept=".xlsx,.xls,.csv" style={{ display: 'none' }} onChange={e => setArquivo(e.target.files?.[0] ?? null)} />
-              {arquivo ? (
-                <div>
-                  <div style={{ width: 48, height: 48, borderRadius: 12, background: fonteAtual.cor, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto .75rem' }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          {/* Busca no banco — só aparece quando fonte === 'banco' */}
+          {isBanco && (
+            <BancoSearch />
+          )}
+
+          {/* Upload — oculto quando fonte === 'banco' */}
+          {!isBanco && (
+            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.5rem', boxShadow: '0 1px 4px rgba(15,23,42,.04)' }}>
+              <label style={lbl}>Arquivo Excel ou CSV</label>
+              <div
+                onClick={() => inputRef.current?.click()}
+                onDragOver={e => { e.preventDefault(); e.currentTarget.style.borderColor = fonteAtual.cor }}
+                onDragLeave={e => { e.currentTarget.style.borderColor = arquivo ? fonteAtual.cor : '#e2e8f0' }}
+                onDrop={e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) setArquivo(f) }}
+                style={{ border: `2px dashed ${arquivo ? fonteAtual.cor : '#e2e8f0'}`, borderRadius: 12, padding: '2.5rem', textAlign: 'center', cursor: 'pointer', background: arquivo ? fonteAtual.cor + '06' : '#fafafa', transition: 'all .15s' }}>
+                <input ref={inputRef} type="file" accept=".xlsx,.xls,.csv" style={{ display: 'none' }} onChange={e => setArquivo(e.target.files?.[0] ?? null)} />
+                {arquivo ? (
+                  <div>
+                    <div style={{ width: 48, height: 48, borderRadius: 12, background: fonteAtual.cor, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto .75rem' }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    </div>
+                    <div style={{ fontWeight: 700, fontSize: '.95rem', color: fonteAtual.cor, fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.25rem' }}>{arquivo.name}</div>
+                    <div style={{ fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>{(arquivo.size / (1024*1024)).toFixed(1)} MB · clique para trocar</div>
                   </div>
-                  <div style={{ fontWeight: 700, fontSize: '.95rem', color: fonteAtual.cor, fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.25rem' }}>{arquivo.name}</div>
-                  <div style={{ fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>{(arquivo.size / (1024*1024)).toFixed(1)} MB · clique para trocar</div>
-                </div>
-              ) : (
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '.75rem' }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                ) : (
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '.75rem' }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                    </div>
+                    <div style={{ fontWeight: 600, color: '#475569', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.25rem' }}>Arraste ou clique para selecionar</div>
+                    <div style={{ fontSize: '.72rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>.xlsx, .xls, .csv</div>
                   </div>
-                  <div style={{ fontWeight: 600, color: '#475569', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.25rem' }}>Arraste ou clique para selecionar</div>
-                  <div style={{ fontSize: '.72rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>.xlsx, .xls, .csv</div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {erro && <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 8, padding: '.75rem 1rem', fontSize: '.82rem', color: '#dc2626', fontFamily: 'var(--font-inter,sans-serif)' }}>{erro}</div>}
 
-          <button onClick={handleAnalisar} disabled={!arquivo || loading} style={{ padding: '.85rem', borderRadius: 9999, border: 'none', background: !arquivo || loading ? '#e2e8f0' : `linear-gradient(135deg, ${fonteAtual.cor}, ${fonteAtual.cor}cc)`, color: !arquivo || loading ? '#94a3b8' : '#fff', fontWeight: 700, fontSize: '.9rem', cursor: !arquivo || loading ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: !arquivo || loading ? 'none' : `0 4px 14px ${fonteAtual.cor}44`, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem' }}>
-            {loading ? <><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: 'spin 1s linear infinite' }}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>Analisando...</> : 'Analisar Planilha →'}
-          </button>
+          {!isBanco && (
+            <button onClick={handleAnalisar} disabled={!arquivo || loading} style={{ padding: '.85rem', borderRadius: 9999, border: 'none', background: !arquivo || loading ? '#e2e8f0' : `linear-gradient(135deg, ${fonteAtual.cor}, ${fonteAtual.cor}cc)`, color: !arquivo || loading ? '#94a3b8' : '#fff', fontWeight: 700, fontSize: '.9rem', cursor: !arquivo || loading ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: !arquivo || loading ? 'none' : `0 4px 14px ${fonteAtual.cor}44`, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem' }}>
+              {loading ? <><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: 'spin 1s linear infinite' }}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>Analisando...</> : 'Analisar Planilha →'}
+            </button>
+          )}
         </div>
       )}
 

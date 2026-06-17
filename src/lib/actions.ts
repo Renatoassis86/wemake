@@ -806,6 +806,39 @@ export async function enviarFormularioPublico(formData: FormData): Promise<Actio
       return { success: false, error: 'Não foi possível confirmar o registro no banco.' }
     }
 
+    // Espelha automaticamente no banco de leads (leads_universal)
+    const qtdTotal = alunos_infantil + alunos_fundamental_1 + alunos_fundamental_2 + alunos_ensino_medio
+    await supabase.from('leads_universal').insert({
+      fonte: 'formulario_wemake',
+      nome: legal_nome,
+      email: legal_email || email_institucional || null,
+      tel_celular: legal_whatsapp || null,
+      cidade,
+      uf: estado,
+      endereco: rua || null,
+      bairro: bairro || null,
+      cep: cep || null,
+      escola_nome: nome_fantasia || razao_social,
+      escola_cnpj: cnpj || null,
+      qtd_infantil: alunos_infantil || null,
+      qtd_fund1: alunos_fundamental_1 || null,
+      qtd_fund2: alunos_fundamental_2 || null,
+      qtd_medio: alunos_ensino_medio || null,
+      qtd_alunos_total: qtdTotal || null,
+      data_inscricao: new Date().toISOString(),
+      dados_extras: {
+        razao_social,
+        email_institucional,
+        ticket_medio: ticket_medio || null,
+        fin_email_cobranca: fin_email_cobranca || null,
+        legal_cpf: legal_cpf || null,
+        formato_ano_letivo: formato_ano_letivo || null,
+        data_inicio_letivo: data_inicio_letivo || null,
+        data_fim_letivo: data_fim_letivo || null,
+        precadastro_id: inserted.id,
+      },
+    })
+
     return { success: true, id: String(inserted.id) }
   } catch (err: any) {
     console.error('[enviarFormularioPublico] Exception:', err)
