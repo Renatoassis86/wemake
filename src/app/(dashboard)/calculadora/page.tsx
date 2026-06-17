@@ -7,31 +7,31 @@ import PageHeader from '@/components/layout/PageHeader'
 const R$ = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 const pct = (v: number) => (v * 100).toFixed(1) + '%'
 const dec = (v: number) => v.toFixed(3)
+const dec3 = (v: number) => v.toFixed(3)
 
 // ══════════════════════════════════════════════════════════════════
 // TIPOS
 // ══════════════════════════════════════════════════════════════════
-interface Faixa { nome: string; min: number; max: number; piso: number }
 interface SisParams {
-  livroMes: number; teto: number; ticketMax: number
+  livroMes: number; teto: number; piso: number; ticketMax: number
   wEscala: number; wTicket: number; wCompl: number; wFid: number
-  faixas: Faixa[]
+  alunosMin: number; alunosMax: number
+}
+interface LeasingParams {
+  i: number          // taxa mensal leasing (default 0.022 = 2.2%)
+  ipca: number       // IPCA anual estimado (default 0.055 = 5.5%)
+  duracaoMeses: number  // duração total contrato em meses (default 60 = 5 anos)
 }
 interface EquipItem { nome: string; qty: number; unit: number; fixedQty: boolean; nota?: string }
 interface ComParams {
   taxas: { parcelas: number; txMan: number; txAdmin: number }[]
 }
 
-// ── Valores padrão (espelham exatamente as abas do Excel) ─────────
+// ── Valores padrão ────────────────────────────────────────────────
 const DEFAULT_SIS: SisParams = {
-  livroMes: 16.50, teto: 420, ticketMax: 1500,
+  livroMes: 16.50, teto: 420, piso: 280, ticketMax: 1500,
   wEscala: 0.35, wTicket: 0.30, wCompl: 0.20, wFid: 0.15,
-  faixas: [
-    { nome: 'Faixa 1', min: 1,   max: 100, piso: 320 },
-    { nome: 'Faixa 2', min: 101, max: 300, piso: 280 },
-    { nome: 'Faixa 3', min: 301, max: 500, piso: 280 },
-    { nome: 'Faixa 4', min: 501, max: 800, piso: 280 },
-  ],
+  alunosMin: 1, alunosMax: 800,
 }
 
 const DEFAULT_EQUIP: EquipItem[] = [
@@ -47,7 +47,7 @@ const DEFAULT_EQUIP: EquipItem[] = [
   { nome: 'Seguro',                qty: 10, unit: 2700.00,  fixedQty: true, nota: 'Qtd igual ao nº de notebooks' },
 ]
 
-// Taxas padrão por faixa de parcelas (J/K colunas do Excel)
+// Taxas padrão por faixa de parcelas
 const DEFAULT_COM: ComParams = {
   taxas: [
     { parcelas: 48, txMan: 0.25, txAdmin: 0.25 },
@@ -55,6 +55,10 @@ const DEFAULT_COM: ComParams = {
     { parcelas: 24, txMan: 0.15, txAdmin: 0.15 },
     { parcelas: 12, txMan: 0.10, txAdmin: 0.10 },
   ],
+}
+
+const DEFAULT_LEASING: LeasingParams = {
+  i: 0.022, ipca: 0.055, duracaoMeses: 60,
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -65,19 +69,18 @@ function calcSistema(
   altaCompl: boolean, situacao: string, desconto: number,
   p: SisParams
 ) {
-  const f = p.faixas.find(x => alunos >= x.min && alunos <= x.max) ?? p.faixas[p.faixas.length - 1]
-  const range = (f.max - f.min) || 1
-
-  const s1 = 1 - (alunos - f.min) / range
+  const scaleRange = (p.alunosMax - p.alunosMin) || 1
+  const s1 = Math.max(0, Math.min(1, 1 - (alunos - p.alunosMin) / scaleRange))
   const s2 = Math.min(1, ticket / p.ticketMax)
   const s3 = (segmentos === 3 || altaCompl) ? 1 : segmentos === 2 ? 0.5 : 0
   const s4 = situacao === 'Renovação 2º ciclo+' ? 0.4 : situacao === 'Renovação 1º ciclo' ? 0.7 : 1.0
 
-  const scoreFinal   = p.wEscala * s1 + p.wTicket * s2 + p.wCompl * s3 + p.wFid * s4
-  const valorBruto   = f.piso + (p.teto - f.piso) * scoreFinal
-  const valorDesc    = valorBruto * (1 - desconto / 100)
-  const valorFinal   = Math.max(f.piso, valorDesc)
-  const anual        = valorFinal * alunos
+  const scoreFinal = p.wEscala * s1 + p.wTicket * s2 + p.wCompl * s3 + p.wFid * s4
+  const amplitude  = p.teto - p.piso
+  const valorBruto = p.piso + amplitude * scoreFinal
+  const valorDesc  = valorBruto * (1 - desconto / 100)
+  const valorFinal = Math.max(p.piso, valorDesc)
+  const anual      = valorFinal * alunos
 
   const gov = desconto === 0 ? { label: '— Sem desconto', status: 'ok' as const }
     : desconto <= 5  ? { label: 'Comercial (autônomo)', status: 'ok' as const }
@@ -85,70 +88,74 @@ function calcSistema(
     : { label: 'Diretoria — Dênis', status: 'error' as const }
 
   return {
-    f, s1, s2, s3, s4, scoreFinal,
+    s1, s2, s3, s4, scoreFinal, amplitude,
     valorBruto, valorDesc, valorFinal, anual,
     custo: anual * 0.70, liquido: anual * 0.30,
-    gov, descMax: valorBruto > f.piso ? (1 - f.piso / valorBruto) * 100 : 0,
+    gov,
+    descMax: valorBruto > p.piso ? (1 - p.piso / valorBruto) * 100 : 0,
     ticketLabel: ticket < 400 ? 'Popular' : ticket <= 800 ? 'Média-baixa' : ticket <= 1500 ? 'Padrão' : 'Premium',
     livroAno: p.livroMes * 12,
   }
 }
 
-function calcComodato(
-  alunos: number, maiorSala: number, anosContrato: number,
-  equip: EquipItem[], cp: ComParams
+function calcLeasing(
+  alunos: number, maiorSala: number,
+  equip: EquipItem[], cp: ComParams, lp: LeasingParams,
+  anualCurriculo: number
 ) {
-  const qtdNB = Math.ceil(maiorSala / 2)
+  const qtdNB      = Math.ceil(maiorSala / 2)
+  const comParcelas = alunos <= 100 ? 48 : alunos <= 300 ? 36 : alunos <= 500 ? 24 : 12
+  const faixaLabel  = alunos <= 100 ? 'Até 100 al.' : alunos <= 300 ? '101–300 al.' : alunos <= 500 ? '301–500 al.' : 'Acima 500 al.'
 
-  // Parcelas comodato baseado em faixa de alunos
-  const parcelas = alunos <= 100 ? 48 : alunos <= 300 ? 36 : alunos <= 500 ? 24 : 12
-  const faixaLabel = alunos <= 100 ? 'Até 100 alunos' : alunos <= 300 ? '101–300' : alunos <= 500 ? '301–500' : 'Acima de 500'
-
-  // Taxas correspondentes
-  const taxaRow = cp.taxas.find(t => t.parcelas === parcelas) ?? cp.taxas[cp.taxas.length - 1]
+  const taxaRow = cp.taxas.find(t => t.parcelas === comParcelas) ?? cp.taxas[cp.taxas.length - 1]
   const txMan   = taxaRow.txMan
   const txAdmin = taxaRow.txAdmin
 
-  // Quantidade efetiva (notebooks e seguro seguem qtdNB se fixedQty)
-  const itensCalc = equip.map((e, idx) => {
-    const qtyReal = e.fixedQty
-      ? (idx === 6 ? qtdNB : qtdNB)  // informática e seguro (idx 6 e 9)
-      : e.qty
-    return { ...e, qtyReal, total: qtyReal * e.unit }
+  const itens    = equip.map(e => ({ ...e, qtyReal: e.fixedQty ? qtdNB : e.qty, total: (e.fixedQty ? qtdNB : e.qty) * e.unit }))
+  const sumEquip = itens.reduce((s, e) => s + e.total, 0)
+  const sumUnit  = equip.reduce((s, e) => s + e.unit, 0)
+
+  const anos  = lp.duracaoMeses / 12
+  const C_man = txMan   * sumUnit * anos
+  const C_adm = txAdmin * sumUnit * anos
+
+  // PV = equipamentos + manutenção + admin
+  const PV = sumEquip + C_man + C_adm
+
+  // Fórmula PRICE: PMT = PV × [i×(1+i)^n ÷ ((1+i)^n − 1)]
+  const i = lp.i
+  const n = comParcelas
+  const N = lp.duracaoMeses
+  const factor = Math.pow(1 + i, n)
+  const parcelaPrice = PV * (i * factor) / (factor - 1)
+
+  const totalRecebido   = parcelaPrice * N
+  const resultadoBruto  = totalRecebido - PV
+  const retorno         = PV > 0 ? resultadoBruto / PV : 0
+  const mesesMargem     = N - n
+  const taxaEfetivAnual = Math.pow(1 + i, 12) - 1
+
+  // Tabela anual: parcela currículo cresce por IPCA, comodato é fixo
+  const anosContrato = Math.ceil(N / 12)
+  const mensalCurriculo1 = anualCurriculo / 12
+  const tabela = Array.from({ length: anosContrato }, (_, y) => {
+    const fatorIpca      = Math.pow(1 + lp.ipca, y)
+    const parcelaCurr    = mensalCurriculo1 * fatorIpca
+    const totalEscola    = parcelaCurr + parcelaPrice
+    const recCurr        = parcelaCurr * 12
+    const recCom         = parcelaPrice * 12
+    return { ano: y + 1, fatorIpca, parcelaCurr, parcelaComodato: parcelaPrice, totalEscola, recCurr, recCom, recTotal: recCurr + recCom }
   })
-  // Recalcula com qtyReal correto por índice
-  const itensComQty = equip.map((e, idx) => {
-    const qtyReal = e.fixedQty ? qtdNB : e.qty
-    return { ...e, qtyReal, total: qtyReal * e.unit }
-  })
-
-  // SUM(C2:C11) — soma dos preços UNITÁRIOS (conforme fórmula Excel)
-  const sumUnit = equip.reduce((s, e) => s + e.unit, 0)
-
-  // Manutenção (C12) = tx × SUM_unitarios × anos
-  const C12 = txMan * sumUnit * anosContrato
-  // Admin (C13) = tx × (SUM_unitarios + C12) × anos
-  const C13 = txAdmin * (sumUnit + C12) * anosContrato
-
-  // Total D14 = SUM(D2:D12) — soma dos totais (qtyReal × unit) + manutenção
-  const D14 = itensComQty.reduce((s, e) => s + e.total, 0) + C12
-
-  const parcelaMensal    = D14 / (parcelas || 1)
-  const valorPorAlunoMes = parcelaMensal / (alunos || 1)
 
   return {
-  // Contrato é sempre anosContrato×12 meses. A escola paga parcelaMensal por todos esses meses.
-  // O comParcelas (faixa) apenas define o valor da parcela (D14 ÷ comParcelas).
-  const mesesContrato      = anosContrato * 12
-  const valorTotalContrato = parcelaMensal * mesesContrato         // total recebido da escola
-  const resultado          = valorTotalContrato - D14              // lucro no comodato
-  const retorno            = D14 > 0 ? resultado / D14 : 0
-
-  return {
-    qtdNB, parcelas, faixaLabel, txMan, txAdmin,
-    sumUnit, C12, C13, itens: itensComQty, D14,
-    parcelaMensal, valorPorAlunoMes,
-    mesesContrato, valorTotalContrato, resultado, retorno,
+    qtdNB, comParcelas, faixaLabel, txMan, txAdmin,
+    itens, sumEquip, sumUnit, C_man, C_adm, PV,
+    i, n, N, factor,
+    parcelaPrice, totalRecebido, resultadoBruto, retorno,
+    mesesMargem, taxaEfetivAnual, tabela,
+    // compat aliases used in combined view
+    parcelaMensal: parcelaPrice,
+    valorPorAlunoMes: parcelaPrice / (alunos || 1),
   }
 }
 
@@ -232,8 +239,6 @@ export default function CalculadoraPage() {
   const [showSisAdv, setShowSisAdv] = useState(false)
 
   const updSp = (field: keyof SisParams, val: any) => setSp(p => ({ ...p, [field]: val }))
-  const updFaixa = (idx: number, field: keyof Faixa, val: number) =>
-    setSp(p => { const f = [...p.faixas]; f[idx] = { ...f[idx], [field]: val }; return { ...p, faixas: f } })
 
   // ── Parâmetros compartilhados sistema+comodato ─────────────────
   const [alunos,    setAlunos]    = useState(100)
@@ -242,9 +247,11 @@ export default function CalculadoraPage() {
   const [altaCompl, setAltaCompl] = useState(false)
   const [situacao,  setSituacao]  = useState('Novo')
   const [desconto,  setDesconto]  = useState(0)
-  const [parcelas,     setParcelas]     = useState(4)
-  const [anosContrato, setAnosContrato] = useState(4)
-  const [maiorSala,    setMaiorSala]    = useState(20)
+  const [parcelas,  setParcelas]  = useState(4)
+  const [maiorSala, setMaiorSala] = useState(20)
+
+  // ── Parâmetros de Leasing ──────────────────────────────────────
+  const [lp, setLp] = useState<LeasingParams>(DEFAULT_LEASING)
 
   // ── Equipamentos do Comodato (todos editáveis) ─────────────────
   const [equip, setEquip] = useState<EquipItem[]>(DEFAULT_EQUIP)
@@ -261,16 +268,16 @@ export default function CalculadoraPage() {
     [alunos, ticket, segs, altaCompl, situacao, desconto, sp]
   )
   const com = useMemo(
-    () => calcComodato(alunos, maiorSala, anosContrato, equip, cp),
-    [alunos, maiorSala, anosContrato, equip, cp]
+    () => calcLeasing(alunos, maiorSala, equip, cp, lp, sis.anual),
+    [alunos, maiorSala, equip, cp, lp, sis.anual]
   )
 
   // Com comodato ativo: currículo é sempre 12x (mensal) — regra de negócio
   const parcelasCurriculo = incluiComodato ? 12 : parcelas
   const alunoMesSis       = sis.valorFinal / 12
   const totalAluMes       = alunoMesSis + com.valorPorAlunoMes
-  // Mensalidade escola = curriculo 12x + comodato mensal (base sempre mensal quando há comodato)
-  const mensalidadeEscola = sis.anual / 12 + com.parcelaMensal
+  // Mensalidade escola = curriculo 12x + leasing mensal (base sempre mensal quando há leasing)
+  const mensalidadeEscola = sis.anual / 12 + com.parcelaPrice
   // Parcela curriculo conforme regra ativa
   const parcelaCurriculo  = sis.anual / parcelasCurriculo
 
@@ -296,13 +303,13 @@ export default function CalculadoraPage() {
 
   return (
     <div>
-      <PageHeader title="Calculadora We Make" subtitle="Precificação por score + comodato de equipamentos" />
+      <PageHeader title="Calculadora We Make" subtitle="Precificação por score + leasing de equipamentos — v6" />
       <div style={{ padding: '1.75rem 2.5rem' }}>
 
         {/* Tabs */}
         <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1.75rem', flexWrap: 'wrap' }}>
           <button style={tabStyle('sistema')}  onClick={() => setTab('sistema')}>We Make — Sistema</button>
-          <button style={tabStyle('comodato')} onClick={() => setTab('comodato')}>Comodato de Equipamentos</button>
+          <button style={tabStyle('comodato')} onClick={() => setTab('comodato')}>Leasing de Equipamentos</button>
         </div>
 
         {/* ══════════════════════════════════════════════════════
@@ -312,10 +319,10 @@ export default function CalculadoraPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
             <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius: 14, padding: '1.1rem 1.5rem' }}>
-              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4A7FDB', marginBottom: '.3rem' }}>Lógica de precificação — Calculadora_v3 · v4.0</div>
+              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4A7FDB', marginBottom: '.3rem' }}>Lógica de precificação — Calculadora_v6 · Piso único + Leasing PRICE</div>
               <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '.4rem' }}>Valor = Piso + (Teto − Piso) × Score ponderado</div>
               <div style={{ fontSize: '.75rem', color: 'rgba(255,255,255,.5)', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)' }}>
-                4 fatores (escala, ticket, complexidade, fidelidade) geram score 0–1 que navega entre piso da faixa e teto fixo. Todos os parâmetros são editáveis abaixo.
+                4 fatores (escala global, ticket, complexidade, fidelidade) geram score 0–1 que navega entre piso único e teto fixo. Escala global de {sp.alunosMin} a {sp.alunosMax} alunos. Todos os parâmetros são editáveis abaixo.
               </div>
             </div>
 
@@ -326,7 +333,7 @@ export default function CalculadoraPage() {
                 <div>
                   <label style={LBL}>Número de alunos</label>
                   <input type="number" min={1} value={alunos} onChange={e => setAlunos(+e.target.value || 1)} style={INP} />
-                  <div style={NOTA}>Total de alunos We Make na escola. Define a faixa de preço.</div>
+                  <div style={NOTA}>Total de alunos We Make na escola. Escala global de {sp.alunosMin} a {sp.alunosMax} alunos.</div>
                 </div>
                 <div>
                   <label style={LBL}>Ticket médio mensal/aluno (R$)</label>
@@ -368,7 +375,7 @@ export default function CalculadoraPage() {
                 <div>
                   <label style={LBL}>Qtd. parcelas (4–12)</label>
                   <input type="number" min={4} max={12} value={parcelas} onChange={e => setParcelas(Math.min(12, Math.max(4, +e.target.value || 4)))} style={INP} />
-                  <div style={NOTA}>Frequência de pagamento do currículo. Independente do prazo do comodato (definido na aba Comodato).</div>
+                  <div style={NOTA}>Frequência de pagamento do currículo. Independente do prazo do leasing (definido na aba Leasing).</div>
                 </div>
               </div>
             </Card>
@@ -390,7 +397,8 @@ export default function CalculadoraPage() {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '.75rem' }}>
                       {[
                         { label: 'Livro/aluno/mês (R$)', field: 'livroMes' as keyof SisParams, val: sp.livroMes, nota: 'Custo fixo do material didático', prefix: 'R$' },
-                        { label: 'Teto único (R$/aluno/ano)', field: 'teto' as keyof SisParams, val: sp.teto, nota: 'Limite máximo absoluto — igual para todas as faixas', prefix: 'R$' },
+                        { label: 'Teto único (R$/aluno/ano)', field: 'teto' as keyof SisParams, val: sp.teto, nota: 'Limite máximo absoluto', prefix: 'R$' },
+                        { label: 'Piso único (R$/aluno/ano)', field: 'piso' as keyof SisParams, val: sp.piso, nota: 'Mínimo garantido — igual para todos', prefix: 'R$' },
                         { label: 'Ticket referência máx (R$)', field: 'ticketMax' as keyof SisParams, val: sp.ticketMax, nota: 'Ticket acima deste valor = score máximo de ticket', prefix: 'R$' },
                       ].map(f => (
                         <div key={f.field}>
@@ -409,6 +417,23 @@ export default function CalculadoraPage() {
                     </div>
                   </div>
 
+                  {/* Escala global */}
+                  <div>
+                    <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', marginBottom: '.65rem' }}>Escala global de alunos</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '.75rem' }}>
+                      <div>
+                        <label style={LBL}>Alunos mín. referência</label>
+                        <InlineNum value={sp.alunosMin} onChange={v => updSp('alunosMin', v)} min={1} step={1} />
+                        <div style={NOTA}>Score escala = 1,000 neste mínimo (preço perto do teto)</div>
+                      </div>
+                      <div>
+                        <label style={LBL}>Alunos máx. referência</label>
+                        <InlineNum value={sp.alunosMax} onChange={v => updSp('alunosMax', v)} min={1} step={1} />
+                        <div style={NOTA}>Score escala = 0,000 neste máximo (preço perto do piso)</div>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Pesos dos scores */}
                   <div>
                     <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', marginBottom: '.65rem' }}>
@@ -419,7 +444,7 @@ export default function CalculadoraPage() {
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '.75rem' }}>
                       {[
-                        { label: 'Peso Escala (%)', field: 'wEscala' as keyof SisParams, val: sp.wEscala, nota: 'Nº de alunos dentro da faixa' },
+                        { label: 'Peso Escala (%)', field: 'wEscala' as keyof SisParams, val: sp.wEscala, nota: 'Nº de alunos — escala global' },
                         { label: 'Peso Ticket (%)', field: 'wTicket' as keyof SisParams, val: sp.wTicket, nota: 'Mensalidade da escola' },
                         { label: 'Peso Complexidade (%)', field: 'wCompl' as keyof SisParams, val: sp.wCompl, nota: 'Nº de segmentos' },
                         { label: 'Peso Fidelidade (%)', field: 'wFid' as keyof SisParams, val: sp.wFid, nota: 'Renovação vs novo contrato' },
@@ -431,32 +456,6 @@ export default function CalculadoraPage() {
                         </div>
                       ))}
                     </div>
-                  </div>
-
-                  {/* Tabela de faixas */}
-                  <div>
-                    <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', marginBottom: '.65rem' }}>Tabela de faixas — piso R$/aluno/ano</div>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: 10, overflow: 'hidden', border: '1px solid #e2e8f0' }}>
-                      <thead>
-                        <tr>{['Faixa', 'Alunos: mín', 'Alunos: máx', 'Piso (R$/aluno/ano)', 'Teto (sempre)'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
-                      </thead>
-                      <tbody>
-                        {sp.faixas.map((f, idx) => (
-                          <tr key={f.nome} style={{ background: idx % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f1f5f9' }}>
-                            <td style={{ padding: '.6rem .85rem', fontWeight: 700, fontSize: '.82rem', fontFamily: 'var(--font-montserrat,sans-serif)', color: alunos >= f.min && alunos <= f.max ? '#2563eb' : '#0f172a' }}>
-                              {f.nome} {alunos >= f.min && alunos <= f.max && <span style={{ fontSize: '.6rem', background: '#dbeafe', color: '#1d4ed8', padding: '.1rem .35rem', borderRadius: 99, marginLeft: '.3rem' }}>atual</span>}
-                            </td>
-                            <td style={{ padding: '.5rem .85rem' }}><InlineNum value={f.min} onChange={v => updFaixa(idx, 'min', v)} min={1} /></td>
-                            <td style={{ padding: '.5rem .85rem' }}><InlineNum value={f.max} onChange={v => updFaixa(idx, 'max', v)} min={1} /></td>
-                            <td style={{ padding: '.5rem .85rem' }}><InlineNum value={f.piso} onChange={v => updFaixa(idx, 'piso', v)} prefix="R$" min={0} step={10} /></td>
-                            <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontWeight: 700, color: '#475569' }}>
-                              <InlineNum value={sp.teto} onChange={v => updSp('teto', v)} prefix="R$" min={0} step={10} />
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    <div style={{ marginTop: '.5rem', fontSize: '.68rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>O teto é único para todas as faixas — editá-lo em uma linha altera todas.</div>
                   </div>
 
                   <div style={{ display: 'flex', gap: '.75rem' }}>
@@ -484,11 +483,11 @@ export default function CalculadoraPage() {
                     <div style={{ height: '100%', width: `${sis.s1 * 100}%`, background: scoreClr(sis.s1), borderRadius: 99, transition: 'width .3s' }} />
                   </div>
                   <div style={{ fontSize: '.7rem', color: '#1e293b', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '.5rem' }}>
-                    <strong>Formula:</strong> 1 − ({alunos} − {sis.f.min}) ÷ ({sis.f.max} − {sis.f.min}) = <strong style={{ color: scoreClr(sis.s1) }}>{dec(sis.s1)}</strong>
+                    <strong>Formula:</strong> 1 − ({alunos} − {sp.alunosMin}) ÷ ({sp.alunosMax} − {sp.alunosMin}) = <strong style={{ color: scoreClr(sis.s1) }}>{dec(sis.s1)}</strong>
                   </div>
                   <div style={{ fontSize: '.68rem', color: '#475569', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)', borderTop: '1px solid #e2e8f0', paddingTop: '.5rem' }}>
-                    <strong>Regra (35% do score):</strong> Escola com mais alunos dentro da faixa recebe score MENOR, levando o preco em direcao ao PISO. Escola com menos alunos recebe score MAIOR, levando em direcao ao TETO. Premissa: volume = poder de barganha = preco menor.<br />
-                    <strong>Faixa atual:</strong> {sis.f.nome} ({sis.f.min}–{sis.f.max} alunos). Score varia de 1,000 (1 aluno) a 0,000 ({sis.f.max} alunos).
+                    <strong>Regra (35% do score):</strong> Escala global única de {sp.alunosMin} a {sp.alunosMax} alunos. Escola menor = score maior = preço perto do teto. Escola maior = score menor = preço perto do piso (desconto por volume).<br />
+                    <strong>Escala global:</strong> Score varia de 1,000 ({sp.alunosMin} aluno) a 0,000 ({sp.alunosMax} alunos).
                   </div>
                 </div>
 
@@ -551,7 +550,7 @@ export default function CalculadoraPage() {
                   </div>
                   <div style={{ fontSize: '.68rem', color: '#475569', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)', borderTop: '1px solid #e2e8f0', paddingTop: '.5rem' }}>
                     <strong>Regra (15% do score):</strong> Situacao do contrato com a escola. Renovacao = desconto implicito por lealdade — escola fiel paga menos que escola nova. Score menor = preco mais proximo do PISO. Quanto mais ciclos de renovacao, maior o beneficio.<br />
-                    <strong>Escala:</strong> Novo = 1,000 (preco cheio) · Renovacao 1° ciclo = 0,700 · Renovacao 2° ciclo+ = 0,400 (preco mais baixo possivel dentro da faixa).
+                    <strong>Escala:</strong> Novo = 1,000 (preco cheio) · Renovacao 1° ciclo = 0,700 · Renovacao 2° ciclo+ = 0,400 (preco mais baixo possivel dentro do piso unico).
                   </div>
                 </div>
               </div>
@@ -565,8 +564,8 @@ export default function CalculadoraPage() {
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '.7rem', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '.2rem' }}>Navega entre</div>
-                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.85rem', fontWeight: 800, color: '#5FE3D0' }}>{R$(sis.f.piso)} a {R$(sp.teto)}</div>
-                  <div style={{ fontSize: '.65rem', color: 'rgba(255,255,255,.3)', marginTop: '.1rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{sis.f.nome} · piso {R$(sis.f.piso)}</div>
+                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.85rem', fontWeight: 800, color: '#5FE3D0' }}>{R$(sp.piso)} a {R$(sp.teto)}</div>
+                  <div style={{ fontSize: '.65rem', color: 'rgba(255,255,255,.3)', marginTop: '.1rem', fontFamily: 'var(--font-inter,sans-serif)' }}>piso único {R$(sp.piso)}</div>
                 </div>
               </div>
             </Card>
@@ -576,11 +575,11 @@ export default function CalculadoraPage() {
               <SecTitle n={4} title="Equação central — memória de cálculo" />
               <div style={{ display: 'flex', flexDirection: 'column', gap: '.75rem' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
-                  <KV label="(1) Piso da faixa" value={R$(sis.f.piso)} sub={`${sis.f.nome}: ${sis.f.min}–${sis.f.max} alunos`} />
-                  <KV label="(2) Amplitude x Score" value={R$(sis.valorBruto - sis.f.piso)} sub={`(${R$(sp.teto)} - ${R$(sis.f.piso)}) x ${dec(sis.scoreFinal)}`} />
+                  <KV label="(1) Piso único" value={R$(sp.piso)} sub={`Piso único: ${sp.alunosMin}–${sp.alunosMax} alunos`} />
+                  <KV label="(2) Amplitude x Score" value={R$(sis.valorBruto - sp.piso)} sub={`(${R$(sp.teto)} - ${R$(sp.piso)}) x ${dec(sis.scoreFinal)}`} />
                   <KV label="(3) Valor bruto" value={R$(sis.valorBruto)} sub="Piso + amplitude x score" color="#4A7FDB" />
                 </div>
-                <Nota t={`${R$(sis.f.piso)} + (${R$(sp.teto)} − ${R$(sis.f.piso)}) × ${dec(sis.scoreFinal)} = ${R$(sis.valorBruto)}/aluno/ano`} />
+                <Nota t={`${R$(sp.piso)} + (${R$(sp.teto)} − ${R$(sp.piso)}) × ${dec(sis.scoreFinal)} = ${R$(sis.valorBruto)}/aluno/ano`} />
 
                 {desconto > 0 && (
                   <>
@@ -592,17 +591,17 @@ export default function CalculadoraPage() {
                   </>
                 )}
 
-                <div style={{ background: sis.valorFinal <= sis.f.piso ? '#fef3c7' : '#f0fdf4', border: `1.5px solid ${sis.valorFinal <= sis.f.piso ? '#fde68a' : '#86efac'}`, borderRadius: 10, padding: '1rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ background: sis.valorFinal <= sp.piso ? '#fef3c7' : '#f0fdf4', border: `1.5px solid ${sis.valorFinal <= sp.piso ? '#fde68a' : '#86efac'}`, borderRadius: 10, padding: '1rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', marginBottom: '.3rem' }}>(6) Protecao piso — MAX(piso, valor_com_desconto)</div>
                     <div style={{ fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.75rem', color: '#475569', marginBottom: '.2rem' }}>
-                      MAX({R$(sis.f.piso)}, {R$(sis.valorDesc)}) = <strong>{R$(sis.valorFinal)}</strong>
+                      MAX({R$(sp.piso)}, {R$(sis.valorDesc)}) = <strong>{R$(sis.valorFinal)}</strong>
                     </div>
                     <div style={{ fontSize: '.68rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                      {sis.valorFinal <= sis.f.piso ? 'Atencao: desconto limitado pelo piso — valor travado no minimo' : 'OK: desconto valido — nao ultrapassou o piso'}
+                      {sis.valorFinal <= sp.piso ? 'Atencao: desconto limitado pelo piso — valor travado no minimo' : 'OK: desconto valido — nao ultrapassou o piso'}
                     </div>
                   </div>
-                  <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: sis.valorFinal <= sis.f.piso ? '#d97706' : '#16a34a' }}>{R$(sis.valorFinal)}</div>
+                  <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: sis.valorFinal <= sp.piso ? '#d97706' : '#16a34a' }}>{R$(sis.valorFinal)}</div>
                 </div>
               </div>
             </Card>
@@ -619,7 +618,7 @@ export default function CalculadoraPage() {
                   <KV label="Custo operacional (70%)" value={R$(sis.custo)} sub="estimativa custo total" color="#dc2626" />
                   <KV label="Resultado líquido (30%)" value={R$(sis.liquido)} sub="margem estimada" color="#16a34a" />
                 </div>
-                <Nota t={`Custo do livro ${R$(sis.livroAno)}/aluno/ano incluído na margem. Piso ${R$(sis.f.piso)} garante cobertura mínima.`} />
+                <Nota t={`Custo do livro ${R$(sis.livroAno)}/aluno/ano incluído na margem. Piso único ${R$(sp.piso)} garante cobertura mínima.`} />
               </Card>
 
               <Card>
@@ -652,7 +651,7 @@ export default function CalculadoraPage() {
                 <div style={{ background: '#eff6ff', border: '1.5px solid #bfdbfe', borderRadius: 8, padding: '.7rem 1rem', marginBottom: '.85rem', display: 'flex', alignItems: 'center', gap: '.6rem' }}>
                   <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#2563eb', flexShrink: 0 }} />
                   <div style={{ fontSize: '.73rem', fontFamily: 'var(--font-inter,sans-serif)', color: '#1d4ed8', lineHeight: 1.4 }}>
-                    <strong>Comodato ativo — curriculo fixado em 12x (mensal).</strong> O parcelamento do curriculo e sempre mensal quando ha comodato, independente da selecao abaixo.
+                    <strong>Leasing ativo — curriculo fixado em 12x (mensal).</strong> O parcelamento do curriculo e sempre mensal quando ha leasing, independente da selecao abaixo.
                   </div>
                 </div>
               ) : (
@@ -686,7 +685,7 @@ export default function CalculadoraPage() {
               </div>
               <div style={{ marginTop: '.65rem', fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
                 {incluiComodato
-                  ? <><strong style={{ color: '#2563eb' }}>12x (mensal)</strong> de {R$(sis.anual / 12)} · por aluno/mês: <strong style={{ color: '#2563eb' }}>{R$(sis.anual / 12 / alunos)}</strong> — fixo pela regra do comodato</>
+                  ? <><strong style={{ color: '#2563eb' }}>12x (mensal)</strong> de {R$(sis.anual / 12)} · por aluno/mês: <strong style={{ color: '#2563eb' }}>{R$(sis.anual / 12 / alunos)}</strong> — fixo pela regra do leasing</>
                   : <>Selecionado: <strong style={{ color: '#2563eb' }}>{parcelas}x de {R$(sis.anual / parcelas)}</strong> · por aluno/mês: <strong style={{ color: '#2563eb' }}>{R$(sis.anual / parcelas / alunos)}</strong></>
                 }
               </div>
@@ -697,12 +696,12 @@ export default function CalculadoraPage() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
                 <div>
                   <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#0f172a', marginBottom: '.25rem' }}>Fechamento do Orcamento</div>
-                  <div style={{ fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>Este orcamento inclui comodato de equipamentos?</div>
+                  <div style={{ fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>Este orcamento inclui leasing de equipamentos?</div>
                 </div>
                 <div style={{ display: 'flex', gap: '.5rem' }}>
                   {[
                     { v: false, l: 'Somente curriculo' },
-                    { v: true,  l: 'Curriculo + Comodato' },
+                    { v: true,  l: 'Curriculo + Leasing' },
                   ].map(opt => (
                     <button
                       key={String(opt.v)}
@@ -728,7 +727,7 @@ export default function CalculadoraPage() {
                     <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
                       <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Valor / aluno / ano</div>
                       <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#4A7FDB', lineHeight: 1 }}>{R$(sis.valorFinal)}</div>
-                      <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{sis.f.nome}</div>
+                      <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>piso único {R$(sp.piso)}</div>
                     </div>
                     <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
                       <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Valor / aluno / mes</div>
@@ -741,11 +740,11 @@ export default function CalculadoraPage() {
                       <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{R$(sis.anual)}/ano ÷ {parcelasCurriculo}x</div>
                     </div>
                   </div>
-                  <Nota t={`Somente curriculo — parcela ${parcelasCurriculo}x de ${R$(parcelaCurriculo)}. Sem comodato. Para incluir equipamentos, selecione "Curriculo + Comodato" acima.`} />
+                  <Nota t={`Somente curriculo — parcela ${parcelasCurriculo}x de ${R$(parcelaCurriculo)}. Sem leasing. Para incluir equipamentos, selecione "Curriculo + Leasing" acima.`} />
                 </div>
               )}
 
-              {/* Resumo curriculo + comodato */}
+              {/* Resumo curriculo + leasing */}
               {incluiComodato && (
                 <div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '1rem' }}>
@@ -771,17 +770,17 @@ export default function CalculadoraPage() {
                         </div>
                       </div>
                     </div>
-                    {/* Comodato */}
+                    {/* Leasing */}
                     <div style={{ background: '#f0f9ff', padding: '.85rem 1.1rem' }}>
-                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.5rem' }}>Comodato (equipamentos)</div>
+                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.5rem' }}>Leasing (equipamentos)</div>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.35rem' }}>
                         <div>
-                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Total investimento</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0369a1' }}>{R$(com.D14)}</div>
+                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>PV (investimento)</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0369a1' }}>{R$(com.PV)}</div>
                         </div>
                         <div>
-                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Parcela ({com.parcelas}x)</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0369a1' }}>{R$(com.parcelaMensal)}</div>
+                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Parcela Price ({com.comParcelas}x)</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0369a1' }}>{R$(com.parcelaPrice)}</div>
                         </div>
                         <div>
                           <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Mensal / aluno</div>
@@ -800,7 +799,7 @@ export default function CalculadoraPage() {
                     <div style={{ padding: '.75rem 1rem' }}>
                       <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Total / aluno / mes</div>
                       <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: '#fff', lineHeight: 1 }}>{R$(totalAluMes)}</div>
-                      <div style={{ fontSize: '.6rem', color: 'rgba(255,255,255,.3)', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>curriculo {R$(alunoMesSis)} + comodato {R$(com.valorPorAlunoMes)}</div>
+                      <div style={{ fontSize: '.6rem', color: 'rgba(255,255,255,.3)', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>curriculo {R$(alunoMesSis)} + leasing {R$(com.valorPorAlunoMes)}</div>
                     </div>
                     <div style={{ padding: '.75rem 1rem' }}>
                       <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Total / aluno / ano</div>
@@ -810,11 +809,11 @@ export default function CalculadoraPage() {
                     <div style={{ padding: '.75rem 1rem' }}>
                       <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Mensalidade escola (total)</div>
                       <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: '#f59e0b', lineHeight: 1 }}>{R$(mensalidadeEscola)}</div>
-                      <div style={{ fontSize: '.6rem', color: 'rgba(255,255,255,.3)', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>curriculo 12x {R$(sis.anual/12)} + comodato {R$(com.parcelaMensal)}</div>
+                      <div style={{ fontSize: '.6rem', color: 'rgba(255,255,255,.3)', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>curriculo 12x {R$(sis.anual/12)} + leasing {R$(com.parcelaPrice)}</div>
                     </div>
                   </div>
                   <div style={{ marginTop: '.65rem' }}>
-                    <Nota t={`Curriculo: ${alunos} al. x ${R$(sis.valorFinal)}/ano ÷ 12 = ${R$(alunoMesSis)}/al./mes. Comodato: ${R$(com.D14)} ÷ ${com.parcelas}x ÷ ${alunos} al. = ${R$(com.valorPorAlunoMes)}/al./mes. Total: ${R$(totalAluMes)}/al./mes.`} />
+                    <Nota t={`Curriculo: ${alunos} al. x ${R$(sis.valorFinal)}/ano ÷ 12 = ${R$(alunoMesSis)}/al./mes. Leasing: ${R$(com.PV)} amortizado em ${com.comParcelas}x PRICE ÷ ${alunos} al. = ${R$(com.valorPorAlunoMes)}/al./mes. Total: ${R$(totalAluMes)}/al./mes.`} />
                   </div>
                 </div>
               )}
@@ -823,22 +822,22 @@ export default function CalculadoraPage() {
         )}
 
         {/* ══════════════════════════════════════════════════════
-            TAB: COMODATO
+            TAB: LEASING
             ══════════════════════════════════════════════════════ */}
         {tab === 'comodato' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
             <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius: 14, padding: '1.1rem 1.5rem' }}>
-              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#5FE3D0', marginBottom: '.3rem' }}>Comodato de equipamentos — Comodato_final</div>
+              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#5FE3D0', marginBottom: '.3rem' }}>Leasing de equipamentos — Tabela PRICE + IPCA</div>
               <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '.4rem' }}>Todos os preços, quantidades e taxas são editáveis</div>
               <div style={{ fontSize: '.75rem', color: 'rgba(255,255,255,.5)', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)' }}>
-                Edite diretamente nas células da tabela. Qtd. de alunos e parcelas/anos compartilhados com a aba Sistema.
+                Parcela calculada por fórmula PRICE. Currículo reajustado por IPCA ao longo do contrato. Nº de alunos compartilhado com a aba Sistema.
               </div>
             </div>
 
-            {/* 1. Parâmetros */}
+            {/* 1. Parâmetros do leasing */}
             <Card>
-              <SecTitle n={1} title="Parâmetros do comodato" />
+              <SecTitle n={1} title="Parâmetros do leasing" />
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem' }}>
                 <div>
                   <label style={LBL}>Nº de alunos</label>
@@ -851,19 +850,29 @@ export default function CalculadoraPage() {
                   <div style={NOTA}>Define notebooks: ⌈{maiorSala} ÷ 2⌉ = {com.qtdNB} unidades. Padrão: 20 alunos.</div>
                 </div>
                 <div>
-                  <label style={LBL}>Prazo do contrato comodato (anos)</label>
-                  <input type="number" min={1} max={10} value={anosContrato} onChange={e => setAnosContrato(Math.min(10, Math.max(1, +e.target.value || 4)))} style={INP} />
-                  <div style={NOTA}>Padrão 4 anos. Manutenção = txMan × equip_unitário × anos. Independente das parcelas do currículo.</div>
+                  <label style={LBL}>Taxa mensal leasing i (%)</label>
+                  <InlineNum value={+(lp.i * 100).toFixed(2)} onChange={v => setLp(p => ({ ...p, i: v / 100 }))} suffix="%" min={0} step={0.1} />
+                  <div style={NOTA}>Taxa PRICE para amortização. Padrão 2,2% a.m.</div>
+                </div>
+                <div>
+                  <label style={LBL}>IPCA anual estimado (%)</label>
+                  <InlineNum value={+(lp.ipca * 100).toFixed(2)} onChange={v => setLp(p => ({ ...p, ipca: v / 100 }))} suffix="%" min={0} step={0.1} />
+                  <div style={NOTA}>Reajuste anual do currículo. Padrão 5,5% a.a.</div>
+                </div>
+                <div>
+                  <label style={LBL}>Duração contrato (meses)</label>
+                  <input type="number" min={12} max={120} step={12} value={lp.duracaoMeses} onChange={e => setLp(p => ({ ...p, duracaoMeses: Math.max(12, +e.target.value || 60) }))} style={INP} />
+                  <div style={NOTA}>Duração total do contrato. Padrão 60 meses (5 anos).</div>
                 </div>
               </div>
 
               {/* Derivados */}
               <div style={{ marginTop: '1rem', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '.75rem' }}>
                 {[
-                  { label: 'Parcelas comodato', value: `${com.parcelas}x`, sub: com.faixaLabel, color: '#4A7FDB' },
+                  { label: 'PV (investimento total)', value: R$(com.PV), sub: 'equip + manut + admin', color: '#4A7FDB' },
+                  { label: 'Parcelas amortização', value: `${com.comParcelas}x`, sub: com.faixaLabel, color: '#0f172a' },
                   { label: 'Notebooks (⌈sala÷2⌉)', value: String(com.qtdNB), sub: `⌈${maiorSala} ÷ 2⌉`, color: '#0f172a' },
-                  { label: 'Taxa manutenção', value: pct(com.txMan), sub: 'sobre preços unitários × anos', color: '#d97706' },
-                  { label: 'Taxa admin', value: pct(com.txAdmin), sub: 'sobre equip+manut × anos', color: '#7c3aed' },
+                  { label: 'Duração total', value: `${lp.duracaoMeses} meses`, sub: `${lp.duracaoMeses / 12} anos`, color: '#7c3aed' },
                 ].map(k => (
                   <div key={k.label} style={{ background: '#f8fafc', borderRadius: 8, padding: '.75rem 1rem', border: '1px solid #e2e8f0' }}>
                     <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>{k.label}</div>
@@ -932,44 +941,28 @@ export default function CalculadoraPage() {
                         </tr>
                       )
                     })}
-                    {/* Linha manutenção — calculada */}
-                    <tr style={{ background: '#fef9ec', borderBottom: '1px solid #fde68a', borderTop: '2px solid #fde68a' }}>
-                      <td style={{ padding: '.6rem .65rem', fontWeight: 700, fontSize: '.82rem', color: '#92400e', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
-                        Manutenção* <span style={{ fontSize: '.6rem', background: '#fde68a', color: '#92400e', padding: '.1rem .35rem', borderRadius: 99, marginLeft: '.3rem' }}>calculada</span>
-                      </td>
-                      <td style={{ padding: '.6rem .65rem', textAlign: 'center', color: '#92400e', fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.82rem' }}>1</td>
-                      <td style={{ padding: '.6rem .65rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '.95rem', fontWeight: 700, color: '#92400e' }}>{R$(com.C12)}</td>
-                      <td style={{ padding: '.6rem .65rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#92400e' }}>{R$(com.C12)}</td>
-                      <td style={{ padding: '.6rem .65rem', fontSize: '.65rem', color: '#92400e', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                        {pct(com.txMan)} × {R$(com.sumUnit)} × {anosContrato} anos
-                      </td>
-                    </tr>
                     {/* Total */}
                     <tr style={{ background: '#0f172a' }}>
-                      <td colSpan={3} style={{ padding: '.85rem 1rem', fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 700, color: '#4A7FDB' }}>TOTAL DO INVESTIMENTO (D14)</td>
-                      <td style={{ padding: '.85rem 1rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.2rem', fontWeight: 800, color: '#fff' }}>{R$(com.D14)}</td>
+                      <td colSpan={3} style={{ padding: '.85rem 1rem', fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 700, color: '#4A7FDB' }}>TOTAL EQUIPAMENTOS (sumEquip)</td>
+                      <td style={{ padding: '.85rem 1rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.2rem', fontWeight: 800, color: '#fff' }}>{R$(com.sumEquip)}</td>
                       <td />
                     </tr>
                   </tbody>
                 </table>
               </div>
-              <div style={{ marginTop: '.75rem', display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
-                <Nota t={`*Manutenção = ${pct(com.txMan)} × ${R$(com.sumUnit)} (soma preços unitários) × ${anosContrato} anos = ${R$(com.C12)}`} />
-                <Nota t={`Taxa admin (separada, não no total): ${pct(com.txAdmin)} × (${R$(com.sumUnit)} + ${R$(com.C12)}) × ${anosContrato} anos = ${R$(com.C13)}`} />
-              </div>
             </Card>
 
-            {/* 3. Taxas por faixa — editáveis */}
+            {/* 3. Taxas de manutenção/admin */}
             <Card>
-              <SecTitle n={3} title="Taxas de manutenção e admin por faixa de parcelas (editáveis)" />
+              <SecTitle n={3} title="Taxas de manutenção/admin (sobre preços unitários)" />
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr>{['Parcelas comodato', 'Faixa de alunos', 'Tx Manutenção (%)', 'Tx Admin (%)'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
+                  <tr>{['Parcelas amort.', 'Faixa de alunos', 'Tx Manutenção (%)', 'Tx Admin (%)'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
                 </thead>
                 <tbody>
                   {cp.taxas.map((t, idx) => {
                     const faixa = t.parcelas === 48 ? 'Até 100 alunos' : t.parcelas === 36 ? '101–300 alunos' : t.parcelas === 24 ? '301–500 alunos' : 'Acima de 500 alunos'
-                    const ativo = t.parcelas === com.parcelas
+                    const ativo = t.parcelas === com.comParcelas
                     return (
                       <tr key={idx} style={{ background: ativo ? '#eff6ff' : idx % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f1f5f9', outline: ativo ? '2px solid #4A7FDB' : 'none', outlineOffset: -1 }}>
                         <td style={{ padding: '.6rem .85rem', fontWeight: 700, fontSize: '.88rem', color: ativo ? '#2563eb' : '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
@@ -987,8 +980,10 @@ export default function CalculadoraPage() {
                   })}
                 </tbody>
               </table>
-              <div style={{ marginTop: '.65rem' }}>
-                <Nota t="Taxas sao aplicadas sobre a soma dos precos UNITARIOS x anos de contrato. A linha em destaque e a faixa ativa com base no numero de alunos." />
+              <div style={{ marginTop: '.65rem', display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
+                <Nota t={`Manutenção = ${pct(com.txMan)} × ${R$(com.sumUnit)} × ${lp.duracaoMeses / 12} anos = ${R$(com.C_man)}`} />
+                <Nota t={`Admin = ${pct(com.txAdmin)} × ${R$(com.sumUnit)} × ${lp.duracaoMeses / 12} anos = ${R$(com.C_adm)}`} />
+                <Nota t={`PV total = ${R$(com.sumEquip)} (equip.) + ${R$(com.C_man)} (manut.) + ${R$(com.C_adm)} (adm.) = ${R$(com.PV)}`} />
               </div>
               <div style={{ marginTop: '.5rem' }}>
                 <button onClick={() => setCp(DEFAULT_COM)} style={{ padding: '.4rem .9rem', borderRadius: 8, border: '1.5px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', fontSize: '.72rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#475569' }}>
@@ -997,62 +992,102 @@ export default function CalculadoraPage() {
               </div>
             </Card>
 
-            {/* 4. Resultado Comodato */}
+            {/* 4. Cálculo Price e resultado */}
             <Card>
-              <SecTitle n={4} title="Resultado — comodato" />
+              <SecTitle n={4} title="Cálculo Price e resultado" />
 
-              {/* Investimento + parcela */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '.6rem' }}>
-                <KV label="Total do investimento (D14)" value={R$(com.D14)} sub="equipamentos + manutenção" big />
-                <KV label="Parcela mensal" value={R$(com.parcelaMensal)} sub={`${R$(com.D14)} ÷ ${com.parcelas}x`} color="#4A7FDB" big />
-                <KV label="Por aluno / mês" value={R$(com.valorPorAlunoMes)} sub={`${R$(com.parcelaMensal)} ÷ ${alunos} al.`} color="#7c3aed" big />
-              </div>
-              <Nota t={`${R$(com.D14)} ÷ ${com.parcelas} parcelas = ${R$(com.parcelaMensal)}/mês · Por aluno: ${R$(com.parcelaMensal)} ÷ ${alunos} alunos = ${R$(com.valorPorAlunoMes)}/aluno/mês`} />
-
-              {/* Valor total do contrato e resultado */}
-              <div style={{ marginTop: '.85rem' }}>
+              {/* Sub-section A — Fórmula Price */}
+              <div style={{ marginBottom: '1rem' }}>
                 <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#64748b', marginBottom: '.5rem' }}>
-                  Visao economica do contrato ({anosContrato} anos = {com.mesesContrato} meses)
+                  Fórmula Price — PMT = PV × [i×(1+i)^n ÷ ((1+i)^n−1)]
+                </div>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '.75rem 1rem', fontSize: '.8rem', fontFamily: 'var(--font-inter,sans-serif)', color: '#1e293b', marginBottom: '.75rem', lineHeight: 1.7 }}>
+                  {R$(com.PV)} × [{pct(com.i)}×{dec3(com.factor)} ÷ ({dec3(com.factor)}−1)] = <strong style={{ color: '#4A7FDB' }}>{R$(com.parcelaPrice)}/mês</strong>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
+                  <KV label="PV (investimento total)" value={R$(com.PV)} sub="equip + manut + admin" big />
+                  <KV label="Parcela Price (FIXA)" value={R$(com.parcelaPrice)} sub={`${R$(com.PV)} amortizado em ${com.n} meses a ${pct(com.i)}/mês`} color="#4A7FDB" big />
+                  <KV label="Por aluno / mês" value={R$(com.valorPorAlunoMes)} sub={`${R$(com.parcelaPrice)} ÷ ${alunos} al.`} color="#7c3aed" big />
+                </div>
+              </div>
+
+              {/* Sub-section B — Visão econômica */}
+              <div>
+                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#64748b', marginBottom: '.5rem' }}>
+                  Visão econômica ({lp.duracaoMeses} meses = {lp.duracaoMeses / 12} anos)
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
                   <KV
-                    label="Valor total do contrato"
-                    value={R$(com.valorTotalContrato)}
-                    sub={`${R$(com.parcelaMensal)}/mês × ${com.mesesContrato} meses`}
+                    label="Total recebido"
+                    value={R$(com.totalRecebido)}
+                    sub={`${R$(com.parcelaPrice)} × ${com.N} meses`}
                     color="#0f172a"
                     big
                   />
                   <KV
-                    label="Resultado apos investimento"
-                    value={R$(com.resultado)}
-                    sub={`${R$(com.valorTotalContrato)} − ${R$(com.D14)}`}
-                    color={com.resultado >= 0 ? '#16a34a' : '#dc2626'}
+                    label="Resultado bruto"
+                    value={R$(com.resultadoBruto)}
+                    sub={`${R$(com.totalRecebido)} − ${R$(com.PV)}`}
+                    color="#16a34a"
                     big
                   />
                   <KV
-                    label="Retorno sobre investimento"
+                    label="Retorno s/ PV"
                     value={`${(com.retorno * 100).toFixed(1)}%`}
-                    sub={com.parcelas < 48 ? `${48 - com.parcelas} meses de margem pos-amortizacao` : `amortizacao em ${com.mesesContrato} meses — sem margem`}
+                    sub={`${(com.taxaEfetivAnual * 100).toFixed(2)}% a.a. efetivo`}
                     color={com.retorno > 0 ? '#7c3aed' : '#94a3b8'}
                     big
                   />
                 </div>
-                <Nota t={`Escola paga ${R$(com.parcelaMensal)}/mes por ${com.mesesContrato} meses (${anosContrato} anos). Equipamento amortizado em ${com.parcelas} meses. Resultado = receita total − investimento.`} />
               </div>
             </Card>
 
-            {/* 5. Resumo Combinado */}
+            {/* 5. Projeção anual */}
+            <Card>
+              <SecTitle n={5} title="Projeção anual — currículo + leasing" />
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr>
+                      {['Ano', 'Período', 'Parcela currículo', 'Parcela leasing', 'Total escola/mês', 'Receita total ano'].map(h => <th key={h} style={th}>{h}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {com.tabela.map((row, idx) => (
+                      <tr key={row.ano} style={{ background: idx % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f1f5f9' }}>
+                        <td style={{ padding: '.6rem .85rem', fontWeight: 700, fontSize: '.88rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Ano {row.ano}</td>
+                        <td style={{ padding: '.6rem .85rem', fontSize: '.78rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
+                          mês {(row.ano - 1) * 12 + 1}–{row.ano * 12}
+                        </td>
+                        <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#4A7FDB' }}>
+                          {R$(row.parcelaCurr)}
+                          {row.ano > 1 && <span style={{ fontSize: '.6rem', color: '#94a3b8', marginLeft: '.3rem' }}>×{row.fatorIpca.toFixed(3)}</span>}
+                        </td>
+                        <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0369a1' }}>{R$(row.parcelaComodato)}</td>
+                        <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>{R$(row.totalEscola)}</td>
+                        <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#16a34a' }}>{R$(row.recTotal)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div style={{ marginTop: '.65rem' }}>
+                <Nota t={`Currículo reajustado por IPCA (${pct(lp.ipca)} a.a.). Leasing FIXO em ${R$(com.parcelaPrice)}/mês durante ${lp.duracaoMeses} meses.`} />
+              </div>
+            </Card>
+
+            {/* 6. Resumo Combinado */}
             <Card style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,.08)' }}>
               <div style={{ marginBottom: '1rem' }}>
-                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#5FE3D0', marginBottom: '.3rem' }}>Resumo combinado — sistema + comodato</div>
+                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#5FE3D0', marginBottom: '.3rem' }}>Resumo combinado — sistema + leasing</div>
                 <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>O que a escola paga por aluno mensalmente</div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1px', background: 'rgba(255,255,255,.08)', borderRadius: 10, overflow: 'hidden' }}>
                 {[
                   { label: 'Sistema We Make', value: R$(alunoMesSis), sub: `${R$(sis.valorFinal)}/ano ÷ 12`, color: '#4A7FDB' },
-                  { label: 'Comodato Equip.', value: R$(com.valorPorAlunoMes), sub: `${R$(com.parcelaMensal)}/mês ÷ ${alunos} al.`, color: '#5FE3D0' },
+                  { label: 'Leasing Equip.', value: R$(com.valorPorAlunoMes), sub: `${R$(com.parcelaPrice)}/mês ÷ ${alunos} al.`, color: '#5FE3D0' },
                   { label: 'Total / aluno / mês', value: R$(totalAluMes), sub: `${R$(totalAluMes * 12)}/aluno/ano`, color: '#fff', big: true },
-                  { label: 'Mensalidade escola', value: R$(mensalidadeEscola), sub: `curriculo 12x + comodato ${com.parcelas}x`, color: '#f59e0b' },
+                  { label: 'Mensalidade escola', value: R$(mensalidadeEscola), sub: `curriculo 12x + leasing ${com.comParcelas}x`, color: '#f59e0b' },
                 ].map(k => (
                   <div key={k.label} style={{ padding: '1rem 1.1rem', background: 'rgba(255,255,255,.04)' }}>
                     <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>{k.label}</div>
@@ -1063,7 +1098,7 @@ export default function CalculadoraPage() {
               </div>
               <div style={{ marginTop: '.75rem', fontSize: '.7rem', color: 'rgba(255,255,255,.35)', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)' }}>
                 Sistema: {alunos} al. × {R$(sis.valorFinal)}/ano ÷ 12 = {R$(alunoMesSis)}/al./mês &nbsp;·&nbsp;
-                Comodato: {R$(com.D14)} ÷ {com.parcelas}x ÷ {alunos} al. = {R$(com.valorPorAlunoMes)}/al./mês &nbsp;·&nbsp;
+                Leasing: {R$(com.PV)} ÷ {com.comParcelas}x PRICE ÷ {alunos} al. = {R$(com.valorPorAlunoMes)}/al./mês &nbsp;·&nbsp;
                 Total: {R$(totalAluMes)}/al./mês · {R$(totalAluMes * 12)}/al./ano
               </div>
             </Card>
