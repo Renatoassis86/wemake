@@ -3,8 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
-// PATCH { precadastro_id, stage? | comentario? | remover_comentario? }
-// O [id] aqui é o leads_universal.id (pode ser 'new' para criação sob demanda)
+// PATCH — atualiza qualquer campo do card do pipeline proposta
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
@@ -25,7 +24,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     .maybeSingle()
 
   let leadId = existente?.id
-  let extraAtual: Record<string, any> = (existente?.dados_extras as any) ?? { precadastro_id }
+  let extra: Record<string, any> = (existente?.dados_extras as any) ?? { precadastro_id }
 
   // Se não existe, cria o registro
   if (!leadId) {
@@ -42,35 +41,47 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     if (insErr) return NextResponse.json({ error: insErr.message }, { status: 400 })
     leadId = novo.id
-    extraAtual = (novo.dados_extras as any) ?? { precadastro_id }
+    extra = (novo.dados_extras as any) ?? { precadastro_id }
   }
 
-  // Aplicar as mudanças
-  if ('stage' in updates) {
-    extraAtual.pipeline_stage = updates.stage
-  }
+  // ── Aplicar as mudanças ──────────────────────────────────────────
+  if ('stage' in updates)         extra.pipeline_stage        = updates.stage
+  if ('tags' in updates)          extra.pipeline_tags         = updates.tags
+  if ('responsaveis' in updates)  extra.pipeline_responsaveis = updates.responsaveis
+  if ('due_date' in updates)      extra.pipeline_due_date     = updates.due_date
 
   if ('comentario' in updates && updates.comentario?.trim()) {
-    const comentarios: any[] = extraAtual.pipeline_comentarios ?? []
-    comentarios.unshift({
+    const list: any[] = extra.pipeline_comentarios ?? []
+    list.unshift({
       id: crypto.randomUUID(),
       texto: updates.comentario.trim(),
       autor_id: user.id,
       criado_em: new Date().toISOString(),
     })
-    extraAtual.pipeline_comentarios = comentarios
+    extra.pipeline_comentarios = list
   }
 
   if ('remover_comentario' in updates) {
-    const comentarios: any[] = extraAtual.pipeline_comentarios ?? []
-    extraAtual.pipeline_comentarios = comentarios.filter((c: any) => c.id !== updates.remover_comentario)
+    extra.pipeline_comentarios = (extra.pipeline_comentarios ?? [])
+      .filter((c: any) => c.id !== updates.remover_comentario)
+  }
+
+  if ('add_anexo' in updates && updates.add_anexo) {
+    const list: any[] = extra.pipeline_anexos ?? []
+    list.push(updates.add_anexo)
+    extra.pipeline_anexos = list
+  }
+
+  if ('remover_anexo' in updates) {
+    extra.pipeline_anexos = (extra.pipeline_anexos ?? [])
+      .filter((a: any) => a.path !== updates.remover_anexo)
   }
 
   const { error } = await supabase
     .from('leads_universal')
-    .update({ dados_extras: extraAtual })
+    .update({ dados_extras: extra })
     .eq('id', leadId)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
-  return NextResponse.json({ success: true, lead_id: leadId, dados_extras: extraAtual })
+  return NextResponse.json({ success: true, lead_id: leadId, dados_extras: extra })
 }

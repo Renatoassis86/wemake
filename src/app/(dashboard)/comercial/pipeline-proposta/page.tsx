@@ -36,8 +36,12 @@ export default async function PipelinePropostaPage() {
     escola_nome: p.nome_fantasia || p.razao_social || '(sem nome)',
     cidade: p.cidade,
     estado: p.estado,
-    pipeline_stage: estadoMap[p.id]?.pipeline_stage ?? 'precadastro_recebido',
-    pipeline_comentarios: estadoMap[p.id]?.pipeline_comentarios ?? [],
+    pipeline_stage:        estadoMap[p.id]?.pipeline_stage        ?? 'precadastro_recebido',
+    pipeline_comentarios:  estadoMap[p.id]?.pipeline_comentarios  ?? [],
+    pipeline_tags:         estadoMap[p.id]?.pipeline_tags         ?? [],
+    pipeline_responsaveis: estadoMap[p.id]?.pipeline_responsaveis ?? [],
+    pipeline_due_date:     estadoMap[p.id]?.pipeline_due_date     ?? null,
+    pipeline_anexos:       estadoMap[p.id]?.pipeline_anexos       ?? [],
     created_at: p.created_at,
   }))
 
