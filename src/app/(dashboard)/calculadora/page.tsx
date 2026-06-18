@@ -13,7 +13,7 @@ const dec3 = (v: number) => v.toFixed(3)
 // TIPOS
 // ══════════════════════════════════════════════════════════════════
 interface FaixaEscala {
-  nome: string; min: number; max: number; s1: number  // fixed escala score for this bracket
+  nome: string; min: number; max: number; s1: number; scoreCap: number
 }
 interface SisParams {
   livroMes: number; teto: number; piso: number; ticketMax: number
@@ -33,12 +33,17 @@ interface EquipItem { nome: string; qty: number; unit: number; fixedQty: boolean
 const DEFAULT_SIS: SisParams = {
   livroMes: 16.67,  // ≈ R$200/ano
   teto: 420, piso: 260, ticketMax: 1500,
-  wEscala: 0.35, wTicket: 0.30, wCompl: 0.20, wFid: 0.15,
+  // Escala 50%: volume é o fator dominante — mais alunos = menor preço
+  // Ticket 20%, Complexidade 20%, Fidelidade 10%: calibram dentro do teto da faixa
+  wEscala: 0.50, wTicket: 0.20, wCompl: 0.20, wFid: 0.10,
   faixas: [
-    { nome: 'Faixa 1', min:   1, max: 100, s1: 0.90 },
-    { nome: 'Faixa 2', min: 101, max: 300, s1: 0.60 },
-    { nome: 'Faixa 3', min: 301, max: 500, s1: 0.30 },
-    { nome: 'Faixa 4', min: 501, max: 800, s1: 0.10 },
+    // scoreCap = teto máximo de score permitido para esta faixa (garante preço máximo por volume)
+    { nome: 'Faixa 1', min:    1, max:  100, s1: 0.90, scoreCap: 1.00 }, // máx R$420
+    { nome: 'Faixa 2', min:  101, max:  300, s1: 0.60, scoreCap: 0.85 }, // máx R$396
+    { nome: 'Faixa 3', min:  301, max:  500, s1: 0.30, scoreCap: 0.60 }, // máx R$356
+    { nome: 'Faixa 4', min:  501, max:  800, s1: 0.10, scoreCap: 0.40 }, // máx R$324
+    { nome: 'Faixa 5', min:  801, max: 1200, s1: 0.00, scoreCap: 0.22 }, // máx R$295 (<R$300)
+    { nome: 'Faixa 6', min: 1201, max: 9999, s1: 0.00, scoreCap: 0.15 }, // máx R$284 (perto do piso)
   ],
 }
 
@@ -80,7 +85,10 @@ function calcSistema(
   const s3 = (segmentos === 3 || altaCompl) ? 1 : segmentos === 2 ? 0.5 : 0
   const s4 = situacao === 'Renovação 2º ciclo+' ? 0.4 : situacao === 'Renovação 1º ciclo' ? 0.7 : 1.0
 
-  const scoreFinal = p.wEscala * s1 + p.wTicket * s2 + p.wCompl * s3 + p.wFid * s4
+  const scoreBruto = p.wEscala * s1 + p.wTicket * s2 + p.wCompl * s3 + p.wFid * s4
+  // scoreCap: teto de score da faixa — garante que escolas grandes nunca ultrapassem o preço máximo da faixa
+  const scoreFinal = Math.min(faixaEscala.scoreCap, scoreBruto)
+  const capAtivo   = scoreBruto > faixaEscala.scoreCap
   const amplitude  = p.teto - p.piso
   const valorBruto = p.piso + amplitude * scoreFinal
   const valorDesc  = valorBruto * (1 - desconto / 100)
@@ -93,7 +101,7 @@ function calcSistema(
     : { label: 'Diretoria — Dênis', status: 'error' as const }
 
   return {
-    s1, s2, s3, s4, scoreFinal, amplitude,
+    s1, s2, s3, s4, scoreBruto, scoreFinal, capAtivo, amplitude,
     valorBruto, valorDesc, valorFinal, anual,
     custo: anual * 0.70, liquido: anual * 0.30,
     gov,
@@ -417,13 +425,13 @@ export default function CalculadoraPage() {
                   {/* Faixas de escala */}
                   <div>
                     <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', marginBottom: '.65rem' }}>
-                      Faixas de escala por volume — score fixo por faixa (maior escola = score menor = preço menor)
+                      Faixas de escala — score fixo (s1) + teto de score por faixa (garante preço máximo por volume)
                     </div>
                     <div style={{ overflowX: 'auto', marginBottom: '.65rem' }}>
                       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
                           <tr>
-                            {['Faixa', 'Alunos de', 'Alunos até', 'Score s1 (fixo 0–1)', 'Ativa?'].map(h => (
+                            {['Faixa', 'Alunos de', 'Alunos até', 'Score s1 (fixo)', 'Teto score (cap)', 'Preço máx', 'Ativa?'].map(h => (
                               <th key={h} style={th}>{h}</th>
                             ))}
                           </tr>
@@ -431,6 +439,7 @@ export default function CalculadoraPage() {
                         <tbody>
                           {sp.faixas.map((f, idx) => {
                             const isAtiva = sis.faixaEscala.nome === f.nome
+                            const precoMax = sp.piso + (sp.teto - sp.piso) * f.scoreCap
                             return (
                               <tr
                                 key={idx}
@@ -448,14 +457,20 @@ export default function CalculadoraPage() {
                                     style={{ ...INP_SM, background: '#fff', minWidth: 80 }}
                                   />
                                 </td>
-                                <td style={{ padding: '.5rem .65rem', minWidth: 90 }}>
+                                <td style={{ padding: '.5rem .65rem', minWidth: 80 }}>
                                   <InlineNum value={f.min} onChange={v => updFaixa(idx, 'min', Math.round(v))} min={1} step={1} />
                                 </td>
-                                <td style={{ padding: '.5rem .65rem', minWidth: 90 }}>
+                                <td style={{ padding: '.5rem .65rem', minWidth: 80 }}>
                                   <InlineNum value={f.max} onChange={v => updFaixa(idx, 'max', Math.round(v))} min={1} step={1} />
                                 </td>
-                                <td style={{ padding: '.5rem .65rem', minWidth: 140 }}>
-                                  <InlineNum value={+f.s1.toFixed(3)} onChange={v => updFaixa(idx, 's1', Math.min(1, Math.max(0, v)))} min={0} step={0.05} style={{ maxWidth: 120 }} />
+                                <td style={{ padding: '.5rem .65rem', minWidth: 110 }}>
+                                  <InlineNum value={+f.s1.toFixed(2)} onChange={v => updFaixa(idx, 's1', Math.min(1, Math.max(0, v)))} min={0} step={0.05} style={{ maxWidth: 100 }} />
+                                </td>
+                                <td style={{ padding: '.5rem .65rem', minWidth: 120 }}>
+                                  <InlineNum value={+f.scoreCap.toFixed(2)} onChange={v => updFaixa(idx, 'scoreCap', Math.min(1, Math.max(0, v)))} min={0} step={0.01} style={{ maxWidth: 100 }} />
+                                </td>
+                                <td style={{ padding: '.5rem .65rem', minWidth: 90, fontFamily: 'var(--font-cormorant,serif)', fontSize: '.95rem', fontWeight: 700, color: precoMax < 300 ? '#16a34a' : '#0f172a' }}>
+                                  {R$(precoMax)}
                                 </td>
                                 <td style={{ padding: '.5rem .85rem' }}>
                                   {isAtiva && (
@@ -471,7 +486,7 @@ export default function CalculadoraPage() {
                       </table>
                     </div>
                     <div style={{ fontSize: '.68rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)', lineHeight: 1.55 }}>
-                      Nota: Score mais alto = preço perto do teto. Score mais baixo = preço perto do piso. Permite descontos maiores para escolas maiores.
+                      <strong>s1:</strong> score de escala da faixa (contribui 50% do score bruto). <strong>Teto (cap):</strong> limite máximo de score que esta faixa permite — garante que o preço nunca ultrapasse o valor na coluna "Preço máx" independente dos outros fatores. Escolas maiores = teto menor = preço obrigatoriamente menor.
                     </div>
                   </div>
 
@@ -527,7 +542,7 @@ export default function CalculadoraPage() {
                     <strong>Faixa ativa:</strong> {sis.faixaEscala.nome} ({sis.faixaEscala.min}–{sis.faixaEscala.max} al.) — Score s1 fixo para esta faixa: <strong style={{ color: scoreClr(sis.s1) }}>{dec(sis.s1)}</strong>
                   </div>
                   <div style={{ fontSize: '.68rem', color: '#475569', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)', borderTop: '1px solid #e2e8f0', paddingTop: '.5rem' }}>
-                    <strong>Regra (35% do score):</strong> Escolas maiores caem para faixas com score menor, aproximando o preço do piso ({R$(sp.piso)}). Score discreto por faixa — não linear. Escola menor = score maior = preço perto do teto.
+                    <strong>Regra ({pct(sp.wEscala)} do score bruto):</strong> Fator dominante. Escolas maiores caem para faixas com s1 menor E com teto de score menor — dupla pressão para baixo. Score menor = preço perto do piso ({R$(sp.piso)}).
                   </div>
                 </div>
 
@@ -547,7 +562,7 @@ export default function CalculadoraPage() {
                     <strong>Fórmula:</strong> MIN(1 ; {R$(ticket)} / {R$(sp.ticketMax)}) = <strong style={{ color: scoreClr(sis.s2) }}>{dec(sis.s2)}</strong> — Perfil: <strong>{sis.ticketLabel}</strong>
                   </div>
                   <div style={{ fontSize: '.68rem', color: '#475569', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)', borderTop: '1px solid #e2e8f0', paddingTop: '.5rem' }}>
-                    <strong>Regra (30% do score):</strong> Mensalidade que a escola cobra dos pais. Ticket maior = escola com maior capacidade de pagamento = score maior = preço próximo do TETO. Ticket acima de {R$(sp.ticketMax)} = score máximo (1,000).<br />
+                    <strong>Regra ({pct(sp.wTicket)} do score bruto):</strong> Mensalidade que a escola cobra dos pais. Ticket maior = escola com maior capacidade de pagamento = score maior = preço próximo do TETO. Ticket acima de {R$(sp.ticketMax)} = score máximo (1,000).<br />
                     <strong>Perfis:</strong> Popular (&lt;R$400) · Média-baixa (R$400–R$800) · Padrão (R$800–{R$(sp.ticketMax)}) · Premium (&gt;{R$(sp.ticketMax)}).
                   </div>
                 </div>
@@ -568,7 +583,7 @@ export default function CalculadoraPage() {
                     <strong>Fórmula:</strong> {segs === 3 || altaCompl ? '3 segmentos / alta complexidade = score 1,000 (máximo)' : segs === 2 ? '2 segmentos = score 0,500' : '1 segmento = score 0,000 (mínimo)'}
                   </div>
                   <div style={{ fontSize: '.68rem', color: '#475569', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)', borderTop: '1px solid #e2e8f0', paddingTop: '.5rem' }}>
-                    <strong>Regra (20% do score):</strong> Número de ciclos escolares atendidos. Mais segmentos = maior estrutura de entrega = custo operacional maior = preço mais próximo do TETO.<br />
+                    <strong>Regra ({pct(sp.wCompl)} do score bruto):</strong> Número de ciclos escolares atendidos. Mais segmentos = maior estrutura de entrega = custo operacional maior = preço mais próximo do TETO.<br />
                     <strong>Escala:</strong> 1 seg = 0,000 · 2 seg = 0,500 · 3 seg = 1,000. "Alta complexidade: SIM" força score 1,000 independente do número de segmentos.
                   </div>
                 </div>
@@ -589,7 +604,7 @@ export default function CalculadoraPage() {
                     <strong>Fórmula:</strong> {situacao === 'Renovação 2º ciclo+' ? 'Renovação 2º ciclo ou mais = score 0,400 (maior benefício de fidelidade)' : situacao === 'Renovação 1º ciclo' ? 'Renovação 1º ciclo = score 0,700 (benefício moderado)' : 'Contrato novo = score 1,000 (sem benefício de fidelidade)'}
                   </div>
                   <div style={{ fontSize: '.68rem', color: '#475569', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)', borderTop: '1px solid #e2e8f0', paddingTop: '.5rem' }}>
-                    <strong>Regra (15% do score):</strong> Situação do contrato com a escola. Renovação = desconto implícito por lealdade — escola fiel paga menos que escola nova. Score menor = preço mais próximo do PISO. Quanto mais ciclos de renovação, maior o benefício.<br />
+                    <strong>Regra ({pct(sp.wFid)} do score bruto):</strong> Situação do contrato com a escola. Renovação = desconto implícito por lealdade — escola fiel paga menos que escola nova. Score menor = preço mais próximo do PISO. Quanto mais ciclos de renovação, maior o benefício.<br />
                     <strong>Escala:</strong> Novo = 1,000 (preço cheio) · Renovação 1° ciclo = 0,700 · Renovação 2° ciclo+ = 0,400 (preço mais baixo possível dentro do piso único).
                   </div>
                 </div>
@@ -597,9 +612,14 @@ export default function CalculadoraPage() {
               <div style={{ background: '#0f172a', borderRadius: 10, padding: '1.1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
                 <div>
                   <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.25rem' }}>Score Final Ponderado</div>
-                  <div style={{ fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.72rem', color: 'rgba(255,255,255,.45)', marginBottom: '.25rem' }}>
-                    {pct(sp.wEscala)}×{dec(sis.s1)} + {pct(sp.wTicket)}×{dec(sis.s2)} + {pct(sp.wCompl)}×{dec(sis.s3)} + {pct(sp.wFid)}×{dec(sis.s4)}
+                  <div style={{ fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.72rem', color: 'rgba(255,255,255,.45)', marginBottom: '.15rem' }}>
+                    Bruto: {pct(sp.wEscala)}×{dec(sis.s1)} + {pct(sp.wTicket)}×{dec(sis.s2)} + {pct(sp.wCompl)}×{dec(sis.s3)} + {pct(sp.wFid)}×{dec(sis.s4)} = {dec(sis.scoreBruto)}
                   </div>
+                  {sis.capAtivo && (
+                    <div style={{ fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.7rem', color: '#fbbf24', marginBottom: '.15rem', display: 'flex', alignItems: 'center', gap: '.35rem' }}>
+                      ⚠ Teto da faixa ({dec(sis.faixaEscala.scoreCap)}) aplicado — escola grande tem preço garantido abaixo de {R$(sp.piso + (sp.teto - sp.piso) * sis.faixaEscala.scoreCap)}
+                    </div>
+                  )}
                   <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '2rem', fontWeight: 800, color: '#fff' }}>{dec(sis.scoreFinal)}</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
