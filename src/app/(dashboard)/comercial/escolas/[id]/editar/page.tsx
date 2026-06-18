@@ -44,7 +44,7 @@ export default async function EscolaEditar({ params }: Props) {
 
   const [{ data: escola }, { data: profiles }] = await Promise.all([
     supabase.from('escolas').select('*').eq('id', id).single(),
-    supabase.from('profiles').select('id, full_name').neq('is_active', false).order('full_name'),
+    supabase.from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo'),
   ])
 
   if (!escola) notFound()
@@ -232,7 +232,7 @@ export default async function EscolaEditar({ params }: Props) {
                   <label className="form-label">Responsável Comercial</label>
                   <select name="responsavel_id" className="form-control" defaultValue={e.responsavel_id ?? ''}>
                     <option value="">Selecione...</option>
-                    {profiles?.map((p: any) => <option key={p.id} value={p.id}>{p.full_name}</option>)}
+                    {profiles?.map((p: any) => <option key={p.id} value={p.id}>{p.nome_completo}</option>)}
                   </select>
                 </div>
               </div>

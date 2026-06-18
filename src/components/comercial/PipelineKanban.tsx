@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { moverNegociacao, removerDoQuadro } from './pipeline-actions'
+import { NegociacaoCardModal } from './NegociacaoCardModal'
 
 const STAGE_COLORS: Record<string, string> = {
   prospeccao:   '#6366f1',
@@ -30,8 +31,27 @@ interface Neg {
   valor_estimado: number | null
   probabilidade: number
   responsavel_id: string | null
+  tags?: string[] | null
+  due_date?: string | null
+  descricao?: string | null
   escola: { id: string; nome: string; cidade?: string | null; estado: string | null } | null
   responsavel: { id: string; full_name: string } | null
+}
+
+function dueBadgeMini(dt?: string | null): { label: string; bg: string; fg: string } | null {
+  if (!dt) return null
+  const ms = new Date(dt).getTime() - Date.now()
+  const dia = 86400000
+  if (ms < 0)         return { label: 'Vencido',       bg: '#fee2e2', fg: '#b91c1c' }
+  if (ms < dia)       return { label: 'Hoje',          bg: '#fef3c7', fg: '#b45309' }
+  if (ms < 2 * dia)   return { label: 'Amanhã',        bg: '#fef3c7', fg: '#b45309' }
+  if (ms < 7 * dia)   return { label: 'Esta semana',   bg: '#dbeafe', fg: '#1e40af' }
+  return null
+}
+
+function fmtDateBR(dt: string) {
+  const d = new Date(dt)
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
 }
 
 interface Props {
@@ -57,14 +77,42 @@ function nameColor(name: string) {
 }
 
 export function PipelineKanban({ negociacoes, stages, userId, onUpdate }: Props) {
-  // Sincroniza estado local sempre que a prop mudar
-  const [negs, setNegs] = useState<Neg[]>(negociacoes)
-  useEffect(() => { setNegs(negociacoes) }, [negociacoes])
+  // Overrides locais: id → stage definido pelo usuário ainda não confirmado pelo banco.
+  // Mantemos até a prop chegar com o mesmo stage, aí limpamos a entrada.
+  const [stageOverrides, setStageOverrides] = useState<Record<string, string>>({})
+  // Ids removidos otimisticamente — escondemos até a prop refletir.
+  const [removedIds, setRemovedIds] = useState<Set<string>>(new Set())
+
+  // Quando a prop muda, descarta overrides que já foram confirmados pelo servidor.
+  useEffect(() => {
+    setStageOverrides(prev => {
+      const next: Record<string, string> = {}
+      for (const [id, st] of Object.entries(prev)) {
+        const fromProp = negociacoes.find(n => n.id === id)
+        // Se a prop já reflete o stage do override, ele cumpriu seu papel → descarta.
+        // Se a prop ainda mostra stage antigo, mantemos o override para evitar flicker.
+        if (fromProp && fromProp.stage !== st) next[id] = st
+      }
+      return next
+    })
+    setRemovedIds(prev => {
+      const next = new Set<string>()
+      const propIds = new Set(negociacoes.map(n => n.id))
+      for (const id of prev) if (propIds.has(id)) next.add(id)
+      return next
+    })
+  }, [negociacoes])
+
+  // Lista efetiva = prop + overrides aplicados − removidos
+  const negs: Neg[] = negociacoes
+    .filter(n => !removedIds.has(n.id))
+    .map(n => stageOverrides[n.id] ? { ...n, stage: stageOverrides[n.id] } : n)
 
   const [draggingId, setDraggingId] = useState<string | null>(null)
   const [overStage, setOverStage]   = useState<string | null>(null)
   const [moving, setMoving]         = useState<string | null>(null)
   const [removing, setRemoving]     = useState<string | null>(null)
+  const [cardAberto, setCardAberto] = useState<string | null>(null)
   const dragStageRef = useRef<string | null>(null)
 
   async function handleRemover(negId: string) {
@@ -73,16 +121,15 @@ export function PipelineKanban({ negociacoes, stages, userId, onUpdate }: Props)
     if (!confirm(`Excluir definitivamente a negociação de "${nome}"? Esta ação não pode ser desfeita.`)) return
 
     setRemoving(negId)
-    // Optimistic update
-    const snapshot = negs
-    setNegs(prev => prev.filter(n => n.id !== negId))
+    // Optimistic update: esconde imediatamente
+    setRemovedIds(prev => { const next = new Set(prev); next.add(negId); return next })
 
     const r = await removerDoQuadro(negId)
     setRemoving(null)
 
     if (!r.success) {
       // Rollback se falhar
-      setNegs(snapshot)
+      setRemovedIds(prev => { const next = new Set(prev); next.delete(negId); return next })
       alert(`Não foi possível excluir: ${r.error ?? 'erro desconhecido'}`)
       return
     }
@@ -128,18 +175,28 @@ export function PipelineKanban({ negociacoes, stages, userId, onUpdate }: Props)
     if (!negId || !fromStage || fromStage === toStage) return
 
     setMoving(negId)
-    // Optimistic update
-    setNegs(prev => prev.map(n => n.id === negId ? { ...n, stage: toStage } : n))
+    // Optimistic update: aplica override imediatamente, sobrevive ao refetch da prop
+    setStageOverrides(prev => ({ ...prev, [negId]: toStage }))
 
     try {
       const result = await moverNegociacao(negId, toStage)
       if (!result.success) {
-        setNegs(prev => prev.map(n => n.id === negId ? { ...n, stage: fromStage } : n))
+        // Rollback do override
+        setStageOverrides(prev => {
+          const next = { ...prev }
+          delete next[negId]
+          return next
+        })
       } else {
+        // Mantém o override até a prop refletir o novo stage (useEffect limpa)
         onUpdate?.()
       }
     } catch {
-      setNegs(prev => prev.map(n => n.id === negId ? { ...n, stage: fromStage } : n))
+      setStageOverrides(prev => {
+        const next = { ...prev }
+        delete next[negId]
+        return next
+      })
     }
     setMoving(null)
     setDraggingId(null)
@@ -229,12 +286,21 @@ export function PipelineKanban({ negociacoes, stages, userId, onUpdate }: Props)
                 const respNome  = n.responsavel?.full_name ?? ''
                 const respColor = respNome ? nameColor(respNome) : '#94a3b8'
                 const isMoving  = moving === n.id
+                const dueBdg    = dueBadgeMini(n.due_date)
+                const tags      = n.tags ?? []
 
                 return (
                   <div
                     key={n.id}
                     id={`neg-${n.id}`}
                     draggable
+                    onClick={e => {
+                      // Não abre durante drag ou ao clicar em botões/links internos
+                      const target = e.target as HTMLElement
+                      if (target.closest('button, a')) return
+                      if (draggingId) return
+                      setCardAberto(n.id)
+                    }}
                     onDragStart={e => handleDragStart(e, n.id, stage)}
                     onDragEnd={e => handleDragEnd(e, n.id)}
                     className="kanban-card"
@@ -245,7 +311,7 @@ export function PipelineKanban({ negociacoes, stages, userId, onUpdate }: Props)
                       borderRadius: 9,
                       padding: '.65rem .75rem',
                       boxShadow: '0 1px 4px rgba(15,23,42,.07)',
-                      cursor: 'grab',
+                      cursor: draggingId ? 'grabbing' : 'pointer',
                       userSelect: 'none',
                       transition: 'box-shadow .15s, transform .1s',
                       opacity: isMoving ? 0.55 : 1,
@@ -303,6 +369,35 @@ export function PipelineKanban({ negociacoes, stages, userId, onUpdate }: Props)
                       </div>
                     )}
 
+                    {/* Tags + due date */}
+                    {(tags.length > 0 || dueBdg) && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.25rem', marginBottom: '.35rem' }}>
+                        {dueBdg && (
+                          <span title={n.due_date ? new Date(n.due_date).toLocaleString('pt-BR') : ''}
+                            style={{
+                              background: dueBdg.bg, color: dueBdg.fg,
+                              fontSize: '.58rem', fontWeight: 800,
+                              padding: '.12rem .4rem', borderRadius: 4,
+                              fontFamily: 'var(--font-montserrat,sans-serif)',
+                              display: 'inline-flex', alignItems: 'center', gap: '.2rem',
+                            }}>
+                            🕒 {n.due_date ? fmtDateBR(n.due_date) : dueBdg.label}
+                          </span>
+                        )}
+                        {tags.slice(0, 3).map(t => (
+                          <span key={t} style={{
+                            background: nameColor(t) + '22', color: nameColor(t),
+                            fontSize: '.58rem', fontWeight: 700,
+                            padding: '.12rem .4rem', borderRadius: 4,
+                            fontFamily: 'var(--font-montserrat,sans-serif)',
+                          }}>{t}</span>
+                        ))}
+                        {tags.length > 3 && (
+                          <span style={{ fontSize: '.58rem', color: '#94a3b8', fontWeight: 700 }}>+{tags.length - 3}</span>
+                        )}
+                      </div>
+                    )}
+
                     {/* Tag do responsável */}
                     {respNome && (
                       <div style={{ display: 'inline-flex', alignItems: 'center', gap: '.28rem', background: `${respColor}15`, border: `1px solid ${respColor}35`, borderRadius: 99, padding: '.18rem .5rem .18rem .22rem', marginBottom: '.3rem' }}>
@@ -341,6 +436,14 @@ export function PipelineKanban({ negociacoes, stages, userId, onUpdate }: Props)
         [draggable]:active { cursor: grabbing !important; }
       `}</style>
     </div>
+
+    {cardAberto && (
+      <NegociacaoCardModal
+        negociacaoId={cardAberto}
+        onClose={() => setCardAberto(null)}
+        onChange={onUpdate}
+      />
+    )}
     </>
   )
 }

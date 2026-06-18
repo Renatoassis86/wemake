@@ -64,7 +64,7 @@ export default async function EscolaNova({ searchParams }: Props) {
 
   const supabase = await createClient()
   const { data: profiles } = await supabase
-    .from('profiles').select('id, full_name').neq('is_active', false).order('full_name')
+    .from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo')
 
   // Pré-preencher com dados do lead se vier do banco de leads
   let leadData: any = null
@@ -326,7 +326,7 @@ export default async function EscolaNova({ searchParams }: Props) {
                   <select name="responsavel_id" style={input}>
                     <option value="">Selecione...</option>
                     {profiles?.map((p: any) => (
-                      <option key={p.id} value={p.id}>{p.full_name}</option>
+                      <option key={p.id} value={p.id}>{p.nome_completo}</option>
                     ))}
                   </select>
                 </div>

@@ -7,6 +7,7 @@ import {
   MEIO_OPTIONS, INTERESSE_OPTIONS, PRONTIDAO_OPTIONS,
   ABERTURA_OPTIONS, ENCAMINHAMENTOS_OPTIONS, CARGO_CONTATO_OPTIONS,
 } from '@/types/database'
+import { RegistroAnexoUpload } from '@/components/comercial/RegistroAnexoUpload'
 
 interface Props { params: Promise<{ id: string }> }
 
@@ -48,7 +49,7 @@ export default async function RegistroEditar({ params }: Props) {
 
   const [{ data: registro }, { data: profiles }] = await Promise.all([
     supabase.from('registros').select('*, escola:escolas(id,nome)').eq('id', id).single(),
-    supabase.from('profiles').select('id, full_name').neq('is_active', false).order('full_name'),
+    supabase.from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo'),
   ])
 
   if (!registro) notFound()
@@ -116,7 +117,7 @@ export default async function RegistroEditar({ params }: Props) {
                 <div>
                   <label style={lbl}>Responsável</label>
                   <select name="responsavel_id" style={inp} defaultValue={r.responsavel_id ?? ''}>
-                    {profiles?.map((p: any) => <option key={p.id} value={p.id}>{p.full_name}</option>)}
+                    {profiles?.map((p: any) => <option key={p.id} value={p.id}>{p.nome_completo}</option>)}
                   </select>
                 </div>
                 <div>
@@ -244,6 +245,21 @@ export default async function RegistroEditar({ params }: Props) {
             </Link>
           </div>
         </form>
+
+        {/* Anexos (proposta financeira e contrapropostas) */}
+        <div style={{ marginTop: '1.5rem' }}>
+          <div style={card}>
+            <div style={secHdr('#7c3aed')}>
+              <div style={{ ...dot('#7c3aed'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </div>
+              <div style={secTitle}>Proposta Financeira e Contrapropostas</div>
+            </div>
+            <div style={body}>
+              <RegistroAnexoUpload registroId={id} />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

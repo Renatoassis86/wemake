@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-interface Profile { id: string; full_name: string; role?: string; avatar_url?: string | null }
+interface Profile { id: string; nome_completo: string; role?: string }
 interface Comentario {
   id: string
   texto: string
@@ -114,7 +114,7 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
       data.negociacao?.escola_id
         ? supabase.from('escolas').select('nome').eq('id', data.negociacao.escola_id).single()
         : Promise.resolve({ data: null }),
-      supabase.from('profiles').select('id, full_name, role, avatar_url').neq('is_active', false).order('full_name'),
+      supabase.from('usuarios').select('id, nome_completo, role').eq('ativo', true).order('nome_completo'),
       supabase.auth.getUser(),
     ])
     setEscolaNome((escRes as any).data?.nome ?? '')
@@ -319,10 +319,10 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
                   <label style={lbl}>Membros</label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '.3rem' }}>
                     {membros.map(m => (
-                      <div key={m.id} title={m.full_name}
+                      <div key={m.id} title={m.nome_completo}
                         style={{
                           width: 30, height: 30, borderRadius: '50%',
-                          background: nameColor(m.full_name),
+                          background: nameColor(m.nome_completo),
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           color: '#fff', fontSize: '.68rem', fontWeight: 800,
                           fontFamily: 'var(--font-montserrat,sans-serif)',
@@ -331,7 +331,7 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
                         }}
                         onClick={() => removeMembro(m.id)}
                       >
-                        {getInitials(m.full_name)}
+                        {getInitials(m.nome_completo)}
                       </div>
                     ))}
                     <button onClick={() => setShowMembros(true)}
@@ -457,7 +457,7 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
                     color: '#fff', fontSize: '.7rem', fontWeight: 800,
                     fontFamily: 'var(--font-montserrat,sans-serif)',
                   }}>
-                    {getInitials(todosProfiles.find(p => p.id === myId)?.full_name ?? 'EU')}
+                    {getInitials(todosProfiles.find(p => p.id === myId)?.nome_completo ?? 'EU')}
                   </div>
                   <div style={{ flex: 1 }}>
                     <textarea value={novoComent} onChange={e => setNovoComent(e.target.value)}
@@ -485,7 +485,7 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
                     <div style={{ fontSize: '.75rem', color: '#94a3b8', fontStyle: 'italic' }}>Nenhum comentário ainda.</div>
                   )}
                   {comentarios.map(c => {
-                    const nome = c.profiles?.full_name ?? '—'
+                    const nome = c.profiles?.nome_completo ?? '—'
                     return (
                       <div key={c.id} style={{ display: 'flex', gap: '.55rem' }}>
                         <div style={{
@@ -564,13 +564,13 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
                       }}>
                       <div style={{
                         width: 28, height: 28, borderRadius: '50%',
-                        background: nameColor(p.full_name),
+                        background: nameColor(p.nome_completo),
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         color: '#fff', fontSize: '.6rem', fontWeight: 800,
                         fontFamily: 'var(--font-montserrat,sans-serif)',
-                      }}>{getInitials(p.full_name)}</div>
+                      }}>{getInitials(p.nome_completo)}</div>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '.78rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{p.full_name}</div>
+                        <div style={{ fontSize: '.78rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{p.nome_completo}</div>
                         {p.role && <div style={{ fontSize: '.6rem', color: '#94a3b8' }}>{p.role}</div>}
                       </div>
                       {ja && <span style={{ fontSize: '.65rem', fontWeight: 700, color: '#4A7FDB' }}>✓ marcado</span>}

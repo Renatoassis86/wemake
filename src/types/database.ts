@@ -360,8 +360,10 @@ export const PRONTIDAO_OPTIONS = [
   { value: 'apresentacao',        label: 'Apresentação em Andamento' },
   { value: 'contrato_enviado',    label: 'Contrato Enviado' },
   { value: 'atualizar_contrato',  label: 'Atualizar Contrato' },
-  { value: 'contrato_assinado',   label: 'Contrato Assinado' },
-  { value: 'parceiro_ativo',      label: 'Parceiro Ativo' },
+  { value: 'contrato_assinado',          label: 'Contrato Assinado' },
+  { value: 'parceiro_ativo',             label: 'Parceiro Ativo' },
+  { value: 'envio_formulario_precadastro', label: 'Envio de Formulário de Pré-Cadastro' },
+  { value: 'envio_proposta_financeira',  label: 'Envio de Proposta Financeira' },
 ]
 
 export const ABERTURA_OPTIONS = [
@@ -378,8 +380,10 @@ export const ENCAMINHAMENTOS_OPTIONS = [
   { value: 'nova_visita',           label: 'Nova Visita' },
   { value: 'contato_futuro',        label: 'Contato Futuro' },
   { value: 'elaboracao_contrato',   label: 'Elaboração de Contrato' },
-  { value: 'contrato_enviado',      label: 'Contrato Enviado' },
-  { value: 'contrato_assinado',     label: 'Contrato Assinado' },
+  { value: 'contrato_enviado',          label: 'Contrato Enviado' },
+  { value: 'contrato_assinado',         label: 'Contrato Assinado' },
+  { value: 'envio_formulario',          label: 'Envio de Formulário de Pré-Cadastro' },
+  { value: 'envio_proposta_financeira', label: 'Envio de Proposta Financeira' },
 ]
 
 export const STAGE_OPTIONS = [

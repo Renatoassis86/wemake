@@ -59,7 +59,7 @@ export function AdminActions({ roleOptions, profiles }: Props) {
     const result = await criarUsuario(fd)
     setCriando(false)
     if (result.success) {
-      setCriarMsg({ tipo: 'ok', texto: `✓ Usuário cadastrado com sucesso! Senha temporária: Senha@2026` })
+      setCriarMsg({ tipo: 'ok', texto: `✓ Usuário cadastrado com sucesso!` })
       ;(e.target as HTMLFormElement).reset()
       router.refresh()
     } else {
@@ -114,14 +114,9 @@ export function AdminActions({ roleOptions, profiles }: Props) {
               <input name="email" type="email" style={inp} required placeholder="email@wemake.tec.br" />
             </div>
 
-            {/* Senha temporária info */}
-            <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 8, padding: '.75rem 1rem' }}>
-              <div style={{ fontSize: '.72rem', color: '#92400e', fontFamily: 'var(--font-inter,sans-serif)', lineHeight: 1.6 }}>
-                <span style={{ fontWeight: 700 }}>Senha temporária:</span>{' '}
-                <code style={{ background: '#fef3c7', padding: '1px 6px', borderRadius: 4, fontWeight: 700 }}>Senha@2026</code>
-                <br />
-                O usuário deverá alterar a senha no primeiro acesso.
-              </div>
+            <div>
+              <label style={lbl}>Senha *</label>
+              <input name="password" type="password" style={inp} required placeholder="Mínimo 6 caracteres" />
             </div>
 
             <div className="mp-stack-mobile" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>

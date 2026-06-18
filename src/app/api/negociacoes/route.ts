@@ -80,6 +80,8 @@ export async function POST(request: NextRequest) {
         valor_estimado: valor_estimado ?? null,
         probabilidade:  0,
         ativa:          true,
+        tags:           [],
+        checklist:      [],
         created_by:     user.id,
       })
       .select('id, stage, titulo, escola_id')

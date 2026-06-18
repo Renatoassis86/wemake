@@ -31,7 +31,8 @@ const NAV_PROCESS = [
   { href: '/comercial/jornada-visual', label: 'Jornada Visual',    icon: GitBranch   },
   { href: '/comercial/jornada',        label: 'Jornada Relac.',    icon: Activity    },
   { href: '/comercial/contratos',      label: 'Jornada Contrat.',  icon: FileSignature },
-  { href: '/comercial/pipeline',       label: 'Pipeline',          icon: Kanban      },
+  { href: '/comercial/pipeline',         label: 'Pipeline CRM',        icon: Kanban      },
+  { href: '/comercial/pipeline-proposta', label: 'Pipeline Proposta',  icon: Kanban      },
   { href: '/comercial/tabela',         label: 'Tabela Geral',      icon: Table2      },
   { href: '/comercial/metas',          label: 'Metas 2027',        icon: Target      },
 ]
