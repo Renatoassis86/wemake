@@ -21,7 +21,7 @@ interface SisParams {
   faixas: FaixaEscala[]
 }
 interface LeasingParams {
-  retornoAlvo: number    // 1.0 = 100% return on PV
+  retornoAlvo: number    // 2.0 = lucro de 2×PV; total recebido = PV × (1 + retornoAlvo)
   ipca: number           // 0.055 = 5.5% annual IPCA
   duracaoMeses: number   // 60 = 5 anos
   txMan: number          // 0.25 = 25% maintenance rate
@@ -48,7 +48,7 @@ const DEFAULT_SIS: SisParams = {
 }
 
 const DEFAULT_LEASING: LeasingParams = {
-  retornoAlvo: 1.0,
+  retornoAlvo: 2.0,  // lucro = 2× PV (recupera PV + ganha 2×PV de lucro)
   ipca: 0.055,
   duracaoMeses: 60,
   txMan: 0.25,
@@ -917,7 +917,7 @@ export default function CalculadoraPage() {
                 <div>
                   <label style={LBL}>Retorno alvo (%)</label>
                   <InlineNum value={+(lp.retornoAlvo * 100).toFixed(1)} onChange={v => setLp(p => ({ ...p, retornoAlvo: v / 100 }))} suffix="%" min={0} step={5} />
-                  <div style={NOTA}>Retorno total sobre PV. 100% = recebe 2× o investimento ao longo do contrato.</div>
+                  <div style={NOTA}>Lucro sobre o PV. 200% = recupera PV + ganha 2×PV de lucro = recebe 3× o total investido.</div>
                 </div>
                 <div>
                   <label style={LBL}>IPCA anual estimado (%)</label>
