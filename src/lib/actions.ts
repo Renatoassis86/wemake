@@ -791,6 +791,17 @@ export async function enviarFormularioPublico(formData: FormData): Promise<Actio
       status: 'pendente',
     }
 
+    // Bloquear reenvio: mesma escola (CNPJ) já submeteu o formulário
+    if (cnpj) {
+      const { count } = await supabase
+        .from('form_precadastro_wemake')
+        .select('id', { count: 'exact', head: true })
+        .eq('cnpj', cnpj)
+      if ((count ?? 0) > 0) {
+        return { success: false, error: 'Sua escola já realizou o pré-cadastro. Nossa equipe comercial entrará em contato em breve.' }
+      }
+    }
+
     const { data: inserted, error } = await supabase
       .from('form_precadastro_wemake')
       .insert(payload)
