@@ -3,7 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
-// PATCH — move card de estágio ou adiciona comentário
+// PATCH { precadastro_id, stage? | comentario? | remover_comentario? }
+// O [id] aqui é o leads_universal.id (pode ser 'new' para criação sob demanda)
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
@@ -11,41 +12,65 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!user) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
 
   const body = await req.json()
+  const { precadastro_id, escola_nome, ...updates } = body
 
-  // Busca registro atual para mesclar dados_extras
-  const { data: lead } = await supabase
+  if (!precadastro_id) return NextResponse.json({ error: 'precadastro_id obrigatório' }, { status: 400 })
+
+  // Busca lead existente pelo precadastro_id em dados_extras
+  let { data: existente } = await supabase
     .from('leads_universal')
-    .select('dados_extras')
-    .eq('id', id)
-    .single()
+    .select('id, dados_extras')
+    .eq('fonte', 'formulario_wemake')
+    .contains('dados_extras', { precadastro_id })
+    .maybeSingle()
 
-  const extraAtual: Record<string, any> = (lead?.dados_extras as any) ?? {}
+  let leadId = existente?.id
+  let extraAtual: Record<string, any> = (existente?.dados_extras as any) ?? { precadastro_id }
 
-  if ('stage' in body) {
-    extraAtual.pipeline_stage = body.stage
+  // Se não existe, cria o registro
+  if (!leadId) {
+    const { data: novo, error: insErr } = await supabase
+      .from('leads_universal')
+      .insert({
+        escola_nome: escola_nome ?? precadastro_id,
+        fonte: 'formulario_wemake',
+        status: 'ativo',
+        dados_extras: { precadastro_id },
+      })
+      .select('id, dados_extras')
+      .single()
+
+    if (insErr) return NextResponse.json({ error: insErr.message }, { status: 400 })
+    leadId = novo.id
+    extraAtual = (novo.dados_extras as any) ?? { precadastro_id }
   }
 
-  if ('comentario' in body && body.comentario?.trim()) {
+  // Aplicar as mudanças
+  if ('stage' in updates) {
+    extraAtual.pipeline_stage = updates.stage
+  }
+
+  if ('comentario' in updates && updates.comentario?.trim()) {
     const comentarios: any[] = extraAtual.pipeline_comentarios ?? []
     comentarios.unshift({
       id: crypto.randomUUID(),
-      texto: body.comentario.trim(),
+      texto: updates.comentario.trim(),
       autor_id: user.id,
       criado_em: new Date().toISOString(),
     })
     extraAtual.pipeline_comentarios = comentarios
   }
 
-  if ('remover_comentario' in body) {
+  if ('remover_comentario' in updates) {
     const comentarios: any[] = extraAtual.pipeline_comentarios ?? []
-    extraAtual.pipeline_comentarios = comentarios.filter((c: any) => c.id !== body.remover_comentario)
+    extraAtual.pipeline_comentarios = comentarios.filter((c: any) => c.id !== updates.remover_comentario)
   }
 
   const { error } = await supabase
     .from('leads_universal')
     .update({ dados_extras: extraAtual })
-    .eq('id', id)
+    .eq('id', leadId)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
-  return NextResponse.json({ success: true, dados_extras: extraAtual })
+  return NextResponse.json({ success: true, lead_id: leadId, dados_extras: extraAtual })
 }
