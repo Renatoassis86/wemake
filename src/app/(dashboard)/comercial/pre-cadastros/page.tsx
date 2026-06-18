@@ -2,6 +2,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import PageHeader from '@/components/layout/PageHeader'
 import { ClipboardList, MapPin, Mail, Phone, FileText, CalendarDays, GraduationCap } from 'lucide-react'
 import PreCadastroActions from './PreCadastroActions'
+import SincronizarLeadsButton from './SincronizarLeadsButton'
 
 interface PreCadastro {
   id: string
@@ -209,6 +210,9 @@ export default async function PreCadastrosPage() {
       />
 
       <div className="mp-page-padding-x" style={{ padding: '0 2rem 2rem' }}>
+        <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+          <SincronizarLeadsButton />
+        </div>
         {error && (
           <div style={{
             background: '#fef2f2', border: '1px solid #fca5a5', color: '#991b1b',

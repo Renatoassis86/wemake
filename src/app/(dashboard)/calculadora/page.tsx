@@ -12,12 +12,13 @@ const dec3 = (v: number) => v.toFixed(3)
 // ══════════════════════════════════════════════════════════════════
 // TIPOS
 // ══════════════════════════════════════════════════════════════════
-interface FaixaCurriculo {
-  nome: string; min: number; max: number; manutencao: number
+interface FaixaEscala {
+  nome: string; min: number; max: number; s1: number  // fixed escala score for this bracket
 }
 interface SisParams {
-  livroAno: number       // R$200/aluno/ano — custo do livro (fixo)
-  faixas: FaixaCurriculo[]
+  livroMes: number; teto: number; piso: number; ticketMax: number
+  wEscala: number; wTicket: number; wCompl: number; wFid: number
+  faixas: FaixaEscala[]
 }
 interface LeasingParams {
   retornoAlvo: number    // 1.0 = 100% return on PV
@@ -30,12 +31,14 @@ interface EquipItem { nome: string; qty: number; unit: number; fixedQty: boolean
 
 // ── Valores padrão ────────────────────────────────────────────────
 const DEFAULT_SIS: SisParams = {
-  livroAno: 200,
+  livroMes: 16.67,  // ≈ R$200/ano
+  teto: 420, piso: 260, ticketMax: 1500,
+  wEscala: 0.35, wTicket: 0.30, wCompl: 0.20, wFid: 0.15,
   faixas: [
-    { nome: 'Faixa 1', min: 1,   max: 100, manutencao: 180 },
-    { nome: 'Faixa 2', min: 101, max: 300, manutencao: 120 },
-    { nome: 'Faixa 3', min: 301, max: 500, manutencao: 80  },
-    { nome: 'Faixa 4', min: 501, max: 800, manutencao: 60  },
+    { nome: 'Faixa 1', min:   1, max: 100, s1: 0.90 },
+    { nome: 'Faixa 2', min: 101, max: 300, s1: 0.60 },
+    { nome: 'Faixa 3', min: 301, max: 500, s1: 0.30 },
+    { nome: 'Faixa 4', min: 501, max: 800, s1: 0.10 },
   ],
 }
 
@@ -48,31 +51,40 @@ const DEFAULT_LEASING: LeasingParams = {
 }
 
 const DEFAULT_EQUIP: EquipItem[] = [
-  { nome: 'Máquina digital',       qty: 1,  unit: 4280.00,  fixedQty: false },
-  { nome: 'Máquina manual',        qty: 1,  unit: 237.40,   fixedQty: false },
-  { nome: 'Ferramenta',            qty: 1,  unit: 1061.53,  fixedQty: false },
-  { nome: 'Papelaria',             qty: 1,  unit: 430.76,   fixedQty: false },
-  { nome: 'Organização',           qty: 1,  unit: 157.98,   fixedQty: false },
-  { nome: 'Eletrônica',            qty: 1,  unit: 1983.82,  fixedQty: false },
-  { nome: 'Informática (notebooks)', qty: 10, unit: 4000.00, fixedQty: true, nota: 'Qtd calculada: ⌈maior sala ÷ 2⌉' },
-  { nome: 'Mídias',                qty: 1,  unit: 3800.00,  fixedQty: false },
-  { nome: 'Segurança',             qty: 1,  unit: 119.70,   fixedQty: false },
-  { nome: 'Seguro',                qty: 10, unit: 2700.00,  fixedQty: true, nota: 'Qtd igual ao nº de notebooks' },
+  { nome: 'Máquina digital',         qty: 1,  unit: 4280.00,  fixedQty: false },
+  { nome: 'Máquina manual',          qty: 1,  unit: 237.40,   fixedQty: false },
+  { nome: 'Ferramenta',              qty: 1,  unit: 1061.53,  fixedQty: false },
+  { nome: 'Papelaria',               qty: 1,  unit: 430.76,   fixedQty: false },
+  { nome: 'Organização',             qty: 1,  unit: 157.98,   fixedQty: false },
+  { nome: 'Eletrônica',              qty: 1,  unit: 1983.82,  fixedQty: false },
+  { nome: 'Informática (notebooks)', qty: 10, unit: 4000.00,  fixedQty: true, nota: 'Qtd calculada: ⌈maior sala ÷ 2⌉' },
+  { nome: 'Mídias',                  qty: 1,  unit: 3800.00,  fixedQty: false },
+  { nome: 'Segurança',               qty: 1,  unit: 119.70,   fixedQty: false },
+  { nome: 'Seguro',                  qty: 10, unit: 2700.00,  fixedQty: true, nota: 'Qtd igual ao nº de notebooks' },
 ]
 
 // ══════════════════════════════════════════════════════════════════
 // FUNÇÕES DE CÁLCULO (puras — recebem tudo como parâmetro)
 // ══════════════════════════════════════════════════════════════════
-function calcSistema(alunos: number, desconto: number, p: SisParams) {
-  // Find the faixa for this student count
-  const faixa = p.faixas.find(f => alunos >= f.min && alunos <= f.max)
-    ?? (alunos < p.faixas[0].min ? p.faixas[0] : p.faixas[p.faixas.length - 1])
+function calcSistema(
+  alunos: number, ticket: number, segmentos: number,
+  altaCompl: boolean, situacao: string, desconto: number,
+  p: SisParams
+) {
+  // s1: stepped faixa-based escala score (more students = lower s1 = price closer to piso)
+  const faixaEscala = p.faixas.find(f => alunos >= f.min && alunos <= f.max)
+    ?? (alunos > p.faixas[p.faixas.length - 1].max ? p.faixas[p.faixas.length - 1] : p.faixas[0])
+  const s1 = faixaEscala.s1
 
-  const livroAno = p.livroAno
-  const manutencao = faixa.manutencao
-  const valorBruto = livroAno + manutencao          // preço/aluno/ano antes do desconto
+  const s2 = Math.min(1, ticket / p.ticketMax)
+  const s3 = (segmentos === 3 || altaCompl) ? 1 : segmentos === 2 ? 0.5 : 0
+  const s4 = situacao === 'Renovação 2º ciclo+' ? 0.4 : situacao === 'Renovação 1º ciclo' ? 0.7 : 1.0
+
+  const scoreFinal = p.wEscala * s1 + p.wTicket * s2 + p.wCompl * s3 + p.wFid * s4
+  const amplitude  = p.teto - p.piso
+  const valorBruto = p.piso + amplitude * scoreFinal
   const valorDesc  = valorBruto * (1 - desconto / 100)
-  const valorFinal = Math.max(livroAno, valorDesc)  // piso = custo do livro
+  const valorFinal = Math.max(p.piso, valorDesc)
   const anual      = valorFinal * alunos
 
   const gov = desconto === 0 ? { label: '— Sem desconto', status: 'ok' as const }
@@ -81,11 +93,14 @@ function calcSistema(alunos: number, desconto: number, p: SisParams) {
     : { label: 'Diretoria — Dênis', status: 'error' as const }
 
   return {
-    faixa, livroAno, manutencao, valorBruto, valorDesc, valorFinal, anual,
-    custoLivros: livroAno * alunos,
-    margemManutencao: (valorFinal - livroAno) * alunos,
+    s1, s2, s3, s4, scoreFinal, amplitude,
+    valorBruto, valorDesc, valorFinal, anual,
+    custo: anual * 0.70, liquido: anual * 0.30,
     gov,
-    descMax: valorBruto > livroAno ? (1 - livroAno / valorBruto) * 100 : 0,
+    descMax: valorBruto > p.piso ? (1 - p.piso / valorBruto) * 100 : 0,
+    ticketLabel: ticket < 400 ? 'Popular' : ticket <= 800 ? 'Média-baixa' : ticket <= 1500 ? 'Padrão' : 'Premium',
+    livroAno: p.livroMes * 12,
+    faixaEscala,
   }
 }
 
@@ -215,12 +230,19 @@ export default function CalculadoraPage() {
 
   // ── Parâmetros do Sistema (todos editáveis) ──────────────────────
   const [sp, setSp] = useState<SisParams>(DEFAULT_SIS)
+  const [showSisAdv, setShowSisAdv] = useState(false)
 
-  const updFaixa = (idx: number, field: keyof FaixaCurriculo, val: any) =>
+  const updSp = (field: keyof SisParams, val: any) => setSp(p => ({ ...p, [field]: val }))
+
+  const updFaixa = (idx: number, field: keyof FaixaEscala, val: any) =>
     setSp(p => { const f = [...p.faixas]; f[idx] = { ...f[idx], [field]: val }; return { ...p, faixas: f } })
 
   // ── Parâmetros compartilhados sistema+comodato ─────────────────
   const [alunos,    setAlunos]    = useState(100)
+  const [ticket,    setTicket]    = useState(700)
+  const [segs,      setSegs]      = useState(2)
+  const [altaCompl, setAltaCompl] = useState(false)
+  const [situacao,  setSituacao]  = useState('Novo')
   const [desconto,  setDesconto]  = useState(0)
   const [parcelas,  setParcelas]  = useState(4)
   const [maiorSala, setMaiorSala] = useState(20)
@@ -236,14 +258,15 @@ export default function CalculadoraPage() {
 
   // ── Cálculos ──────────────────────────────────────────────────
   const sis = useMemo(
-    () => calcSistema(alunos, desconto, sp),
-    [alunos, desconto, sp]
+    () => calcSistema(alunos, ticket, segs, altaCompl, situacao, desconto, sp),
+    [alunos, ticket, segs, altaCompl, situacao, desconto, sp]
   )
   const com = useMemo(
     () => calcLeasing(alunos, maiorSala, equip, lp, sis.anual),
     [alunos, maiorSala, equip, lp, sis.anual]
   )
 
+  // Com comodato ativo: currículo é sempre 12x (mensal) — regra de negócio
   const parcelasCurriculo = incluiComodato ? 12 : parcelas
   const alunoMesSis       = sis.valorFinal / 12
   const totalAluMes       = alunoMesSis + com.valorPorAlunoMes
@@ -251,6 +274,7 @@ export default function CalculadoraPage() {
   const parcelaCurriculo  = sis.anual / parcelasCurriculo
 
   // ── Helpers visuais ───────────────────────────────────────────
+  const scoreClr  = (v: number) => v >= 0.7 ? '#16a34a' : v >= 0.4 ? '#d97706' : '#dc2626'
   const govClr    = (s: string) => s === 'error' ? '#dc2626' : s === 'warn' ? '#d97706' : '#16a34a'
   const govBg     = (s: string) => s === 'error' ? '#fef2f2' : s === 'warn' ? '#fefce8' : '#f0fdf4'
   const govBorder = (s: string) => s === 'error' ? '#fca5a5' : s === 'warn' ? '#fde68a' : '#86efac'
@@ -271,7 +295,7 @@ export default function CalculadoraPage() {
 
   return (
     <div>
-      <PageHeader title="Calculadora We Make" subtitle="Precificação por faixas de volume + leasing de retorno garantido — v7" />
+      <PageHeader title="Calculadora We Make" subtitle="Precificação por score ponderado + faixas de volume + leasing garantido — v7" />
       <div style={{ padding: '1.75rem 2.5rem' }}>
 
         {/* Tabs */}
@@ -289,13 +313,13 @@ export default function CalculadoraPage() {
             {/* Header banner */}
             <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius: 14, padding: '1.1rem 1.5rem' }}>
               <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4A7FDB', marginBottom: '.3rem' }}>
-                Precificação por faixas de volume + leasing de retorno garantido — v7
+                Lógica de precificação — Calculadora_v7 · Score ponderado + Faixas de volume + Leasing retorno garantido
               </div>
               <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '.4rem' }}>
-                Preço = Livro (R${sp.livroAno}/aluno/ano) + Manutenção por faixa de volume
+                Valor = Piso + (Teto − Piso) × Score ponderado
               </div>
               <div style={{ fontSize: '.75rem', color: 'rgba(255,255,255,.5)', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)' }}>
-                Mais alunos = menor manutenção = preço total menor por aluno (desconto por volume). Piso = custo do livro. Todos os parâmetros são editáveis abaixo.
+                4 fatores (escala por faixas, ticket, complexidade, fidelidade) geram score 0–1 que navega entre piso único e teto fixo. Escala por faixas discretas de volume. Todos os parâmetros são editáveis abaixo.
               </div>
             </div>
 
@@ -306,207 +330,363 @@ export default function CalculadoraPage() {
                 <div>
                   <label style={LBL}>Número de alunos</label>
                   <input type="number" min={1} value={alunos} onChange={e => setAlunos(+e.target.value || 1)} style={INP} />
-                  <div style={NOTA}>Total de alunos We Make na escola. Determina qual faixa de manutenção é aplicada.</div>
+                  <div style={NOTA}>Total de alunos We Make na escola. Determina qual faixa de escala é aplicada (score s1 fixo por faixa).</div>
+                </div>
+                <div>
+                  <label style={LBL}>Ticket médio mensal/aluno (R$)</label>
+                  <input type="number" min={0} value={ticket} onChange={e => setTicket(+e.target.value || 0)} style={INP} />
+                  <div style={NOTA}>Mensalidade da escola ao pai. Escolas ≥ R${sp.ticketMax.toLocaleString('pt-BR')} = score máximo.</div>
+                </div>
+                <div>
+                  <label style={LBL}>Segmentos atendidos</label>
+                  <div style={{ display: 'flex', gap: '.4rem' }}>
+                    {[1, 2, 3].map(n => (
+                      <button key={n} onClick={() => setSegs(n)} style={{ flex: 1, padding: '.65rem', borderRadius: 8, border: `1.5px solid ${segs === n ? '#0f172a' : '#e2e8f0'}`, background: segs === n ? '#0f172a' : '#fff', color: segs === n ? '#fff' : '#64748b', fontWeight: 700, fontSize: '.9rem', cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{n}</button>
+                    ))}
+                  </div>
+                  <div style={NOTA}>Ciclos escolares. 3 = score complexidade máximo.</div>
+                </div>
+                <div>
+                  <label style={LBL}>Alta complexidade?</label>
+                  <div style={{ display: 'flex', gap: '.5rem' }}>
+                    {['NÃO', 'SIM'].map(v => (
+                      <button key={v} onClick={() => setAltaCompl(v === 'SIM')} style={{ flex: 1, padding: '.65rem', borderRadius: 8, border: `1.5px solid ${(altaCompl ? 'SIM' : 'NÃO') === v ? '#0f172a' : '#e2e8f0'}`, background: (altaCompl ? 'SIM' : 'NÃO') === v ? '#0f172a' : '#fff', color: (altaCompl ? 'SIM' : 'NÃO') === v ? '#fff' : '#64748b', fontWeight: 700, fontSize: '.82rem', cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{v}</button>
+                    ))}
+                  </div>
+                  <div style={NOTA}>SIM força score complexidade = 1,000.</div>
+                </div>
+                <div>
+                  <label style={LBL}>Situação do contrato</label>
+                  <select value={situacao} onChange={e => setSituacao(e.target.value)} style={{ ...INP, background: '#fffef0' }}>
+                    <option>Novo</option>
+                    <option>Renovação 1º ciclo</option>
+                    <option>Renovação 2º ciclo+</option>
+                  </select>
+                  <div style={NOTA}>Renovação reduz score de fidelidade, beneficiando a escola.</div>
                 </div>
                 <div>
                   <label style={LBL}>Desconto comercial (%)</label>
-                  <input
-                    type="number" min={0} max={30} step={0.5} value={desconto}
-                    onChange={e => setDesconto(+e.target.value || 0)}
-                    style={{ ...INP, borderColor: desconto > 10 ? '#fca5a5' : desconto > 5 ? '#fde68a' : '#e2e8f0' }}
-                  />
-                  <div style={NOTA}>≤5% autônomo · 6–10% Renato · &gt;10% Dênis. Piso = custo do livro ({R$(sp.livroAno)}).</div>
+                  <input type="number" min={0} max={30} step={0.5} value={desconto} onChange={e => setDesconto(+e.target.value || 0)} style={{ ...INP, borderColor: desconto > 10 ? '#fca5a5' : desconto > 5 ? '#fde68a' : '#e2e8f0' }} />
+                  <div style={NOTA}>≤5% autônomo · 6–10% Renato · &gt;10% Dênis.</div>
                 </div>
                 <div>
                   <label style={LBL}>Qtd. parcelas (4–12)</label>
                   <input type="number" min={4} max={12} value={parcelas} onChange={e => setParcelas(Math.min(12, Math.max(4, +e.target.value || 4)))} style={INP} />
-                  <div style={NOTA}>Frequência de pagamento do currículo. Independente do prazo do leasing.</div>
+                  <div style={NOTA}>Frequência de pagamento do currículo. Independente do prazo do leasing (definido na aba Leasing).</div>
                 </div>
               </div>
             </Card>
 
-            {/* 2. Tabela de faixas */}
+            {/* 2. Parâmetros avançados (editáveis) */}
             <Card>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                <SecTitle n={2} title="Tabela de faixas de volume (editável)" />
-                <button
-                  onClick={() => setSp(DEFAULT_SIS)}
-                  style={{ padding: '.4rem .9rem', borderRadius: 8, border: '1.5px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', fontSize: '.72rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#475569' }}
-                >
-                  Restaurar padrão
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: showSisAdv ? '1rem' : 0 }}>
+                <SecTitle n={2} title="Parâmetros e pesos (editáveis)" />
+                <button onClick={() => setShowSisAdv(v => !v)} style={{ padding: '.4rem .9rem', borderRadius: 8, border: '1.5px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', fontSize: '.72rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#475569' }}>
+                  {showSisAdv ? 'Fechar' : 'Editar'}
                 </button>
               </div>
+              {showSisAdv && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
-              <div style={{ overflowX: 'auto', marginBottom: '.75rem' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr>
-                      {['Faixa', 'Alunos (mín)', 'Alunos (máx)', 'Manutenção (R$/al./ano)', 'Livro (R$/al./ano)', 'Total (R$/al./ano)', 'Ativa?'].map(h => (
-                        <th key={h} style={th}>{h}</th>
+                  {/* Valores gerais */}
+                  <div>
+                    <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', marginBottom: '.65rem' }}>Valores gerais</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '.75rem' }}>
+                      {[
+                        { label: 'Livro/aluno/mês (R$)', field: 'livroMes' as keyof SisParams, val: sp.livroMes, nota: 'Custo fixo do material didático ≈ R$200/ano', prefix: 'R$' },
+                        { label: 'Teto único (R$/aluno/ano)', field: 'teto' as keyof SisParams, val: sp.teto, nota: 'Limite máximo absoluto', prefix: 'R$' },
+                        { label: 'Piso único (R$/aluno/ano)', field: 'piso' as keyof SisParams, val: sp.piso, nota: 'Mínimo garantido — igual para todos', prefix: 'R$' },
+                        { label: 'Ticket referência máx (R$)', field: 'ticketMax' as keyof SisParams, val: sp.ticketMax, nota: 'Ticket acima deste valor = score máximo de ticket', prefix: 'R$' },
+                      ].map(f => (
+                        <div key={f.field}>
+                          <label style={LBL}>{f.label}</label>
+                          <InlineNum value={f.val as number} onChange={v => updSp(f.field, v)} prefix={f.prefix} min={0} step={0.5} />
+                          <div style={NOTA}>{f.nota}</div>
+                        </div>
                       ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sp.faixas.map((f, idx) => {
-                      const isAtiva = sis.faixa.nome === f.nome
-                      const total = sp.livroAno + f.manutencao
-                      return (
-                        <tr
-                          key={idx}
-                          style={{
-                            background: isAtiva ? '#eff6ff' : idx % 2 === 0 ? '#fff' : '#fafafa',
-                            borderBottom: '1px solid #f1f5f9',
-                            outline: isAtiva ? '2px solid #4A7FDB' : 'none',
-                            outlineOffset: -1,
-                          }}
-                        >
-                          <td style={{ padding: '.5rem .65rem', minWidth: 90 }}>
-                            <input
-                              type="text" value={f.nome}
-                              onChange={e => updFaixa(idx, 'nome', e.target.value)}
-                              style={{ ...INP_SM, background: '#fff', minWidth: 80 }}
-                            />
-                          </td>
-                          <td style={{ padding: '.5rem .65rem', minWidth: 90 }}>
-                            <InlineNum value={f.min} onChange={v => updFaixa(idx, 'min', Math.round(v))} min={1} step={1} />
-                          </td>
-                          <td style={{ padding: '.5rem .65rem', minWidth: 90 }}>
-                            <InlineNum value={f.max} onChange={v => updFaixa(idx, 'max', Math.round(v))} min={1} step={1} />
-                          </td>
-                          <td style={{ padding: '.5rem .65rem', minWidth: 140 }}>
-                            <InlineNum value={f.manutencao} onChange={v => updFaixa(idx, 'manutencao', v)} prefix="R$" min={0} step={5} />
-                          </td>
-                          <td style={{ padding: '.5rem .65rem', minWidth: 120 }}>
-                            <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#64748b', padding: '.35rem .55rem' }}>
-                              {R$(sp.livroAno)}
-                            </div>
-                          </td>
-                          <td style={{ padding: '.5rem .65rem', minWidth: 120 }}>
-                            <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: isAtiva ? '#2563eb' : '#0f172a', padding: '.35rem .55rem' }}>
-                              {R$(total)}
-                            </div>
-                          </td>
-                          <td style={{ padding: '.5rem .85rem' }}>
-                            {isAtiva && (
-                              <span style={{ display: 'inline-block', padding: '.2rem .6rem', borderRadius: 99, background: '#dbeafe', color: '#1d4ed8', fontSize: '.65rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
-                                Ativa
-                              </span>
-                            )}
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                      <div>
+                        <label style={LBL}>Livro/aluno/ano (calculado)</label>
+                        <div style={{ padding: '.65rem .9rem', background: '#f1f5f9', borderRadius: 8, fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#475569', border: '1.5px solid #e2e8f0' }}>
+                          {R$(sp.livroMes * 12)}
+                        </div>
+                        <div style={NOTA}>R${sp.livroMes}/mês × 12 meses</div>
+                      </div>
+                    </div>
+                  </div>
 
-              <Nota t={`Faixa ativa: ${sis.faixa.nome} (${sis.faixa.min}–${sis.faixa.max} alunos) — Manutenção ${R$(sis.manutencao)}/aluno/ano → Total bruto ${R$(sis.valorBruto)}/aluno/ano.`} />
+                  {/* Faixas de escala */}
+                  <div>
+                    <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', marginBottom: '.65rem' }}>
+                      Faixas de escala por volume — score fixo por faixa (maior escola = score menor = preço menor)
+                    </div>
+                    <div style={{ overflowX: 'auto', marginBottom: '.65rem' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead>
+                          <tr>
+                            {['Faixa', 'Alunos de', 'Alunos até', 'Score s1 (fixo 0–1)', 'Ativa?'].map(h => (
+                              <th key={h} style={th}>{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sp.faixas.map((f, idx) => {
+                            const isAtiva = sis.faixaEscala.nome === f.nome
+                            return (
+                              <tr
+                                key={idx}
+                                style={{
+                                  background: isAtiva ? '#eff6ff' : idx % 2 === 0 ? '#fff' : '#fafafa',
+                                  borderBottom: '1px solid #f1f5f9',
+                                  outline: isAtiva ? '2px solid #4A7FDB' : 'none',
+                                  outlineOffset: -1,
+                                }}
+                              >
+                                <td style={{ padding: '.5rem .65rem', minWidth: 90 }}>
+                                  <input
+                                    type="text" value={f.nome}
+                                    onChange={e => updFaixa(idx, 'nome', e.target.value)}
+                                    style={{ ...INP_SM, background: '#fff', minWidth: 80 }}
+                                  />
+                                </td>
+                                <td style={{ padding: '.5rem .65rem', minWidth: 90 }}>
+                                  <InlineNum value={f.min} onChange={v => updFaixa(idx, 'min', Math.round(v))} min={1} step={1} />
+                                </td>
+                                <td style={{ padding: '.5rem .65rem', minWidth: 90 }}>
+                                  <InlineNum value={f.max} onChange={v => updFaixa(idx, 'max', Math.round(v))} min={1} step={1} />
+                                </td>
+                                <td style={{ padding: '.5rem .65rem', minWidth: 140 }}>
+                                  <InlineNum value={+f.s1.toFixed(3)} onChange={v => updFaixa(idx, 's1', Math.min(1, Math.max(0, v)))} min={0} step={0.05} style={{ maxWidth: 120 }} />
+                                </td>
+                                <td style={{ padding: '.5rem .85rem' }}>
+                                  {isAtiva && (
+                                    <span style={{ display: 'inline-block', padding: '.2rem .6rem', borderRadius: 99, background: '#dbeafe', color: '#1d4ed8', fontSize: '.65rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                                      Ativa
+                                    </span>
+                                  )}
+                                </td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div style={{ fontSize: '.68rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)', lineHeight: 1.55 }}>
+                      Nota: Score mais alto = preço perto do teto. Score mais baixo = preço perto do piso. Permite descontos maiores para escolas maiores.
+                    </div>
+                  </div>
 
-              <div style={{ marginTop: '.85rem' }}>
-                <label style={LBL}>Livro / aluno / ano (R$) — custo fixo do material didático</label>
-                <div style={{ maxWidth: 220 }}>
-                  <InlineNum value={sp.livroAno} onChange={v => setSp(p => ({ ...p, livroAno: v }))} prefix="R$" min={0} step={5} />
+                  {/* Pesos dos scores */}
+                  <div>
+                    <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', marginBottom: '.65rem' }}>
+                      Pesos dos scores — soma deve ser 100%
+                      <span style={{ marginLeft: '.75rem', fontWeight: 800, color: Math.abs(sp.wEscala + sp.wTicket + sp.wCompl + sp.wFid - 1) < 0.001 ? '#16a34a' : '#dc2626' }}>
+                        Atual: {((sp.wEscala + sp.wTicket + sp.wCompl + sp.wFid) * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '.75rem' }}>
+                      {[
+                        { label: 'Peso Escala (%)', field: 'wEscala' as keyof SisParams, val: sp.wEscala, nota: 'Volume de alunos — faixas discretas' },
+                        { label: 'Peso Ticket (%)', field: 'wTicket' as keyof SisParams, val: sp.wTicket, nota: 'Mensalidade da escola' },
+                        { label: 'Peso Complexidade (%)', field: 'wCompl' as keyof SisParams, val: sp.wCompl, nota: 'Nº de segmentos' },
+                        { label: 'Peso Fidelidade (%)', field: 'wFid' as keyof SisParams, val: sp.wFid, nota: 'Renovação vs novo contrato' },
+                      ].map(f => (
+                        <div key={f.field}>
+                          <label style={LBL}>{f.label}</label>
+                          <InlineNum value={+(f.val as number * 100).toFixed(1)} onChange={v => updSp(f.field, v / 100)} suffix="%" min={0} step={1} />
+                          <div style={NOTA}>{f.nota}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '.75rem' }}>
+                    <button onClick={() => setSp(DEFAULT_SIS)} style={{ padding: '.45rem 1rem', borderRadius: 8, border: '1.5px solid #e2e8f0', background: '#fff', cursor: 'pointer', fontSize: '.72rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#64748b' }}>Restaurar padrão</button>
+                  </div>
                 </div>
-                <div style={NOTA}>Custo base do livro — funciona como piso mínimo de preço. Nenhum desconto pode levar o valor abaixo de {R$(sp.livroAno)}/aluno/ano.</div>
+              )}
+            </Card>
+
+            {/* 3. Scores */}
+            <Card>
+              <SecTitle n={3} title="Scores dos fatores (0 a 1 cada)" />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+
+                {/* Score 1 — Escala (faixa-based) */}
+                <div style={{ background: '#f8fafc', borderRadius: 10, padding: '1rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
+                    <div>
+                      <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Score 1 — Escala <span style={{ color: '#94a3b8' }}>({pct(sp.wEscala)})</span></div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: scoreClr(sis.s1) }}>{dec(sis.s1)}</div>
+                    </div>
+                    <div style={{ width: 46, height: 46, borderRadius: '50%', border: `3px solid ${scoreClr(sis.s1)}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '.75rem', color: scoreClr(sis.s1), fontFamily: 'var(--font-montserrat,sans-serif)' }}>{pct(sis.s1)}</div>
+                  </div>
+                  <div style={{ background: '#e2e8f0', borderRadius: 99, height: 5, overflow: 'hidden', marginBottom: '.65rem' }}>
+                    <div style={{ height: '100%', width: `${sis.s1 * 100}%`, background: scoreClr(sis.s1), borderRadius: 99, transition: 'width .3s' }} />
+                  </div>
+                  <div style={{ fontSize: '.7rem', color: '#1e293b', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '.5rem' }}>
+                    <strong>Faixa ativa:</strong> {sis.faixaEscala.nome} ({sis.faixaEscala.min}–{sis.faixaEscala.max} al.) — Score s1 fixo para esta faixa: <strong style={{ color: scoreClr(sis.s1) }}>{dec(sis.s1)}</strong>
+                  </div>
+                  <div style={{ fontSize: '.68rem', color: '#475569', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)', borderTop: '1px solid #e2e8f0', paddingTop: '.5rem' }}>
+                    <strong>Regra (35% do score):</strong> Escolas maiores caem para faixas com score menor, aproximando o preço do piso ({R$(sp.piso)}). Score discreto por faixa — não linear. Escola menor = score maior = preço perto do teto.
+                  </div>
+                </div>
+
+                {/* Score 2 — Ticket */}
+                <div style={{ background: '#f8fafc', borderRadius: 10, padding: '1rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
+                    <div>
+                      <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Score 2 — Ticket médio <span style={{ color: '#94a3b8' }}>({pct(sp.wTicket)})</span></div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: scoreClr(sis.s2) }}>{dec(sis.s2)}</div>
+                    </div>
+                    <div style={{ width: 46, height: 46, borderRadius: '50%', border: `3px solid ${scoreClr(sis.s2)}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '.75rem', color: scoreClr(sis.s2), fontFamily: 'var(--font-montserrat,sans-serif)' }}>{pct(sis.s2)}</div>
+                  </div>
+                  <div style={{ background: '#e2e8f0', borderRadius: 99, height: 5, overflow: 'hidden', marginBottom: '.65rem' }}>
+                    <div style={{ height: '100%', width: `${sis.s2 * 100}%`, background: scoreClr(sis.s2), borderRadius: 99, transition: 'width .3s' }} />
+                  </div>
+                  <div style={{ fontSize: '.7rem', color: '#1e293b', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '.5rem' }}>
+                    <strong>Fórmula:</strong> MIN(1 ; {R$(ticket)} / {R$(sp.ticketMax)}) = <strong style={{ color: scoreClr(sis.s2) }}>{dec(sis.s2)}</strong> — Perfil: <strong>{sis.ticketLabel}</strong>
+                  </div>
+                  <div style={{ fontSize: '.68rem', color: '#475569', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)', borderTop: '1px solid #e2e8f0', paddingTop: '.5rem' }}>
+                    <strong>Regra (30% do score):</strong> Mensalidade que a escola cobra dos pais. Ticket maior = escola com maior capacidade de pagamento = score maior = preço próximo do TETO. Ticket acima de {R$(sp.ticketMax)} = score máximo (1,000).<br />
+                    <strong>Perfis:</strong> Popular (&lt;R$400) · Média-baixa (R$400–R$800) · Padrão (R$800–{R$(sp.ticketMax)}) · Premium (&gt;{R$(sp.ticketMax)}).
+                  </div>
+                </div>
+
+                {/* Score 3 — Complexidade */}
+                <div style={{ background: '#f8fafc', borderRadius: 10, padding: '1rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
+                    <div>
+                      <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Score 3 — Complexidade <span style={{ color: '#94a3b8' }}>({pct(sp.wCompl)})</span></div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: scoreClr(sis.s3) }}>{dec(sis.s3)}</div>
+                    </div>
+                    <div style={{ width: 46, height: 46, borderRadius: '50%', border: `3px solid ${scoreClr(sis.s3)}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '.75rem', color: scoreClr(sis.s3), fontFamily: 'var(--font-montserrat,sans-serif)' }}>{pct(sis.s3)}</div>
+                  </div>
+                  <div style={{ background: '#e2e8f0', borderRadius: 99, height: 5, overflow: 'hidden', marginBottom: '.65rem' }}>
+                    <div style={{ height: '100%', width: `${sis.s3 * 100}%`, background: scoreClr(sis.s3), borderRadius: 99, transition: 'width .3s' }} />
+                  </div>
+                  <div style={{ fontSize: '.7rem', color: '#1e293b', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '.5rem' }}>
+                    <strong>Fórmula:</strong> {segs === 3 || altaCompl ? '3 segmentos / alta complexidade = score 1,000 (máximo)' : segs === 2 ? '2 segmentos = score 0,500' : '1 segmento = score 0,000 (mínimo)'}
+                  </div>
+                  <div style={{ fontSize: '.68rem', color: '#475569', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)', borderTop: '1px solid #e2e8f0', paddingTop: '.5rem' }}>
+                    <strong>Regra (20% do score):</strong> Número de ciclos escolares atendidos. Mais segmentos = maior estrutura de entrega = custo operacional maior = preço mais próximo do TETO.<br />
+                    <strong>Escala:</strong> 1 seg = 0,000 · 2 seg = 0,500 · 3 seg = 1,000. "Alta complexidade: SIM" força score 1,000 independente do número de segmentos.
+                  </div>
+                </div>
+
+                {/* Score 4 — Fidelidade */}
+                <div style={{ background: '#f8fafc', borderRadius: 10, padding: '1rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
+                    <div>
+                      <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Score 4 — Fidelidade <span style={{ color: '#94a3b8' }}>({pct(sp.wFid)})</span></div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: scoreClr(sis.s4) }}>{dec(sis.s4)}</div>
+                    </div>
+                    <div style={{ width: 46, height: 46, borderRadius: '50%', border: `3px solid ${scoreClr(sis.s4)}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '.75rem', color: scoreClr(sis.s4), fontFamily: 'var(--font-montserrat,sans-serif)' }}>{pct(sis.s4)}</div>
+                  </div>
+                  <div style={{ background: '#e2e8f0', borderRadius: 99, height: 5, overflow: 'hidden', marginBottom: '.65rem' }}>
+                    <div style={{ height: '100%', width: `${sis.s4 * 100}%`, background: scoreClr(sis.s4), borderRadius: 99, transition: 'width .3s' }} />
+                  </div>
+                  <div style={{ fontSize: '.7rem', color: '#1e293b', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '.5rem' }}>
+                    <strong>Fórmula:</strong> {situacao === 'Renovação 2º ciclo+' ? 'Renovação 2º ciclo ou mais = score 0,400 (maior benefício de fidelidade)' : situacao === 'Renovação 1º ciclo' ? 'Renovação 1º ciclo = score 0,700 (benefício moderado)' : 'Contrato novo = score 1,000 (sem benefício de fidelidade)'}
+                  </div>
+                  <div style={{ fontSize: '.68rem', color: '#475569', lineHeight: 1.65, fontFamily: 'var(--font-inter,sans-serif)', borderTop: '1px solid #e2e8f0', paddingTop: '.5rem' }}>
+                    <strong>Regra (15% do score):</strong> Situação do contrato com a escola. Renovação = desconto implícito por lealdade — escola fiel paga menos que escola nova. Score menor = preço mais próximo do PISO. Quanto mais ciclos de renovação, maior o benefício.<br />
+                    <strong>Escala:</strong> Novo = 1,000 (preço cheio) · Renovação 1° ciclo = 0,700 · Renovação 2° ciclo+ = 0,400 (preço mais baixo possível dentro do piso único).
+                  </div>
+                </div>
+              </div>
+              <div style={{ background: '#0f172a', borderRadius: 10, padding: '1.1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+                <div>
+                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.25rem' }}>Score Final Ponderado</div>
+                  <div style={{ fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.72rem', color: 'rgba(255,255,255,.45)', marginBottom: '.25rem' }}>
+                    {pct(sp.wEscala)}×{dec(sis.s1)} + {pct(sp.wTicket)}×{dec(sis.s2)} + {pct(sp.wCompl)}×{dec(sis.s3)} + {pct(sp.wFid)}×{dec(sis.s4)}
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '2rem', fontWeight: 800, color: '#fff' }}>{dec(sis.scoreFinal)}</div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '.7rem', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '.2rem' }}>Navega entre</div>
+                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.85rem', fontWeight: 800, color: '#5FE3D0' }}>{R$(sp.piso)} a {R$(sp.teto)}</div>
+                  <div style={{ fontSize: '.65rem', color: 'rgba(255,255,255,.3)', marginTop: '.1rem', fontFamily: 'var(--font-inter,sans-serif)' }}>piso único {R$(sp.piso)}</div>
+                </div>
               </div>
             </Card>
 
-            {/* 3. Memória de cálculo */}
+            {/* 4. Equação Central */}
             <Card>
-              <SecTitle n={3} title="Memória de cálculo — equação central" />
+              <SecTitle n={4} title="Equação central — memória de cálculo" />
               <div style={{ display: 'flex', flexDirection: 'column', gap: '.75rem' }}>
-
-                {/* Componentes do preço */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
-                  <KV label="Livro (R$/aluno/ano)" value={R$(sis.livroAno)} sub={`Custo fixo — piso mínimo`} />
-                  <KV label={`Manutenção ${sis.faixa.nome}`} value={R$(sis.manutencao)} sub={`Faixa ${sis.faixa.min}–${sis.faixa.max} alunos`} />
-                  <KV label="Valor bruto" value={R$(sis.valorBruto)} sub={`${R$(sis.livroAno)} + ${R$(sis.manutencao)}`} color="#4A7FDB" />
+                  <KV label="(1) Piso único" value={R$(sp.piso)} sub={`Piso único: ${sis.faixaEscala.nome} ativa`} />
+                  <KV label="(2) Amplitude × Score" value={R$(sis.valorBruto - sp.piso)} sub={`(${R$(sp.teto)} − ${R$(sp.piso)}) × ${dec(sis.scoreFinal)}`} />
+                  <KV label="(3) Valor bruto" value={R$(sis.valorBruto)} sub="Piso + amplitude × score" color="#4A7FDB" />
                 </div>
-                <Nota t={`${R$(sp.livroAno)} (livro) + ${R$(sis.manutencao)} (manutenção) = ${R$(sis.valorBruto)}/aluno/ano`} />
+                <Nota t={`${R$(sp.piso)} + (${R$(sp.teto)} − ${R$(sp.piso)}) × ${dec(sis.scoreFinal)} = ${R$(sis.valorBruto)}/aluno/ano`} />
 
                 {desconto > 0 && (
                   <>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
-                      <KV label="Desconto aplicado" value={`-${desconto}%`} sub={`-${R$(sis.valorBruto * desconto / 100)}/aluno/ano`} color="#dc2626" />
-                      <KV label="Valor com desconto" value={R$(sis.valorDesc)} sub="Antes da proteção do piso" />
+                      <KV label="(4) Desconto aplicado" value={`-${desconto}%`} sub={`-${R$(sis.valorBruto * desconto / 100)}`} color="#dc2626" />
+                      <KV label="(5) Valor com desconto" value={R$(sis.valorDesc)} sub="Antes da proteção do piso" />
                     </div>
                     <Nota t={`${R$(sis.valorBruto)} × (1 − ${desconto}%) = ${R$(sis.valorDesc)}. Desconto máximo sem furar o piso: ${sis.descMax.toFixed(1)}%.`} />
                   </>
                 )}
 
-                <div style={{
-                  background: sis.valorFinal <= sis.livroAno && desconto > 0 ? '#fef3c7' : '#f0fdf4',
-                  border: `1.5px solid ${sis.valorFinal <= sis.livroAno && desconto > 0 ? '#fde68a' : '#86efac'}`,
-                  borderRadius: 10, padding: '1rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                }}>
+                <div style={{ background: sis.valorFinal <= sp.piso ? '#fef3c7' : '#f0fdf4', border: `1.5px solid ${sis.valorFinal <= sp.piso ? '#fde68a' : '#86efac'}`, borderRadius: 10, padding: '1rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', marginBottom: '.3rem' }}>
-                      Proteção piso — MAX(livro, valor_com_desconto)
-                    </div>
+                    <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', marginBottom: '.3rem' }}>(6) Proteção piso — MAX(piso, valor_com_desconto)</div>
                     <div style={{ fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.75rem', color: '#475569', marginBottom: '.2rem' }}>
-                      MAX({R$(sp.livroAno)}, {R$(sis.valorDesc)}) = <strong>{R$(sis.valorFinal)}</strong>
+                      MAX({R$(sp.piso)}, {R$(sis.valorDesc)}) = <strong>{R$(sis.valorFinal)}</strong>
                     </div>
                     <div style={{ fontSize: '.68rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                      {sis.valorFinal <= sis.livroAno && desconto > 0
-                        ? 'Atenção: desconto limitado pelo piso — valor travado no custo do livro'
-                        : 'OK: desconto válido — não ultrapassou o custo do livro'}
+                      {sis.valorFinal <= sp.piso ? 'Atenção: desconto limitado pelo piso — valor travado no mínimo' : 'OK: desconto válido — não ultrapassou o piso'}
                     </div>
                   </div>
-                  <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: sis.valorFinal <= sis.livroAno && desconto > 0 ? '#d97706' : '#16a34a' }}>
-                    {R$(sis.valorFinal)}
-                  </div>
-                </div>
-
-                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '.75rem 1rem' }}>
-                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#64748b', marginBottom: '.3rem' }}>
-                    Valor final — síntese
-                  </div>
-                  <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>
-                    {R$(sis.valorFinal)}/aluno/ano · {R$(sis.valorFinal / 12)}/aluno/mês
-                  </div>
+                  <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: sis.valorFinal <= sp.piso ? '#d97706' : '#16a34a' }}>{R$(sis.valorFinal)}</div>
                 </div>
               </div>
             </Card>
 
-            {/* 4. Resultado financeiro */}
-            <Card>
-              <SecTitle n={4} title="Resultado financeiro" />
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '.75rem' }}>
-                <KV label="Valor/aluno/ano" value={R$(sis.valorFinal)} color="#4A7FDB" big />
-                <KV label="Valor/aluno/mês" value={R$(sis.valorFinal / 12)} sub="÷ 12 meses" />
-                <KV label="Valor anual total" value={R$(sis.anual)} sub={`${alunos} alunos × ${R$(sis.valorFinal)}`} />
-                <KV label="Custo livros (anual)" value={R$(sis.custoLivros)} sub={`${R$(sp.livroAno)}/aluno × ${alunos} alunos`} color="#dc2626" />
-                <KV label="Margem manutenção (anual)" value={R$(sis.margemManutencao)} sub={`(${R$(sis.valorFinal)} − ${R$(sp.livroAno)}) × ${alunos} al.`} color="#16a34a" />
-              </div>
-              <Nota t={`Custo real = livros ${R$(sis.custoLivros)}/ano. Margem da manutenção ${R$(sis.margemManutencao)}/ano.`} />
-            </Card>
-
-            {/* 5. Governança do desconto */}
-            <Card>
-              <SecTitle n={5} title="Governança do desconto" />
-              <div style={{ background: govBg(sis.gov.status), border: `1.5px solid ${govBorder(sis.gov.status)}`, borderRadius: 10, padding: '1rem 1.25rem', marginBottom: '.85rem' }}>
-                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', color: govClr(sis.gov.status), marginBottom: '.3rem' }}>
-                  {desconto === 0 ? 'Sem desconto' : `Desconto ${desconto}%`}
+            {/* 5. Resultado + Governança */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+              <Card>
+                <SecTitle n={5} title="Resultado — análise financeira" />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '.75rem' }}>
+                  <KV label="Valor/aluno/ano" value={R$(sis.valorFinal)} color="#4A7FDB" big />
+                  <KV label="Valor/aluno/mês" value={R$(sis.valorFinal / 12)} sub="÷ 12 meses" />
+                  <KV label="Valor anual total" value={R$(sis.anual)} sub={`${alunos} alunos × ${R$(sis.valorFinal)}`} />
+                  <KV label="Custo livro/aluno/ano" value={R$(sis.livroAno)} sub={`R$${sp.livroMes}/mês × 12`} />
+                  <KV label="Custo operacional (70%)" value={R$(sis.custo)} sub="estimativa custo total" color="#dc2626" />
+                  <KV label="Resultado líquido (30%)" value={R$(sis.liquido)} sub="margem estimada" color="#16a34a" />
                 </div>
-                <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: govClr(sis.gov.status) }}>{sis.gov.label}</div>
-              </div>
-              {[
-                { range: '0%',    label: 'Sem desconto',         s: 'ok',    ativo: desconto === 0 },
-                { range: '1–5%',  label: 'Comercial (autônomo)', s: 'ok',    ativo: desconto > 0 && desconto <= 5 },
-                { range: '6–10%', label: 'Gerência — Renato',    s: 'warn',  ativo: desconto > 5 && desconto <= 10 },
-                { range: '>10%',  label: 'Diretoria — Dênis',    s: 'error', ativo: desconto > 10 },
-              ].map(r => (
-                <div key={r.range} style={{ display: 'flex', alignItems: 'center', gap: '.65rem', padding: '.45rem .7rem', borderRadius: 7, background: r.ativo ? govBg(r.s) : '#f8fafc', border: `1px solid ${r.ativo ? govBorder(r.s) : '#e2e8f0'}`, marginBottom: '.35rem' }}>
-                  <div style={{ width: 7, height: 7, borderRadius: '50%', background: govClr(r.s), flexShrink: 0 }} />
-                  <div style={{ fontSize: '.72rem', fontFamily: 'var(--font-inter,sans-serif)', flex: 1 }}><strong style={{ fontFamily: 'var(--font-montserrat,sans-serif)' }}>{r.range}</strong> · {r.label}</div>
-                  {r.ativo && <span style={{ fontSize: '.6rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: govClr(r.s) }}>atual</span>}
-                </div>
-              ))}
-            </Card>
+                <Nota t={`Custo do livro ${R$(sis.livroAno)}/aluno/ano incluído na margem. Piso único ${R$(sp.piso)} garante cobertura mínima.`} />
+              </Card>
 
-            {/* 6. Parcelamento */}
+              <Card>
+                <SecTitle n={6} title="Governança do desconto" />
+                <div style={{ background: govBg(sis.gov.status), border: `1.5px solid ${govBorder(sis.gov.status)}`, borderRadius: 10, padding: '1rem 1.25rem', marginBottom: '.85rem' }}>
+                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', color: govClr(sis.gov.status), marginBottom: '.3rem' }}>
+                    {desconto === 0 ? 'Sem desconto' : `Desconto ${desconto}%`}
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: govClr(sis.gov.status) }}>{sis.gov.label}</div>
+                </div>
+                {[
+                  { range: '0%',    label: 'Sem desconto',         s: 'ok',    ativo: desconto === 0 },
+                  { range: '1–5%',  label: 'Comercial (autônomo)', s: 'ok',    ativo: desconto > 0 && desconto <= 5 },
+                  { range: '6–10%', label: 'Gerência — Renato',    s: 'warn',  ativo: desconto > 5 && desconto <= 10 },
+                  { range: '>10%',  label: 'Diretoria — Dênis',    s: 'error', ativo: desconto > 10 },
+                ].map(r => (
+                  <div key={r.range} style={{ display: 'flex', alignItems: 'center', gap: '.65rem', padding: '.45rem .7rem', borderRadius: 7, background: r.ativo ? govBg(r.s) : '#f8fafc', border: `1px solid ${r.ativo ? govBorder(r.s) : '#e2e8f0'}`, marginBottom: '.35rem' }}>
+                    <div style={{ width: 7, height: 7, borderRadius: '50%', background: govClr(r.s), flexShrink: 0 }} />
+                    <div style={{ fontSize: '.72rem', fontFamily: 'var(--font-inter,sans-serif)', flex: 1 }}><strong style={{ fontFamily: 'var(--font-montserrat,sans-serif)' }}>{r.range}</strong> · {r.label}</div>
+                    {r.ativo && <span style={{ fontSize: '.6rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: govClr(r.s) }}>atual</span>}
+                  </div>
+                ))}
+              </Card>
+            </div>
+
+            {/* 7. Parcelamento */}
             <Card>
-              <SecTitle n={6} title="Painel de parcelamento — 4x a 12x" />
+              <SecTitle n={7} title="Painel de parcelamento — 4x a 12x" />
               {incluiComodato ? (
                 <div style={{ background: '#eff6ff', border: '1.5px solid #bfdbfe', borderRadius: 8, padding: '.7rem 1rem', marginBottom: '.85rem', display: 'flex', alignItems: 'center', gap: '.6rem' }}>
                   <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#2563eb', flexShrink: 0 }} />
@@ -551,7 +731,7 @@ export default function CalculadoraPage() {
               </div>
             </Card>
 
-            {/* 7. Fechamento do Orçamento */}
+            {/* 8. Fechamento do Orçamento */}
             <Card style={{ border: `2px solid ${incluiComodato ? '#4A7FDB' : '#e2e8f0'}` }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
                 <div>
@@ -587,7 +767,7 @@ export default function CalculadoraPage() {
                     <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
                       <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Valor / aluno / ano</div>
                       <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#4A7FDB', lineHeight: 1 }}>{R$(sis.valorFinal)}</div>
-                      <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>piso = custo livro {R$(sp.livroAno)}</div>
+                      <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>piso único {R$(sp.piso)}</div>
                     </div>
                     <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
                       <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Valor / aluno / mês</div>

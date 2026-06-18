@@ -10,12 +10,13 @@ interface Props {
 const POR_PAGINA = 50
 
 const FONTE_OPTS = [
-  { value: '',           label: 'Todas as fontes' },
-  { value: 'ciecc_2025', label: '1º CIECC 2025' },
-  { value: 'ciecc_2026', label: '2º CIECC 2026' },
-  { value: 'crm',        label: 'CRM Education' },
-  { value: 'oikos',      label: 'Oikos Live' },
-  { value: 'outro',      label: 'Outro' },
+  { value: '',                  label: 'Todas as fontes' },
+  { value: 'ciecc_2025',        label: '1º CIECC 2025' },
+  { value: 'ciecc_2026',        label: '2º CIECC 2026' },
+  { value: 'formulario_wemake', label: 'Formulário We Make' },
+  { value: 'crm',               label: 'CRM Education' },
+  { value: 'oikos',             label: 'Oikos Live' },
+  { value: 'outro',             label: 'Outro' },
 ]
 
 const TIPO_OPTS = [
