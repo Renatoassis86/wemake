@@ -52,7 +52,7 @@ export default async function RegistroNovo({ searchParams }: Props) {
 
   const [escolas, { data: profiles }, { data: negociacoes }] = await Promise.all([
     buscarEscolasUnificadas(supabase),
-    supabase.from('profiles').select('id, full_name').eq('is_active', true).order('full_name'),
+    supabase.from('profiles').select('id, full_name').neq('is_active', false).order('full_name'),
     escolaId
       ? supabase.from('negociacoes').select('id, titulo, stage').eq('escola_id', escolaId).eq('ativa', true)
       : Promise.resolve({ data: [] }),
@@ -137,8 +137,9 @@ export default async function RegistroNovo({ searchParams }: Props) {
                 <div>
                   <label style={lbl}>Responsável pelo Contato</label>
                   <select name="responsavel_id" style={inp} defaultValue={user?.id ?? ''}>
+                    <option value="">Selecione...</option>
                     {profiles?.map((p: any) => (
-                      <option key={p.id} value={p.id}>{p.full_name}</option>
+                      <option key={p.id} value={p.id}>{p.full_name ?? p.id}</option>
                     ))}
                   </select>
                 </div>

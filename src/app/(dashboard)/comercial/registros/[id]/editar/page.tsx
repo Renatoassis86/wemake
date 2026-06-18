@@ -48,7 +48,7 @@ export default async function RegistroEditar({ params }: Props) {
 
   const [{ data: registro }, { data: profiles }] = await Promise.all([
     supabase.from('registros').select('*, escola:escolas(id,nome)').eq('id', id).single(),
-    supabase.from('profiles').select('id, full_name').eq('is_active', true).order('full_name'),
+    supabase.from('profiles').select('id, full_name').neq('is_active', false).order('full_name'),
   ])
 
   if (!registro) notFound()

@@ -64,7 +64,7 @@ export default async function EscolaNova({ searchParams }: Props) {
 
   const supabase = await createClient()
   const { data: profiles } = await supabase
-    .from('profiles').select('id, full_name').eq('is_active', true).order('full_name')
+    .from('profiles').select('id, full_name').neq('is_active', false).order('full_name')
 
   // Pré-preencher com dados do lead se vier do banco de leads
   let leadData: any = null

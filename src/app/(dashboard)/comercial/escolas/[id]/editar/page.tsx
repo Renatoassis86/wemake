@@ -44,7 +44,7 @@ export default async function EscolaEditar({ params }: Props) {
 
   const [{ data: escola }, { data: profiles }] = await Promise.all([
     supabase.from('escolas').select('*').eq('id', id).single(),
-    supabase.from('profiles').select('id, full_name').eq('is_active', true).order('full_name'),
+    supabase.from('profiles').select('id, full_name').neq('is_active', false).order('full_name'),
   ])
 
   if (!escola) notFound()
