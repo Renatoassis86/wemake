@@ -126,9 +126,9 @@ function calcLeasing(
   const sumEquip = itens.reduce((s, e) => s + e.total, 0)
   const sumUnit  = equip.reduce((s, e) => s + e.unit, 0)
 
-  // Maintenance & admin (on unit prices, over contract duration)
-  const C_man = lp.txMan   * sumUnit * anos
-  const C_adm = lp.txAdmin * sumUnit * anos
+  // Maintenance & admin applied on total equipment value (all items × quantities)
+  const C_man = lp.txMan   * sumEquip * anos
+  const C_adm = lp.txAdmin * sumEquip * anos
   const PV    = sumEquip + C_man + C_adm
 
   // Simple return formula: PMT = PV × (1 + retornoAlvo) / N
@@ -932,12 +932,12 @@ export default function CalculadoraPage() {
                 <div>
                   <label style={LBL}>Tx. Manutenção (%)</label>
                   <InlineNum value={+(lp.txMan * 100).toFixed(1)} onChange={v => setLp(p => ({ ...p, txMan: v / 100 }))} suffix="%" min={0} step={1} />
-                  <div style={NOTA}>Taxa sobre soma dos preços unitários × anos. Padrão 25%.</div>
+                  <div style={NOTA}>Taxa sobre o total de equipamentos (com quantidades) × anos. Padrão 25%.</div>
                 </div>
                 <div>
                   <label style={LBL}>Tx. Admin (%)</label>
                   <InlineNum value={+(lp.txAdmin * 100).toFixed(1)} onChange={v => setLp(p => ({ ...p, txAdmin: v / 100 }))} suffix="%" min={0} step={1} />
-                  <div style={NOTA}>Taxa administrativa sobre preços unitários × anos. Padrão 25%.</div>
+                  <div style={NOTA}>Taxa administrativa sobre o total de equipamentos (com quantidades) × anos. Padrão 25%.</div>
                 </div>
               </div>
 
@@ -1032,20 +1032,20 @@ export default function CalculadoraPage() {
               <SecTitle n={3} title="Taxas de manutenção/admin (sobre preços unitários)" />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '.65rem' }}>
                 <KV
-                  label={`Manutenção: ${pct(lp.txMan)} × soma unitários × ${com.anos} anos`}
+                  label={`Manutenção: ${pct(lp.txMan)} × total equipamentos × ${com.anos} anos`}
                   value={R$(com.C_man)}
-                  sub={`${pct(lp.txMan)} × ${R$(com.sumUnit)} × ${com.anos}`}
+                  sub={`${pct(lp.txMan)} × ${R$(com.sumEquip)} × ${com.anos}`}
                   color="#0f172a"
                 />
                 <KV
-                  label={`Admin: ${pct(lp.txAdmin)} × soma unitários × ${com.anos} anos`}
+                  label={`Admin: ${pct(lp.txAdmin)} × total equipamentos × ${com.anos} anos`}
                   value={R$(com.C_adm)}
-                  sub={`${pct(lp.txAdmin)} × ${R$(com.sumUnit)} × ${com.anos}`}
+                  sub={`${pct(lp.txAdmin)} × ${R$(com.sumEquip)} × ${com.anos}`}
                   color="#0f172a"
                 />
               </div>
-              <Nota t={`Manutenção: ${pct(lp.txMan)} × ${R$(com.sumUnit)} × ${com.anos} anos = ${R$(com.C_man)}`} />
-              <Nota t={`Admin: ${pct(lp.txAdmin)} × ${R$(com.sumUnit)} × ${com.anos} anos = ${R$(com.C_adm)}`} />
+              <Nota t={`Manutenção: ${pct(lp.txMan)} × ${R$(com.sumEquip)} (total equip.) × ${com.anos} anos = ${R$(com.C_man)}`} />
+              <Nota t={`Admin: ${pct(lp.txAdmin)} × ${R$(com.sumEquip)} (total equip.) × ${com.anos} anos = ${R$(com.C_adm)}`} />
               <Nota t={`PV total: ${R$(com.sumEquip)} (equip.) + ${R$(com.C_man)} (manut.) + ${R$(com.C_adm)} (adm.) = ${R$(com.PV)}`} />
             </Card>
 
