@@ -23,10 +23,10 @@ interface SisParams {
 interface LeasingParams {
   ipca: number           // 0.055 = 5.5% annual IPCA
   duracaoMeses: number   // 48 = 4 anos (padrão)
-  txMan: number          // taxa de manutenção sobre total de equipamentos (única)
-  txAdmin: number        // taxa administrativa sobre total de equipamentos (única)
   retornoAlvo: number    // retorno alvo sobre PV em % (padrão 200)
+  faixasTax: TaxaFaixa[] // taxas por faixa de alunos (manut + admin compartilham a mesma taxa)
 }
+interface TaxaFaixa { nome: string; min: number; max: number; taxa: number }
 interface EquipItem { nome: string; qty: number; unit: number; fixedQty: boolean; nota?: string }
 
 // ── Valores padrão ────────────────────────────────────────────────
@@ -47,12 +47,20 @@ const DEFAULT_SIS: SisParams = {
   ],
 }
 
+const DEFAULT_TAX_FAIXAS: TaxaFaixa[] = [
+  { nome: 'Micro',       min:    1, max:  100, taxa: 0.10 },
+  { nome: 'Pequena',     min:  101, max:  300, taxa: 0.13 },
+  { nome: 'Média',       min:  301, max:  500, taxa: 0.17 },
+  { nome: 'Grande',      min:  501, max:  800, taxa: 0.21 },
+  { nome: 'Extra Grande',min:  801, max: 1200, taxa: 0.23 },
+  { nome: 'Mega',        min: 1201, max: 9999, taxa: 0.25 },
+]
+
 const DEFAULT_LEASING: LeasingParams = {
   ipca: 0.055,
   duracaoMeses: 48,
-  txMan: 0.25,
-  txAdmin: 0.25,
   retornoAlvo: 200,
+  faixasTax: DEFAULT_TAX_FAIXAS,
 }
 
 const DEFAULT_EQUIP: EquipItem[] = [
@@ -126,9 +134,16 @@ function calcLeasing(
   const sumEquip = itens.reduce((s, e) => s + e.total, 0)
   const sumUnit  = equip.reduce((s, e) => s + e.unit, 0)
 
+  // Taxa por faixa de alunos (manut e admin compartilham a mesma taxa)
+  const faixaTax = lp.faixasTax.find(f => alunos >= f.min && alunos <= f.max)
+    ?? (alunos > lp.faixasTax[lp.faixasTax.length - 1].max
+        ? lp.faixasTax[lp.faixasTax.length - 1]
+        : lp.faixasTax[0])
+  const txRate = faixaTax.taxa
+
   // PV = equipamentos + taxa manutenção (única) + taxa administrativa (única)
-  const C_man = lp.txMan   * sumEquip   // ex: 25% de equipamentos
-  const C_adm = lp.txAdmin * sumEquip   // ex: 25% de equipamentos
+  const C_man = txRate * sumEquip
+  const C_adm = txRate * sumEquip
   const PV    = sumEquip + C_man + C_adm
 
   // Total recebido = PV × (1 + retornoAlvo%) — amortiza investimento + resultado configurável
@@ -157,6 +172,7 @@ function calcLeasing(
 
   return {
     qtdNB, N, anos, PV, sumEquip, sumUnit, C_man, C_adm,
+    txRate, faixaTax,
     itens,
     parcelaPrice, totalRecebido, resultadoBruto, retornoEquip, retornoRealPV, tabela,
     parcelaMensal:   parcelaPrice,
@@ -266,6 +282,10 @@ export default function CalculadoraPage() {
 
   // ── Parâmetros de Leasing ──────────────────────────────────────
   const [lp, setLp] = useState<LeasingParams>(DEFAULT_LEASING)
+  const [showTaxFaixas, setShowTaxFaixas] = useState(false)
+
+  const updLpFaixa = (idx: number, field: keyof TaxaFaixa, val: any) =>
+    setLp(p => { const f = [...p.faixasTax]; f[idx] = { ...f[idx], [field]: val }; return { ...p, faixasTax: f } })
 
   // ── Equipamentos do Comodato (todos editáveis) ─────────────────
   const [equip, setEquip] = useState<EquipItem[]>(DEFAULT_EQUIP)
@@ -944,17 +964,81 @@ export default function CalculadoraPage() {
                   <input type="number" min={12} max={120} step={12} value={lp.duracaoMeses || ''} onChange={e => setLp(p => ({ ...p, duracaoMeses: +e.target.value }))} onBlur={() => { if (!(lp.duracaoMeses >= 12)) setLp(p => ({ ...p, duracaoMeses: 48 })) }} style={INP} />
                   <div style={NOTA}>Duração total do contrato. Padrão 48 meses (4 anos).</div>
                 </div>
-                <div>
-                  <label style={LBL}>Tx. Manutenção (%)</label>
-                  <InlineNum value={+(lp.txMan * 100).toFixed(1)} onChange={v => setLp(p => ({ ...p, txMan: v / 100 }))} suffix="%" min={0} step={1} />
-                  <div style={NOTA}>Taxa única sobre o total dos equipamentos. Padrão 25%.</div>
-                </div>
-                <div>
-                  <label style={LBL}>Tx. Admin (%)</label>
-                  <InlineNum value={+(lp.txAdmin * 100).toFixed(1)} onChange={v => setLp(p => ({ ...p, txAdmin: v / 100 }))} suffix="%" min={0} step={1} />
-                  <div style={NOTA}>Taxa única administrativa sobre o total dos equipamentos. Padrão 25%.</div>
+                <div style={{ gridColumn: 'span 2' }}>
+                  <label style={LBL}>Taxa manut. + admin (por faixa de alunos)</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '.65rem', padding: '.65rem .9rem', background: '#eff6ff', border: '2px solid #4A7FDB', borderRadius: 8 }}>
+                    <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#4A7FDB', flexShrink: 0 }} />
+                    <div style={{ flex: 1 }}>
+                      <span style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.72rem', fontWeight: 800, color: '#1d4ed8' }}>{com.faixaTax.nome}</span>
+                      <span style={{ fontSize: '.72rem', color: '#475569', marginLeft: '.4rem' }}>({com.faixaTax.min}–{com.faixaTax.max === 9999 ? '∞' : com.faixaTax.max} alunos)</span>
+                    </div>
+                    <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.4rem', fontWeight: 800, color: '#1d4ed8', lineHeight: 1 }}>{pct(com.txRate)}</div>
+                    <button onClick={() => setShowTaxFaixas(v => !v)} style={{ padding: '.3rem .75rem', borderRadius: 7, border: '1.5px solid #93c5fd', background: '#fff', cursor: 'pointer', fontSize: '.7rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#2563eb' }}>
+                      {showTaxFaixas ? 'Fechar' : 'Editar faixas'}
+                    </button>
+                  </div>
+                  <div style={NOTA}>Taxa aplicada sobre o total dos equipamentos (manut. + admin.). Mínimo 10% (escolas micro) — máximo 25% (megaescolas).</div>
                 </div>
               </div>
+
+              {/* Tabela de faixas de taxa */}
+              {showTaxFaixas && (
+                <div style={{ marginTop: '1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 10, padding: '1rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '.75rem' }}>
+                    <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b' }}>
+                      Faixas de taxa — manut. + admin. por nº de alunos
+                    </div>
+                    <button onClick={() => setLp(p => ({ ...p, faixasTax: DEFAULT_TAX_FAIXAS }))} style={{ padding: '.3rem .75rem', borderRadius: 7, border: '1.5px solid #e2e8f0', background: '#fff', cursor: 'pointer', fontSize: '.7rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#64748b' }}>
+                      Restaurar padrão
+                    </button>
+                  </div>
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr>
+                          {['Faixa', 'Alunos de', 'Alunos até', 'Taxa manut. (%)', 'Taxa admin. (%)', 'Ativa?'].map(h => (
+                            <th key={h} style={th}>{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {lp.faixasTax.map((f, idx) => {
+                          const isAtiva = com.faixaTax.nome === f.nome
+                          return (
+                            <tr key={idx} style={{ background: isAtiva ? '#eff6ff' : idx % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f1f5f9', outline: isAtiva ? '2px solid #4A7FDB' : 'none', outlineOffset: -1 }}>
+                              <td style={{ padding: '.5rem .65rem', minWidth: 110 }}>
+                                <input type="text" value={f.nome} onChange={e => updLpFaixa(idx, 'nome', e.target.value)} style={{ ...INP_SM, background: '#fff', minWidth: 100 }} />
+                              </td>
+                              <td style={{ padding: '.5rem .65rem', minWidth: 90 }}>
+                                <InlineNum value={f.min} onChange={v => updLpFaixa(idx, 'min', Math.round(v))} min={1} step={1} />
+                              </td>
+                              <td style={{ padding: '.5rem .65rem', minWidth: 90 }}>
+                                <InlineNum value={f.max === 9999 ? 9999 : f.max} onChange={v => updLpFaixa(idx, 'max', Math.round(v))} min={1} step={1} />
+                              </td>
+                              <td style={{ padding: '.5rem .65rem', minWidth: 120 }}>
+                                <InlineNum value={+(f.taxa * 100).toFixed(1)} onChange={v => updLpFaixa(idx, 'taxa', Math.min(1, Math.max(0, v / 100)))} suffix="%" min={0} step={1} />
+                              </td>
+                              <td style={{ padding: '.5rem .65rem', minWidth: 120, fontFamily: 'var(--font-cormorant,serif)', fontSize: '.95rem', fontWeight: 700, color: '#64748b' }}>
+                                {pct(f.taxa)} (igual à manut.)
+                              </td>
+                              <td style={{ padding: '.5rem .85rem' }}>
+                                {isAtiva && (
+                                  <span style={{ display: 'inline-block', padding: '.2rem .6rem', borderRadius: 99, background: '#dbeafe', color: '#1d4ed8', fontSize: '.65rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                                    ● Ativa — {alunos} al.
+                                  </span>
+                                )}
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div style={{ marginTop: '.6rem', fontSize: '.68rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)', lineHeight: 1.55 }}>
+                    A mesma taxa é aplicada tanto para manutenção quanto para administração. PV = equipamentos + {pct(com.txRate)} (manut.) + {pct(com.txRate)} (admin.).
+                  </div>
+                </div>
+              )}
 
               {/* Derivados */}
               <div style={{ marginTop: '1rem', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '.75rem' }}>
@@ -1044,23 +1128,23 @@ export default function CalculadoraPage() {
 
             {/* 3. Taxas de manutenção/admin */}
             <Card>
-              <SecTitle n={3} title="Taxas de manutenção/admin (valor único sobre total de equipamentos)" />
+              <SecTitle n={3} title={`Taxas manut. + admin — faixa "${com.faixaTax.nome}" (${pct(com.txRate)} cada)`} />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '.65rem' }}>
                 <KV
-                  label={`Manutenção: ${pct(lp.txMan)} × total equipamentos`}
+                  label={`Manutenção: ${pct(com.txRate)} × total equipamentos`}
                   value={R$(com.C_man)}
-                  sub={`${pct(lp.txMan)} × ${R$(com.sumEquip)}`}
+                  sub={`${pct(com.txRate)} × ${R$(com.sumEquip)}`}
                   color="#0f172a"
                 />
                 <KV
-                  label={`Admin: ${pct(lp.txAdmin)} × total equipamentos`}
+                  label={`Admin: ${pct(com.txRate)} × total equipamentos`}
                   value={R$(com.C_adm)}
-                  sub={`${pct(lp.txAdmin)} × ${R$(com.sumEquip)}`}
+                  sub={`${pct(com.txRate)} × ${R$(com.sumEquip)}`}
                   color="#0f172a"
                 />
               </div>
-              <Nota t={`Manutenção: ${pct(lp.txMan)} × ${R$(com.sumEquip)} (total equip.) = ${R$(com.C_man)}`} />
-              <Nota t={`Admin: ${pct(lp.txAdmin)} × ${R$(com.sumEquip)} (total equip.) = ${R$(com.C_adm)}`} />
+              <Nota t={`Manutenção: ${pct(com.txRate)} × ${R$(com.sumEquip)} (total equip.) = ${R$(com.C_man)}`} />
+              <Nota t={`Admin: ${pct(com.txRate)} × ${R$(com.sumEquip)} (total equip.) = ${R$(com.C_adm)}`} />
               <Nota t={`PV total: ${R$(com.sumEquip)} (equip.) + ${R$(com.C_man)} (manut.) + ${R$(com.C_adm)} (adm.) = ${R$(com.PV)}`} />
             </Card>
 
