@@ -23,8 +23,8 @@ interface SisParams {
 interface LeasingParams {
   ipca: number           // 0.055 = 5.5% annual IPCA
   duracaoMeses: number   // 48 = 4 anos (padrão)
-  txMan: number          // taxa de manutenção sobre total de equipamentos × anos
-  txAdmin: number        // taxa administrativa sobre total de equipamentos × anos
+  txMan: number          // taxa de manutenção sobre total de equipamentos (única)
+  txAdmin: number        // taxa administrativa sobre total de equipamentos (única)
 }
 interface EquipItem { nome: string; qty: number; unit: number; fixedQty: boolean; nota?: string }
 
@@ -124,18 +124,18 @@ function calcLeasing(
   const sumEquip = itens.reduce((s, e) => s + e.total, 0)
   const sumUnit  = equip.reduce((s, e) => s + e.unit, 0)
 
-  // Maintenance & admin applied on total equipment value (all items × quantities)
-  const C_man = lp.txMan   * sumEquip * anos
-  const C_adm = lp.txAdmin * sumEquip * anos
+  // PV = equipamentos + taxa manutenção (única) + taxa administrativa (única)
+  const C_man = lp.txMan   * sumEquip   // ex: 25% de equipamentos
+  const C_adm = lp.txAdmin * sumEquip   // ex: 25% de equipamentos
   const PV    = sumEquip + C_man + C_adm
 
-  // Fórmula: recuperar PV + 2×PV de resultado = 3×PV ao final do contrato
-  const totalRecebido    = PV * 3                              // amortização + 2× resultado
-  const parcelaPrice     = totalRecebido / N                   // parcela mensal da escola
-  const resultadoBruto   = totalRecebido - PV                  // = 2×PV
-  const valorPorAlunoMes = parcelaPrice / (alunos || 1)        // parcela por aluno/mês
-  const retornoEquip     = totalRecebido / (sumEquip || 1) - 1 // retorno s/ custo equipamentos
-  const retornoRealPV    = resultadoBruto / (PV || 1)          // = 2.0 (200% sobre PV)
+  // Total recebido = PV × 3 (amortiza investimento + 200% de resultado)
+  const totalRecebido    = PV * 3
+  const parcelaPrice     = totalRecebido / N
+  const resultadoBruto   = totalRecebido - PV                  // = 2×PV (200%)
+  const valorPorAlunoMes = parcelaPrice / (alunos || 1)
+  const retornoEquip     = totalRecebido / (sumEquip || 1) - 1
+  const retornoRealPV    = resultadoBruto / (PV || 1)          // sempre 2.0 = 200%
 
   // Annual projection table with IPCA on curriculum, fixed leasing
   const anosContrato     = Math.ceil(N / 12)
@@ -927,11 +927,11 @@ export default function CalculadoraPage() {
                   <div style={NOTA}>Compartilhado com aba Sistema. Usado para calcular valor por aluno/mês.</div>
                 </div>
                 <div>
-                  <label style={LBL}>Retorno s/ equipamentos</label>
+                  <label style={LBL}>Retorno s/ PV (fixo)</label>
                   <div style={{ ...INP, background: '#f0fdf4', color: '#15803d', fontWeight: 700, display: 'flex', alignItems: 'center' }}>
-                    {pct(com.retornoEquip)}
+                    {pct(com.retornoRealPV)}
                   </div>
-                  <div style={NOTA}>Calculado: {R$(com.totalRecebido)} recebido ÷ {R$(com.sumEquip)} equip − 1. Depende de N e PV.</div>
+                  <div style={NOTA}>Sempre 200%: recebe PV + 2×PV = 3×PV. Equip {R$(com.sumEquip)} + manut/admin = PV {R$(com.PV)}.</div>
                 </div>
                 <div>
                   <label style={LBL}>IPCA anual estimado (%)</label>
@@ -946,12 +946,12 @@ export default function CalculadoraPage() {
                 <div>
                   <label style={LBL}>Tx. Manutenção (%)</label>
                   <InlineNum value={+(lp.txMan * 100).toFixed(1)} onChange={v => setLp(p => ({ ...p, txMan: v / 100 }))} suffix="%" min={0} step={1} />
-                  <div style={NOTA}>Taxa sobre o total de equipamentos (com quantidades) × anos. Padrão 25%.</div>
+                  <div style={NOTA}>Taxa única sobre o total dos equipamentos. Padrão 25%.</div>
                 </div>
                 <div>
                   <label style={LBL}>Tx. Admin (%)</label>
                   <InlineNum value={+(lp.txAdmin * 100).toFixed(1)} onChange={v => setLp(p => ({ ...p, txAdmin: v / 100 }))} suffix="%" min={0} step={1} />
-                  <div style={NOTA}>Taxa administrativa sobre o total de equipamentos (com quantidades) × anos. Padrão 25%.</div>
+                  <div style={NOTA}>Taxa única administrativa sobre o total dos equipamentos. Padrão 25%.</div>
                 </div>
               </div>
 
@@ -961,7 +961,7 @@ export default function CalculadoraPage() {
                   { label: 'PV (investimento total)', value: R$(com.PV), sub: 'equip + manut + admin', color: '#4A7FDB' },
                   { label: 'Parcelas', value: `${com.N}x`, sub: `${com.N / 12} anos (igual ao contrato)`, color: '#0f172a' },
                   { label: 'Notebooks (⌈sala÷2⌉)', value: String(com.qtdNB), sub: `⌈${maiorSala} ÷ 2⌉`, color: '#0f172a' },
-                  { label: 'Retorno s/ equip.', value: pct(com.retornoEquip), sub: `lucro líquido ${R$(com.resultadoBruto)}`, color: '#7c3aed' },
+                  { label: 'Retorno s/ PV', value: pct(com.retornoRealPV), sub: `lucro ${R$(com.resultadoBruto)} = 2×PV`, color: '#7c3aed' },
                 ].map(k => (
                   <div key={k.label} style={{ background: '#f8fafc', borderRadius: 8, padding: '.75rem 1rem', border: '1px solid #e2e8f0' }}>
                     <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>{k.label}</div>
@@ -1109,9 +1109,9 @@ export default function CalculadoraPage() {
                     big
                   />
                   <KV
-                    label="Retorno s/ equipamento"
-                    value={pct(com.retornoEquip)}
-                    sub={`${R$(com.totalRecebido)} ÷ ${R$(com.sumEquip)} − 1`}
+                    label="Retorno s/ PV (fixo 200%)"
+                    value={pct(com.retornoRealPV)}
+                    sub={`${R$(com.resultadoBruto)} lucro = 2 × ${R$(com.PV)}`}
                     color="#7c3aed"
                     big
                   />
