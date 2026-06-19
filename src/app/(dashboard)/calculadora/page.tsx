@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import PageHeader from '@/components/layout/PageHeader'
+import { createClient } from '@/lib/supabase/client'
 
 // ── Formatação ────────────────────────────────────────────────────
 const R$ = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -310,6 +311,131 @@ export default function CalculadoraPage() {
   const mensalidadeEscola = sis.anual / 12 + com.parcelaPrice
   const parcelaCurriculo  = sis.anual / parcelasCurriculo
 
+  // ── Modal "Gerar Proposta" ─────────────────────────────────────
+  const [showModal, setShowModal] = useState(false)
+
+  // Default validade = 30 dias a partir de hoje
+  const defaultValidade = () => {
+    const d = new Date()
+    d.setDate(d.getDate() + 30)
+    return d.toISOString().split('T')[0]
+  }
+
+  const [modalForm, setModalForm] = useState({
+    escolaNome: '',
+    escolaEmail: '',
+    tipo: incluiComodato ? 'curriculo_comodato' : 'curriculo',
+    validade: defaultValidade(),
+    texto: '',
+  })
+  const [logoFile, setLogoFile]         = useState<File | null>(null)
+  const [logoPreview, setLogoPreview]   = useState<string | null>(null)
+  const [modalLoading, setModalLoading] = useState(false)
+  const [modalError, setModalError]     = useState<string | null>(null)
+  const [propostaResult, setPropostaResult] = useState<{
+    token: string; pin: string; link: string
+  } | null>(null)
+  const logoInputRef = useRef<HTMLInputElement>(null)
+
+  function openModal() {
+    setModalForm({
+      escolaNome: '',
+      escolaEmail: '',
+      tipo: incluiComodato ? 'curriculo_comodato' : 'curriculo',
+      validade: defaultValidade(),
+      texto: '',
+    })
+    setLogoFile(null)
+    setLogoPreview(null)
+    setModalLoading(false)
+    setModalError(null)
+    setPropostaResult(null)
+    setShowModal(true)
+  }
+
+  function closeModal() {
+    setShowModal(false)
+    setPropostaResult(null)
+    setModalError(null)
+  }
+
+  function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null
+    setLogoFile(file)
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = ev => setLogoPreview(ev.target?.result as string)
+      reader.readAsDataURL(file)
+    } else {
+      setLogoPreview(null)
+    }
+  }
+
+  async function handleModalSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!modalForm.escolaNome.trim()) {
+      setModalError('Nome da escola é obrigatório.')
+      return
+    }
+    setModalLoading(true)
+    setModalError(null)
+
+    try {
+      let logoUrl: string | null = null
+
+      // Upload logo to Supabase Storage
+      if (logoFile) {
+        const supabase = createClient()
+        const ext = logoFile.name.split('.').pop() ?? 'png'
+        const fileName = `escola-${Date.now()}.${ext}`
+        const { error: uploadErr } = await supabase.storage
+          .from('proposta-logos')
+          .upload(fileName, logoFile, { contentType: logoFile.type, upsert: true })
+        if (uploadErr) throw new Error('Falha no upload do logo: ' + uploadErr.message)
+        logoUrl = supabase.storage.from('proposta-logos').getPublicUrl(fileName).data.publicUrl
+      }
+
+      // POST to /api/propostas
+      const payload = {
+        escola_nome:          modalForm.escolaNome.trim(),
+        escola_email:         modalForm.escolaEmail.trim() || null,
+        escola_logo_url:      logoUrl,
+        tipo:                 modalForm.tipo,
+        validade:             modalForm.validade,
+        num_alunos:           alunos,
+        segmentos:            segs,
+        valor_aluno_ano:      sis.valorFinal,
+        num_parcelas:         incluiComodato ? 12 : parcelas,
+        duracao_meses:        lp.duracaoMeses,
+        comodato_pv:          incluiComodato ? com.PV : null,
+        comodato_parcela:     incluiComodato ? com.parcelaPrice : null,
+        comodato_retorno_pct: incluiComodato ? lp.retornoAlvo : null,
+        comodato_tx_rate:     incluiComodato ? com.txRate : null,
+        comodato_notebooks:   incluiComodato ? com.qtdNB : null,
+        dados_calculo:        { sis, com, lp, sp },
+        texto_personalizado:  modalForm.texto.trim() || null,
+      }
+
+      const res = await fetch('/api/propostas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? 'Erro ao gerar proposta')
+
+      setPropostaResult({
+        token: data.token,
+        pin:   data.escola_pin,
+        link:  `/proposta/${data.token}`,
+      })
+    } catch (err: unknown) {
+      setModalError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setModalLoading(false)
+    }
+  }
+
   // ── Helpers visuais ───────────────────────────────────────────
   const scoreClr  = (v: number) => v >= 0.7 ? '#16a34a' : v >= 0.4 ? '#d97706' : '#dc2626'
   const govClr    = (s: string) => s === 'error' ? '#dc2626' : s === 'warn' ? '#d97706' : '#16a34a'
@@ -335,10 +461,24 @@ export default function CalculadoraPage() {
       <PageHeader title="Calculadora We Make" subtitle="Precificação por score ponderado + faixas de volume + leasing garantido — v7" />
       <div style={{ padding: '1.75rem 2.5rem' }}>
 
-        {/* Tabs */}
-        <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1.75rem', flexWrap: 'wrap' }}>
+        {/* Tabs + Gerar Proposta CTA */}
+        <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
           <button style={tabStyle('sistema')}  onClick={() => setTab('sistema')}>We Make — Sistema</button>
           <button style={tabStyle('comodato')} onClick={() => setTab('comodato')}>Leasing de Equipamentos</button>
+          <div style={{ flex: 1 }} />
+          <button
+            onClick={openModal}
+            style={{
+              padding: '.6rem 1.4rem', borderRadius: 9, border: 'none', cursor: 'pointer',
+              fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.8rem', fontWeight: 800,
+              background: 'linear-gradient(135deg, #4c8ade, #2a69ba)',
+              color: '#fff', letterSpacing: '.04em',
+              boxShadow: '0 2px 10px rgba(76,138,222,.35)',
+              display: 'flex', alignItems: 'center', gap: '.5rem',
+            }}
+          >
+            <span style={{ fontSize: '1rem', lineHeight: 1 }}>&#10003;</span> Gerar Proposta
+          </button>
         </div>
 
         {/* ══════════════════════════════════════════════════════
@@ -1275,6 +1415,279 @@ export default function CalculadoraPage() {
         )}
 
       </div>
+
+      {/* ══════════════════════════════════════════════════════
+          MODAL — GERAR PROPOSTA
+          ══════════════════════════════════════════════════════ */}
+      {showModal && (
+        <div
+          onClick={e => { if (e.target === e.currentTarget) closeModal() }}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 1000,
+            background: 'rgba(0,0,0,0.72)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '1rem',
+          }}
+        >
+          <div style={{
+            background: '#fff', borderRadius: 16, width: '100%', maxWidth: 520,
+            boxShadow: '0 24px 60px rgba(0,0,0,.35)',
+            display: 'flex', flexDirection: 'column',
+            maxHeight: '92vh', overflow: 'hidden',
+          }}>
+            {/* Modal header */}
+            <div style={{
+              background: 'linear-gradient(135deg, #0b1f44, #1e3a6e)',
+              padding: '1.2rem 1.5rem',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              borderRadius: '16px 16px 0 0',
+            }}>
+              <div>
+                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.6rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#76f3cd', marginBottom: '.2rem' }}>
+                  We Make
+                </div>
+                <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.25rem', fontWeight: 700, color: '#fff' }}>
+                  Gerar Proposta Comercial
+                </div>
+              </div>
+              <button
+                onClick={closeModal}
+                style={{ background: 'rgba(255,255,255,.12)', border: 'none', borderRadius: 8, width: 34, height: 34, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', color: '#fff' }}
+              >
+                &#215;
+              </button>
+            </div>
+
+            {/* Modal body — scrollable */}
+            <div style={{ overflowY: 'auto', flex: 1, padding: '1.5rem' }}>
+
+              {/* SUCCESS SCREEN */}
+              {propostaResult ? (
+                <div style={{ textAlign: 'center', padding: '.5rem 0' }}>
+                  <div style={{ width: 60, height: 60, borderRadius: '50%', background: '#dcfce7', border: '3px solid #86efac', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.75rem', margin: '0 auto 1.1rem' }}>
+                    &#10003;
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.45rem', fontWeight: 800, color: '#16a34a', marginBottom: '.3rem' }}>
+                    Proposta gerada com sucesso!
+                  </div>
+                  <div style={{ fontSize: '.8rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '1.5rem' }}>
+                    Compartilhe o link com a escola e informe o PIN de acesso.
+                  </div>
+
+                  {/* Link */}
+                  <div style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 10, padding: '1rem', marginBottom: '1rem', textAlign: 'left' }}>
+                    <div style={{ ...LBL, marginBottom: '.4rem' }}>Link da proposta</div>
+                    <a
+                      href={propostaResult.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.82rem', color: '#2a69ba', wordBreak: 'break-all', textDecoration: 'underline', display: 'block', marginBottom: '.7rem' }}
+                    >
+                      {typeof window !== 'undefined' ? window.location.origin : ''}{propostaResult.link}
+                    </a>
+                    <button
+                      onClick={() => {
+                        const url = (typeof window !== 'undefined' ? window.location.origin : '') + propostaResult.link
+                        navigator.clipboard.writeText(url)
+                      }}
+                      style={{ padding: '.45rem 1rem', borderRadius: 7, border: '1.5px solid #4c8ade', background: '#eff6ff', color: '#2a69ba', cursor: 'pointer', fontSize: '.75rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}
+                    >
+                      Copiar link
+                    </button>
+                  </div>
+
+                  {/* PIN */}
+                  <div style={{ background: '#fffbeb', border: '1.5px solid #fde68a', borderRadius: 10, padding: '1rem', marginBottom: '1.5rem', textAlign: 'left' }}>
+                    <div style={{ ...LBL, marginBottom: '.4rem', color: '#b45309' }}>PIN da escola (compartilhe com o diretor)</div>
+                    <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '2rem', fontWeight: 800, color: '#92400e', letterSpacing: '.25em' }}>
+                      {propostaResult.pin}
+                    </div>
+                    <div style={{ fontSize: '.7rem', color: '#78716c', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.3rem' }}>
+                      A escola usa este PIN para acessar a proposta em /acesso-escola
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '.75rem', justifyContent: 'center' }}>
+                    <button
+                      onClick={() => {
+                        setPropostaResult(null)
+                        setModalForm({ escolaNome: '', escolaEmail: '', tipo: incluiComodato ? 'curriculo_comodato' : 'curriculo', validade: defaultValidade(), texto: '' })
+                        setLogoFile(null)
+                        setLogoPreview(null)
+                        setModalError(null)
+                      }}
+                      style={{ padding: '.55rem 1.2rem', borderRadius: 8, border: '1.5px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#475569' }}
+                    >
+                      Nova proposta
+                    </button>
+                    <button
+                      onClick={closeModal}
+                      style={{ padding: '.55rem 1.2rem', borderRadius: 8, border: 'none', background: '#0b1f44', cursor: 'pointer', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#fff' }}
+                    >
+                      Fechar
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* FORM SCREEN */
+                <form onSubmit={handleModalSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+
+                  {/* Nome da Escola */}
+                  <div>
+                    <label style={LBL}>Nome da Escola <span style={{ color: '#dc2626' }}>*</span></label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Ex: Escola Estadual João Pedro"
+                      value={modalForm.escolaNome}
+                      onChange={e => setModalForm(f => ({ ...f, escolaNome: e.target.value }))}
+                      style={INP}
+                    />
+                  </div>
+
+                  {/* E-mail da escola */}
+                  <div>
+                    <label style={LBL}>E-mail da escola (acesso ao portal)</label>
+                    <input
+                      type="email"
+                      placeholder="diretoria@escola.edu.br"
+                      value={modalForm.escolaEmail}
+                      onChange={e => setModalForm(f => ({ ...f, escolaEmail: e.target.value }))}
+                      style={INP}
+                    />
+                  </div>
+
+                  {/* Logo da escola */}
+                  <div>
+                    <label style={LBL}>Logo da escola</label>
+                    <input
+                      ref={logoInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoChange}
+                      style={{ display: 'none' }}
+                    />
+                    <div
+                      onClick={() => logoInputRef.current?.click()}
+                      style={{
+                        border: '2px dashed #cbd5e1', borderRadius: 10, padding: '1rem',
+                        cursor: 'pointer', textAlign: 'center', background: '#f8fafc',
+                        display: 'flex', alignItems: 'center', gap: '1rem',
+                      }}
+                    >
+                      {logoPreview ? (
+                        <>
+                          <img src={logoPreview} alt="Logo preview" style={{ width: 64, height: 64, objectFit: 'contain', borderRadius: 6, border: '1px solid #e2e8f0', flexShrink: 0 }} />
+                          <div style={{ textAlign: 'left' }}>
+                            <div style={{ fontSize: '.78rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)' }}>{logoFile?.name}</div>
+                            <div style={{ fontSize: '.65rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>Clique para trocar</div>
+                          </div>
+                        </>
+                      ) : (
+                        <div style={{ margin: '0 auto' }}>
+                          <div style={{ fontSize: '1.5rem', marginBottom: '.25rem' }}>&#128247;</div>
+                          <div style={{ fontSize: '.78rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>Clique para selecionar o logo da escola</div>
+                          <div style={{ fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>PNG, JPG, SVG (opcional)</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Tipo */}
+                  <div>
+                    <label style={LBL}>Tipo de proposta</label>
+                    <div style={{ display: 'flex', gap: '.5rem' }}>
+                      {[
+                        { val: 'curriculo',          label: 'Somente Currículo' },
+                        { val: 'curriculo_comodato', label: 'Currículo + Comodato' },
+                      ].map(opt => (
+                        <button
+                          key={opt.val}
+                          type="button"
+                          onClick={() => setModalForm(f => ({ ...f, tipo: opt.val }))}
+                          style={{
+                            flex: 1, padding: '.6rem .5rem', borderRadius: 8, cursor: 'pointer',
+                            fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.75rem', fontWeight: 700,
+                            border: `1.5px solid ${modalForm.tipo === opt.val ? '#0b1f44' : '#e2e8f0'}`,
+                            background: modalForm.tipo === opt.val ? '#0b1f44' : '#f8fafc',
+                            color: modalForm.tipo === opt.val ? '#fff' : '#64748b',
+                          }}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Validade */}
+                  <div>
+                    <label style={LBL}>Validade da proposta</label>
+                    <input
+                      type="date"
+                      value={modalForm.validade}
+                      onChange={e => setModalForm(f => ({ ...f, validade: e.target.value }))}
+                      style={INP}
+                    />
+                  </div>
+
+                  {/* Texto personalizado */}
+                  <div>
+                    <label style={LBL}>Texto personalizado (opcional)</label>
+                    <textarea
+                      rows={3}
+                      placeholder="Mensagem ou observações especiais para incluir na proposta..."
+                      value={modalForm.texto}
+                      onChange={e => setModalForm(f => ({ ...f, texto: e.target.value }))}
+                      style={{ ...INP, resize: 'vertical', minHeight: 72 }}
+                    />
+                  </div>
+
+                  {/* Resumo dos dados da calculadora */}
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '.85rem 1rem', fontSize: '.72rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', lineHeight: 1.7 }}>
+                    <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#94a3b8', marginBottom: '.4rem' }}>
+                      Dados da calculadora (incluídos automaticamente)
+                    </div>
+                    <strong>{alunos} alunos</strong> &middot; {segs} segmento{segs > 1 ? 's' : ''} &middot; {R$(sis.valorFinal)}/aluno/ano
+                    {incluiComodato && (
+                      <> &middot; Comodato PV {R$(com.PV)} &middot; {com.N}x de {R$(com.parcelaPrice)}</>
+                    )}
+                  </div>
+
+                  {/* Error */}
+                  {modalError && (
+                    <div style={{ background: '#fef2f2', border: '1.5px solid #fca5a5', borderRadius: 8, padding: '.75rem 1rem', fontSize: '.78rem', color: '#dc2626', fontFamily: 'var(--font-inter,sans-serif)' }}>
+                      {modalError}
+                    </div>
+                  )}
+
+                  {/* Actions */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', paddingTop: '.25rem' }}>
+                    <button
+                      type="submit"
+                      disabled={modalLoading}
+                      style={{
+                        flex: 1, padding: '.7rem 1.2rem', borderRadius: 9, border: 'none', cursor: modalLoading ? 'wait' : 'pointer',
+                        fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.82rem', fontWeight: 800,
+                        background: modalLoading ? '#93c5fd' : 'linear-gradient(135deg, #4c8ade, #2a69ba)',
+                        color: '#fff', letterSpacing: '.03em',
+                      }}
+                    >
+                      {modalLoading ? 'Gerando...' : 'Gerar Proposta'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={closeModal}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '.8rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)', textDecoration: 'underline', padding: '.25rem' }}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

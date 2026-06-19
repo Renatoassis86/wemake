@@ -1,0 +1,12 @@
+.next
+node_modules
+.git
+*.log
+.env.local
+.vercel
+__pycache__
+*.py
+*.md
+test_*
+robot_*
+selenium_*

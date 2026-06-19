@@ -33,6 +33,8 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/hub') ||
     pathname.startsWith('/login') ||
     pathname.startsWith('/formulario') ||
+    pathname.startsWith('/proposta') ||
+    pathname.startsWith('/acesso-escola') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
     pathname.startsWith('/images') ||

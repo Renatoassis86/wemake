@@ -1,0 +1,34 @@
+{
+  "existe": [
+    "escolas",
+    "escolas_resumo",
+    "registros",
+    "negociacoes",
+    "tarefas",
+    "notas_escola",
+    "contratos",
+    "contratos_arquivos",
+    "profiles",
+    "audit_log",
+    "documentos_oficiais",
+    "formularios",
+    "agenda_eventos",
+    "agenda_participantes",
+    "leads_universal",
+    "leads_pessoa",
+    "leads_escola",
+    "leads_contato_escola",
+    "leads_oikos_live",
+    "leads_participacao",
+    "leads_perfil_escola",
+    "ciecc_inscritos",
+    "ciecc_leads_sem_escola",
+    "transcricoes_reunioes",
+    "usuario_escolas_pipeline"
+  ],
+  "nao_existe": [
+    "perfis",
+    "empresas",
+    "usuarios_empresas"
+  ]
+}

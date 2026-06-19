@@ -1,0 +1,560 @@
+{
+  "gerado_em": "2026-06-16T10:32:54.397212",
+  "base_url": "https://comercial.wemake.tec.br",
+  "resumo": {
+    "total": 33,
+    "ok": 31,
+    "alertas": 2,
+    "erros": 0
+  },
+  "paginas": [
+    {
+      "path": "/login",
+      "desc": "Login",
+      "url": "https://comercial.wemake.tec.br/login",
+      "requires_auth": false,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [
+        {
+          "text": "Entrar na Plataforma",
+          "found": true
+        },
+        {
+          "text": "Acesso Restrito",
+          "found": true
+        },
+        {
+          "text": "Equipe We Make",
+          "found": true
+        },
+        {
+          "text": "Formulário",
+          "found": true
+        }
+      ],
+      "errors": [],
+      "screenshot": "robo_screenshots\\login.png"
+    },
+    {
+      "path": "/formulario",
+      "desc": "Formulário de Escola",
+      "url": "https://comercial.wemake.tec.br/formulario",
+      "requires_auth": false,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [
+        {
+          "text": "Formulário",
+          "found": true
+        },
+        {
+          "text": "escola",
+          "found": true
+        }
+      ],
+      "errors": [],
+      "screenshot": "robo_screenshots\\formulario.png"
+    },
+    {
+      "path": "/formulario/obrigado",
+      "desc": "Formulário - Obrigado",
+      "url": "https://comercial.wemake.tec.br/formulario/obrigado",
+      "requires_auth": false,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\formulario_obrigado.png"
+    },
+    {
+      "path": "/hub/comercial/login",
+      "desc": "Hub Comercial Login",
+      "url": "https://comercial.wemake.tec.br/hub/comercial/login",
+      "requires_auth": false,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\hub_comercial_login.png"
+    },
+    {
+      "path": "/hub/contratos/login",
+      "desc": "Hub Contratos Login",
+      "url": "https://comercial.wemake.tec.br/hub/contratos/login",
+      "requires_auth": false,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\hub_contratos_login.png"
+    },
+    {
+      "path": "/hub/pedidos/login",
+      "desc": "Hub Pedidos Login",
+      "url": "https://comercial.wemake.tec.br/hub/pedidos/login",
+      "requires_auth": false,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\hub_pedidos_login.png"
+    },
+    {
+      "path": "/comercial",
+      "desc": "Dashboard Comercial",
+      "url": "https://comercial.wemake.tec.br/comercial",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [
+        {
+          "text": "Dashboard Comercial",
+          "found": true
+        },
+        {
+          "text": "Total de Escolas",
+          "found": true
+        },
+        {
+          "text": "Leads Quentes",
+          "found": true
+        },
+        {
+          "text": "Registros",
+          "found": true
+        }
+      ],
+      "errors": [],
+      "screenshot": "robo_screenshots\\comercial.png"
+    },
+    {
+      "path": "/comercial/escolas",
+      "desc": "Gestão de Escolas",
+      "url": "https://comercial.wemake.tec.br/comercial/escolas",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [
+        {
+          "text": "Escolas",
+          "found": true
+        }
+      ],
+      "errors": [],
+      "screenshot": "robo_screenshots\\comercial_escolas.png"
+    },
+    {
+      "path": "/comercial/pipeline",
+      "desc": "Pipeline Kanban",
+      "url": "https://comercial.wemake.tec.br/comercial/pipeline",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [
+        {
+          "text": "Pipeline",
+          "found": true
+        }
+      ],
+      "errors": [],
+      "screenshot": "robo_screenshots\\comercial_pipeline.png"
+    },
+    {
+      "path": "/comercial/registros",
+      "desc": "Registros de Interações",
+      "url": "https://comercial.wemake.tec.br/comercial/registros",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [
+        {
+          "text": "Registros",
+          "found": true
+        }
+      ],
+      "errors": [],
+      "screenshot": "robo_screenshots\\comercial_registros.png"
+    },
+    {
+      "path": "/comercial/leads",
+      "desc": "Leads",
+      "url": "https://comercial.wemake.tec.br/comercial/leads",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [
+        {
+          "text": "Leads",
+          "found": true
+        }
+      ],
+      "errors": [],
+      "screenshot": "robo_screenshots\\comercial_leads.png"
+    },
+    {
+      "path": "/comercial/metas",
+      "desc": "Metas",
+      "url": "https://comercial.wemake.tec.br/comercial/metas",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [
+        {
+          "text": "Metas",
+          "found": true
+        }
+      ],
+      "errors": [],
+      "screenshot": "robo_screenshots\\comercial_metas.png"
+    },
+    {
+      "path": "/comercial/tabela",
+      "desc": "Tabela Geral",
+      "url": "https://comercial.wemake.tec.br/comercial/tabela",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [
+        {
+          "text": "Tabela",
+          "found": true
+        }
+      ],
+      "errors": [],
+      "screenshot": "robo_screenshots\\comercial_tabela.png"
+    },
+    {
+      "path": "/comercial/jornada",
+      "desc": "Jornada de Relacionamento",
+      "url": "https://comercial.wemake.tec.br/comercial/jornada",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [
+        {
+          "text": "Jornada",
+          "found": true
+        }
+      ],
+      "errors": [],
+      "screenshot": "robo_screenshots\\comercial_jornada.png"
+    },
+    {
+      "path": "/comercial/jornada-visual",
+      "desc": "Jornada Visual",
+      "url": "https://comercial.wemake.tec.br/comercial/jornada-visual",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [
+        {
+          "text": "Jornada",
+          "found": true
+        }
+      ],
+      "errors": [],
+      "screenshot": "robo_screenshots\\comercial_jornada-visual.png"
+    },
+    {
+      "path": "/comercial/contratos",
+      "desc": "Contratos Comercial",
+      "url": "https://comercial.wemake.tec.br/comercial/contratos",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\comercial_contratos.png"
+    },
+    {
+      "path": "/comercial/pre-cadastros",
+      "desc": "Pré-Cadastros",
+      "url": "https://comercial.wemake.tec.br/comercial/pre-cadastros",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\comercial_pre-cadastros.png"
+    },
+    {
+      "path": "/agenda",
+      "desc": "Agenda",
+      "url": "https://comercial.wemake.tec.br/agenda",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [
+        {
+          "text": "Agenda",
+          "found": true
+        }
+      ],
+      "errors": [],
+      "screenshot": "robo_screenshots\\agenda.png"
+    },
+    {
+      "path": "/calculadora",
+      "desc": "Calculadora",
+      "url": "https://comercial.wemake.tec.br/calculadora",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [
+        {
+          "text": "Calculadora",
+          "found": true
+        }
+      ],
+      "errors": [],
+      "screenshot": "robo_screenshots\\calculadora.png"
+    },
+    {
+      "path": "/sobre",
+      "desc": "Sobre",
+      "url": "https://comercial.wemake.tec.br/sobre",
+      "requires_auth": true,
+      "status": "ALERTA",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [
+        {
+          "text": "Sobre",
+          "found": false
+        },
+        {
+          "text": "We Make",
+          "found": true
+        }
+      ],
+      "errors": [
+        "Texto não encontrado: 'Sobre'"
+      ],
+      "screenshot": "robo_screenshots\\sobre.png"
+    },
+    {
+      "path": "/exports",
+      "desc": "Exports / Downloads",
+      "url": "https://comercial.wemake.tec.br/exports",
+      "requires_auth": true,
+      "status": "ALERTA",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [
+        {
+          "text": "Export",
+          "found": false
+        },
+        {
+          "text": "Download",
+          "found": true
+        },
+        {
+          "text": "Relatório",
+          "found": true
+        }
+      ],
+      "errors": [
+        "Texto não encontrado: 'Export'"
+      ],
+      "screenshot": "robo_screenshots\\exports.png"
+    },
+    {
+      "path": "/financeiro",
+      "desc": "Financeiro",
+      "url": "https://comercial.wemake.tec.br/financeiro",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\financeiro.png"
+    },
+    {
+      "path": "/dashboards",
+      "desc": "Dashboards",
+      "url": "https://comercial.wemake.tec.br/dashboards",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\dashboards.png"
+    },
+    {
+      "path": "/tutorial",
+      "desc": "Tutorial",
+      "url": "https://comercial.wemake.tec.br/tutorial",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\tutorial.png"
+    },
+    {
+      "path": "/adminpanel",
+      "desc": "Admin Panel",
+      "url": "https://comercial.wemake.tec.br/adminpanel",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\adminpanel.png"
+    },
+    {
+      "path": "/ai-bob",
+      "desc": "AI Bob",
+      "url": "https://comercial.wemake.tec.br/ai-bob",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\ai-bob.png"
+    },
+    {
+      "path": "/leads-banco",
+      "desc": "Banco de Leads",
+      "url": "https://comercial.wemake.tec.br/leads-banco",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\leads-banco.png"
+    },
+    {
+      "path": "/pesquisa-mercado",
+      "desc": "Pesquisa de Mercado",
+      "url": "https://comercial.wemake.tec.br/pesquisa-mercado",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\pesquisa-mercado.png"
+    },
+    {
+      "path": "/transcricoes",
+      "desc": "Transcrições",
+      "url": "https://comercial.wemake.tec.br/transcricoes",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\transcricoes.png"
+    },
+    {
+      "path": "/estoque",
+      "desc": "Estoque",
+      "url": "https://comercial.wemake.tec.br/estoque",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\estoque.png"
+    },
+    {
+      "path": "/importacao",
+      "desc": "Importação",
+      "url": "https://comercial.wemake.tec.br/importacao",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\importacao.png"
+    },
+    {
+      "path": "/formularios",
+      "desc": "Formulários",
+      "url": "https://comercial.wemake.tec.br/formularios",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\formularios.png"
+    },
+    {
+      "path": "/contratos",
+      "desc": "Contratos",
+      "url": "https://comercial.wemake.tec.br/contratos",
+      "requires_auth": true,
+      "status": "OK",
+      "http_status": 200,
+      "redirected_to": null,
+      "title": "We Make — Gestão Comercial para Educação",
+      "content_checks": [],
+      "errors": [],
+      "screenshot": "robo_screenshots\\contratos.png"
+    }
+  ]
+}

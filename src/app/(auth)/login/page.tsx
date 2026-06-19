@@ -485,6 +485,26 @@ export default function LoginPage() {
               </span>
               <ArrowRight size={14} style={{ flexShrink: 0 }} />
             </a>
+
+            {/* Link escola parceira */}
+            <Link href="/acesso-escola" style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.45rem',
+              marginTop: '.75rem',
+              padding: '.6rem 1rem', borderRadius: 10,
+              border: '1px solid rgba(255,255,255,.08)',
+              background: 'transparent',
+              color: 'rgba(255,255,255,.38)', textDecoration: 'none',
+              fontSize: '.78rem', fontWeight: 500,
+              transition: 'all .2s',
+              fontFamily: 'var(--font-inter, sans-serif)',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.color = 'rgba(255,255,255,.7)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,.18)'; e.currentTarget.style.background = 'rgba(255,255,255,.04)' }}
+              onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,.38)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,.08)'; e.currentTarget.style.background = 'transparent' }}
+            >
+              Sou escola parceira
+              <ArrowRight size={13} />
+              <span style={{ fontWeight: 600, color: 'rgba(255,255,255,.55)' }}>Acessar minha proposta</span>
+            </Link>
           </div>
         </div>
       </section>

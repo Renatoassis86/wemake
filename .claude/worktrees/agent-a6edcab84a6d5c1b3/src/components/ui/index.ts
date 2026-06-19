@@ -1,0 +1,18 @@
+// Central export for all UI components
+// Usage: import { StatCard, Badge, Avatar, Progress, ... } from '@/components/ui'
+
+export { default as StatCard }        from './StatCard'
+export { default as Badge }           from './Badge'
+export { ClassificacaoBadge, PrioridadeBadge, StatusTarefaBadge } from './Badge'
+export { default as Avatar }          from './Avatar'
+export { AvatarStack }                from './Avatar'
+export { default as Progress }        from './Progress'
+export { CircularProgress }           from './Progress'
+export { default as TimelineCard }    from './TimelineCard'
+export { default as EscolaCard }      from './EscolaCard'
+export { default as DataTable }       from './DataTable'
+export type { Column }                from './DataTable'
+export { FormField, Input, Select, Textarea, SectionTitle, CheckboxGroup, RadioGroup, NumberStepper } from './FormField'
+export { default as MultiStepForm }   from './MultiStepForm'
+export { StepPanel, useStepContext }  from './MultiStepForm'
+export type { StepDef }               from './MultiStepForm'
