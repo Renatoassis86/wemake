@@ -1127,7 +1127,7 @@ export default function CalculadoraPage() {
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr>
-                      {['Ano', 'Período', 'Parcela currículo', 'Parcela leasing', 'Total escola/mês', 'Rec. leasing/ano', 'Rec. total/ano'].map(h => <th key={h} style={th}>{h}</th>)}
+                      {['Ano', 'Período', 'Parcela currículo', 'Parcela leasing', 'Total escola/mês', 'Rec. leasing/ano'].map(h => <th key={h} style={th}>{h}</th>)}
                     </tr>
                   </thead>
                   <tbody>
@@ -1144,7 +1144,6 @@ export default function CalculadoraPage() {
                         <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0369a1' }}>{R$(row.parcelaComodato)}</td>
                         <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>{R$(row.totalEscola)}</td>
                         <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0369a1' }}>{R$(row.recCom)}</td>
-                        <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#16a34a' }}>{R$(row.recTotal)}</td>
                       </tr>
                     ))}
                     <tr style={{ background: '#f0fdf4', borderTop: '2px solid #86efac' }}>
@@ -1152,9 +1151,6 @@ export default function CalculadoraPage() {
                         TOTAL {com.N} meses — só leasing
                       </td>
                       <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.05rem', fontWeight: 800, color: '#0369a1' }}>{R$(com.totalRecebido)}</td>
-                      <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.05rem', fontWeight: 800, color: '#15803d' }}>
-                        {R$(com.tabela.reduce((s, r) => s + r.recTotal, 0))}
-                      </td>
                     </tr>
                   </tbody>
                 </table>
