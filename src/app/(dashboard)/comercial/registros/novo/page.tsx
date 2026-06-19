@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { upsertRegistro } from '@/lib/actions'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
@@ -49,10 +50,11 @@ export default async function RegistroNovo({ searchParams }: Props) {
   const escolaId = params.escola ?? ''
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const admin = createAdminClient()
 
   const [escolas, { data: profiles }, { data: negociacoes }] = await Promise.all([
     buscarEscolasUnificadas(supabase),
-    supabase.from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo'),
+    admin.from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo'),
     escolaId
       ? supabase.from('negociacoes').select('id, titulo, stage').eq('escola_id', escolaId).eq('ativa', true)
       : Promise.resolve({ data: [] }),

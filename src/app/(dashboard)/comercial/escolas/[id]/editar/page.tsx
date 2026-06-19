@@ -1,10 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { notFound } from 'next/navigation'
 import { upsertEscola } from '@/lib/actions'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
 import { PERFIL_OPTIONS, ORIGEM_OPTIONS, CARGO_CONTATO_OPTIONS } from '@/types/database'
-import { CheckboxPaideia } from '@/components/ui/CheckboxPaideia'
 
 export const dynamic = 'force-dynamic'
 
@@ -41,10 +41,11 @@ interface Props { params: Promise<{ id: string }> }
 export default async function EscolaEditar({ params }: Props) {
   const { id } = await params
   const supabase = await createClient()
+  const admin = createAdminClient()
 
   const [{ data: escola }, { data: profiles }] = await Promise.all([
     supabase.from('escolas').select('*').eq('id', id).single(),
-    supabase.from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo'),
+    admin.from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo'),
   ])
 
   if (!escola) notFound()
@@ -83,7 +84,7 @@ export default async function EscolaEditar({ params }: Props) {
                     {PERFIL_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                   </select>
                 </div>
-                <CheckboxPaideia defaultChecked={e.escola_paideia ?? false} />
+                <input type="hidden" name="escola_paideia" value={e.escola_paideia ? 'true' : 'false'} />
               </div>
             </div>
           </div>

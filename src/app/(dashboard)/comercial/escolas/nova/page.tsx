@@ -1,9 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { upsertEscola } from '@/lib/actions'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
 import { PERFIL_OPTIONS, ORIGEM_OPTIONS, CARGO_CONTATO_OPTIONS } from '@/types/database'
-import { CheckboxPaideia } from '@/components/ui/CheckboxPaideia'
 
 /* ── Estilos reutilizáveis ──────────────────────────────────────── */
 const card: React.CSSProperties = {
@@ -63,7 +63,8 @@ export default async function EscolaNova({ searchParams }: Props) {
   const leadId = params.lead ?? ''  // 'lead:NomeEscola' quando vindo do banco de leads
 
   const supabase = await createClient()
-  const { data: profiles } = await supabase
+  const admin = createAdminClient()
+  const { data: profiles } = await admin
     .from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo')
 
   // Pré-preencher com dados do lead se vier do banco de leads
@@ -119,9 +120,6 @@ export default async function EscolaNova({ searchParams }: Props) {
                     {PERFIL_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                   </select>
                 </div>
-              </div>
-              <div style={{ marginTop: '1.25rem' }}>
-                <CheckboxPaideia defaultChecked={false} />
               </div>
             </div>
           </div>

@@ -82,8 +82,7 @@ export function PipelinePropostaBoard({ cards: cardsIniciais }: Props) {
   // Carrega usuários ao abrir modal
   useEffect(() => {
     if (!modal) return
-    createClient().from('usuarios').select('id, nome_completo, role').eq('ativo', true).order('nome_completo')
-      .then(({ data }) => setUsuarios(data ?? []))
+    fetch('/api/usuarios').then(r => r.json()).then(data => setUsuarios(Array.isArray(data) ? data : []))
   }, [modal?.precadastro_id])
 
   // ── Helpers ────────────────────────────────────────────────────────

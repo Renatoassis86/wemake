@@ -21,11 +21,10 @@ interface SisParams {
   faixas: FaixaEscala[]
 }
 interface LeasingParams {
-  retornoAlvo: number    // 2.0 = lucro de 2×PV; total recebido = PV × (1 + retornoAlvo)
   ipca: number           // 0.055 = 5.5% annual IPCA
-  duracaoMeses: number   // 60 = 5 anos
-  txMan: number          // 0.25 = 25% maintenance rate
-  txAdmin: number        // 0.25 = 25% admin rate
+  duracaoMeses: number   // 48 = 4 anos (padrão)
+  txMan: number          // taxa de manutenção sobre total de equipamentos × anos
+  txAdmin: number        // taxa administrativa sobre total de equipamentos × anos
 }
 interface EquipItem { nome: string; qty: number; unit: number; fixedQty: boolean; nota?: string }
 
@@ -48,9 +47,8 @@ const DEFAULT_SIS: SisParams = {
 }
 
 const DEFAULT_LEASING: LeasingParams = {
-  retornoAlvo: 2.0,  // lucro = 2× PV (recupera PV + ganha 2×PV de lucro)
   ipca: 0.055,
-  duracaoMeses: 60,
+  duracaoMeses: 48,
   txMan: 0.25,
   txAdmin: 0.25,
 }
@@ -131,11 +129,13 @@ function calcLeasing(
   const C_adm = lp.txAdmin * sumEquip * anos
   const PV    = sumEquip + C_man + C_adm
 
-  // Simple return formula: PMT = PV × (1 + retornoAlvo) / N
-  const totalRecebido  = PV * (1 + lp.retornoAlvo)
-  const parcelaPrice   = totalRecebido / N
-  const resultadoBruto = totalRecebido - PV
-  const retorno        = lp.retornoAlvo
+  // Fórmula: recuperar PV + 2×PV de resultado = 3×PV ao final do contrato
+  const totalRecebido    = PV * 3                              // amortização + 2× resultado
+  const parcelaPrice     = totalRecebido / N                   // parcela mensal da escola
+  const resultadoBruto   = totalRecebido - PV                  // = 2×PV
+  const valorPorAlunoMes = parcelaPrice / (alunos || 1)        // parcela por aluno/mês
+  const retornoEquip     = totalRecebido / (sumEquip || 1) - 1 // retorno s/ custo equipamentos
+  const retornoRealPV    = resultadoBruto / (PV || 1)          // = 2.0 (200% sobre PV)
 
   // Annual projection table with IPCA on curriculum, fixed leasing
   const anosContrato     = Math.ceil(N / 12)
@@ -155,7 +155,7 @@ function calcLeasing(
   return {
     qtdNB, N, anos, PV, sumEquip, sumUnit, C_man, C_adm,
     itens,
-    parcelaPrice, totalRecebido, resultadoBruto, retorno, tabela,
+    parcelaPrice, totalRecebido, resultadoBruto, retornoEquip, retornoRealPV, tabela,
     parcelaMensal:   parcelaPrice,
     valorPorAlunoMes: parcelaPrice / (alunos || 1),
   }
@@ -172,6 +172,12 @@ const INP: React.CSSProperties = {
 }
 const INP_SM: React.CSSProperties = {
   ...INP, padding: '.35rem .55rem', fontSize: '.8rem', borderRadius: 6,
+}
+const INP_KEY: React.CSSProperties = {
+  ...INP,
+  background: '#eff6ff',
+  border: '2px solid #4A7FDB',
+  boxShadow: '0 0 0 3px rgba(74,127,219,0.12)',
 }
 const LBL: React.CSSProperties = {
   display: 'block', fontSize: '.65rem', fontWeight: 700,
@@ -334,38 +340,44 @@ export default function CalculadoraPage() {
             {/* 1. Entradas principais */}
             <Card>
               <SecTitle n={1} title="Entradas principais" />
+              <div style={{ marginTop: '-.5rem', marginBottom: '.75rem', display: 'flex', alignItems: 'center', gap: '.4rem' }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#4A7FDB', flexShrink: 0 }} />
+                <span style={{ fontSize: '.67rem', fontWeight: 600, color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                  campos destacados em azul mudam por contrato
+                </span>
+              </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem' }}>
                 <div>
                   <label style={LBL}>Número de alunos</label>
-                  <input type="number" min={1} value={alunos} onChange={e => setAlunos(+e.target.value || 1)} style={INP} />
+                  <input type="number" min={1} value={alunos || ''} onChange={e => setAlunos(+e.target.value)} onBlur={() => { if (!(alunos >= 1)) setAlunos(1) }} style={INP_KEY} />
                   <div style={NOTA}>Total de alunos We Make na escola. Determina qual faixa de escala é aplicada (score s1 fixo por faixa).</div>
                 </div>
                 <div>
                   <label style={LBL}>Ticket médio mensal/aluno (R$)</label>
-                  <input type="number" min={0} value={ticket} onChange={e => setTicket(+e.target.value || 0)} style={INP} />
+                  <input type="number" min={0} value={ticket || ''} onChange={e => setTicket(+e.target.value)} onBlur={() => { if (!(ticket >= 0)) setTicket(0) }} style={INP_KEY} />
                   <div style={NOTA}>Mensalidade da escola ao pai. Escolas ≥ R${sp.ticketMax.toLocaleString('pt-BR')} = score máximo.</div>
                 </div>
                 <div>
                   <label style={LBL}>Segmentos atendidos</label>
-                  <div style={{ display: 'flex', gap: '.4rem' }}>
+                  <div style={{ display: 'flex', gap: '.4rem', padding: '.35rem', background: '#eff6ff', border: '2px solid #4A7FDB', borderRadius: 8, boxShadow: '0 0 0 3px rgba(74,127,219,0.12)' }}>
                     {[1, 2, 3].map(n => (
-                      <button key={n} onClick={() => setSegs(n)} style={{ flex: 1, padding: '.65rem', borderRadius: 8, border: `1.5px solid ${segs === n ? '#0f172a' : '#e2e8f0'}`, background: segs === n ? '#0f172a' : '#fff', color: segs === n ? '#fff' : '#64748b', fontWeight: 700, fontSize: '.9rem', cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{n}</button>
+                      <button key={n} onClick={() => setSegs(n)} style={{ flex: 1, padding: '.5rem', borderRadius: 6, border: `1.5px solid ${segs === n ? '#1d4ed8' : '#93c5fd'}`, background: segs === n ? '#1d4ed8' : '#fff', color: segs === n ? '#fff' : '#1d4ed8', fontWeight: 700, fontSize: '.9rem', cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{n}</button>
                     ))}
                   </div>
                   <div style={NOTA}>Ciclos escolares. 3 = score complexidade máximo.</div>
                 </div>
                 <div>
                   <label style={LBL}>Alta complexidade?</label>
-                  <div style={{ display: 'flex', gap: '.5rem' }}>
+                  <div style={{ display: 'flex', gap: '.5rem', padding: '.35rem', background: '#eff6ff', border: '2px solid #4A7FDB', borderRadius: 8, boxShadow: '0 0 0 3px rgba(74,127,219,0.12)' }}>
                     {['NÃO', 'SIM'].map(v => (
-                      <button key={v} onClick={() => setAltaCompl(v === 'SIM')} style={{ flex: 1, padding: '.65rem', borderRadius: 8, border: `1.5px solid ${(altaCompl ? 'SIM' : 'NÃO') === v ? '#0f172a' : '#e2e8f0'}`, background: (altaCompl ? 'SIM' : 'NÃO') === v ? '#0f172a' : '#fff', color: (altaCompl ? 'SIM' : 'NÃO') === v ? '#fff' : '#64748b', fontWeight: 700, fontSize: '.82rem', cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{v}</button>
+                      <button key={v} onClick={() => setAltaCompl(v === 'SIM')} style={{ flex: 1, padding: '.5rem', borderRadius: 6, border: `1.5px solid ${(altaCompl ? 'SIM' : 'NÃO') === v ? '#1d4ed8' : '#93c5fd'}`, background: (altaCompl ? 'SIM' : 'NÃO') === v ? '#1d4ed8' : '#fff', color: (altaCompl ? 'SIM' : 'NÃO') === v ? '#fff' : '#1d4ed8', fontWeight: 700, fontSize: '.82rem', cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{v}</button>
                     ))}
                   </div>
                   <div style={NOTA}>SIM força score complexidade = 1,000.</div>
                 </div>
                 <div>
                   <label style={LBL}>Situação do contrato</label>
-                  <select value={situacao} onChange={e => setSituacao(e.target.value)} style={{ ...INP, background: '#fffef0' }}>
+                  <select value={situacao} onChange={e => setSituacao(e.target.value)} style={INP_KEY}>
                     <option>Novo</option>
                     <option>Renovação 1º ciclo</option>
                     <option>Renovação 2º ciclo+</option>
@@ -374,13 +386,18 @@ export default function CalculadoraPage() {
                 </div>
                 <div>
                   <label style={LBL}>Desconto comercial (%)</label>
-                  <input type="number" min={0} max={30} step={0.5} value={desconto} onChange={e => setDesconto(+e.target.value || 0)} style={{ ...INP, borderColor: desconto > 10 ? '#fca5a5' : desconto > 5 ? '#fde68a' : '#e2e8f0' }} />
+                  <input type="number" min={0} max={30} step={0.5} value={desconto} onChange={e => setDesconto(+e.target.value || 0)} style={{ ...INP_KEY, borderColor: desconto > 10 ? '#fca5a5' : desconto > 5 ? '#fbbf24' : '#4A7FDB' }} />
                   <div style={NOTA}>≤5% autônomo · 6–10% Renato · &gt;10% Dênis.</div>
                 </div>
                 <div>
-                  <label style={LBL}>Qtd. parcelas (4–12)</label>
-                  <input type="number" min={4} max={12} value={parcelas} onChange={e => setParcelas(Math.min(12, Math.max(4, +e.target.value || 4)))} style={INP} />
-                  <div style={NOTA}>Frequência de pagamento do currículo. Independente do prazo do leasing (definido na aba Leasing).</div>
+                  <label style={LBL}>Qtd. parcelas currículo (4–12)</label>
+                  <input type="number" min={4} max={12} value={parcelas || ''} onChange={e => setParcelas(+e.target.value)} onBlur={() => setParcelas(p => Math.min(12, Math.max(4, p || 4)))} style={INP_KEY} />
+                  <div style={NOTA}>Frequência de pagamento do currículo. Independente do prazo do comodato.</div>
+                </div>
+                <div>
+                  <label style={LBL}>Alunos na maior sala</label>
+                  <input type="number" min={2} max={60} value={maiorSala || ''} onChange={e => setMaiorSala(+e.target.value)} onBlur={() => { if (!(maiorSala >= 2)) setMaiorSala(20) }} style={INP_KEY} />
+                  <div style={NOTA}>Define notebooks do comodato: ⌈{maiorSala} ÷ 2⌉ = {com.qtdNB} unidades.</div>
                 </div>
               </div>
             </Card>
@@ -873,7 +890,7 @@ export default function CalculadoraPage() {
                     </div>
                   </div>
                   <div style={{ marginTop: '.65rem' }}>
-                    <Nota t={`Currículo: ${alunos} al. × ${R$(sis.valorFinal)}/ano ÷ 12 = ${R$(alunoMesSis)}/al./mês. Leasing: ${R$(com.PV)} × (1 + ${pct(lp.retornoAlvo)}) ÷ ${com.N} meses ÷ ${alunos} al. = ${R$(com.valorPorAlunoMes)}/al./mês. Total: ${R$(totalAluMes)}/al./mês.`} />
+                    <Nota t={`Currículo: ${alunos} al. × ${R$(sis.valorFinal)}/ano ÷ 12 = ${R$(alunoMesSis)}/al./mês. Comodato: ${R$(com.PV)} ÷ ${alunos} al. ÷ 12 = ${R$(com.valorPorAlunoMes)}/al./mês. Total: ${R$(totalAluMes)}/al./mês.`} />
                   </div>
                 </div>
               )}
@@ -893,10 +910,10 @@ export default function CalculadoraPage() {
                 Leasing de equipamentos — retorno garantido + projeção IPCA
               </div>
               <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '.4rem' }}>
-                PMT = PV × (1 + retorno) ÷ N — parcelamento = duração do contrato
+                Total recebido = PV × 3 — amortização do investimento + 2× de resultado
               </div>
               <div style={{ fontSize: '.75rem', color: 'rgba(255,255,255,.5)', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)' }}>
-                Fórmula de retorno garantido: retorno sobre PV fixo, prazo de amortização = duração total do contrato. Currículo reajustado por IPCA ao longo do contrato. Nº de alunos compartilhado com a aba Sistema.
+                PV = equipamentos + tx. manutenção + tx. administrativa. Total = PV × 3 dividido por N meses = parcela mensal fixa. Parcela ÷ alunos = valor por aluno/mês. Padrão: 48 meses (4 anos).
               </div>
             </div>
 
@@ -906,18 +923,15 @@ export default function CalculadoraPage() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem' }}>
                 <div>
                   <label style={LBL}>Nº de alunos</label>
-                  <input type="number" min={1} value={alunos} onChange={e => setAlunos(+e.target.value || 1)} style={INP} />
+                  <input type="number" min={1} value={alunos || ''} onChange={e => setAlunos(+e.target.value)} onBlur={() => { if (!(alunos >= 1)) setAlunos(1) }} style={INP} />
                   <div style={NOTA}>Compartilhado com aba Sistema. Usado para calcular valor por aluno/mês.</div>
                 </div>
                 <div>
-                  <label style={LBL}>Alunos na maior sala</label>
-                  <input type="number" min={2} max={60} value={maiorSala} onChange={e => setMaiorSala(+e.target.value || 20)} style={INP} />
-                  <div style={NOTA}>Define notebooks: ⌈{maiorSala} ÷ 2⌉ = {com.qtdNB} unidades. Padrão: 20 alunos.</div>
-                </div>
-                <div>
-                  <label style={LBL}>Retorno alvo (%)</label>
-                  <InlineNum value={+(lp.retornoAlvo * 100).toFixed(1)} onChange={v => setLp(p => ({ ...p, retornoAlvo: v / 100 }))} suffix="%" min={0} step={5} />
-                  <div style={NOTA}>Lucro sobre o PV. 200% = recupera PV + ganha 2×PV de lucro = recebe 3× o total investido.</div>
+                  <label style={LBL}>Retorno s/ equipamentos</label>
+                  <div style={{ ...INP, background: '#f0fdf4', color: '#15803d', fontWeight: 700, display: 'flex', alignItems: 'center' }}>
+                    {pct(com.retornoEquip)}
+                  </div>
+                  <div style={NOTA}>Calculado: {R$(com.totalRecebido)} recebido ÷ {R$(com.sumEquip)} equip − 1. Depende de N e PV.</div>
                 </div>
                 <div>
                   <label style={LBL}>IPCA anual estimado (%)</label>
@@ -926,8 +940,8 @@ export default function CalculadoraPage() {
                 </div>
                 <div>
                   <label style={LBL}>Duração contrato (meses)</label>
-                  <input type="number" min={12} max={120} step={12} value={lp.duracaoMeses} onChange={e => setLp(p => ({ ...p, duracaoMeses: Math.max(12, +e.target.value || 60) }))} style={INP} />
-                  <div style={NOTA}>Duração total do contrato = prazo de amortização. Padrão 60 meses (5 anos).</div>
+                  <input type="number" min={12} max={120} step={12} value={lp.duracaoMeses || ''} onChange={e => setLp(p => ({ ...p, duracaoMeses: +e.target.value }))} onBlur={() => { if (!(lp.duracaoMeses >= 12)) setLp(p => ({ ...p, duracaoMeses: 48 })) }} style={INP} />
+                  <div style={NOTA}>Duração total do contrato. Padrão 48 meses (4 anos).</div>
                 </div>
                 <div>
                   <label style={LBL}>Tx. Manutenção (%)</label>
@@ -947,7 +961,7 @@ export default function CalculadoraPage() {
                   { label: 'PV (investimento total)', value: R$(com.PV), sub: 'equip + manut + admin', color: '#4A7FDB' },
                   { label: 'Parcelas', value: `${com.N}x`, sub: `${com.N / 12} anos (igual ao contrato)`, color: '#0f172a' },
                   { label: 'Notebooks (⌈sala÷2⌉)', value: String(com.qtdNB), sub: `⌈${maiorSala} ÷ 2⌉`, color: '#0f172a' },
-                  { label: 'Retorno alvo', value: pct(lp.retornoAlvo), sub: `${R$(com.resultadoBruto)} de resultado bruto`, color: '#7c3aed' },
+                  { label: 'Retorno s/ equip.', value: pct(com.retornoEquip), sub: `lucro líquido ${R$(com.resultadoBruto)}`, color: '#7c3aed' },
                 ].map(k => (
                   <div key={k.label} style={{ background: '#f8fafc', borderRadius: 8, padding: '.75rem 1rem', border: '1px solid #e2e8f0' }}>
                     <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>{k.label}</div>
@@ -1056,13 +1070,13 @@ export default function CalculadoraPage() {
               {/* Sub-section A — Fórmula retorno garantido */}
               <div style={{ marginBottom: '1.25rem' }}>
                 <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#64748b', marginBottom: '.5rem' }}>
-                  Fórmula retorno garantido: PMT = PV × (1 + retorno) ÷ N
+                  Fórmula: PV × 3 ÷ N meses = parcela mensal → amortização + 2× resultado
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '.75rem 1rem', fontSize: '.8rem', fontFamily: 'var(--font-inter,sans-serif)', color: '#1e293b', marginBottom: '.75rem', lineHeight: 1.7 }}>
-                  {R$(com.PV)} × (1 + {pct(lp.retornoAlvo)}) ÷ {com.N} meses = <strong style={{ color: '#4A7FDB' }}>{R$(com.parcelaPrice)}/mês</strong>
+                  {R$(com.PV)} × 3 ÷ {com.N} meses = <strong style={{ color: '#4A7FDB' }}>{R$(com.parcelaPrice)}/mês</strong> &nbsp;·&nbsp; por aluno: <strong>{R$(com.valorPorAlunoMes)}/mês</strong> &nbsp;·&nbsp; total: <strong style={{ color: '#16a34a' }}>{R$(com.totalRecebido)}</strong>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
-                  <KV label="PV (investimento total)" value={R$(com.PV)} sub="equip + manut + admin" big />
+                  <KV label="PV (base do cálculo)" value={R$(com.PV)} sub={`equip ${R$(com.sumEquip)} + manut + admin`} big />
                   <KV label="Parcela (FIXA)" value={R$(com.parcelaPrice)} sub={`${com.N} parcelas mensais fixas`} color="#4A7FDB" big />
                   <KV label="Por aluno / mês" value={R$(com.valorPorAlunoMes)} sub={`${R$(com.parcelaPrice)} ÷ ${alunos} al.`} color="#7c3aed" big />
                 </div>
@@ -1073,25 +1087,31 @@ export default function CalculadoraPage() {
                 <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#64748b', marginBottom: '.5rem' }}>
                   Visão econômica ({lp.duracaoMeses} meses = {lp.duracaoMeses / 12} anos)
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
                   <KV
-                    label="Total recebido"
+                    label="Total recebido (leasing)"
                     value={R$(com.totalRecebido)}
                     sub={`${R$(com.parcelaPrice)} × ${com.N} meses`}
                     color="#0f172a"
                     big
                   />
                   <KV
-                    label="Resultado bruto"
+                    label="PV investido (equip+custos)"
+                    value={R$(com.PV)}
+                    sub={`equip ${R$(com.sumEquip)} + manut + admin`}
+                    color="#64748b"
+                  />
+                  <KV
+                    label="Resultado líquido"
                     value={R$(com.resultadoBruto)}
-                    sub={`${R$(com.totalRecebido)} − ${R$(com.PV)}`}
-                    color="#16a34a"
+                    sub={`recebido ${R$(com.totalRecebido)} − PV ${R$(com.PV)}`}
+                    color={com.resultadoBruto >= 0 ? '#16a34a' : '#dc2626'}
                     big
                   />
                   <KV
-                    label="Retorno s/ PV"
-                    value={pct(lp.retornoAlvo)}
-                    sub={`${R$(com.resultadoBruto)} ÷ ${R$(com.PV)}`}
+                    label="Retorno s/ equipamento"
+                    value={pct(com.retornoEquip)}
+                    sub={`${R$(com.totalRecebido)} ÷ ${R$(com.sumEquip)} − 1`}
                     color="#7c3aed"
                     big
                   />
@@ -1106,7 +1126,7 @@ export default function CalculadoraPage() {
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr>
-                      {['Ano', 'Período', 'Parcela currículo', 'Parcela leasing', 'Total escola/mês', 'Receita total ano'].map(h => <th key={h} style={th}>{h}</th>)}
+                      {['Ano', 'Período', 'Parcela currículo', 'Parcela leasing', 'Total escola/mês', 'Rec. leasing/ano', 'Rec. total/ano'].map(h => <th key={h} style={th}>{h}</th>)}
                     </tr>
                   </thead>
                   <tbody>
@@ -1122,9 +1142,19 @@ export default function CalculadoraPage() {
                         </td>
                         <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0369a1' }}>{R$(row.parcelaComodato)}</td>
                         <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>{R$(row.totalEscola)}</td>
+                        <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0369a1' }}>{R$(row.recCom)}</td>
                         <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#16a34a' }}>{R$(row.recTotal)}</td>
                       </tr>
                     ))}
+                    <tr style={{ background: '#f0fdf4', borderTop: '2px solid #86efac' }}>
+                      <td colSpan={5} style={{ padding: '.6rem .85rem', fontSize: '.72rem', fontWeight: 700, color: '#15803d', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                        TOTAL {com.N} meses — só leasing
+                      </td>
+                      <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.05rem', fontWeight: 800, color: '#0369a1' }}>{R$(com.totalRecebido)}</td>
+                      <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.05rem', fontWeight: 800, color: '#15803d' }}>
+                        {R$(com.tabela.reduce((s, r) => s + r.recTotal, 0))}
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -1155,7 +1185,7 @@ export default function CalculadoraPage() {
               </div>
               <div style={{ marginTop: '.75rem', fontSize: '.7rem', color: 'rgba(255,255,255,.35)', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)' }}>
                 Sistema: {alunos} al. × {R$(sis.valorFinal)}/ano ÷ 12 = {R$(alunoMesSis)}/al./mês &nbsp;·&nbsp;
-                Leasing: {R$(com.PV)} × (1 + {pct(lp.retornoAlvo)}) ÷ {com.N} meses ÷ {alunos} al. = {R$(com.valorPorAlunoMes)}/al./mês &nbsp;·&nbsp;
+                Comodato: {R$(com.PV)} ÷ {alunos} al. ÷ 12 = {R$(com.valorPorAlunoMes)}/al./mês &nbsp;·&nbsp;
                 Total: {R$(totalAluMes)}/al./mês · {R$(totalAluMes * 12)}/al./ano
               </div>
             </Card>

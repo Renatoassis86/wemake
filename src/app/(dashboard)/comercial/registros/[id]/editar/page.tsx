@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { upsertRegistro } from '@/lib/actions'
 import { notFound } from 'next/navigation'
 import PageHeader from '@/components/layout/PageHeader'
@@ -46,10 +47,11 @@ export default async function RegistroEditar({ params }: Props) {
   const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const admin = createAdminClient()
 
   const [{ data: registro }, { data: profiles }] = await Promise.all([
     supabase.from('registros').select('*, escola:escolas(id,nome)').eq('id', id).single(),
-    supabase.from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo'),
+    admin.from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo'),
   ])
 
   if (!registro) notFound()

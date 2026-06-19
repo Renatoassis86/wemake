@@ -114,11 +114,11 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
       data.negociacao?.escola_id
         ? supabase.from('escolas').select('nome').eq('id', data.negociacao.escola_id).single()
         : Promise.resolve({ data: null }),
-      supabase.from('usuarios').select('id, nome_completo, role').eq('ativo', true).order('nome_completo'),
+      fetch('/api/usuarios').then(r => r.json()),
       supabase.auth.getUser(),
     ])
     setEscolaNome((escRes as any).data?.nome ?? '')
-    setTodosProfiles((profsRes.data ?? []) as Profile[])
+    setTodosProfiles((Array.isArray(profsRes) ? profsRes : []) as Profile[])
     setMyId(userRes.data.user?.id ?? '')
     setLoading(false)
   }, [negociacaoId])
