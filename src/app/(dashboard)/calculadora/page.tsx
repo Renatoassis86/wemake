@@ -25,6 +25,7 @@ interface LeasingParams {
   duracaoMeses: number   // 48 = 4 anos (padrão)
   txMan: number          // taxa de manutenção sobre total de equipamentos (única)
   txAdmin: number        // taxa administrativa sobre total de equipamentos (única)
+  retornoAlvo: number    // retorno alvo sobre PV em % (padrão 200)
 }
 interface EquipItem { nome: string; qty: number; unit: number; fixedQty: boolean; nota?: string }
 
@@ -51,6 +52,7 @@ const DEFAULT_LEASING: LeasingParams = {
   duracaoMeses: 48,
   txMan: 0.25,
   txAdmin: 0.25,
+  retornoAlvo: 200,
 }
 
 const DEFAULT_EQUIP: EquipItem[] = [
@@ -129,8 +131,9 @@ function calcLeasing(
   const C_adm = lp.txAdmin * sumEquip   // ex: 25% de equipamentos
   const PV    = sumEquip + C_man + C_adm
 
-  // Total recebido = PV × 3 (amortiza investimento + 200% de resultado)
-  const totalRecebido    = PV * 3
+  // Total recebido = PV × (1 + retornoAlvo%) — amortiza investimento + resultado configurável
+  const multiplier       = 1 + (lp.retornoAlvo ?? 200) / 100
+  const totalRecebido    = PV * multiplier
   const parcelaPrice     = totalRecebido / N
   const resultadoBruto   = totalRecebido - PV                  // = 2×PV (200%)
   const valorPorAlunoMes = parcelaPrice / (alunos || 1)
@@ -910,10 +913,10 @@ export default function CalculadoraPage() {
                 Leasing de equipamentos — retorno garantido + projeção IPCA
               </div>
               <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '.4rem' }}>
-                Total recebido = PV × 3 — amortização do investimento + 2× de resultado
+                Total recebido = PV × (1 + retorno%) — amortização do investimento + resultado configurável
               </div>
               <div style={{ fontSize: '.75rem', color: 'rgba(255,255,255,.5)', lineHeight: 1.6, fontFamily: 'var(--font-inter,sans-serif)' }}>
-                PV = equipamentos + tx. manutenção + tx. administrativa. Total = PV × 3 dividido por N meses = parcela mensal fixa. Parcela ÷ alunos = valor por aluno/mês. Padrão: 48 meses (4 anos).
+                PV = equipamentos + tx. manutenção (única) + tx. administrativa (única). Total = PV × multiplicador dividido por N meses = parcela mensal fixa. Padrão: retorno 200% (PV × 3), 48 meses (4 anos).
               </div>
             </div>
 
@@ -927,11 +930,9 @@ export default function CalculadoraPage() {
                   <div style={NOTA}>Compartilhado com aba Sistema. Usado para calcular valor por aluno/mês.</div>
                 </div>
                 <div>
-                  <label style={LBL}>Retorno s/ PV (fixo)</label>
-                  <div style={{ ...INP, background: '#f0fdf4', color: '#15803d', fontWeight: 700, display: 'flex', alignItems: 'center' }}>
-                    {pct(com.retornoRealPV)}
-                  </div>
-                  <div style={NOTA}>Sempre 200%: recebe PV + 2×PV = 3×PV. Equip {R$(com.sumEquip)} + manut/admin = PV {R$(com.PV)}.</div>
+                  <label style={LBL}>Retorno alvo s/ PV (%)</label>
+                  <InlineNum value={lp.retornoAlvo} onChange={v => setLp(p => ({ ...p, retornoAlvo: Math.max(1, v) }))} suffix="%" min={1} step={10} />
+                  <div style={NOTA}>Retorno sobre o PV investido. Padrão 200% = PV × 3. Total = {R$(com.totalRecebido)} = PV × {(1 + lp.retornoAlvo / 100).toFixed(2)}.</div>
                 </div>
                 <div>
                   <label style={LBL}>IPCA anual estimado (%)</label>
@@ -1043,23 +1044,23 @@ export default function CalculadoraPage() {
 
             {/* 3. Taxas de manutenção/admin */}
             <Card>
-              <SecTitle n={3} title="Taxas de manutenção/admin (sobre preços unitários)" />
+              <SecTitle n={3} title="Taxas de manutenção/admin (valor único sobre total de equipamentos)" />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '.65rem' }}>
                 <KV
-                  label={`Manutenção: ${pct(lp.txMan)} × total equipamentos × ${com.anos} anos`}
+                  label={`Manutenção: ${pct(lp.txMan)} × total equipamentos`}
                   value={R$(com.C_man)}
-                  sub={`${pct(lp.txMan)} × ${R$(com.sumEquip)} × ${com.anos}`}
+                  sub={`${pct(lp.txMan)} × ${R$(com.sumEquip)}`}
                   color="#0f172a"
                 />
                 <KV
-                  label={`Admin: ${pct(lp.txAdmin)} × total equipamentos × ${com.anos} anos`}
+                  label={`Admin: ${pct(lp.txAdmin)} × total equipamentos`}
                   value={R$(com.C_adm)}
-                  sub={`${pct(lp.txAdmin)} × ${R$(com.sumEquip)} × ${com.anos}`}
+                  sub={`${pct(lp.txAdmin)} × ${R$(com.sumEquip)}`}
                   color="#0f172a"
                 />
               </div>
-              <Nota t={`Manutenção: ${pct(lp.txMan)} × ${R$(com.sumEquip)} (total equip.) × ${com.anos} anos = ${R$(com.C_man)}`} />
-              <Nota t={`Admin: ${pct(lp.txAdmin)} × ${R$(com.sumEquip)} (total equip.) × ${com.anos} anos = ${R$(com.C_adm)}`} />
+              <Nota t={`Manutenção: ${pct(lp.txMan)} × ${R$(com.sumEquip)} (total equip.) = ${R$(com.C_man)}`} />
+              <Nota t={`Admin: ${pct(lp.txAdmin)} × ${R$(com.sumEquip)} (total equip.) = ${R$(com.C_adm)}`} />
               <Nota t={`PV total: ${R$(com.sumEquip)} (equip.) + ${R$(com.C_man)} (manut.) + ${R$(com.C_adm)} (adm.) = ${R$(com.PV)}`} />
             </Card>
 
@@ -1070,10 +1071,10 @@ export default function CalculadoraPage() {
               {/* Sub-section A — Fórmula retorno garantido */}
               <div style={{ marginBottom: '1.25rem' }}>
                 <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#64748b', marginBottom: '.5rem' }}>
-                  Fórmula: PV × 3 ÷ N meses = parcela mensal → amortização + 2× resultado
+                  Fórmula: PV × (1 + {lp.retornoAlvo}%) ÷ N meses = parcela mensal → amortização + resultado
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '.75rem 1rem', fontSize: '.8rem', fontFamily: 'var(--font-inter,sans-serif)', color: '#1e293b', marginBottom: '.75rem', lineHeight: 1.7 }}>
-                  {R$(com.PV)} × 3 ÷ {com.N} meses = <strong style={{ color: '#4A7FDB' }}>{R$(com.parcelaPrice)}/mês</strong> &nbsp;·&nbsp; por aluno: <strong>{R$(com.valorPorAlunoMes)}/mês</strong> &nbsp;·&nbsp; total: <strong style={{ color: '#16a34a' }}>{R$(com.totalRecebido)}</strong>
+                  {R$(com.PV)} × {(1 + lp.retornoAlvo / 100).toFixed(2)} ÷ {com.N} meses = <strong style={{ color: '#4A7FDB' }}>{R$(com.parcelaPrice)}/mês</strong> &nbsp;·&nbsp; por aluno: <strong>{R$(com.valorPorAlunoMes)}/mês</strong> &nbsp;·&nbsp; total: <strong style={{ color: '#16a34a' }}>{R$(com.totalRecebido)}</strong>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
                   <KV label="PV (base do cálculo)" value={R$(com.PV)} sub={`equip ${R$(com.sumEquip)} + manut + admin`} big />
