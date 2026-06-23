@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Eye, EyeOff, ArrowRight, ArrowLeft, ClipboardList, Phone, Mail, MessageCircle } from 'lucide-react'
+import { Eye, EyeOff, ArrowRight, ArrowLeft, ClipboardList, Phone, Mail, MessageCircle, FileText } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import MobileNav from '@/components/mobile/MobileNav'
@@ -129,6 +129,23 @@ export default function LoginPage() {
           >
             <ArrowLeft size={14} />
             Voltar ao início
+          </Link>
+          <Link href="/proposta/acesso" style={{
+            display: 'inline-flex', alignItems: 'center', gap: '.4rem',
+            background: 'rgba(118,243,205,0.1)',
+            border: '1px solid rgba(118,243,205,0.3)',
+            color: '#76f3cd',
+            padding: '.45rem 1.1rem', borderRadius: 9999,
+            fontSize: '.78rem', fontWeight: 600, textDecoration: 'none',
+            letterSpacing: '.02em',
+            transition: 'all .2s',
+            fontFamily: 'var(--font-montserrat, sans-serif)',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(118,243,205,0.2)'; e.currentTarget.style.borderColor = 'rgba(118,243,205,0.6)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(118,243,205,0.1)'; e.currentTarget.style.borderColor = 'rgba(118,243,205,0.3)' }}
+          >
+            <FileText size={14} />
+            Ver minha proposta
           </Link>
           <a href="/formulario" style={{
             display: 'inline-flex', alignItems: 'center', gap: '.4rem',
@@ -487,7 +504,7 @@ export default function LoginPage() {
             </a>
 
             {/* Link escola parceira */}
-            <Link href="/acesso-escola" style={{
+            <Link href="/proposta/acesso" style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.45rem',
               marginTop: '.75rem',
               padding: '.6rem 1rem', borderRadius: 10,

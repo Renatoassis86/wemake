@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useRef } from 'react'
 import PageHeader from '@/components/layout/PageHeader'
-import { createClient } from '@/lib/supabase/client'
 
 // ── Formatação ────────────────────────────────────────────────────
 const R$ = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -383,16 +382,14 @@ export default function CalculadoraPage() {
     try {
       let logoUrl: string | null = null
 
-      // Upload logo to Supabase Storage
+      // Upload logo via API route (uses service_role to bypass storage RLS)
       if (logoFile) {
-        const supabase = createClient()
-        const ext = logoFile.name.split('.').pop() ?? 'png'
-        const fileName = `escola-${Date.now()}.${ext}`
-        const { error: uploadErr } = await supabase.storage
-          .from('proposta-logos')
-          .upload(fileName, logoFile, { contentType: logoFile.type, upsert: true })
-        if (uploadErr) throw new Error('Falha no upload do logo: ' + uploadErr.message)
-        logoUrl = supabase.storage.from('proposta-logos').getPublicUrl(fileName).data.publicUrl
+        const fd = new FormData()
+        fd.append('file', logoFile)
+        const upRes = await fetch('/api/propostas/upload-logo', { method: 'POST', body: fd })
+        const upData = await upRes.json()
+        if (!upRes.ok) throw new Error('Falha no upload do logo: ' + (upData.error ?? upRes.status))
+        logoUrl = upData.url
       }
 
       // POST to /api/propostas
@@ -1503,7 +1500,7 @@ export default function CalculadoraPage() {
                       {propostaResult.pin}
                     </div>
                     <div style={{ fontSize: '.7rem', color: '#78716c', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.3rem' }}>
-                      A escola usa este PIN para acessar a proposta em /acesso-escola
+                      A escola usa este PIN para acessar a proposta em /proposta/acesso
                     </div>
                   </div>
 
