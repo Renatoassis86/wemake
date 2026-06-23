@@ -379,25 +379,25 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
         <section ref={sec(1)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', display: 'flex', alignItems: 'stretch', background: C.ivory, overflow: 'hidden', position: 'relative' }}>
           <Glow color="rgba(76,138,222,0.06)" size={500} style={{ top: -120, right: -120 }} />
 
-          {/* foto lateral */}
-          <div style={{ width: 'clamp(280px,38%,460px)', flexShrink: 0, background: C.navy, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'var(--section-py) clamp(24px,4vw,56px)', position: 'relative', overflow: 'hidden' }}>
-            <Glow color="rgba(118,243,205,0.15)" size={500} style={{ bottom: -100, right: -100 }} />
-            <Aurora color1="rgba(76,138,222,0.18)" color2="rgba(118,243,205,0.1)" style={{ top: -160, left: -160 }} />
-            <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              {/* círculo grande */}
-              <div style={{ position: 'relative' }}>
-                <div style={{ animation: 'glow-pulse 4s ease-in-out infinite', position: 'absolute', inset: -16, borderRadius: '50%', background: `radial-gradient(circle,rgba(118,243,205,0.18) 0%,transparent 70%)` }} />
-                <div style={{ width: 'clamp(240px,28vh,320px)', height: 'clamp(240px,28vh,320px)', borderRadius: '50%', padding: 5, border: `3px solid ${C.mint}`, boxShadow: `0 0 48px rgba(118,243,205,0.25), 0 20px 60px rgba(0,0,0,0.55)` }}>
-                  <img src="/proposta/denis_ceo.png" alt="Denis Júlio" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', objectPosition: 'top center' }} />
-                </div>
-                {/* badge de nome sobreposto na base */}
-                <div style={{ position: 'absolute', bottom: -4, left: '50%', transform: 'translateX(-50%)', background: 'rgba(11,31,68,0.92)', backdropFilter: 'blur(12px)', border: `1px solid rgba(118,243,205,0.25)`, borderRadius: 999, padding: '8px 20px', display: 'flex', alignItems: 'center', gap: 10, whiteSpace: 'nowrap', boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: C.mint, flexShrink: 0 }} />
-                  <div>
-                    <p style={{ fontFamily: 'Fraunces, serif', fontSize: '0.875rem', color: C.white, fontWeight: 600, lineHeight: 1.2 }}>Dênis Júlio</p>
-                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: C.mint, letterSpacing: '0.08em', textTransform: 'uppercase', lineHeight: 1.2 }}>Fundador · We Make</p>
-                  </div>
-                </div>
+          {/* foto lateral — preenchimento total da coluna */}
+          <div style={{ width: 'clamp(280px,38%,480px)', flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
+            {/* foto preenchendo toda a coluna */}
+            <img
+              src="/proposta/denis_ceo.png"
+              alt="Denis Júlio"
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
+            />
+            {/* gradiente: navy nas bordas para fundir */}
+            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to right, ${C.navy} 0%, rgba(11,31,68,0.15) 30%, transparent 60%)` }} />
+            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, ${C.navy} 0%, rgba(11,31,68,0.4) 20%, transparent 50%)` }} />
+            {/* anel de glow decorativo */}
+            <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 60% 40%, rgba(118,243,205,0.08) 0%, transparent 60%)`, pointerEvents: 'none' }} />
+            {/* badge de nome na base */}
+            <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', background: 'rgba(11,31,68,0.88)', backdropFilter: 'blur(16px)', border: `1px solid rgba(118,243,205,0.3)`, borderRadius: 999, padding: '10px 22px', display: 'flex', alignItems: 'center', gap: 10, whiteSpace: 'nowrap', boxShadow: '0 4px 24px rgba(0,0,0,0.5)', zIndex: 2 }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: C.mint, flexShrink: 0, boxShadow: `0 0 8px ${C.mint}` }} />
+              <div>
+                <p style={{ fontFamily: 'Fraunces, serif', fontSize: '0.9rem', color: C.white, fontWeight: 600, lineHeight: 1.2 }}>Dênis Júlio</p>
+                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: C.mint, letterSpacing: '0.1em', textTransform: 'uppercase', lineHeight: 1.2 }}>Fundador · We Make</p>
               </div>
             </div>
           </div>
