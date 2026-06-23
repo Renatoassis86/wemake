@@ -420,12 +420,15 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
             </Reveal>
             <Reveal delay={220}>
               <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-base)', color: '#334155', lineHeight: 1.75, marginBottom: 14 }}>
-                Atuamos como parceira de escolas que desejam oferecer aos seus estudantes uma formação tecnológica consistente, organizada curricularmente e acompanhada com intencionalidade pedagógica.
+                Atuamos como parceira de escolas que desejam oferecer aos seus estudantes uma formação tecnológica consistente, organizada curricularmente e acompanhada com intencionalidade pedagógica. Nossa proposta não se limita ao fornecimento de aulas ou materiais: trabalhamos com currículo estruturado, formação docente, acompanhamento contínuo, orientação de implantação e apoio à organização do espaço maker, de modo coerente e com fidelidade à Cosmovisão Cristã.
               </p>
             </Reveal>
             <Reveal delay={320}>
+              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-base)', color: '#334155', lineHeight: 1.75, marginBottom: 14 }}>
+                É com grande gratidão que agradecemos à <strong style={{ color: C.navy }}>{p.escola_nome}</strong> pela oportunidade de considerar a We Make como uma parceira estratégica para enriquecer o trabalho pedagógico envolvendo a tecnologia e a cultura maker.
+              </p>
               <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-base)', color: '#334155', lineHeight: 1.75, marginBottom: 24 }}>
-                É com grande gratidão que agradecemos à <strong style={{ color: C.navy }}>{p.escola_nome}</strong> pela oportunidade de considerarem a We Make como parceira estratégica. Valorizamos profundamente o compromisso com a inovação educacional.
+                Valorizamos profundamente o compromisso da sua escola com a inovação educacional e estamos entusiasmados com a possibilidade de colaborar para promover experiências de aprendizagem criativas e significativas, mas sem abrir mão dos princípios e valores cristãos.
               </p>
               <div className="surface-glass-ivory" style={{ padding: '16px 22px', display: 'inline-flex', alignItems: 'center', gap: 16, borderRadius: 14 }}>
                 <div>
@@ -677,6 +680,18 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                 </Reveal>
               ))}
             </div>
+
+            {/* galeria de imagens — proposta1 a 3 */}
+            <Reveal delay={480}>
+              <div style={{ marginTop: 20, display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
+                {['proposta1.png', 'proposta2.png', 'proposta3.png'].map(src => (
+                  <div key={src} style={{ borderRadius: 12, overflow: 'hidden', height: 140, position: 'relative' }}>
+                    <img src={`/proposta/${src}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(11,31,68,0.55) 0%, transparent 60%)' }} />
+                  </div>
+                ))}
+              </div>
+            </Reveal>
           </div>
         </section>
 
@@ -797,6 +812,18 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     </div>
                   ))}
                 </div>
+              </div>
+            </Reveal>
+
+            {/* galeria de imagens — proposta4 a 6 */}
+            <Reveal delay={460}>
+              <div style={{ marginTop: 20, display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
+                {['proposta4.png', 'proposta5.png', 'proposta6.png'].map(src => (
+                  <div key={src} style={{ borderRadius: 12, overflow: 'hidden', height: 140, position: 'relative' }}>
+                    <img src={`/proposta/${src}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(11,31,68,0.04)' }} />
+                  </div>
+                ))}
               </div>
             </Reveal>
           </div>
