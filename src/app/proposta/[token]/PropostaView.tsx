@@ -244,7 +244,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
 
   const sections = [
     'capa', 'carta', 'div1', 'config', 'investimento', 'escopo',
-    ...(hasComodato ? ['div2', 'modelo1', 'comodato', 'resumo'] : []),
+    ...(hasComodato ? ['maker-intro', 'modelo1', 'modelo2', 'resumo'] : ['maker-assessoria']),
     'contato',
   ]
 
@@ -719,6 +719,68 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
+            6 · ASSESSORIA SALA MAKER — apenas quando NÃO tem comodato
+        ══════════════════════════════════════════════════════════════ */}
+        {!hasComodato && (
+          <section ref={sec(6)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.navy, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
+            <Glow color="rgba(118,243,205,0.12)" size={560} style={{ top: -120, left: -120 }} />
+            <Glow color="rgba(76,138,222,0.18)" size={420} style={{ bottom: -80, right: -80 }} />
+            <Aurora color1="rgba(76,138,222,0.08)" color2="rgba(118,243,205,0.06)" style={{ top: -180, right: -80 }} />
+
+            {/* coluna conteúdo — esquerda */}
+            <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div style={{ maxWidth: 640, width: '100%' }}>
+              <Reveal>
+                <Eyebrow>Espaço Maker</Eyebrow>
+                <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.white, marginBottom: 12, letterSpacing: '-0.02em', lineHeight: 1.05, textWrap: 'balance' } as React.CSSProperties}>
+                  Apoio completo para sua Sala Maker
+                </h2>
+                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, marginBottom: 8, maxWidth: 580 }}>
+                  Para apoiar a escola na organização de um espaço adequado ao desenvolvimento da Educação Tecnológica e Maker, a We Make oferece orientação completa para a implantação dos recursos necessários à operação da disciplina.
+                </p>
+                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.75, marginBottom: 24, maxWidth: 580 }}>
+                  A organização e a aquisição dos recursos do espaço maker são realizadas pela própria escola. A We Make atua como parceira estratégica em todo o processo de planejamento e implantação.
+                </p>
+              </Reveal>
+
+              <Reveal delay={100}>
+                <div style={{ borderRadius: 16, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', padding: '20px 24px', marginBottom: 20 }}>
+                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.16em', color: C.mint, marginBottom: 14 }}>O que a We Make oferece</p>
+                  {[
+                    'Planejamento e orientação para implantação da disciplina',
+                    'Onboarding presencial de implantação',
+                    'Apoio à organização do espaço maker em nível compatível com a proposta',
+                    'Memorial descritivo do espaço maker (projeto arquitetônico)',
+                    'Acompanhamento pedagógico recorrente ao longo da vigência',
+                    'Assessoria tecnológica e teológica para uso do espaço',
+                  ].map((item, i) => (
+                    <Reveal key={item} delay={i * 40}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '7px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.mint, flexShrink: 0, marginTop: 5 }} />
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.62)', lineHeight: 1.5 }}>{item}</span>
+                      </div>
+                    </Reveal>
+                  ))}
+                </div>
+              </Reveal>
+
+              <Reveal delay={320}>
+                <div style={{ padding: '12px 18px', borderLeft: `3px solid ${C.mint}`, background: 'rgba(118,243,205,0.06)', borderRadius: '0 12px 12px 0' }}>
+                  <p style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7 }}>
+                    A aquisição dos equipamentos, máquinas e recursos do espaço maker é de responsabilidade da escola. Não está incluída nesta proposta, salvo contratação específica.
+                  </p>
+                </div>
+              </Reveal>
+            </div></div>
+
+            {/* coluna imagem — direita */}
+            <div style={{ width: 'clamp(260px,36%,460px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
+              <img src="/proposta/proposta6.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(11,31,68,0.85) 0%, rgba(11,31,68,0.25) 40%, transparent 70%)' }} />
+            </div>
+          </section>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════
             COMODATO — sections 6, 7, 8, 9
         ══════════════════════════════════════════════════════════════ */}
         {hasComodato && (
@@ -994,8 +1056,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     {[
                       { criterio: 'Formato de implantação', m1: 'A escola realiza diretamente a aquisição dos recursos reutilizáveis necessários à implantação do espaço maker.', m2: 'A We Make disponibiliza os recursos reutilizáveis durante a vigência contratual, com possibilidade de transferência definitiva à escola ao final do contrato.' },
                       { criterio: 'Propriedade durante o contrato', m1: 'Os recursos pertencem à escola desde a aquisição.', m2: 'Os recursos permanecem vinculados à We Make durante a vigência contratual. Ao final, cumpridas as condições contratuais, os recursos poderão ser transferidos definitivamente à escola.' },
-                      { criterio: 'Investimento inicial em recursos reutilizáveis', m1: R$(p.comodato_pv ?? 0), m2: '—' },
-                      { criterio: 'Investimento anual por aluno', m1: R$(p.valor_aluno_ano), m2: R$(p.valor_aluno_ano + (p.comodato_parcela ?? 0) * 12 / (p.num_alunos || 1)) },
+                      { criterio: 'Investimento inicial em recursos', m1: R$(p.comodato_pv ?? 0), m2: '—' },
                       { criterio: 'Vantagem principal', m1: 'A escola fortalece imediatamente seu patrimônio próprio e tem maior autonomia sobre os recursos adquiridos.', m2: 'A escola reduz o desembolso inicial, implanta o espaço maker com recursos disponibilizados pela We Make e pode incorporar esses bens ao seu patrimônio ao final da vigência.' },
                       { criterio: 'Indicado para', m1: 'Escolas que desejam investir diretamente em infraestrutura própria desde o início da parceria.', m2: 'Escolas que desejam diluir o investimento nos recursos reutilizáveis ao longo do contrato, preservando a possibilidade de incorporação patrimonial futura.' },
                       { criterio: 'Validade da Proposta', m1: fmtDate(p.validade), m2: fmtDate(p.validade) },
@@ -1013,9 +1074,9 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                 <Reveal delay={280}>
                   <div style={{ marginTop: 16, background: `linear-gradient(135deg,${C.royal},${C.royalD})`, borderRadius: 18, padding: '22px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, boxShadow: '0 12px 48px rgba(76,138,222,0.4)' }}>
                     {[
-                      { label: 'Total escola / mês (M2)', val: R$(totalAnual / 12 + mensalComd), color: C.white },
-                      { label: 'Por aluno / mês (M2)',    val: R$((totalAnual / 12 + mensalComd) / (p.num_alunos || 1)), color: C.mint },
-                      { label: `Total ${p.duracao_meses}m (M2)`, val: R$((totalAnual / 12 + mensalComd) * p.duracao_meses), color: C.amber },
+                      { label: 'Investimento mensal total', val: R$(totalAnual / 12 + mensalComd), color: C.white },
+                      { label: 'Custo por aluno / mês',   val: R$((totalAnual / 12 + mensalComd) / (p.num_alunos || 1)), color: C.mint },
+                      { label: `Investimento total (${p.duracao_meses}m)`, val: R$((totalAnual / 12 + mensalComd) * p.duracao_meses), color: C.amber },
                     ].map((item) => (
                       <div key={item.label}>
                         <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.55)', marginBottom: 6 }}>{item.label}</p>
