@@ -243,7 +243,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
   const descPct      = Math.max(0, Math.round((1 - p.valor_aluno_ano / 420) * 100))
 
   const sections = [
-    'capa', 'carta', 'div1', 'config', 'investimento', 'escopo', 'sala-maker',
+    'capa', 'carta', 'div1', 'config', 'investimento', 'escopo',
     ...(hasComodato ? ['div2', 'modelo1', 'comodato', 'resumo'] : []),
     'contato',
   ]
@@ -719,136 +719,12 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
-            6 · SALA MAKER — sempre presente (ivory)
-        ══════════════════════════════════════════════════════════════ */}
-        <section ref={sec(6)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.ivory, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
-          <Glow color="rgba(76,138,222,0.06)" size={480} style={{ top: -80, right: -80 }} />
-          <Glow color="rgba(118,243,205,0.05)" size={360} style={{ bottom: -60, left: -80 }} />
-
-          {/* coluna imagem — esquerda */}
-          <div style={{ width: 'clamp(260px,36%,460px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
-            <img src="/proposta/proposta6.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(248,250,252,0.88) 0%, rgba(248,250,252,0.2) 35%, transparent 65%)' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'rgba(11,31,68,0.06)' }} />
-          </div>
-
-          {/* coluna conteúdo — direita */}
-          <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) clamp(20px,3vw,48px)', overflowY: 'auto' }}><div>
-
-            {/* header */}
-            <Reveal>
-              <Eyebrow dark>{hasComodato ? 'Espaço Maker' : 'O que preparar'}</Eyebrow>
-              <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 12 }}>
-                <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.navy, letterSpacing: '-0.02em', lineHeight: 1.05, textWrap: 'balance' } as React.CSSProperties}>
-                  {hasComodato ? 'O que é a Sala Maker' : 'Requisitos para a Sala Maker'}
-                </h2>
-                <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', fontWeight: 700, color: C.royal, textTransform: 'uppercase', letterSpacing: '0.14em', padding: '4px 12px', borderRadius: 99, border: `1px solid ${C.royal}`, whiteSpace: 'nowrap' }}>
-                  We Make Standard
-                </span>
-              </div>
-              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.75, maxWidth: 620, marginBottom: 8 }}>
-                O Espaço Maker é o laboratório físico onde os estudantes desenvolvem projetos de engenharia, robótica, fabricação digital, programação, eletrônica e cultura maker. Para que a experiência seja segura, funcional e inspiradora, a We Make definiu parâmetros mínimos de infraestrutura que o ambiente deve atender.
-              </p>
-              {hasComodato ? (
-                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', color: '#64748b', lineHeight: 1.65, maxWidth: 620, marginBottom: 'clamp(14px,2vh,22px)', padding: '10px 16px', borderLeft: `3px solid ${C.royal}`, background: 'rgba(76,138,222,0.05)', borderRadius: '0 10px 10px 0' }}>
-                  As especificações abaixo definem o ambiente físico que a escola deve organizar. Nas seções seguintes apresentamos as duas formas de disponibilização dos recursos e equipamentos necessários à operação da disciplina.
-                </p>
-              ) : (
-                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', color: '#64748b', lineHeight: 1.65, maxWidth: 620, marginBottom: 'clamp(14px,2vh,22px)', padding: '10px 16px', borderLeft: `3px solid ${C.royal}`, background: 'rgba(76,138,222,0.05)', borderRadius: '0 10px 10px 0' }}>
-                  Como parte da parceria curricular, a escola é responsável por organizar e manter o espaço físico de acordo com as especificações abaixo. A We Make orienta o processo de implantação e fornece o memorial descritivo completo durante o onboarding.
-                </p>
-              )}
-            </Reveal>
-
-            {/* tabela animada */}
-            <Reveal delay={140}>
-              <div className="surface-glass-ivory" style={{ borderRadius: 16, overflow: 'hidden' }}>
-
-                {/* cabeçalho da tabela */}
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 3fr 1fr', background: C.navy, padding: '10px 20px', gap: 12 }}>
-                  {['Requisito', 'Especificação', 'Status'].map(h => (
-                    <span key={h} style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,255,255,0.55)' }}>{h}</span>
-                  ))}
-                </div>
-
-                {/* linhas por categoria */}
-                {[
-                  {
-                    cat: 'Espaço Físico', catColor: C.royal,
-                    rows: [
-                      { req: 'Área útil',          spec: 'Mínimo 60 m² (recomendado 80 m²)',                status: 'Obrigatório' },
-                      { req: 'Pé-direito',          spec: 'Mínimo 2,80 m',                                  status: 'Obrigatório' },
-                      { req: 'Piso',                spec: 'Epóxi, vinílico ESD ou taco de madeira',          status: 'Recomendado' },
-                      { req: 'Iluminação',          spec: 'LED 4.000 K, ≥ 500 lux, dimerizável',            status: 'Obrigatório' },
-                    ],
-                  },
-                  {
-                    cat: 'Infraestrutura Elétrica', catColor: C.mintD,
-                    rows: [
-                      { req: 'Tomadas 110V',        spec: '30 pontos 2P+T distribuídos nas bancadas',        status: 'Obrigatório' },
-                      { req: 'Tomadas 220V',        spec: '6 pontos para equipamentos especiais',             status: 'Obrigatório' },
-                      { req: 'Circuito dedicado',   spec: 'Disjuntor 30A exclusivo para a sala',             status: 'Obrigatório' },
-                      { req: 'Carga estimada',      spec: '≥ 6 kVA disponíveis',                             status: 'Obrigatório' },
-                    ],
-                  },
-                  {
-                    cat: 'Conectividade', catColor: '#0ea5e9',
-                    rows: [
-                      { req: 'Wi-Fi',               spec: 'Access Point Wi-Fi 5 ou 6 (mín. 2 APs)',         status: 'Obrigatório' },
-                      { req: 'Cabeamento',          spec: '8 pontos RJ-45 Cat 6 nas bancadas',               status: 'Recomendado' },
-                      { req: 'Velocidade mínima',   spec: '100 Mbps simétrico garantido',                    status: 'Obrigatório' },
-                      { req: 'Nobreak / UPS',       spec: '≥ 2 kVA para equipamentos críticos',             status: 'Recomendado' },
-                    ],
-                  },
-                  {
-                    cat: 'Climatização & Ambiente', catColor: C.amber,
-                    rows: [
-                      { req: 'Ar-condicionado',     spec: '36.000 BTU (2 splits de 18.000 BTU)',            status: 'Obrigatório' },
-                      { req: 'Temperatura',         spec: 'Manutenção entre 18°C e 22°C',                   status: 'Obrigatório' },
-                      { req: 'Ventilação cruzada',  spec: 'Janelas ou exaustão mecânica',                    status: 'Recomendado' },
-                      { req: 'Acústica',            spec: 'Revestimento fonoabsorvente parcial',             status: 'Opcional' },
-                    ],
-                  },
-                ].map((group, gi) => (
-                  <div key={group.cat}>
-                    {/* categoria header */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 20px', background: 'rgba(11,31,68,0.04)', borderTop: '1px solid rgba(11,31,68,0.06)' }}>
-                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: group.catColor, flexShrink: 0 }} />
-                      <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: group.catColor }}>{group.cat}</span>
-                    </div>
-                    {/* linhas */}
-                    {group.rows.map((row, ri) => (
-                      <TableRow key={row.req} row={row} delay={(gi * 4 + ri) * 45} catColor={group.catColor} />
-                    ))}
-                  </div>
-                ))}
-
-                {/* rodapé */}
-                <div style={{ padding: '10px 20px', background: 'rgba(11,31,68,0.03)', borderTop: '1px solid rgba(11,31,68,0.06)', display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
-                  {[
-                    { dot: C.navy,   label: 'Obrigatório — essencial para funcionamento' },
-                    { dot: C.royal,  label: 'Recomendado — impacta qualidade' },
-                    { dot: '#94a3b8',label: 'Opcional — diferencial' },
-                  ].map(l => (
-                    <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <div style={{ width: 6, height: 6, borderRadius: '50%', background: l.dot }} />
-                      <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: '#64748b' }}>{l.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </Reveal>
-
-          </div></div>
-        </section>
-
-        {/* ══════════════════════════════════════════════════════════════
-            COMODATO — sections 7, 8, 9
+            COMODATO — sections 6, 7, 8, 9
         ══════════════════════════════════════════════════════════════ */}
         {hasComodato && (
           <>
             {/* 7 · ESPAÇO MAKER INTRO — tony navy, dois modelos */}
-            <section ref={sec(7)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.navy, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
+            <section ref={sec(6)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.navy, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
               <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/proposta/proposta1.png)', backgroundSize: 'cover', backgroundPosition: 'center', filter: 'brightness(0.08) saturate(0.3)' }} />
               <Glow color="rgba(118,243,205,0.14)" size={600} style={{ top: -160, right: -160 }} />
               <Glow color="rgba(76,138,222,0.2)" size={500} style={{ bottom: -120, left: -120 }} />
@@ -911,7 +787,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
             </section>
 
             {/* 8 · MODELO 1 — Investimento Patrimonial (tabela de custos) */}
-            <section ref={sec(8)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.ivory, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
+            <section ref={sec(7)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.ivory, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
               <Glow color="rgba(76,138,222,0.06)" size={480} style={{ top: -80, right: -80 }} />
               <Glow color="rgba(118,243,205,0.04)" size={360} style={{ bottom: -60, left: -80 }} />
 
@@ -990,7 +866,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
             </section>
 
             {/* 9 · MODELO 2 (COMODATO) — tone: royal */}
-            <section ref={sec(9)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.royalD, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
+            <section ref={sec(8)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.royalD, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
               <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(160deg,${C.royal},${C.royalD})` }} />
               <Glow color="rgba(118,243,205,0.18)" size={460} style={{ top: -80, right: -80 }} />
               <Aurora color1="rgba(118,243,205,0.1)" color2="rgba(11,31,68,0.15)" style={{ bottom: -200, left: -160 }} />
@@ -1088,7 +964,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
             </section>
 
             {/* 10 · RESUMO COMPARATIVO — tone: navy */}
-            <section ref={sec(10)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.navy, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflow: 'hidden', position: 'relative' }}>
+            <section ref={sec(9)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.navy, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflow: 'hidden', position: 'relative' }}>
               <Glow color="rgba(255,204,0,0.1)" size={440} style={{ top: -80, right: -80 }} />
               <Glow color="rgba(76,138,222,0.18)" size={380} style={{ bottom: -80, left: -80 }} />
 
