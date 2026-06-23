@@ -2,43 +2,28 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const MAX_BYTES = 400 * 1024 // 400 KB
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData()
     const file = formData.get('file') as File | null
-    if (!file) return NextResponse.json({ error: 'No file provided' }, { status: 400 })
+    if (!file) return NextResponse.json({ error: 'Nenhum arquivo enviado.' }, { status: 400 })
 
-    const ext  = file.name.split('.').pop() ?? 'png'
-    const name = `logo-${Date.now()}.${ext}`
-    const buf  = await file.arrayBuffer()
-
-    // Use Storage REST API directly — service_role bypasses RLS via HTTP Authorization header
-    const uploadRes = await fetch(
-      `${SUPABASE_URL}/storage/v1/object/proposta-logos/${name}`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${SERVICE_KEY}`,
-          'apikey':        SERVICE_KEY,
-          'Content-Type':  file.type,
-          'x-upsert':      'true',
-        },
-        body: buf,
-      },
-    )
-
-    if (!uploadRes.ok) {
-      const errText = await uploadRes.text()
-      return NextResponse.json({ error: errText }, { status: 500 })
+    if (file.size > MAX_BYTES) {
+      return NextResponse.json(
+        { error: 'Imagem muito grande. Use um arquivo menor que 400 KB.' },
+        { status: 400 },
+      )
     }
 
-    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/proposta-logos/${name}`
-    return NextResponse.json({ url: publicUrl })
+    const buf    = await file.arrayBuffer()
+    const base64 = Buffer.from(buf).toString('base64')
+    const url    = `data:${file.type};base64,${base64}`
+
+    return NextResponse.json({ url })
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : 'Unknown error'
+    const msg = e instanceof Error ? e.message : 'Erro desconhecido'
     return NextResponse.json({ error: msg }, { status: 500 })
   }
 }
