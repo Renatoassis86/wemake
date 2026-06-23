@@ -465,13 +465,14 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
         {/* ══════════════════════════════════════════════════════════════
             3 · CONFIGURAÇÃO — tone: royal (azul We Make, como Services)
         ══════════════════════════════════════════════════════════════ */}
-        <section ref={sec(3)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.royal, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflow: 'hidden', position: 'relative' }}>
+        <section ref={sec(3)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.royal, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
           <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(160deg,${C.royal},${C.royalD})` }} />
           <Glow color="rgba(118,243,205,0.18)" size={480} style={{ top: -100, right: -100 }} />
           <Glow color="rgba(11,31,68,0.3)" size={400} style={{ bottom: -80, left: -80 }} />
           <Aurora color1="rgba(118,243,205,0.1)" color2="rgba(11,31,68,0.15)" style={{ bottom: -200, right: -120 }} />
 
-          <div style={{ position: 'relative', zIndex: 2, maxWidth: 900, width: '100%', margin: '0 auto' }}>
+          {/* coluna conteúdo — esquerda */}
+          <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div>
             <Reveal>
               <Eyebrow>Objetivo da Parceria</Eyebrow>
               <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.white, marginBottom: 8, letterSpacing: '-0.02em', lineHeight: 1.05, textWrap: 'balance' } as React.CSSProperties}>
@@ -528,19 +529,32 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                   ))}
                 </div>
               </Reveal>
-            </div>
+            </div></div>
+          </div>
+
+          {/* coluna imagem — direita */}
+          <div style={{ width: 'clamp(280px,38%,480px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
+            <img src="/proposta/proposta1.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(76,138,222,0.75) 0%, rgba(76,138,222,0.2) 35%, transparent 70%)' }} />
           </div>
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
             4 · INVESTIMENTO — tone: navy premium
         ══════════════════════════════════════════════════════════════ */}
-        <section ref={sec(4)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.navy, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'var(--section-py) var(--gutter)', overflow: 'hidden', position: 'relative' }}>
+        <section ref={sec(4)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.navy, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
           <Glow color="rgba(118,243,205,0.12)" size={600} style={{ top: -160, right: -160 }} />
           <Glow color="rgba(76,138,222,0.2)" size={500} style={{ bottom: -120, left: -120 }} />
           <Aurora color1="rgba(76,138,222,0.08)" color2="rgba(118,243,205,0.06)" style={{ top: -200, left: -100 }} />
 
-          <div style={{ position: 'relative', zIndex: 2, maxWidth: 860, width: '100%', margin: '0 auto' }}>
+          {/* coluna imagem — esquerda */}
+          <div style={{ width: 'clamp(240px,34%,420px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
+            <img src="/proposta/proposta2.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(11,31,68,0.8) 0%, rgba(11,31,68,0.25) 40%, transparent 75%)' }} />
+          </div>
+
+          {/* coluna conteúdo — direita */}
+          <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div style={{ maxWidth: 700, width: '100%' }}>
 
             {/* eyebrow + título */}
             <Reveal>
@@ -638,18 +652,19 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               </div>
             </Reveal>
 
-          </div>
+          </div></div>
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
             5 · ESCOPO — tone: navy (escuro, igual à seção Soluções)
         ══════════════════════════════════════════════════════════════ */}
-        <section ref={sec(5)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.navy, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflow: 'hidden', position: 'relative' }}>
+        <section ref={sec(5)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.navy, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
           <Glow color="rgba(118,243,205,0.14)" size={500} style={{ top: -100, right: -100 }} />
           <Glow color="rgba(76,138,222,0.18)" size={400} style={{ bottom: -80, left: -100 }} />
           <Aurora color1="rgba(118,243,205,0.08)" color2="rgba(76,138,222,0.1)" style={{ bottom: -200, right: -80 }} />
 
-          <div style={{ position: 'relative', zIndex: 2, maxWidth: 960, width: '100%', margin: '0 auto' }}>
+          {/* coluna conteúdo — esquerda */}
+          <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div>
             <Reveal>
               <Eyebrow>Escopo da Parceria</Eyebrow>
               <h2 className="text-gradient-cinematic" style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', marginBottom: 8, letterSpacing: '-0.02em', lineHeight: 1.05 }}>
@@ -681,28 +696,31 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               ))}
             </div>
 
-            {/* galeria de imagens — proposta1 a 3 */}
-            <Reveal delay={480}>
-              <div style={{ marginTop: 20, display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
-                {['proposta1.png', 'proposta2.png', 'proposta3.png'].map(src => (
-                  <div key={src} style={{ borderRadius: 12, overflow: 'hidden', height: 140, position: 'relative' }}>
-                    <img src={`/proposta/${src}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(11,31,68,0.55) 0%, transparent 60%)' }} />
-                  </div>
-                ))}
-              </div>
-            </Reveal>
+          </div></div>
+
+          {/* coluna imagem — direita */}
+          <div style={{ width: 'clamp(280px,36%,460px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
+            <img src="/proposta/proposta3.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(11,31,68,0.8) 0%, rgba(11,31,68,0.2) 40%, transparent 70%)' }} />
           </div>
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
             6 · SALA MAKER — sempre presente (ivory)
         ══════════════════════════════════════════════════════════════ */}
-        <section ref={sec(6)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.ivory, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflow: 'hidden', position: 'relative' }}>
+        <section ref={sec(6)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.ivory, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
           <Glow color="rgba(76,138,222,0.06)" size={480} style={{ top: -80, right: -80 }} />
           <Glow color="rgba(118,243,205,0.05)" size={360} style={{ bottom: -60, left: -80 }} />
 
-          <div style={{ position: 'relative', zIndex: 2, maxWidth: 1000, width: '100%', margin: '0 auto' }}>
+          {/* coluna imagem — esquerda */}
+          <div style={{ width: 'clamp(260px,36%,460px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
+            <img src="/proposta/proposta4.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(248,250,252,0.88) 0%, rgba(248,250,252,0.2) 35%, transparent 65%)' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'rgba(11,31,68,0.06)' }} />
+          </div>
+
+          {/* coluna conteúdo — direita */}
+          <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) clamp(20px,3vw,48px)', overflowY: 'auto' }}><div>
 
             {/* header */}
             <Reveal>
@@ -815,18 +833,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               </div>
             </Reveal>
 
-            {/* galeria de imagens — proposta4 a 6 */}
-            <Reveal delay={460}>
-              <div style={{ marginTop: 20, display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
-                {['proposta4.png', 'proposta5.png', 'proposta6.png'].map(src => (
-                  <div key={src} style={{ borderRadius: 12, overflow: 'hidden', height: 140, position: 'relative' }}>
-                    <img src={`/proposta/${src}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(11,31,68,0.04)' }} />
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-          </div>
+          </div></div>
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
@@ -888,18 +895,19 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                 {['proposta2.png', 'proposta3.png', 'proposta4.png'].map((src, i) => (
                   <div key={src} style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
                     <img src={`/proposta/${src}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(11,31,68,0.55) 0%, rgba(11,31,68,0.1) 60%, transparent 100%)' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(11,31,68,0.55) 0%, rgba(11,31,68,0.1) 60%, transparent 100%)' }} />
                   </div>
                 ))}
               </div>
             </section>
 
             {/* 8 · MODELO 1 — Investimento Patrimonial (tabela de custos) */}
-            <section ref={sec(8)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.ivory, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflow: 'hidden', position: 'relative' }}>
+            <section ref={sec(8)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.ivory, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
               <Glow color="rgba(76,138,222,0.06)" size={480} style={{ top: -80, right: -80 }} />
               <Glow color="rgba(118,243,205,0.04)" size={360} style={{ bottom: -60, left: -80 }} />
 
-              <div style={{ position: 'relative', zIndex: 2, maxWidth: 900, width: '100%', margin: '0 auto' }}>
+              {/* coluna conteúdo — esquerda */}
+              <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div style={{ maxWidth: 700, width: '100%' }}>
                 <Reveal>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                     <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.royal, background: 'rgba(76,138,222,0.1)', border: `1px solid ${C.royal}`, borderRadius: 999, padding: '3px 12px' }}>Modelo 1</span>
@@ -962,16 +970,30 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     </div>
                   </div>
                 </Reveal>
+              </div></div>
+
+              {/* coluna imagem — direita */}
+              <div style={{ width: 'clamp(240px,32%,400px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
+                <img src="/proposta/proposta5.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(248,250,252,0.9) 0%, rgba(248,250,252,0.3) 30%, transparent 60%)' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(11,31,68,0.06)' }} />
               </div>
             </section>
 
             {/* 9 · MODELO 2 (COMODATO) — tone: royal */}
-            <section ref={sec(9)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.royalD, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflow: 'hidden', position: 'relative' }}>
+            <section ref={sec(9)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.royalD, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
               <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(160deg,${C.royal},${C.royalD})` }} />
               <Glow color="rgba(118,243,205,0.18)" size={460} style={{ top: -80, right: -80 }} />
               <Aurora color1="rgba(118,243,205,0.1)" color2="rgba(11,31,68,0.15)" style={{ bottom: -200, left: -160 }} />
 
-              <div style={{ position: 'relative', zIndex: 2, maxWidth: 900, width: '100%', margin: '0 auto' }}>
+              {/* coluna imagem — esquerda */}
+              <div style={{ width: 'clamp(260px,36%,460px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
+                <img src="/proposta/proposta6.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(42,105,186,0.85) 0%, rgba(76,138,222,0.25) 35%, transparent 65%)' }} />
+              </div>
+
+              {/* coluna conteúdo — direita */}
+              <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) clamp(20px,3vw,48px)', overflowY: 'auto' }}><div style={{ maxWidth: 700, width: '100%' }}>
                 <Reveal>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                     <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.mint, background: 'rgba(118,243,205,0.12)', border: '1px solid rgba(118,243,205,0.3)', borderRadius: 999, padding: '3px 12px' }}>Modelo 2</span>
@@ -1029,7 +1051,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     </div>
                   </div>
                 </Reveal>
-              </div>
+              </div></div>
             </section>
 
             {/* 10 · RESUMO COMPARATIVO — tone: navy */}
