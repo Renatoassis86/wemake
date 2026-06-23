@@ -737,34 +737,27 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
 
             {/* header */}
             <Reveal>
-              <Eyebrow dark>Memorial Descritivo</Eyebrow>
-              <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 'clamp(16px,2.5vh,28px)' }}>
+              <Eyebrow dark>{hasComodato ? 'Espaço Maker' : 'O que preparar'}</Eyebrow>
+              <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 12 }}>
                 <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.navy, letterSpacing: '-0.02em', lineHeight: 1.05, textWrap: 'balance' } as React.CSSProperties}>
-                  Especificações da Sala Maker
+                  {hasComodato ? 'O que é a Sala Maker' : 'Requisitos para a Sala Maker'}
                 </h2>
                 <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', fontWeight: 700, color: C.royal, textTransform: 'uppercase', letterSpacing: '0.14em', padding: '4px 12px', borderRadius: 99, border: `1px solid ${C.royal}`, whiteSpace: 'nowrap' }}>
                   We Make Standard
                 </span>
               </div>
-            </Reveal>
-
-            {/* 4 métricas destaque */}
-            <Reveal delay={80}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 'clamp(12px,2vh,20px)' }}>
-                {[
-                  { val: 60,  suffix: 'm²',  label: 'Área mínima',        color: C.royal },
-                  { val: 35,  suffix: 'al.', label: 'Capacidade máxima',  color: C.royalD },
-                  { val: 30,  suffix: 'pts', label: 'Tomadas 110V',       color: C.navy },
-                  { val: 36,  suffix: 'kBTU',label: 'Climatização',       color: '#0ea5e9' },
-                ].map((m, i) => (
-                  <div key={m.label} className="surface-glass-ivory card-lift" style={{ borderRadius: 14, padding: '14px 16px', borderLeft: `3px solid ${m.color}` }}>
-                    <div style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-3xl)', color: m.color, lineHeight: 1, marginBottom: 4 }}>
-                      <Counter to={m.val} suffix={m.suffix} duration={900} />
-                    </div>
-                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', lineHeight: 1.3 }}>{m.label}</p>
-                  </div>
-                ))}
-              </div>
+              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.75, maxWidth: 620, marginBottom: 8 }}>
+                O Espaço Maker é o laboratório físico onde os estudantes desenvolvem projetos de engenharia, robótica, fabricação digital, programação, eletrônica e cultura maker. Para que a experiência seja segura, funcional e inspiradora, a We Make definiu parâmetros mínimos de infraestrutura que o ambiente deve atender.
+              </p>
+              {hasComodato ? (
+                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', color: '#64748b', lineHeight: 1.65, maxWidth: 620, marginBottom: 'clamp(14px,2vh,22px)', padding: '10px 16px', borderLeft: `3px solid ${C.royal}`, background: 'rgba(76,138,222,0.05)', borderRadius: '0 10px 10px 0' }}>
+                  As especificações abaixo definem o ambiente físico que a escola deve organizar. Nas seções seguintes apresentamos as duas formas de disponibilização dos recursos e equipamentos necessários à operação da disciplina.
+                </p>
+              ) : (
+                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', color: '#64748b', lineHeight: 1.65, maxWidth: 620, marginBottom: 'clamp(14px,2vh,22px)', padding: '10px 16px', borderLeft: `3px solid ${C.royal}`, background: 'rgba(76,138,222,0.05)', borderRadius: '0 10px 10px 0' }}>
+                  Como parte da parceria curricular, a escola é responsável por organizar e manter o espaço físico de acordo com as especificações abaixo. A We Make orienta o processo de implantação e fornece o memorial descritivo completo durante o onboarding.
+                </p>
+              )}
             </Reveal>
 
             {/* tabela animada */}
@@ -1102,9 +1095,15 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               <div style={{ position: 'relative', zIndex: 2, maxWidth: 920, width: '100%', margin: '0 auto' }}>
                 <Reveal>
                   <Eyebrow>Resumo Final</Eyebrow>
-                  <h2 className="text-gradient-cinematic" style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', marginBottom: 20, letterSpacing: '-0.02em', lineHeight: 1.05 }}>
+                  <h2 className="text-gradient-cinematic" style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', marginBottom: 12, letterSpacing: '-0.02em', lineHeight: 1.05 }}>
                     Comparativo dos Modelos
                   </h2>
+                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, maxWidth: 820, marginBottom: 8 }}>
+                    Em ambos os modelos, a implantação do espaço maker considera recursos que apoiam aulas de engenharia, fabricação digital, programação, robótica educacional, eletrônica, cidadania digital e projetos criativos. A composição final dos recursos foi definida conforme os segmentos atendidos, a quantidade de alunos contratada, o tamanho da maior turma e a configuração pedagógica definida.
+                  </p>
+                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', color: 'rgba(255,255,255,0.38)', lineHeight: 1.7, maxWidth: 820, marginBottom: 20 }}>
+                    É importante destacar que os modelos apresentados dizem respeito aos recursos reutilizáveis do espaço maker. Não estão incluídos adequações estruturais do ambiente, reformas, instalações elétricas ou lógicas, climatização, marcenaria, mobiliário planejado, bancadas fixas, armários sob medida, nem os materiais consumíveis utilizados nas aulas.
+                  </p>
                 </Reveal>
 
                 {/* Tabela comparativa */}
@@ -1117,12 +1116,13 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                       <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: C.mint }}>Modelo 2 — Cessão</span>
                     </div>
                     {[
-                      { criterio: 'Formato de implantação', m1: 'A escola adquire os recursos diretamente.', m2: 'A We Make disponibiliza durante o contrato.' },
-                      { criterio: 'Propriedade durante o contrato', m1: 'Pertence à escola desde a aquisição.', m2: 'Vinculado à We Make; transferido ao final.' },
-                      { criterio: 'Investimento inicial em recursos', m1: R$(p.comodato_pv ?? 0), m2: '—' },
+                      { criterio: 'Formato de implantação', m1: 'A escola realiza diretamente a aquisição dos recursos reutilizáveis necessários à implantação do espaço maker.', m2: 'A We Make disponibiliza os recursos reutilizáveis durante a vigência contratual, com possibilidade de transferência definitiva à escola ao final do contrato.' },
+                      { criterio: 'Propriedade durante o contrato', m1: 'Os recursos pertencem à escola desde a aquisição.', m2: 'Os recursos permanecem vinculados à We Make durante a vigência contratual. Ao final, cumpridas as condições contratuais, os recursos poderão ser transferidos definitivamente à escola.' },
+                      { criterio: 'Investimento inicial em recursos reutilizáveis', m1: R$(p.comodato_pv ?? 0), m2: '—' },
                       { criterio: 'Investimento anual por aluno', m1: R$(p.valor_aluno_ano), m2: R$(p.valor_aluno_ano + (p.comodato_parcela ?? 0) * 12 / (p.num_alunos || 1)) },
-                      { criterio: 'Vantagem principal', m1: 'Patrimônio imediato e maior autonomia.', m2: 'Reduz desembolso inicial; patrimônio ao final.' },
-                      { criterio: 'Indicado para', m1: 'Escolas que desejam investir em infraestrutura própria desde o início.', m2: 'Escolas que desejam diluir o investimento ao longo do contrato.' },
+                      { criterio: 'Vantagem principal', m1: 'A escola fortalece imediatamente seu patrimônio próprio e tem maior autonomia sobre os recursos adquiridos.', m2: 'A escola reduz o desembolso inicial, implanta o espaço maker com recursos disponibilizados pela We Make e pode incorporar esses bens ao seu patrimônio ao final da vigência.' },
+                      { criterio: 'Indicado para', m1: 'Escolas que desejam investir diretamente em infraestrutura própria desde o início da parceria.', m2: 'Escolas que desejam diluir o investimento nos recursos reutilizáveis ao longo do contrato, preservando a possibilidade de incorporação patrimonial futura.' },
+                      { criterio: 'Validade da Proposta', m1: fmtDate(p.validade), m2: fmtDate(p.validade) },
                     ].map((row, i) => (
                       <div key={row.criterio} style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', padding: '11px 20px', gap: 12, borderBottom: '1px solid rgba(255,255,255,0.05)', background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)' }}>
                         <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 600, color: 'rgba(255,255,255,0.55)' }}>{row.criterio}</span>
@@ -1130,15 +1130,6 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                         <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: C.mint, lineHeight: 1.5 }}>{row.m2}</span>
                       </div>
                     ))}
-                  </div>
-                </Reveal>
-
-                {/* Nota de rodapé */}
-                <Reveal delay={200}>
-                  <div style={{ borderLeft: `2px solid ${C.mint}`, padding: '10px 18px' }}>
-                    <p style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.45)', lineHeight: 1.75 }}>
-                      Em ambos os modelos, a implantação contempla recursos que apoiam aulas de engenharia, fabricação digital, programação, robótica educacional, eletrônica, cidadania digital e projetos criativos. Não estão incluídos adequações estruturais, reformas, instalações elétricas, mobiliário e materiais consumíveis.
-                    </p>
                   </div>
                 </Reveal>
 
