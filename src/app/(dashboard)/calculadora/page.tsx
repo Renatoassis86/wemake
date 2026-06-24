@@ -64,16 +64,15 @@ const DEFAULT_LEASING: LeasingParams = {
 }
 
 const DEFAULT_EQUIP: EquipItem[] = [
-  { nome: 'Máquina digital',         qty: 1,  unit: 4280.00,  fixedQty: false },
-  { nome: 'Máquina manual',          qty: 1,  unit: 237.40,   fixedQty: false },
-  { nome: 'Ferramenta',              qty: 1,  unit: 1061.53,  fixedQty: false },
-  { nome: 'Papelaria',               qty: 1,  unit: 430.76,   fixedQty: false },
-  { nome: 'Organização',             qty: 1,  unit: 157.98,   fixedQty: false },
-  { nome: 'Eletrônica',              qty: 1,  unit: 1983.82,  fixedQty: false },
-  { nome: 'Informática (notebooks)', qty: 10, unit: 4000.00,  fixedQty: true, nota: 'Qtd calculada: ⌈maior sala ÷ 2⌉' },
-  { nome: 'Mídias',                  qty: 1,  unit: 3800.00,  fixedQty: false },
-  { nome: 'Segurança',               qty: 1,  unit: 119.70,   fixedQty: false },
-  { nome: 'Seguro',                  qty: 10, unit: 2700.00,  fixedQty: true, nota: 'Qtd igual ao nº de notebooks' },
+  { nome: 'Máquinas digitais',       qty: 1,  unit: 4712.40,  fixedQty: false },
+  { nome: 'Máquinas manuais',        qty: 1,  unit: 265.20,   fixedQty: false },
+  { nome: 'Ferramentas',             qty: 1,  unit: 1173.00,  fixedQty: false },
+  { nome: 'Itens de Papelaria',      qty: 1,  unit: 479.40,   fixedQty: false },
+  { nome: 'Organização',             qty: 1,  unit: 173.40,   fixedQty: false },
+  { nome: 'Eletrônica',              qty: 1,  unit: 2182.80,  fixedQty: false },
+  { nome: 'Computadores',            qty: 10, unit: 4000.00,  fixedQty: true, nota: 'Qtd = ⌈maior sala ÷ 2⌉ (1 por 2 alunos)' },
+  { nome: 'Mídias',                  qty: 1,  unit: 4182.00,  fixedQty: false },
+  { nome: 'Segurança',               qty: 1,  unit: 132.60,   fixedQty: false },
 ]
 
 // ══════════════════════════════════════════════════════════════════
@@ -313,10 +312,10 @@ export default function CalculadoraPage() {
   // ── Modal "Gerar Proposta" ─────────────────────────────────────
   const [showModal, setShowModal] = useState(false)
 
-  // Default validade = 30 dias a partir de hoje
+  // Default validade = 20 dias a partir de hoje
   const defaultValidade = () => {
     const d = new Date()
-    d.setDate(d.getDate() + 30)
+    d.setDate(d.getDate() + 20)
     return d.toISOString().split('T')[0]
   }
 
@@ -557,7 +556,7 @@ export default function CalculadoraPage() {
                 <div>
                   <label style={LBL}>Alunos na maior sala</label>
                   <input type="number" min={2} max={60} value={maiorSala || ''} onChange={e => setMaiorSala(+e.target.value)} onBlur={() => { if (!(maiorSala >= 2)) setMaiorSala(20) }} style={INP_KEY} />
-                  <div style={NOTA}>Define notebooks do comodato: ⌈{maiorSala} ÷ 2⌉ = {com.qtdNB} unidades.</div>
+                  <div style={NOTA}>Define notebooks: ⌈{maiorSala} ÷ 2⌉ = {com.qtdNB} unidades (1 por 2 alunos).</div>
                 </div>
               </div>
             </Card>
@@ -981,77 +980,27 @@ export default function CalculadoraPage() {
                 </div>
               )}
 
-              {/* Resumo currículo + leasing */}
+              {/* Resumo currículo + leasing — valores combinados apenas */}
               {incluiComodato && (
                 <div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '1rem' }}>
-                    {/* Currículo */}
-                    <div style={{ background: '#f8fafc', padding: '.85rem 1.1rem' }}>
-                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.5rem' }}>Currículo (sistema)</div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.35rem' }}>
-                        <div>
-                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Anual / aluno</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#4A7FDB' }}>{R$(sis.valorFinal)}</div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Mensal / aluno</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#4A7FDB' }}>{R$(sis.valorFinal / 12)}</div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Anual total</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>{R$(sis.anual)}</div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Parcela (12x)</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>{R$(sis.anual / 12)}</div>
-                        </div>
-                      </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '.75rem' }}>
+                    <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
+                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Valor / aluno / ano</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#4A7FDB', lineHeight: 1 }}>{R$(totalAluMes * 12)}</div>
+                      <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>currículo + equipamentos</div>
                     </div>
-                    {/* Leasing */}
-                    <div style={{ background: '#f0f9ff', padding: '.85rem 1.1rem' }}>
-                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.5rem' }}>Leasing (equipamentos)</div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.35rem' }}>
-                        <div>
-                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>PV (investimento)</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0369a1' }}>{R$(com.PV)}</div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Parcela ({com.N}x)</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0369a1' }}>{R$(com.parcelaPrice)}</div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Mensal / aluno</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0369a1' }}>{R$(com.valorPorAlunoMes)}</div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '.58rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>Duração</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0369a1' }}>{com.N} meses</div>
-                        </div>
-                      </div>
+                    <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
+                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Valor / aluno / mês</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{R$(totalAluMes)}</div>
+                      <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{R$(totalAluMes * 12)}/ano ÷ 12</div>
+                    </div>
+                    <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
+                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Parcela mensal escola</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{R$(mensalidadeEscola)}</div>
+                      <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>12x de {R$(mensalidadeEscola)}</div>
                     </div>
                   </div>
-
-                  {/* Total combinado */}
-                  <div style={{ background: '#0f172a', borderRadius: 10, padding: '1.1rem 1.5rem', display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px' }}>
-                    <div style={{ padding: '.75rem 1rem' }}>
-                      <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Total / aluno / mês</div>
-                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: '#fff', lineHeight: 1 }}>{R$(totalAluMes)}</div>
-                      <div style={{ fontSize: '.6rem', color: 'rgba(255,255,255,.3)', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>currículo {R$(alunoMesSis)} + leasing {R$(com.valorPorAlunoMes)}</div>
-                    </div>
-                    <div style={{ padding: '.75rem 1rem' }}>
-                      <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Total / aluno / ano</div>
-                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: '#5FE3D0', lineHeight: 1 }}>{R$(totalAluMes * 12)}</div>
-                      <div style={{ fontSize: '.6rem', color: 'rgba(255,255,255,.3)', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{R$(totalAluMes)}/mês × 12</div>
-                    </div>
-                    <div style={{ padding: '.75rem 1rem' }}>
-                      <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Mensalidade escola (total)</div>
-                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: '#f59e0b', lineHeight: 1 }}>{R$(mensalidadeEscola)}</div>
-                      <div style={{ fontSize: '.6rem', color: 'rgba(255,255,255,.3)', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>currículo 12x {R$(sis.anual / 12)} + leasing {R$(com.parcelaPrice)}</div>
-                    </div>
-                  </div>
-                  <div style={{ marginTop: '.65rem' }}>
-                    <Nota t={`Currículo: ${alunos} al. × ${R$(sis.valorFinal)}/ano ÷ 12 = ${R$(alunoMesSis)}/al./mês. Comodato: ${R$(com.PV)} ÷ ${alunos} al. ÷ 12 = ${R$(com.valorPorAlunoMes)}/al./mês. Total: ${R$(totalAluMes)}/al./mês.`} />
-                  </div>
+                  <Nota t={`Currículo + equipamentos combinados. ${alunos} al. × ${R$(totalAluMes * 12)}/ano ÷ 12 = ${R$(totalAluMes)}/al./mês. Escola paga ${R$(mensalidadeEscola)}/mês.`} />
                 </div>
               )}
             </Card>
@@ -1182,7 +1131,7 @@ export default function CalculadoraPage() {
                 {[
                   { label: 'PV (investimento total)', value: R$(com.PV), sub: 'equip + manut + admin', color: '#4A7FDB' },
                   { label: 'Parcelas', value: `${com.N}x`, sub: `${com.N / 12} anos (igual ao contrato)`, color: '#0f172a' },
-                  { label: 'Notebooks (⌈sala÷2⌉)', value: String(com.qtdNB), sub: `⌈${maiorSala} ÷ 2⌉`, color: '#0f172a' },
+                  { label: 'Notebooks (sala÷2)', value: String(com.qtdNB), sub: `⌈${maiorSala} ÷ 2⌉ = ${com.qtdNB} unidades`, color: '#0f172a' },
                   { label: 'Retorno s/ PV', value: pct(com.retornoRealPV), sub: `lucro ${R$(com.resultadoBruto)} = 2×PV`, color: '#7c3aed' },
                 ].map(k => (
                   <div key={k.label} style={{ background: '#f8fafc', borderRadius: 8, padding: '.75rem 1rem', border: '1px solid #e2e8f0' }}>

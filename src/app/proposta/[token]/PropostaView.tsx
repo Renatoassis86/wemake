@@ -230,11 +230,36 @@ const I = {
   laptop:  (c='currentColor') => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M2 20h20"/></svg>,
 }
 
+// ── countdown hook ────────────────────────────────────────────────────────────
+type Tick = { days: number; hours: number; minutes: number; seconds: number; expired: boolean }
+
+function useCountdown(targetDate: string): Tick | null {
+  const [tick, setTick] = useState<Tick | null>(null)
+  useEffect(() => {
+    const calcDiff = (): Tick => {
+      const diff = Math.max(0, new Date(targetDate + 'T23:59:59').getTime() - Date.now())
+      return {
+        days:    Math.floor(diff / 86_400_000),
+        hours:   Math.floor((diff % 86_400_000) / 3_600_000),
+        minutes: Math.floor((diff % 3_600_000)  / 60_000),
+        seconds: Math.floor((diff % 60_000)      / 1_000),
+        expired: diff === 0,
+      }
+    }
+    setTick(calcDiff())
+    const id = setInterval(() => setTick(calcDiff()), 1_000)
+    return () => clearInterval(id)
+  }, [targetDate])
+  return tick
+}
+
 // ── main ──────────────────────────────────────────────────────────────────────
 export default function PropostaView({ proposta: p, isExpired }: { proposta: Proposta; isExpired: boolean }) {
   const [active, setActive] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const sectionRefs = useRef<(HTMLElement | null)[]>([])
+
+  const countdown = useCountdown(p.validade)
 
   const hasComodato = p.tipo === 'curriculo_comodato'
   const totalAnual   = p.valor_aluno_ano * p.num_alunos
@@ -242,9 +267,15 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
   const mensalComd   = p.comodato_parcela ?? 0
   const descPct      = Math.max(0, Math.round((1 - p.valor_aluno_ano / 420) * 100))
 
+  // Itens reais do comodato vindos do dados_calculo
+  type ComItem = { nome: string; total: number }
+  const comData = (p.dados_calculo as Record<string, Record<string, unknown>>)?.com ?? {}
+  const comItens: ComItem[] = (comData.itens as ComItem[] | undefined) ?? []
+  const sumEquip = comItens.reduce((s, it) => s + it.total, 0)
+
   const sections = [
-    'capa', 'carta', 'div1', 'config', 'investimento', 'escopo',
-    ...(hasComodato ? ['maker-intro', 'modelo1', 'modelo2', 'resumo'] : ['maker-assessoria']),
+    'capa', 'carta', 'div1', 'config', 'escopo',
+    ...(hasComodato ? ['div2', 'maker-intro', 'modelo1', 'modelo2', 'investimento', 'resumo'] : ['maker-assessoria', 'investimento']),
     'contato',
   ]
 
@@ -357,9 +388,30 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
 
             {/* direita: validade + scroll */}
             <div style={{ position: 'absolute', bottom: 28, right: 'var(--gutter)', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 12 }}>
-              <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)' }}>
-                Válido até {fmtDate(p.validade)}
-              </span>
+              <div style={{ background: 'rgba(255,204,0,0.1)', border: '1px solid rgba(255,204,0,0.3)', borderRadius: 12, padding: '8px 14px', textAlign: 'right' }}>
+                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,204,0,0.55)', marginBottom: 4 }}>
+                  {countdown?.expired ? 'Proposta expirada' : 'Proposta válida por'}
+                </p>
+                {countdown?.expired ? (
+                  <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: '0.9rem', color: '#f87171', lineHeight: 1 }}>Expirada</p>
+                ) : (
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'baseline', justifyContent: 'flex-end' }}>
+                    {([
+                      { v: countdown?.days,    u: 'd' },
+                      { v: countdown?.hours,   u: 'h' },
+                      { v: countdown?.minutes, u: 'm' },
+                      { v: countdown?.seconds, u: 's' },
+                    ] as { v: number | undefined; u: string }[]).map(({ v, u }) => (
+                      <span key={u} style={{ fontFamily: 'Geist Mono, monospace', fontSize: '0.9rem', fontWeight: 700, color: C.amber, lineHeight: 1 }}>
+                        {v !== undefined ? String(v).padStart(2, '0') : '--'}<span style={{ fontSize: '0.55rem', color: 'rgba(255,204,0,0.5)', marginLeft: 1 }}>{u}</span>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', color: 'rgba(255,204,0,0.4)', marginTop: 3 }}>
+                  até {fmtDate(p.validade)}
+                </p>
+              </div>
               <button onClick={() => scrollTo(1)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.35)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', letterSpacing: '0.14em' }}>
                 DESLIZAR
                 <span style={{ animation: 'bob 1.8s ease-in-out infinite', display: 'block' }}>{I.arrow()}</span>
@@ -376,7 +428,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
         {/* ══════════════════════════════════════════════════════════════
             1 · CARTA CEO  — tone: ivory (branco, como o site)
         ══════════════════════════════════════════════════════════════ */}
-        <section ref={sec(1)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', display: 'flex', alignItems: 'stretch', background: C.ivory, overflow: 'hidden', position: 'relative' }}>
+        <section ref={sec(1)} style={{ scrollSnapAlign: 'start', height: '100dvh', display: 'flex', alignItems: 'stretch', background: C.ivory, overflow: 'hidden', position: 'relative' }}>
           <Glow color="rgba(76,138,222,0.06)" size={500} style={{ top: -120, right: -120 }} />
 
           {/* foto lateral — preenchimento total da coluna */}
@@ -403,7 +455,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
           </div>
 
           {/* carta */}
-          <div style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'var(--section-py) clamp(20px,3vw,48px)', position: 'relative', zIndex: 2 }}>
+          <div style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'clamp(48px,7vh,80px) clamp(20px,3vw,48px) clamp(32px,5vh,56px)', position: 'relative', zIndex: 2 }}>
             <Reveal>
               <Eyebrow dark>Carta do CEO</Eyebrow>
               <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 400, fontSize: 'var(--text-3xl)', color: C.navy, marginBottom: 20, lineHeight: 1.2, letterSpacing: '-0.015em', textWrap: 'balance' } as React.CSSProperties}>
@@ -465,7 +517,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
         {/* ══════════════════════════════════════════════════════════════
             3 · CONFIGURAÇÃO — tone: royal (azul We Make, como Services)
         ══════════════════════════════════════════════════════════════ */}
-        <section ref={sec(3)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.royal, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
+        <section ref={sec(3)} style={{ scrollSnapAlign: 'start', height: '100dvh', background: C.royal, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
           <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(160deg,${C.royal},${C.royalD})` }} />
           <Glow color="rgba(118,243,205,0.18)" size={480} style={{ top: -100, right: -100 }} />
           <Glow color="rgba(11,31,68,0.3)" size={400} style={{ bottom: -80, left: -80 }} />
@@ -550,125 +602,9 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
-            4 · INVESTIMENTO — tone: navy premium
+            4 · ESCOPO — tone: navy (escuro, igual à seção Soluções)
         ══════════════════════════════════════════════════════════════ */}
-        <section ref={sec(4)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.navy, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
-          <Glow color="rgba(118,243,205,0.12)" size={600} style={{ top: -160, right: -160 }} />
-          <Glow color="rgba(76,138,222,0.2)" size={500} style={{ bottom: -120, left: -120 }} />
-          <Aurora color1="rgba(76,138,222,0.08)" color2="rgba(118,243,205,0.06)" style={{ top: -200, left: -100 }} />
-
-          {/* coluna imagem — esquerda */}
-          <div style={{ width: 'clamp(240px,34%,420px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
-            <img src="/proposta/proposta2.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(11,31,68,0.8) 0%, rgba(11,31,68,0.25) 40%, transparent 75%)' }} />
-          </div>
-
-          {/* coluna conteúdo — direita */}
-          <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div style={{ maxWidth: 700, width: '100%' }}>
-
-            {/* eyebrow + título */}
-            <Reveal>
-              <Eyebrow>Financeiro</Eyebrow>
-              <h2 className="text-gradient-cinematic" style={{ fontFamily: 'Fraunces, serif', fontWeight: 300, fontStyle: 'italic', fontSize: 'var(--text-5xl)', marginBottom: 28, letterSpacing: '-0.03em', lineHeight: 1 }}>
-                Investimento da Parceria
-              </h2>
-            </Reveal>
-
-            {/* hero price row */}
-            <Reveal delay={80}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 0, alignItems: 'center', marginBottom: 20 }}>
-
-                {/* preço principal */}
-                <div>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: 10 }}>Valor por aluno / ano</p>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-                    <span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.28)', textDecoration: 'line-through' }}>R$ 420,00</span>
-                    <span style={{ background: 'rgba(255,204,0,0.15)', color: C.amber, fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', fontWeight: 700, padding: '3px 10px', borderRadius: 99, letterSpacing: '0.08em', border: '1px solid rgba(255,204,0,0.25)' }}>
-                      {descPct}% OFF
-                    </span>
-                  </div>
-                  <div style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-display)', color: C.white, lineHeight: 0.9, letterSpacing: '-0.04em' }}>
-                    {R$(p.valor_aluno_ano)}
-                  </div>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginTop: 10, letterSpacing: '0.02em' }}>
-                    Valor negociado exclusivo para esta proposta
-                  </p>
-                </div>
-
-                {/* divisor vertical */}
-                <div style={{ width: 1, alignSelf: 'stretch', background: 'linear-gradient(180deg, transparent, rgba(255,255,255,0.12) 30%, rgba(255,255,255,0.12) 70%, transparent)', margin: '0 clamp(20px,4vw,48px)' }} />
-
-                {/* taxa implantação */}
-                <div>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: 10 }}>Taxa de Implantação</p>
-                  {p.duracao_meses >= 48 && (
-                    <p style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.28)', textDecoration: 'line-through', marginBottom: 8 }}>R$ 5.000,00</p>
-                  )}
-                  <div style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: p.duracao_meses >= 48 ? C.mint : C.white, lineHeight: 1, letterSpacing: '-0.03em' }}>
-                    {p.duracao_meses >= 48 ? 'ISENTA' : R$(5000)}
-                  </div>
-                  {p.duracao_meses >= 48 && (
-                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: C.mint, marginTop: 10, letterSpacing: '0.04em' }}>
-                      Contratos ≥ 48 meses
-                    </p>
-                  )}
-                </div>
-
-              </div>
-            </Reveal>
-
-            {/* linha separadora */}
-            <Reveal delay={140}>
-              <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0.1) 80%, transparent)', marginBottom: 18 }} />
-            </Reveal>
-
-            {/* callout */}
-            <Reveal delay={180}>
-              <div style={{ borderLeft: `2px solid ${C.mint}`, padding: '10px 18px', marginBottom: 20 }}>
-                <p style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
-                  Esta referência facilita a leitura gerencial. O investimento contempla currículo, formação, acompanhamento e implantação — não se reduz ao custo unitário por aluno.
-                </p>
-              </div>
-            </Reveal>
-
-            {/* cards financeiros */}
-            <Reveal delay={240}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 18 }}>
-                {[
-                  { label: 'Total Anual', val: R$(totalAnual), note: `${p.num_alunos.toLocaleString('pt-BR')} al. × ${R$(p.valor_aluno_ano)}`, hi: false },
-                  { label: `Parcela (${p.num_parcelas}×)`, val: R$(parcelaCurr), note: `Total anual ÷ ${p.num_parcelas}`, hi: true },
-                  { label: 'Por aluno / mês', val: R$(p.valor_aluno_ano / 12), note: 'Custo unitário mensal', hi: false },
-                ].map((c) => (
-                  <div key={c.label} className="surface-glass card-lift" style={{ borderRadius: 16, padding: '18px 20px', borderColor: c.hi ? `rgba(118,243,205,0.25)` : 'rgba(255,255,255,0.08)' }}>
-                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.16em', color: c.hi ? C.mint : 'rgba(255,255,255,0.35)', marginBottom: 8 }}>{c.label}</p>
-                    <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-2xl)', color: c.hi ? C.mint : C.white, lineHeight: 1, marginBottom: 6, letterSpacing: '-0.02em' }}>{c.val}</p>
-                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.25)', lineHeight: 1.4 }}>{c.note}</p>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-
-            {/* tags condições */}
-            <Reveal delay={320}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {[
-                  `${descPct}% de desconto aplicado`, 'Boleto bancário', 'Vencimento dia 7',
-                  'Reajuste anual IPCA', `Validade: ${fmtDate(p.validade)}`,
-                ].map(t => (
-                  <div key={t} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '6px 14px', borderRadius: 99, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', fontFamily: 'Geist, sans-serif', fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.02em' }}>
-                    <div style={{ width: 4, height: 4, borderRadius: '50%', background: C.mint, flexShrink: 0 }} />{t}
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-
-          </div></div>
-        </section>
-
-        {/* ══════════════════════════════════════════════════════════════
-            5 · ESCOPO — tone: navy (escuro, igual à seção Soluções)
-        ══════════════════════════════════════════════════════════════ */}
-        <section ref={sec(5)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.navy, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
+        <section ref={sec(4)} style={{ scrollSnapAlign: 'start', height: '100dvh', background: C.navy, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
           <Glow color="rgba(118,243,205,0.14)" size={500} style={{ top: -100, right: -100 }} />
           <Glow color="rgba(76,138,222,0.18)" size={400} style={{ bottom: -80, left: -100 }} />
           <Aurora color1="rgba(118,243,205,0.08)" color2="rgba(76,138,222,0.1)" style={{ bottom: -200, right: -80 }} />
@@ -719,16 +655,16 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
-            6 · ASSESSORIA SALA MAKER — apenas quando NÃO tem comodato
+            5 · ASSESSORIA SALA MAKER — apenas quando NÃO tem comodato
         ══════════════════════════════════════════════════════════════ */}
         {!hasComodato && (
-          <section ref={sec(6)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.navy, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
+          <section ref={sec(5)} style={{ scrollSnapAlign: 'start', height: '100dvh', background: C.navy, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
             <Glow color="rgba(118,243,205,0.12)" size={560} style={{ top: -120, left: -120 }} />
             <Glow color="rgba(76,138,222,0.18)" size={420} style={{ bottom: -80, right: -80 }} />
             <Aurora color1="rgba(76,138,222,0.08)" color2="rgba(118,243,205,0.06)" style={{ top: -180, right: -80 }} />
 
             {/* coluna conteúdo — esquerda */}
-            <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div style={{ maxWidth: 640, width: '100%' }}>
+            <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div style={{ maxWidth: 640, width: '100%' }}>
               <Reveal>
                 <Eyebrow>Espaço Maker</Eyebrow>
                 <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.white, marginBottom: 12, letterSpacing: '-0.02em', lineHeight: 1.05, textWrap: 'balance' } as React.CSSProperties}>
@@ -763,7 +699,55 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                 </div>
               </Reveal>
 
-              <Reveal delay={320}>
+              {/* Tabela de referência de custos — exibe se houver dados no dados_calculo */}
+              {comItens.length > 0 && (
+                <Reveal delay={220}>
+                  <div style={{ marginBottom: 20 }}>
+                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.16em', color: C.mint, marginBottom: 10 }}>
+                      Simulação de custos — referência para aquisição
+                    </p>
+                    <div style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                      {/* cabeçalho */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', background: 'rgba(11,31,68,0.6)', padding: '10px 18px', gap: 8 }}>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.45)' }}>Item</span>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.45)', textAlign: 'right' }}>Valor</span>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.45)', textAlign: 'right' }}>%</span>
+                      </div>
+                      {/* linha TOTAL */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', padding: '11px 18px', gap: 8, background: 'rgba(118,243,205,0.07)', borderBottom: '2px solid rgba(118,243,205,0.15)' }}>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: 'var(--text-sm)', color: C.white }}>TOTAL ESTIMADO</span>
+                        <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-sm)', color: C.mint, textAlign: 'right' }}>{R$(sumEquip)}</span>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: C.white, textAlign: 'right', fontWeight: 600 }}>100%</span>
+                      </div>
+                      {/* itens */}
+                      {comItens.map((item, i) => (
+                        <div key={item.nome} style={{
+                          display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', padding: '8px 18px', gap: 8,
+                          borderBottom: '1px solid rgba(255,255,255,0.04)',
+                          background: i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent',
+                        }}>
+                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.65)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{ width: 3, height: 10, borderRadius: 2, background: C.mint, flexShrink: 0 }} />
+                            {item.nome}
+                          </span>
+                          <span style={{ fontFamily: 'Fraunces, serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.8)', textAlign: 'right' }}>{R$(item.total)}</span>
+                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', textAlign: 'right' }}>
+                            {sumEquip > 0 ? `${((item.total / sumEquip) * 100).toFixed(1)}%` : '—'}
+                          </span>
+                        </div>
+                      ))}
+                      {/* rodapé */}
+                      <div style={{ padding: '8px 18px', background: 'rgba(11,31,68,0.4)' }}>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)', lineHeight: 1.55 }}>
+                          * Simulação com base no memorial descritivo We Make. Valores referenciais sujeitos a atualização na aquisição.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </Reveal>
+              )}
+
+              <Reveal delay={360}>
                 <div style={{ padding: '12px 18px', borderLeft: `3px solid ${C.mint}`, background: 'rgba(118,243,205,0.06)', borderRadius: '0 12px 12px 0' }}>
                   <p style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7 }}>
                     A aquisição dos equipamentos, máquinas e recursos do espaço maker é de responsabilidade da escola. Não está incluída nesta proposta, salvo contratação específica.
@@ -774,82 +758,137 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
 
             {/* coluna imagem — direita */}
             <div style={{ width: 'clamp(260px,36%,460px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
-              <img src="/proposta/proposta6.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+              <img src="/proposta/proposta4.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(11,31,68,0.85) 0%, rgba(11,31,68,0.25) 40%, transparent 70%)' }} />
             </div>
           </section>
         )}
 
         {/* ══════════════════════════════════════════════════════════════
-            COMODATO — sections 6, 7, 8, 9
+            COMODATO — sections 5 (div2), 6, 7, 8
         ══════════════════════════════════════════════════════════════ */}
         {hasComodato && (
           <>
-            {/* 7 · ESPAÇO MAKER INTRO — tony navy, dois modelos */}
-            <section ref={sec(6)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.navy, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
-              <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/proposta/proposta1.png)', backgroundSize: 'cover', backgroundPosition: 'center', filter: 'brightness(0.08) saturate(0.3)' }} />
-              <Glow color="rgba(118,243,205,0.14)" size={600} style={{ top: -160, right: -160 }} />
-              <Glow color="rgba(76,138,222,0.2)" size={500} style={{ bottom: -120, left: -120 }} />
-              <Aurora color1="rgba(76,138,222,0.08)" color2="rgba(118,243,205,0.06)" style={{ top: -200, left: -100 }} />
+            {/* 5 · DIVISOR PARTE 2 */}
+            <section ref={sec(5)} style={{ scrollSnapAlign: 'start', height: '100dvh', background: C.royal, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative', textAlign: 'center', padding: 'var(--section-py) var(--gutter)' }}>
+              <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(160deg,${C.royalD},${C.navy})` }} />
+              <Glow color="rgba(118,243,205,0.18)" size={600} style={{ top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} />
+              <Aurora color1="rgba(118,243,205,0.1)" color2="rgba(76,138,222,0.08)" style={{ top: -200, right: -200 }} />
+              <div style={{ position: 'relative', zIndex: 2, maxWidth: 680 }}>
+                <Reveal>
+                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: C.mint, marginBottom: 20 }}>
+                    Parte 2
+                  </p>
+                  <h2 style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-5xl)', color: C.white, lineHeight: 1.1, letterSpacing: '-0.025em', marginBottom: 24 }}>
+                    Modelos de Implantação do Espaço Maker
+                  </h2>
+                  <div style={{ width: 60, height: 2, background: C.mint, margin: '0 auto 24px', borderRadius: 1 }} />
+                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.75, maxWidth: 520, margin: '0 auto' }}>
+                    A We Make apresenta duas possibilidades de implantação dos recursos necessários à operação da disciplina maker na sua escola.
+                  </p>
+                </Reveal>
+              </div>
+            </section>
 
-              {/* conteúdo */}
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'var(--section-py) var(--gutter)', position: 'relative', zIndex: 2 }}>
-                <div style={{ maxWidth: 640 }}>
+            {/* 6 · ESPAÇO MAKER INTRO — tony navy, dois modelos */}
+            <section ref={sec(6)} style={{ scrollSnapAlign: 'start', height: '100dvh', background: C.navy, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
+              {/* imagem de fundo com pouca opacidade */}
+              <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/proposta/proposta1.png)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.18 }} />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(11,31,68,0.92) 0%, rgba(11,31,68,0.7) 50%, rgba(11,31,68,0.85) 100%)' }} />
+              <Glow color="rgba(118,243,205,0.16)" size={620} style={{ top: -180, left: -100 }} />
+              <Glow color="rgba(76,138,222,0.22)" size={520} style={{ bottom: -140, right: -120 }} />
+
+              {/* coluna conteúdo — esquerda, scroll natural */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'clamp(36px,5vh,56px) var(--gutter)', position: 'relative', zIndex: 2, overflowY: 'auto' }}>
+                <div style={{ maxWidth: 660 }}>
+
                   <Reveal>
-                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.2em', color: C.mint, textTransform: 'uppercase', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <span style={{ width: 24, height: 1, background: C.mint, opacity: 0.6, display: 'inline-block' }} /> Parte 2 · Infraestrutura
-                    </p>
-                    <h2 className="text-gradient-cinematic" style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-5xl)', lineHeight: 1.05, marginBottom: 18, letterSpacing: '-0.025em' }}>
-                      Espaço Maker
+                    <Eyebrow>Infraestrutura</Eyebrow>
+                    <h2 className="text-gradient-cinematic" style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-4xl)', lineHeight: 1.05, marginBottom: 14, letterSpacing: '-0.025em' }}>
+                      Espaço Maker We Make
                     </h2>
-                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.75, marginBottom: 10 }}>
+                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.82rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.75, marginBottom: 14 }}>
                       Para apoiar a escola na organização de um espaço adequado ao desenvolvimento da Educação Tecnológica e Maker, a We Make apresenta duas possibilidades de implantação dos recursos necessários à operação da disciplina.
-                    </p>
-                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.45)', lineHeight: 1.75, marginBottom: 28 }}>
-                      Em ambos os modelos, a composição dos recursos considera os segmentos atendidos, a quantidade de alunos contratada e a configuração pedagógica definida — incluindo equipamentos para engenharia, fabricação digital, programação, robótica, eletrônica, cidadania digital e projetos criativos. Adequações estruturais, mobiliário planejado e materiais consumíveis não estão incluídos.
                     </p>
                   </Reveal>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                    <Reveal delay={100}>
-                      <div className="surface-glass card-lift" style={{ borderRadius: 16, padding: '20px 22px', height: '100%' }}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.royal, background: 'rgba(76,138,222,0.15)', border: '1px solid rgba(76,138,222,0.3)', borderRadius: 999, padding: '3px 10px' }}>Modelo 1</span>
-                        </div>
-                        <h3 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-lg)', color: C.white, marginBottom: 12, lineHeight: 1.2 }}>Investimento Patrimonial da Escola</h3>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7 }}>
-                          A própria instituição realiza a aquisição dos recursos reutilizáveis, máquinas, ferramentas, equipamentos e demais itens necessários. Os bens adquiridos passam a integrar o patrimônio da escola e podem ser utilizados em outras atividades pedagógicas, projetos interdisciplinares e formações docentes.
+                  {/* tags de recursos */}
+                  <Reveal delay={50}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 18 }}>
+                      {['Máquinas Digitais', 'Robótica & Eletrônica', 'Computadores', 'Ferramentas', 'Mídias', 'Organização & Segurança'].map(tag => (
+                        <span key={tag} style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', fontWeight: 600, color: C.mint, background: 'rgba(118,243,205,0.08)', border: '1px solid rgba(118,243,205,0.2)', borderRadius: 99, padding: '3px 10px' }}>{tag}</span>
+                      ))}
+                    </div>
+                  </Reveal>
+
+                  {/* divisor */}
+                  <Reveal delay={80}>
+                    <div style={{ height: 1, background: 'rgba(255,255,255,0.07)', marginBottom: 18 }} />
+                  </Reveal>
+
+                  {/* Modelo 1 */}
+                  <Reveal delay={100}>
+                    <div style={{ display: 'flex', gap: 14, marginBottom: 18 }}>
+                      <div style={{ flexShrink: 0, paddingTop: 3 }}>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.royal, background: 'rgba(76,138,222,0.15)', border: '1px solid rgba(76,138,222,0.3)', borderRadius: 999, padding: '3px 10px', whiteSpace: 'nowrap' }}>Modelo 1</span>
+                      </div>
+                      <div>
+                        <h3 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: '0.95rem', color: C.white, marginBottom: 6, lineHeight: 1.2 }}>Investimento Patrimonial da Escola</h3>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', color: 'rgba(255,255,255,0.48)', lineHeight: 1.7 }}>
+                          A própria instituição realiza a aquisição dos recursos reutilizáveis, máquinas, ferramentas, equipamentos e demais itens necessários para a composição do espaço maker. Os bens adquiridos passam a integrar o patrimônio da escola e podem ser utilizados em outras atividades pedagógicas, projetos interdisciplinares, formações docentes e experiências educativas desenvolvidas pela própria instituição.
                         </p>
                       </div>
-                    </Reveal>
-                    <Reveal delay={180}>
-                      <div style={{ borderRadius: 16, padding: '20px 22px', height: '100%', background: 'rgba(118,243,205,0.06)', border: '1px solid rgba(118,243,205,0.2)', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }} className="card-lift">
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.mint, background: 'rgba(118,243,205,0.12)', border: '1px solid rgba(118,243,205,0.3)', borderRadius: 999, padding: '3px 10px' }}>Modelo 2</span>
-                        </div>
-                        <h3 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-lg)', color: C.white, marginBottom: 12, lineHeight: 1.2 }}>Cessão de Uso com Transferência Final</h3>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7 }}>
-                          A We Make disponibiliza os recursos reutilizáveis durante a vigência contratual. Ao final, cumpridas integralmente as condições estabelecidas, esses recursos poderão ser transferidos definitivamente à escola — permitindo reduzir o investimento inicial sem abrir mão de construir uma estrutura própria.
+                    </div>
+                  </Reveal>
+
+                  {/* divisor */}
+                  <Reveal delay={130}>
+                    <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', marginBottom: 18 }} />
+                  </Reveal>
+
+                  {/* Modelo 2 */}
+                  <Reveal delay={160}>
+                    <div style={{ display: 'flex', gap: 14, marginBottom: 18 }}>
+                      <div style={{ flexShrink: 0, paddingTop: 3 }}>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.mint, background: 'rgba(118,243,205,0.12)', border: '1px solid rgba(118,243,205,0.3)', borderRadius: 999, padding: '3px 10px', whiteSpace: 'nowrap' }}>Modelo 2</span>
+                      </div>
+                      <div>
+                        <h3 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: '0.95rem', color: C.white, marginBottom: 6, lineHeight: 1.2 }}>Cessão de Uso com Transferência Final</h3>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', color: 'rgba(255,255,255,0.48)', lineHeight: 1.7 }}>
+                          A We Make disponibiliza à escola, durante o período do contrato, os recursos reutilizáveis necessários ao desenvolvimento das aulas previstas na proposta pedagógica. Ao final da vigência contratual, desde que cumpridas integralmente as condições estabelecidas, esses recursos poderão ser transferidos definitivamente à escola, passando a compor seu patrimônio.
+                        </p>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', color: 'rgba(255,255,255,0.38)', lineHeight: 1.7, marginTop: 8 }}>
+                          Esse modelo permite que a escola reduza o investimento inicial necessário para a implantação do espaço maker, sem abrir mão da possibilidade de, ao final da parceria, consolidar uma estrutura própria para a continuidade da Educação Tecnológica e Maker.
                         </p>
                       </div>
-                    </Reveal>
-                  </div>
+                    </div>
+                  </Reveal>
+
+                  {/* nota rodapé */}
+                  <Reveal delay={200}>
+                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 12 }}>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.2)', lineHeight: 1.6 }}>
+                        * Não incluídos: adequações estruturais, reformas, instalações elétricas, climatização, mobiliário planejado ou materiais consumíveis.
+                      </p>
+                    </div>
+                  </Reveal>
+
                 </div>
               </div>
 
-              {/* coluna fotos */}
-              <div style={{ width: 'clamp(180px,30%,360px)', flexShrink: 0, display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 2 }}>
-                {['proposta2.png', 'proposta3.png', 'proposta4.png'].map((src, i) => (
+              {/* coluna fotos — direita */}
+              <div style={{ width: 'clamp(220px,30%,380px)', flexShrink: 0, display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 2 }}>
+                {['proposta3.png', 'proposta4.png', 'proposta5.png'].map((src) => (
                   <div key={src} style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
                     <img src={`/proposta/${src}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(11,31,68,0.55) 0%, rgba(11,31,68,0.1) 60%, transparent 100%)' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(11,31,68,0.6) 0%, transparent 55%)' }} />
                   </div>
                 ))}
               </div>
             </section>
 
-            {/* 8 · MODELO 1 — Investimento Patrimonial (tabela de custos) */}
-            <section ref={sec(7)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.ivory, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
+            {/* 7 · MODELO 1 — Investimento Patrimonial (tabela de custos) */}
+            <section ref={sec(7)} style={{ scrollSnapAlign: 'start', height: '100dvh', background: C.ivory, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
               <Glow color="rgba(76,138,222,0.06)" size={480} style={{ top: -80, right: -80 }} />
               <Glow color="rgba(118,243,205,0.04)" size={360} style={{ bottom: -60, left: -80 }} />
 
@@ -883,28 +922,18 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     {/* linha TOTAL */}
                     <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', padding: '14px 24px', gap: 12, background: `rgba(11,31,68,0.06)`, borderBottom: `2px solid rgba(11,31,68,0.12)` }}>
                       <span style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: 'var(--text-base)', color: C.navy }}>TOTAL</span>
-                      <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-base)', color: C.royal, textAlign: 'right' }}>{R$(p.comodato_pv ?? 0)}</span>
+                      <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-base)', color: C.royal, textAlign: 'right' }}>{R$(sumEquip)}</span>
                       <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: C.navy, textAlign: 'right', fontWeight: 600 }}>100%</span>
                     </div>
 
-                    {/* linhas de itens */}
-                    {[
-                      { label: 'Computadores',     pct: 0.8696 },
-                      { label: 'Máquinas digitais', pct: 0.0462 },
-                      { label: 'Mídias',            pct: 0.0410 },
-                      { label: 'Eletrônica',        pct: 0.0214 },
-                      { label: 'Ferramentas',       pct: 0.0115 },
-                      { label: 'Itens de Papelaria',pct: 0.0047 },
-                      { label: 'Máquinas manuais',  pct: 0.0026 },
-                      { label: 'Organização',       pct: 0.0017 },
-                      { label: 'Segurança',         pct: 0.0013 },
-                    ].map((item, i) => (
+                    {/* linhas de itens — vindas do dados_calculo */}
+                    {comItens.map((item, i) => (
                       <TableRow
-                        key={item.label}
-                        row={{ req: item.label, spec: R$((p.comodato_pv ?? 0) * item.pct), status: '' }}
+                        key={item.nome}
+                        row={{ req: item.nome, spec: R$(item.total), status: '' }}
                         delay={i * 40}
                         catColor={C.royal}
-                        pct={`${(item.pct * 100).toFixed(2)}%`}
+                        pct={sumEquip > 0 ? `${((item.total / sumEquip) * 100).toFixed(2)}%` : '—'}
                       />
                     ))}
 
@@ -927,8 +956,8 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               </div>
             </section>
 
-            {/* 9 · MODELO 2 (COMODATO) — tone: royal */}
-            <section ref={sec(8)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.royalD, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
+            {/* 8 · MODELO 2 (COMODATO) — tone: royal */}
+            <section ref={sec(8)} style={{ scrollSnapAlign: 'start', height: '100dvh', background: C.royalD, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
               <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(160deg,${C.royal},${C.royalD})` }} />
               <Glow color="rgba(118,243,205,0.18)" size={460} style={{ top: -80, right: -80 }} />
               <Aurora color1="rgba(118,243,205,0.1)" color2="rgba(11,31,68,0.15)" style={{ bottom: -200, left: -160 }} />
@@ -971,28 +1000,19 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     {/* linha TOTAL */}
                     <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', padding: '14px 24px', gap: 12, background: 'rgba(118,243,205,0.08)', borderBottom: '2px solid rgba(118,243,205,0.2)' }}>
                       <span style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: 'var(--text-base)', color: C.white }}>TOTAL</span>
-                      <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-base)', color: C.mint, textAlign: 'right' }}>{R$(p.comodato_pv ?? 0)}</span>
+                      <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-base)', color: C.mint, textAlign: 'right' }}>{R$(sumEquip)}</span>
                       <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: C.white, textAlign: 'right', fontWeight: 600 }}>100%</span>
                     </div>
-                    {/* linhas de itens */}
-                    {[
-                      { label: 'Computadores',      pct: 0.8696 },
-                      { label: 'Máquinas digitais',  pct: 0.0462 },
-                      { label: 'Mídias',             pct: 0.0410 },
-                      { label: 'Eletrônica',         pct: 0.0214 },
-                      { label: 'Ferramentas',        pct: 0.0115 },
-                      { label: 'Itens de Papelaria', pct: 0.0047 },
-                      { label: 'Máquinas manuais',   pct: 0.0026 },
-                      { label: 'Organização',        pct: 0.0017 },
-                      { label: 'Segurança',          pct: 0.0013 },
-                    ].map((item, i) => (
-                      <TableRow
-                        key={item.label}
-                        row={{ req: item.label, spec: R$((p.comodato_pv ?? 0) * item.pct), status: '' }}
-                        delay={i * 40}
-                        catColor={C.mint}
-                        pct={`${(item.pct * 100).toFixed(2)}%`}
-                      />
+                    {/* linhas de itens — vindas do dados_calculo */}
+                    {comItens.map((item) => (
+                      <div key={item.nome} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', padding: '10px 24px', gap: 12, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 500, color: 'rgba(255,255,255,0.8)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ width: 3, height: 12, borderRadius: 2, background: C.mint, display: 'inline-block', flexShrink: 0 }} />
+                          {item.nome}
+                        </span>
+                        <span style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--text-sm)', fontWeight: 600, color: C.mint, textAlign: 'right' }}>{R$(item.total)}</span>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.45)', textAlign: 'right' }}>{sumEquip > 0 ? `${((item.total / sumEquip) * 100).toFixed(2)}%` : '—'}</span>
+                      </div>
                     ))}
                     {/* rodapé */}
                     <div style={{ padding: '10px 24px', background: 'rgba(11,31,68,0.3)', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
@@ -1006,8 +1026,11 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                 <Reveal delay={320}>
                   <div style={{ borderRadius: 16, padding: '20px 28px', display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap', background: 'rgba(118,243,205,0.08)', border: '1px solid rgba(118,243,205,0.2)' }}>
                     <div>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Parcela mensal (recursos)</p>
-                      <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-3xl)', color: C.mint, lineHeight: 1 }}>{R$(p.comodato_parcela ?? 0)}</p>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Investimento mensal total</p>
+                      <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-3xl)', color: C.mint, lineHeight: 1 }}>{R$(totalAnual / 12 + mensalComd)}</p>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>
+                        {R$((totalAnual / 12 + mensalComd) * 12 / (p.num_alunos || 1))} por aluno / ano
+                      </p>
                     </div>
                     <div style={{ height: 44, width: 1, background: 'rgba(255,255,255,0.15)' }} />
                     <div>
@@ -1016,78 +1039,222 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     </div>
                     <div style={{ height: 44, width: 1, background: 'rgba(255,255,255,0.15)' }} />
                     <div>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Reajuste</p>
-                      <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-lg)', color: C.white, lineHeight: 1 }}>Anual · IPCA</p>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>Vencimento dia 7 · Boleto</p>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Condições</p>
+                      <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-lg)', color: C.white, lineHeight: 1 }}>Boleto · Dia 7</p>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>Reajuste anual IPCA</p>
                     </div>
                   </div>
                 </Reveal>
               </div></div>
             </section>
 
-            {/* 10 · RESUMO COMPARATIVO — tone: navy */}
-            <section ref={sec(9)} style={{ scrollSnapAlign: 'start', minHeight: '100dvh', background: C.navy, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflow: 'hidden', position: 'relative' }}>
-              <Glow color="rgba(255,204,0,0.1)" size={440} style={{ top: -80, right: -80 }} />
-              <Glow color="rgba(76,138,222,0.18)" size={380} style={{ bottom: -80, left: -80 }} />
-
-              <div style={{ position: 'relative', zIndex: 2, maxWidth: 920, width: '100%', margin: '0 auto' }}>
-                <Reveal>
-                  <Eyebrow>Resumo Final</Eyebrow>
-                  <h2 className="text-gradient-cinematic" style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', marginBottom: 12, letterSpacing: '-0.02em', lineHeight: 1.05 }}>
-                    Comparativo dos Modelos
-                  </h2>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, maxWidth: 820, marginBottom: 8 }}>
-                    Em ambos os modelos, a implantação do espaço maker considera recursos que apoiam aulas de engenharia, fabricação digital, programação, robótica educacional, eletrônica, cidadania digital e projetos criativos. A composição final dos recursos foi definida conforme os segmentos atendidos, a quantidade de alunos contratada, o tamanho da maior turma e a configuração pedagógica definida.
-                  </p>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', color: 'rgba(255,255,255,0.38)', lineHeight: 1.7, maxWidth: 820, marginBottom: 20 }}>
-                    É importante destacar que os modelos apresentados dizem respeito aos recursos reutilizáveis do espaço maker. Não estão incluídos adequações estruturais do ambiente, reformas, instalações elétricas ou lógicas, climatização, marcenaria, mobiliário planejado, bancadas fixas, armários sob medida, nem os materiais consumíveis utilizados nas aulas.
-                  </p>
-                </Reveal>
-
-                {/* Tabela comparativa */}
-                <Reveal delay={80}>
-                  <div className="surface-glass" style={{ borderRadius: 16, overflow: 'hidden', marginBottom: 18 }}>
-                    {/* cabeçalho */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', background: 'rgba(255,255,255,0.06)', padding: '12px 20px', gap: 12, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                      <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,255,255,0.35)' }}>Critério</span>
-                      <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: C.royal }}>Modelo 1 — Patrimonial</span>
-                      <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: C.mint }}>Modelo 2 — Cessão</span>
-                    </div>
-                    {[
-                      { criterio: 'Formato de implantação', m1: 'A escola realiza diretamente a aquisição dos recursos reutilizáveis necessários à implantação do espaço maker.', m2: 'A We Make disponibiliza os recursos reutilizáveis durante a vigência contratual, com possibilidade de transferência definitiva à escola ao final do contrato.' },
-                      { criterio: 'Propriedade durante o contrato', m1: 'Os recursos pertencem à escola desde a aquisição.', m2: 'Os recursos permanecem vinculados à We Make durante a vigência contratual. Ao final, cumpridas as condições contratuais, os recursos poderão ser transferidos definitivamente à escola.' },
-                      { criterio: 'Investimento inicial em recursos', m1: R$(p.comodato_pv ?? 0), m2: '—' },
-                      { criterio: 'Vantagem principal', m1: 'A escola fortalece imediatamente seu patrimônio próprio e tem maior autonomia sobre os recursos adquiridos.', m2: 'A escola reduz o desembolso inicial, implanta o espaço maker com recursos disponibilizados pela We Make e pode incorporar esses bens ao seu patrimônio ao final da vigência.' },
-                      { criterio: 'Indicado para', m1: 'Escolas que desejam investir diretamente em infraestrutura própria desde o início da parceria.', m2: 'Escolas que desejam diluir o investimento nos recursos reutilizáveis ao longo do contrato, preservando a possibilidade de incorporação patrimonial futura.' },
-                      { criterio: 'Validade da Proposta', m1: fmtDate(p.validade), m2: fmtDate(p.validade) },
-                    ].map((row, i) => (
-                      <div key={row.criterio} style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', padding: '11px 20px', gap: 12, borderBottom: '1px solid rgba(255,255,255,0.05)', background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)' }}>
-                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 600, color: 'rgba(255,255,255,0.55)' }}>{row.criterio}</span>
-                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.75)', lineHeight: 1.5 }}>{row.m1}</span>
-                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: C.mint, lineHeight: 1.5 }}>{row.m2}</span>
-                      </div>
-                    ))}
-                  </div>
-                </Reveal>
-
-                {/* Destaque financeiro */}
-                <Reveal delay={280}>
-                  <div style={{ marginTop: 16, background: `linear-gradient(135deg,${C.royal},${C.royalD})`, borderRadius: 18, padding: '22px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, boxShadow: '0 12px 48px rgba(76,138,222,0.4)' }}>
-                    {[
-                      { label: 'Investimento mensal total', val: R$(totalAnual / 12 + mensalComd), color: C.white },
-                      { label: 'Custo por aluno / mês',   val: R$((totalAnual / 12 + mensalComd) / (p.num_alunos || 1)), color: C.mint },
-                      { label: `Investimento total (${p.duracao_meses}m)`, val: R$((totalAnual / 12 + mensalComd) * p.duracao_meses), color: C.amber },
-                    ].map((item) => (
-                      <div key={item.label}>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.55)', marginBottom: 6 }}>{item.label}</p>
-                        <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-3xl)', color: item.color, lineHeight: 1 }}>{item.val}</p>
-                      </div>
-                    ))}
-                  </div>
-                </Reveal>
-              </div>
-            </section>
           </>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════
+            INVESTIMENTO — narrativa: valores revelados por último
+        ══════════════════════════════════════════════════════════════ */}
+        <section ref={hasComodato ? sec(9) : sec(6)} style={{ scrollSnapAlign: 'start', height: '100dvh', background: C.navy, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
+          <Glow color="rgba(118,243,205,0.12)" size={600} style={{ top: -160, right: -160 }} />
+          <Glow color="rgba(76,138,222,0.2)" size={500} style={{ bottom: -120, left: -120 }} />
+          <Aurora color1="rgba(76,138,222,0.08)" color2="rgba(118,243,205,0.06)" style={{ top: -200, left: -100 }} />
+
+          {/* coluna imagem — esquerda */}
+          <div style={{ width: 'clamp(240px,34%,420px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
+            <img src="/proposta/proposta2.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(11,31,68,0.8) 0%, rgba(11,31,68,0.25) 40%, transparent 75%)' }} />
+          </div>
+
+          {/* coluna conteúdo — direita */}
+          <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div style={{ maxWidth: 700, width: '100%' }}>
+
+            <Reveal>
+              <Eyebrow>Financeiro</Eyebrow>
+              <h2 className="text-gradient-cinematic" style={{ fontFamily: 'Fraunces, serif', fontWeight: 300, fontStyle: 'italic', fontSize: 'var(--text-5xl)', marginBottom: 20, letterSpacing: '-0.03em', lineHeight: 1 }}>
+                Investimento da Parceria
+              </h2>
+            </Reveal>
+
+            {hasComodato ? (
+              <>
+                <Reveal delay={60}>
+                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 20, maxWidth: 560 }}>
+                    Esta proposta apresenta dois modelos de parceria. Escolha o que melhor se adapta à realidade da sua escola.
+                  </p>
+                </Reveal>
+                <Reveal delay={100}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 18 }}>
+                    <div className="surface-glass" style={{ borderRadius: 20, padding: '22px 24px', borderColor: 'rgba(76,138,222,0.25)' }}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(76,138,222,0.15)', border: '1px solid rgba(76,138,222,0.35)', borderRadius: 99, padding: '3px 12px', marginBottom: 12 }}>
+                        <div style={{ width: 5, height: 5, borderRadius: '50%', background: C.royal }} />
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: C.royal }}>Modelo 1</span>
+                      </div>
+                      <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-lg)', color: C.white, marginBottom: 4, lineHeight: 1.2 }}>Somente Currículo</p>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.68rem', color: 'rgba(255,255,255,0.38)', lineHeight: 1.5, marginBottom: 18 }}>
+                        A escola adquire os equipamentos da Sala Maker com recursos próprios.
+                      </p>
+                      <div style={{ height: 1, background: 'rgba(255,255,255,0.07)', marginBottom: 16 }} />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>Por aluno / ano</span>
+                          <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-xl)', color: C.royal }}>{R$(p.valor_aluno_ano)}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>Por aluno / mês</span>
+                          <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.6)' }}>{R$(p.valor_aluno_ano / 12)}</span>
+                        </div>
+                        <div style={{ background: 'rgba(76,138,222,0.12)', border: '1px solid rgba(76,138,222,0.25)', borderRadius: 12, padding: '12px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', fontWeight: 600, color: C.royal }}>Parcela mensal escola</span>
+                          <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-2xl)', color: C.white }}>{R$(totalAnual / 12)}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="surface-glass" style={{ borderRadius: 20, padding: '22px 24px', borderColor: 'rgba(118,243,205,0.3)', boxShadow: '0 0 40px rgba(118,243,205,0.08)' }}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(118,243,205,0.12)', border: '1px solid rgba(118,243,205,0.35)', borderRadius: 99, padding: '3px 12px', marginBottom: 12 }}>
+                        <div style={{ width: 5, height: 5, borderRadius: '50%', background: C.mint }} />
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: C.mint }}>Modelo 2</span>
+                      </div>
+                      <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-lg)', color: C.white, marginBottom: 4, lineHeight: 1.2 }}>Currículo + Sala Maker Equipada</p>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.68rem', color: 'rgba(255,255,255,0.38)', lineHeight: 1.5, marginBottom: 18 }}>
+                        Equipamentos disponibilizados pela We Make — investimento diluído no contrato.
+                      </p>
+                      <div style={{ height: 1, background: 'rgba(118,243,205,0.12)', marginBottom: 16 }} />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>Por aluno / ano</span>
+                          <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-xl)', color: C.mint }}>{R$((totalAnual / 12 + mensalComd) * 12 / p.num_alunos)}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>Por aluno / mês</span>
+                          <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.6)' }}>{R$((totalAnual / 12 + mensalComd) / p.num_alunos)}</span>
+                        </div>
+                        <div style={{ background: 'rgba(118,243,205,0.1)', border: '1px solid rgba(118,243,205,0.3)', borderRadius: 12, padding: '12px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', fontWeight: 600, color: C.mint }}>Parcela mensal escola</span>
+                          <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-2xl)', color: C.white }}>{R$(totalAnual / 12 + mensalComd)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Reveal>
+              </>
+            ) : (
+              <>
+                <Reveal delay={80}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 0, alignItems: 'center', marginBottom: 20 }}>
+                    <div>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: 10 }}>Valor por aluno / ano</p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+                        <span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.28)', textDecoration: 'line-through' }}>R$ 420,00</span>
+                        <span style={{ background: 'rgba(255,204,0,0.15)', color: C.amber, fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', fontWeight: 700, padding: '3px 10px', borderRadius: 99, letterSpacing: '0.08em', border: '1px solid rgba(255,204,0,0.25)' }}>
+                          {descPct}% OFF
+                        </span>
+                      </div>
+                      <div style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-display)', color: C.white, lineHeight: 0.9, letterSpacing: '-0.04em' }}>
+                        {R$(p.valor_aluno_ano)}
+                      </div>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginTop: 10, letterSpacing: '0.02em' }}>
+                        Valor negociado exclusivo para esta proposta
+                      </p>
+                    </div>
+                    <div style={{ width: 1, alignSelf: 'stretch', background: 'linear-gradient(180deg, transparent, rgba(255,255,255,0.12) 30%, rgba(255,255,255,0.12) 70%, transparent)', margin: '0 clamp(20px,4vw,48px)' }} />
+                    <div>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: 10 }}>Taxa de Implantação</p>
+                      {p.duracao_meses >= 48 && (
+                        <p style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.28)', textDecoration: 'line-through', marginBottom: 8 }}>R$ 5.000,00</p>
+                      )}
+                      <div style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: p.duracao_meses >= 48 ? C.mint : C.white, lineHeight: 1, letterSpacing: '-0.03em' }}>
+                        {p.duracao_meses >= 48 ? 'ISENTA' : R$(5000)}
+                      </div>
+                      {p.duracao_meses >= 48 && (
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: C.mint, marginTop: 10, letterSpacing: '0.04em' }}>Contratos ≥ 48 meses</p>
+                      )}
+                    </div>
+                  </div>
+                </Reveal>
+                <Reveal delay={140}>
+                  <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0.1) 80%, transparent)', marginBottom: 18 }} />
+                </Reveal>
+                <Reveal delay={180}>
+                  <div style={{ borderLeft: `2px solid ${C.mint}`, padding: '10px 18px', marginBottom: 20 }}>
+                    <p style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
+                      Esta referência facilita a leitura gerencial. O investimento contempla currículo, formação, acompanhamento e implantação — não se reduz ao custo unitário por aluno.
+                    </p>
+                  </div>
+                </Reveal>
+                <Reveal delay={240}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 18 }}>
+                    {[
+                      { label: `Parcela (${p.num_parcelas}×)`, val: R$(parcelaCurr), note: `Total anual ÷ ${p.num_parcelas}`, hi: true },
+                      { label: 'Por aluno / ano', val: R$(p.valor_aluno_ano), note: `${p.num_alunos} alunos × ${R$(p.valor_aluno_ano)}`, hi: false },
+                      { label: 'Por aluno / mês', val: R$(p.valor_aluno_ano / 12), note: 'Custo unitário mensal', hi: false },
+                    ].map((c) => (
+                      <div key={c.label} className="surface-glass card-lift" style={{ borderRadius: 16, padding: '18px 20px', borderColor: c.hi ? `rgba(118,243,205,0.25)` : 'rgba(255,255,255,0.08)' }}>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.16em', color: c.hi ? C.mint : 'rgba(255,255,255,0.35)', marginBottom: 8 }}>{c.label}</p>
+                        <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-2xl)', color: c.hi ? C.mint : C.white, lineHeight: 1, marginBottom: 6, letterSpacing: '-0.02em' }}>{c.val}</p>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.25)', lineHeight: 1.4 }}>{c.note}</p>
+                      </div>
+                    ))}
+                  </div>
+                </Reveal>
+              </>
+            )}
+
+            <Reveal delay={320}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {[
+                  `${descPct}% de desconto aplicado`, 'Boleto bancário', 'Vencimento dia 7',
+                  'Reajuste anual IPCA', `Validade: ${fmtDate(p.validade)}`,
+                ].map(t => (
+                  <div key={t} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '6px 14px', borderRadius: 99, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', fontFamily: 'Geist, sans-serif', fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.02em' }}>
+                    <div style={{ width: 4, height: 4, borderRadius: '50%', background: C.mint, flexShrink: 0 }} />{t}
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+
+          </div></div>
+        </section>
+
+        {hasComodato && (
+          <section ref={sec(10)} style={{ scrollSnapAlign: 'start', height: '100dvh', background: C.navy, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflow: 'hidden', position: 'relative' }}>
+            <Glow color="rgba(255,204,0,0.1)" size={440} style={{ top: -80, right: -80 }} />
+            <Glow color="rgba(76,138,222,0.18)" size={380} style={{ bottom: -80, left: -80 }} />
+
+            <div style={{ position: 'relative', zIndex: 2, maxWidth: 920, width: '100%', margin: '0 auto' }}>
+              <Reveal>
+                <Eyebrow>Resumo Final</Eyebrow>
+                <h2 className="text-gradient-cinematic" style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', marginBottom: 12, letterSpacing: '-0.02em', lineHeight: 1.05 }}>
+                  Comparativo dos Modelos
+                </h2>
+                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, maxWidth: 820, marginBottom: 8 }}>
+                  Em ambos os modelos, a implantação do espaço maker considera recursos que apoiam aulas de engenharia, fabricação digital, programação, robótica educacional, eletrônica, cidadania digital e projetos criativos.
+                </p>
+              </Reveal>
+
+              <Reveal delay={80}>
+                <div style={{ borderRadius: 16, overflow: 'hidden', marginBottom: 18, border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', background: 'rgba(255,255,255,0.06)', padding: '12px 20px', gap: 12, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                    <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,255,255,0.4)' }}>Critério</span>
+                    <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: C.royal }}>Modelo 1 — Patrimonial</span>
+                    <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: C.mint }}>Modelo 2 — Cessão</span>
+                  </div>
+                  {[
+                    { criterio: 'Formato', m1: 'Escola adquire diretamente os equipamentos da Sala Maker.', m2: 'We Make disponibiliza equipamentos durante a vigência contratual.' },
+                    { criterio: 'Propriedade', m1: 'Os recursos pertencem à escola desde a aquisição.', m2: 'Recursos pertencem à We Make durante o contrato; transferência possível ao final.' },
+                    { criterio: 'Investimento inicial', m1: R$(sumEquip), m2: '—' },
+                    { criterio: 'Parcela mensal', m1: R$(totalAnual / 12), m2: R$(totalAnual / 12 + mensalComd) },
+                    { criterio: 'Por aluno / mês', m1: R$(p.valor_aluno_ano / 12), m2: R$((totalAnual / 12 + mensalComd) / (p.num_alunos || 1)) },
+                  ].map((row, i) => (
+                    <div key={row.criterio} style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', padding: '12px 20px', gap: 12, borderBottom: '1px solid rgba(255,255,255,0.05)', background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)' }}>
+                      <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{row.criterio}</span>
+                      <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>{row.m1}</span>
+                      <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: C.mint, lineHeight: 1.5 }}>{row.m2}</span>
+                    </div>
+                  ))}
+                </div>
+              </Reveal>
+            </div>
+          </section>
         )}
 
         {/* ══════════════════════════════════════════════════════════════
@@ -1130,9 +1297,35 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               <a href="https://wa.me/5583982301530" target="_blank" rel="noopener noreferrer" className="btn-primary">
                 {I.phone('#0b1f44')} Falar com a equipe We Make
               </a>
-              <p style={{ marginTop: 32, fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.18)', lineHeight: 1.6 }}>
-                © We Make Tecnologia Educacional · Proposta Confidencial<br />
-                Válida até {fmtDate(p.validade)}
+              <div style={{ marginTop: 24, background: 'rgba(255,204,0,0.08)', border: '1px solid rgba(255,204,0,0.28)', borderRadius: 14, padding: '14px 20px' }}>
+                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,204,0,0.5)', marginBottom: 8, textAlign: 'center' }}>
+                  {countdown?.expired ? 'Proposta expirada' : 'Esta proposta expira em'}
+                </p>
+                {countdown?.expired ? (
+                  <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-xl)', color: '#f87171', textAlign: 'center' }}>Expirada em {fmtDate(p.validade)}</p>
+                ) : (
+                  <>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 6 }}>
+                      {([
+                        { v: countdown?.days,    label: 'dias' },
+                        { v: countdown?.hours,   label: 'horas' },
+                        { v: countdown?.minutes, label: 'min' },
+                        { v: countdown?.seconds, label: 'seg' },
+                      ] as { v: number | undefined; label: string }[]).map(({ v, label }) => (
+                        <div key={label} style={{ textAlign: 'center' }}>
+                          <p style={{ fontFamily: 'Geist Mono, monospace', fontWeight: 700, fontSize: 'var(--text-2xl)', color: C.amber, lineHeight: 1, marginBottom: 2 }}>
+                            {v !== undefined ? String(v).padStart(2, '0') : '--'}
+                          </p>
+                          <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.52rem', color: 'rgba(255,204,0,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{label}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,204,0,0.4)', textAlign: 'center' }}>até {fmtDate(p.validade)}</p>
+                  </>
+                )}
+              </div>
+              <p style={{ marginTop: 20, fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.18)', lineHeight: 1.6 }}>
+                © We Make Tecnologia Educacional · Proposta Confidencial
               </p>
             </Reveal>
           </div>
