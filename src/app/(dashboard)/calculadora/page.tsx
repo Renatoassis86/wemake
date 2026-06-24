@@ -328,6 +328,7 @@ export default function CalculadoraPage() {
   })
   const [logoFile, setLogoFile]         = useState<File | null>(null)
   const [logoPreview, setLogoPreview]   = useState<string | null>(null)
+  const [valorCustom, setValorCustom]   = useState<string>('')
   const [modalLoading, setModalLoading] = useState(false)
   const [modalError, setModalError]     = useState<string | null>(null)
   const [propostaResult, setPropostaResult] = useState<{
@@ -345,6 +346,7 @@ export default function CalculadoraPage() {
     })
     setLogoFile(null)
     setLogoPreview(null)
+    setValorCustom(sis.valorFinal.toFixed(2))
     setModalLoading(false)
     setModalError(null)
     setPropostaResult(null)
@@ -391,7 +393,7 @@ export default function CalculadoraPage() {
         validade:             modalForm.validade,
         num_alunos:           alunos,
         segmentos:            segs,
-        valor_aluno_ano:      sis.valorFinal,
+        valor_aluno_ano:      parseFloat(valorCustom.replace(',', '.')) || sis.valorFinal,
         num_parcelas:         incluiComodato ? 12 : parcelas,
         duracao_meses:        lp.duracaoMeses,
         comodato_pv:          incluiComodato ? com.PV : null,
@@ -1567,6 +1569,35 @@ export default function CalculadoraPage() {
                     />
                   </div>
 
+                  {/* Valor por aluno/ano (editável para estratégia de negociação) */}
+                  <div>
+                    <label style={LBL}>Valor por aluno / ano (R$)</label>
+                    <div style={{ position: 'relative' }}>
+                      <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.82rem', pointerEvents: 'none' }}>R$</span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={valorCustom}
+                        onChange={e => setValorCustom(e.target.value)}
+                        style={{ ...INP, paddingLeft: 36 }}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontSize: '.65rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
+                      <span style={{ color: '#94a3b8' }}>
+                        Calculadora: <strong style={{ color: '#475569' }}>{sis.valorFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+                        {parseFloat(valorCustom) !== sis.valorFinal && (
+                          <span style={{ marginLeft: 6, color: parseFloat(valorCustom) > sis.valorFinal ? '#16a34a' : '#dc2626', fontWeight: 700 }}>
+                            ({parseFloat(valorCustom) > sis.valorFinal ? '+' : ''}{(((parseFloat(valorCustom) || 0) / sis.valorFinal - 1) * 100).toFixed(1)}%)
+                          </span>
+                        )}
+                      </span>
+                      <span style={{ color: '#94a3b8' }}>
+                        Total anual: <strong style={{ color: '#0b1f44' }}>{((parseFloat(valorCustom) || 0) * alunos).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong>
+                      </span>
+                    </div>
+                  </div>
+
                   {/* Texto personalizado */}
                   <div>
                     <label style={LBL}>Texto personalizado (opcional)</label>
@@ -1584,7 +1615,7 @@ export default function CalculadoraPage() {
                     <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#94a3b8', marginBottom: '.4rem' }}>
                       Dados da calculadora (incluídos automaticamente)
                     </div>
-                    <strong>{alunos} alunos</strong> &middot; {segs} segmento{segs > 1 ? 's' : ''} &middot; {R$(sis.valorFinal)}/aluno/ano
+                    <strong>{alunos} alunos</strong> &middot; {segs} segmento{segs > 1 ? 's' : ''} &middot; {R$(parseFloat(valorCustom) || sis.valorFinal)}/aluno/ano
                     {incluiComodato && (
                       <> &middot; Comodato PV {R$(com.PV)} &middot; {com.N}x de {R$(com.parcelaPrice)}</>
                     )}
