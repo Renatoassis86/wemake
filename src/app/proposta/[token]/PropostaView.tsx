@@ -1232,23 +1232,53 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               </Reveal>
 
               <Reveal delay={80}>
-                <div style={{ borderRadius: 16, overflow: 'hidden', marginBottom: 18, border: '1px solid rgba(255,255,255,0.08)' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', background: 'rgba(255,255,255,0.06)', padding: '12px 20px', gap: 12, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ borderRadius: 16, overflow: 'auto', marginBottom: 18, border: '1px solid rgba(255,255,255,0.08)', maxHeight: 'calc(100dvh - 220px)' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', background: 'rgba(255,255,255,0.06)', padding: '12px 20px', gap: 16, borderBottom: '1px solid rgba(255,255,255,0.1)', position: 'sticky', top: 0, zIndex: 1 }}>
                     <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,255,255,0.4)' }}>Critério</span>
-                    <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: C.royal }}>Modelo 1 — Patrimonial</span>
-                    <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: C.mint }}>Modelo 2 — Cessão</span>
+                    <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: C.royal }}>Modelo 1 — Investimento Patrimonial da Escola</span>
+                    <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: C.mint }}>Modelo 2 — Cessão de Uso com Transferência Final</span>
                   </div>
                   {[
-                    { criterio: 'Formato', m1: 'Escola adquire diretamente os equipamentos da Sala Maker.', m2: 'We Make disponibiliza equipamentos durante a vigência contratual.' },
-                    { criterio: 'Propriedade', m1: 'Os recursos pertencem à escola desde a aquisição.', m2: 'Recursos pertencem à We Make durante o contrato; transferência possível ao final.' },
-                    { criterio: 'Investimento inicial', m1: R$(sumEquip), m2: '—' },
-                    { criterio: 'Parcela mensal', m1: R$(totalAnual / 12), m2: R$(totalAnual / 12 + mensalComd) },
-                    { criterio: 'Por aluno / mês', m1: R$(p.valor_aluno_ano / 12), m2: R$((totalAnual / 12 + mensalComd) / (p.num_alunos || 1)) },
+                    {
+                      criterio: 'Formato de implantação',
+                      m1: 'A escola realiza diretamente a aquisição dos recursos reutilizáveis necessários à implantação do espaço maker.',
+                      m2: 'A We Make disponibiliza os recursos reutilizáveis durante a vigência contratual, com possibilidade de transferência definitiva à escola ao final do contrato.',
+                    },
+                    {
+                      criterio: 'Propriedade dos recursos durante o contrato',
+                      m1: 'Os recursos pertencem à escola desde a aquisição.',
+                      m2: 'Os recursos permanecem vinculados à We Make durante a vigência contratual. Ao final, cumpridas integralmente as condições contratuais, os recursos reutilizáveis poderão ser transferidos definitivamente à escola.',
+                    },
+                    {
+                      criterio: 'Investimento inicial em recursos reutilizáveis',
+                      m1: R$(sumEquip),
+                      m2: '—',
+                    },
+                    {
+                      criterio: 'Investimento anual por aluno',
+                      m1: `${R$(p.valor_aluno_ano)} por aluno/ano`,
+                      m2: `${R$((totalAnual / 12 + mensalComd) * 12 / (p.num_alunos || 1))} por aluno/ano`,
+                    },
+                    {
+                      criterio: 'Vantagem principal',
+                      m1: 'A escola fortalece imediatamente seu patrimônio próprio e tem maior autonomia sobre os recursos adquiridos.',
+                      m2: 'A escola reduz o desembolso inicial, implanta o espaço maker com recursos disponibilizados pela We Make e pode incorporar esses bens ao seu patrimônio ao final da vigência.',
+                    },
+                    {
+                      criterio: 'Indicado para',
+                      m1: 'Escolas que desejam investir diretamente em infraestrutura própria desde o início da parceria.',
+                      m2: 'Escolas que desejam diluir o investimento nos recursos reutilizáveis ao longo do contrato, preservando a possibilidade de incorporação patrimonial futura.',
+                    },
+                    {
+                      criterio: 'Validade da Proposta',
+                      m1: fmtDate(p.validade),
+                      m2: fmtDate(p.validade),
+                    },
                   ].map((row, i) => (
-                    <div key={row.criterio} style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', padding: '12px 20px', gap: 12, borderBottom: '1px solid rgba(255,255,255,0.05)', background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)' }}>
-                      <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{row.criterio}</span>
-                      <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>{row.m1}</span>
-                      <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: C.mint, lineHeight: 1.5 }}>{row.m2}</span>
+                    <div key={row.criterio} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', padding: '14px 20px', gap: 16, borderBottom: '1px solid rgba(255,255,255,0.05)', background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)', alignItems: 'start' }}>
+                      <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', fontWeight: 700, color: 'rgba(255,255,255,0.5)', lineHeight: 1.4 }}>{row.criterio}</span>
+                      <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.55 }}>{row.m1}</span>
+                      <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.8rem', color: C.mint, lineHeight: 1.55 }}>{row.m2}</span>
                     </div>
                   ))}
                 </div>
