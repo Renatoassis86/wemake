@@ -379,17 +379,8 @@ export default function CalculadoraPage() {
     setModalError(null)
 
     try {
-      let logoUrl: string | null = null
-
-      // Upload logo via API route (uses service_role to bypass storage RLS)
-      if (logoFile) {
-        const fd = new FormData()
-        fd.append('file', logoFile)
-        const upRes = await fetch('/api/propostas/upload-logo', { method: 'POST', body: fd })
-        const upData = await upRes.json()
-        if (!upRes.ok) throw new Error('Falha no upload do logo: ' + (upData.error ?? upRes.status))
-        logoUrl = upData.url
-      }
+      // logoPreview já é uma data URL base64 gerada pelo FileReader no handleLogoChange
+      const logoUrl: string | null = logoPreview
 
       // POST to /api/propostas
       const payload = {
