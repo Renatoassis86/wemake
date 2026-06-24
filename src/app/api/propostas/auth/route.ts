@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
 export const dynamic = 'force-dynamic'
+
+function anonClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
+}
 
 // POST — public endpoint: valida email + PIN e retorna o token da proposta
 export async function POST(request: NextRequest) {
@@ -16,9 +23,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const admin = createAdminClient()
+    const supabase = anonClient()
 
-    const { data, error } = await admin
+    const { data, error } = await supabase
       .from('propostas')
       .select('token')
       .eq('escola_email', email.toLowerCase().trim())

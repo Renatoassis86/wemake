@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,8 +12,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
-    const admin = createAdminClient()
-    const { data, error } = await admin
+    const { data, error } = await supabase
       .from('propostas')
       .select('*')
       .order('created_at', { ascending: false })
@@ -32,7 +30,7 @@ export async function GET() {
 // POST — cria nova proposta
 export async function POST(request: NextRequest) {
   try {
-    // Auth check
+    // Auth check — usa o client com sessão do usuário (bypassa RLS via policy "authenticated manage propostas")
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -65,8 +63,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'escola_nome é obrigatório' }, { status: 400 })
     }
 
-    const admin = createAdminClient()
-
     const insert: Record<string, unknown> = {
       escola_nome,
       tipo:               tipo ?? 'curriculo',
@@ -90,7 +86,7 @@ export async function POST(request: NextRequest) {
     if (comodato_tx_rate !== undefined)     insert.comodato_tx_rate     = comodato_tx_rate
     if (comodato_notebooks !== undefined)   insert.comodato_notebooks   = comodato_notebooks
 
-    const { data, error } = await admin
+    const { data, error } = await supabase
       .from('propostas')
       .insert(insert)
       .select('id, token, escola_pin')

@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
 export const dynamic = 'force-dynamic'
+
+function anonClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
+}
 
 // GET — busca proposta pelo token (público, sem autenticação)
 export async function GET(
@@ -15,10 +22,9 @@ export async function GET(
       return NextResponse.json({ error: 'Token obrigatório' }, { status: 400 })
     }
 
-    const admin = createAdminClient()
+    const supabase = anonClient()
 
-    // Fetch the proposta
-    const { data: proposta, error } = await admin
+    const { data: proposta, error } = await supabase
       .from('propostas')
       .select('*')
       .eq('token', token)
@@ -28,7 +34,7 @@ export async function GET(
       return NextResponse.json({ error: 'Proposta não encontrada' }, { status: 404 })
     }
 
-    // Build update payload: always increment visualizacoes; set visualizado_em on first view
+    // Incrementa visualizações (fire-and-forget — falha silenciosa se anon não tiver update policy)
     const updatePayload: Record<string, unknown> = {
       visualizacoes: (proposta.visualizacoes ?? 0) + 1,
     }
@@ -36,14 +42,13 @@ export async function GET(
       updatePayload.visualizado_em = new Date().toISOString()
     }
 
-    // Fire-and-forget update (non-blocking)
-    admin
+    supabase
       .from('propostas')
       .update(updatePayload)
       .eq('token', token)
       .then(({ error: updateErr }) => {
         if (updateErr) {
-          console.error('[propostas/[token] GET] update error:', updateErr.message)
+          console.warn('[propostas/[token] GET] view count update skipped:', updateErr.message)
         }
       })
 

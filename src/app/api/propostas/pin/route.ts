@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
 export const dynamic = 'force-dynamic'
+
+function anonClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,8 +18,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'PIN obrigatório.' }, { status: 400 })
     }
 
-    const admin = createAdminClient()
-    const { data, error } = await admin
+    const supabase = anonClient()
+    const { data, error } = await supabase
       .from('propostas')
       .select('token, escola_nome')
       .eq('escola_pin', String(pin).trim())
