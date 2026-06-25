@@ -426,67 +426,72 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
-            1 · CARTA CEO  — tone: ivory (branco, como o site)
+            1 · CARTA CEO  — minimalista: foto circular + texto limpo
         ══════════════════════════════════════════════════════════════ */}
         <section ref={sec(1)} style={{ scrollSnapAlign: 'start', height: '100dvh', display: 'flex', alignItems: 'stretch', background: C.ivory, overflow: 'hidden', position: 'relative' }}>
-          <Glow color="rgba(76,138,222,0.06)" size={500} style={{ top: -120, right: -120 }} />
+          <Glow color="rgba(76,138,222,0.05)" size={600} style={{ top: -100, right: -100 }} />
+          <Glow color="rgba(118,243,205,0.04)" size={400} style={{ bottom: -80, left: -80 }} />
 
-          {/* foto lateral — preenchimento total da coluna */}
-          <div style={{ width: 'clamp(280px,38%,480px)', flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
-            {/* foto preenchendo toda a coluna */}
-            <img
-              src="/proposta/denis_ceo.png"
-              alt="Denis Júlio"
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
-            />
-            {/* gradiente: navy nas bordas para fundir */}
-            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to right, ${C.navy} 0%, rgba(11,31,68,0.15) 30%, transparent 60%)` }} />
-            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, ${C.navy} 0%, rgba(11,31,68,0.4) 20%, transparent 50%)` }} />
-            {/* anel de glow decorativo */}
-            <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 60% 40%, rgba(118,243,205,0.08) 0%, transparent 60%)`, pointerEvents: 'none' }} />
-            {/* badge de nome na base */}
-            <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', background: 'rgba(11,31,68,0.88)', backdropFilter: 'blur(16px)', border: `1px solid rgba(118,243,205,0.3)`, borderRadius: 999, padding: '10px 22px', display: 'flex', alignItems: 'center', gap: 10, whiteSpace: 'nowrap', boxShadow: '0 4px 24px rgba(0,0,0,0.5)', zIndex: 2 }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: C.mint, flexShrink: 0, boxShadow: `0 0 8px ${C.mint}` }} />
-              <div>
-                <p style={{ fontFamily: 'Fraunces, serif', fontSize: '0.9rem', color: C.white, fontWeight: 600, lineHeight: 1.2 }}>Dênis Júlio</p>
-                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: C.mint, letterSpacing: '0.1em', textTransform: 'uppercase', lineHeight: 1.2 }}>Fundador · We Make</p>
+          {/* coluna esquerda — foto circular centralizada */}
+          <div style={{ width: 'clamp(260px,36%,440px)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', padding: '40px 24px' }}>
+            {/* composição circular */}
+            <div style={{ position: 'relative', width: 'clamp(200px,22vw,300px)', height: 'clamp(200px,22vw,300px)' }}>
+              {/* círculo azul de fundo — ligeiramente maior e deslocado */}
+              <div style={{ position: 'absolute', width: '90%', height: '90%', borderRadius: '50%', background: C.royal, top: '5%', left: '5%' }} />
+              {/* círculo accent teal — canto superior esquerdo */}
+              <div style={{ position: 'absolute', width: '38%', height: '38%', borderRadius: '50%', background: C.mint, top: '-10%', left: '-12%', opacity: 0.85 }} />
+              {/* foto circular */}
+              <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', overflow: 'hidden', boxShadow: '0 8px 40px rgba(11,31,68,0.18)' }}>
+                <img
+                  src="/proposta/denis_ceo.png"
+                  alt="Denis Júlio"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
+                />
               </div>
+            </div>
+            {/* nome abaixo da foto */}
+            <div style={{ position: 'absolute', bottom: 'clamp(32px,5vh,56px)', textAlign: 'center' }}>
+              <p style={{ fontFamily: 'Fraunces, serif', fontSize: '1rem', color: C.navy, fontWeight: 600, fontStyle: 'italic', lineHeight: 1.2, marginBottom: 2 }}>Denis Júlio</p>
+              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: C.royal, letterSpacing: '0.1em', textTransform: 'uppercase' }}>CEO · We Make</p>
             </div>
           </div>
 
-          {/* carta */}
-          <div style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'clamp(48px,7vh,80px) clamp(20px,3vw,48px) clamp(32px,5vh,56px)', position: 'relative', zIndex: 2 }}>
+          {/* divisor vertical */}
+          <div style={{ width: 1, background: 'rgba(11,31,68,0.07)', margin: '48px 0', flexShrink: 0 }} />
+
+          {/* coluna direita — carta */}
+          <div style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'clamp(40px,6vh,72px) clamp(24px,3vw,52px) clamp(32px,5vh,56px) clamp(24px,3vw,48px)', position: 'relative', zIndex: 2 }}>
             <Reveal>
               <Eyebrow dark>Carta do CEO</Eyebrow>
-              <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 400, fontSize: 'var(--text-3xl)', color: C.navy, marginBottom: 20, lineHeight: 1.2, letterSpacing: '-0.015em', textWrap: 'balance' } as React.CSSProperties}>
+              <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 400, fontSize: 'var(--text-3xl)', color: C.navy, marginBottom: 20, lineHeight: 1.2, letterSpacing: '-0.015em', textWrap: 'balance', maxWidth: 540 } as React.CSSProperties}>
                 Prezado(a) gestor(a) de <em style={{ color: C.royal }}>{p.escola_nome}</em>,
               </h2>
             </Reveal>
-            <Reveal delay={120}>
-              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-base)', color: '#334155', lineHeight: 1.75, marginBottom: 14 }}>
+            <Reveal delay={100}>
+              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.8, marginBottom: 14, maxWidth: 540 }}>
                 {p.texto_personalizado
                   ? p.texto_personalizado
                   : `A We Make é uma editora de soluções tecnológicas para escolas confessionais, criada com o objetivo de pensar, estudar, ensinar e desenvolver tecnologia a partir da Cosmovisão Cristã. Somos referência no compromisso da educação escolar distintamente cristã, que prima pela Verdade, Beleza e Bondade.`
                 }
               </p>
             </Reveal>
-            <Reveal delay={220}>
-              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-base)', color: '#334155', lineHeight: 1.75, marginBottom: 14 }}>
-                Atuamos como parceira de escolas que desejam oferecer aos seus estudantes uma formação tecnológica consistente, organizada curricularmente e acompanhada com intencionalidade pedagógica. Nossa proposta não se limita ao fornecimento de aulas ou materiais: trabalhamos com currículo estruturado, formação docente, acompanhamento contínuo, orientação de implantação e apoio à organização do espaço maker, de modo coerente e com fidelidade à Cosmovisão Cristã.
+            <Reveal delay={180}>
+              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.8, marginBottom: 14, maxWidth: 540 }}>
+                Atuamos como parceira de escolas que desejam oferecer uma formação tecnológica consistente e acompanhada com intencionalidade pedagógica — currículo estruturado, formação docente, acompanhamento contínuo e apoio ao espaço maker, com fidelidade à Cosmovisão Cristã.
+              </p>
+            </Reveal>
+            <Reveal delay={260}>
+              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.8, marginBottom: 32, maxWidth: 540 }}>
+                É com grande gratidão que agradecemos à <strong style={{ color: C.navy }}>{p.escola_nome}</strong> pela oportunidade de ser uma parceira estratégica, entusiasmados com a possibilidade de promover experiências criativas e significativas sem abrir mão dos valores cristãos.
               </p>
             </Reveal>
             <Reveal delay={320}>
-              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-base)', color: '#334155', lineHeight: 1.75, marginBottom: 14 }}>
-                É com grande gratidão que agradecemos à <strong style={{ color: C.navy }}>{p.escola_nome}</strong> pela oportunidade de considerar a We Make como uma parceira estratégica para enriquecer o trabalho pedagógico envolvendo a tecnologia e a cultura maker.
-              </p>
-              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-base)', color: '#334155', lineHeight: 1.75, marginBottom: 24 }}>
-                Valorizamos profundamente o compromisso da sua escola com a inovação educacional e estamos entusiasmados com a possibilidade de colaborar para promover experiências de aprendizagem criativas e significativas, mas sem abrir mão dos princípios e valores cristãos.
-              </p>
-              <div className="surface-glass-ivory" style={{ padding: '16px 22px', display: 'inline-flex', alignItems: 'center', gap: 16, borderRadius: 14 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ width: 28, height: 2, background: C.royal, borderRadius: 1, opacity: 0.4 }} />
                 <div>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>Com gratidão,</p>
-                  <p style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--text-2xl)', color: C.navy, fontWeight: 600, fontStyle: 'italic', lineHeight: 1.1 }}>Denis Júlio</p>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: C.royal, marginTop: 2 }}>CEO — We Make Tecnologia Educacional</p>
+                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 3 }}>Com gratidão,</p>
+                  <p style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--text-2xl)', color: C.navy, fontWeight: 600, fontStyle: 'italic', lineHeight: 1.1, marginBottom: 2 }}>Denis Júlio</p>
+                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.7rem', color: C.royal }}>CEO — We Make Tecnologia Educacional</p>
                 </div>
               </div>
             </Reveal>
