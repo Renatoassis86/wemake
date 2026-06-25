@@ -35,7 +35,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    return NextResponse.json({ token: data.token, escola_nome: data.escola_nome })
+    // Seta cookie de autenticação da proposta (válido por 8h, httpOnly)
+    const response = NextResponse.json({ token: data.token, escola_nome: data.escola_nome })
+    response.cookies.set('proposta_auth', data.token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/proposta',
+      maxAge: 60 * 60 * 8, // 8 horas
+      secure: process.env.NODE_ENV === 'production',
+    })
+    return response
   } catch (err) {
     console.error('[propostas/pin POST]', err)
     return NextResponse.json({ error: 'Erro interno.' }, { status: 500 })
