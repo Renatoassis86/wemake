@@ -1069,19 +1069,13 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
         {/* ══════════════════════════════════════════════════════════════
             INVESTIMENTO — narrativa: valores revelados por último
         ══════════════════════════════════════════════════════════════ */}
-        <section ref={hasComodato ? sec(9) : sec(6)} style={{ scrollSnapAlign: 'start', height: '100dvh', background: C.navy, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
-          <Glow color="rgba(118,243,205,0.12)" size={600} style={{ top: -160, right: -160 }} />
-          <Glow color="rgba(76,138,222,0.2)" size={500} style={{ bottom: -120, left: -120 }} />
+        <section ref={hasComodato ? sec(9) : sec(6)} style={{ scrollSnapAlign: 'start', height: '100dvh', background: C.navy, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
+          <Glow color="rgba(118,243,205,0.12)" size={700} style={{ top: -200, right: -100 }} />
+          <Glow color="rgba(76,138,222,0.18)" size={600} style={{ bottom: -160, left: -100 }} />
           <Aurora color1="rgba(76,138,222,0.08)" color2="rgba(118,243,205,0.06)" style={{ top: -200, left: -100 }} />
 
-          {/* coluna imagem — esquerda */}
-          <div style={{ width: 'clamp(240px,34%,420px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
-            <img src="/proposta/proposta2.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(11,31,68,0.8) 0%, rgba(11,31,68,0.25) 40%, transparent 75%)' }} />
-          </div>
-
-          {/* coluna conteúdo — direita */}
-          <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div style={{ maxWidth: 700, width: '100%' }}>
+          {/* conteúdo centralizado */}
+          <div style={{ width: '100%', position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'var(--section-py) clamp(24px,8vw,120px)', overflowY: 'auto', height: '100%' }}><div style={{ maxWidth: 860, width: '100%', margin: '0 auto' }}>
 
             <Reveal>
               <Eyebrow>Financeiro</Eyebrow>
@@ -1203,10 +1197,10 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                       { label: 'Por aluno / ano', val: R$(p.valor_aluno_ano), note: `${p.num_alunos} alunos × ${R$(p.valor_aluno_ano)}`, hi: false },
                       { label: 'Por aluno / mês', val: R$(p.valor_aluno_ano / 12), note: 'Custo unitário mensal', hi: false },
                     ].map((c) => (
-                      <div key={c.label} className="surface-glass card-lift" style={{ borderRadius: 16, padding: '18px 20px', borderColor: c.hi ? `rgba(118,243,205,0.25)` : 'rgba(255,255,255,0.08)' }}>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.16em', color: c.hi ? C.mint : 'rgba(255,255,255,0.35)', marginBottom: 8 }}>{c.label}</p>
-                        <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-2xl)', color: c.hi ? C.mint : C.white, lineHeight: 1, marginBottom: 6, letterSpacing: '-0.02em' }}>{c.val}</p>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.25)', lineHeight: 1.4 }}>{c.note}</p>
+                      <div key={c.label} className="surface-glass card-lift" style={{ borderRadius: 20, padding: '24px 28px', borderColor: c.hi ? `rgba(118,243,205,0.25)` : 'rgba(255,255,255,0.08)' }}>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.16em', color: c.hi ? C.mint : 'rgba(255,255,255,0.35)', marginBottom: 10 }}>{c.label}</p>
+                        <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-3xl)', color: c.hi ? C.mint : C.white, lineHeight: 1, marginBottom: 8, letterSpacing: '-0.02em' }}>{c.val}</p>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.28)', lineHeight: 1.4 }}>{c.note}</p>
                       </div>
                     ))}
                   </div>
