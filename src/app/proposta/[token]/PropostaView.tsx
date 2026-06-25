@@ -678,98 +678,86 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
             <Glow color="rgba(76,138,222,0.18)" size={420} style={{ bottom: -80, right: -80 }} />
             <Aurora color1="rgba(76,138,222,0.08)" color2="rgba(118,243,205,0.06)" style={{ top: -180, right: -80 }} />
 
-            {/* coluna conteúdo — esquerda */}
-            <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div style={{ maxWidth: 640, width: '100%' }}>
+            {/* coluna conteúdo — esquerda, distribuído verticalmente */}
+            <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 'clamp(32px,5vh,52px) var(--gutter)', overflow: 'hidden' }}>
+
+              {/* topo: eyebrow + título + subtexto condensado */}
               <Reveal>
                 <Eyebrow>Espaço Maker</Eyebrow>
-                <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.white, marginBottom: 12, letterSpacing: '-0.02em', lineHeight: 1.05, textWrap: 'balance' } as React.CSSProperties}>
+                <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.white, marginBottom: 10, letterSpacing: '-0.02em', lineHeight: 1.05, textWrap: 'balance' } as React.CSSProperties}>
                   Apoio completo para sua Sala Maker
                 </h2>
-                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, marginBottom: 8, maxWidth: 580 }}>
-                  Para apoiar a escola na organização de um espaço adequado ao desenvolvimento da Educação Tecnológica e Maker, a We Make oferece orientação completa para a implantação dos recursos necessários à operação da disciplina.
-                </p>
-                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.75, marginBottom: 24, maxWidth: 580 }}>
-                  A organização e a aquisição dos recursos do espaço maker são realizadas pela própria escola. A We Make atua como parceira estratégica em todo o processo de planejamento e implantação.
+                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.6)', lineHeight: 1.65, maxWidth: 560 }}>
+                  A We Make orienta e apoia a escola em todo o processo de planejamento e implantação da Sala Maker — desde o memorial descritivo até o onboarding e o acompanhamento pedagógico ao longo da vigência.
                 </p>
               </Reveal>
 
+              {/* meio: grid 2 colunas de itens */}
               <Reveal delay={100}>
-                <div style={{ borderRadius: 16, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', padding: '20px 24px', marginBottom: 20 }}>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.16em', color: C.mint, marginBottom: 14 }}>O que a We Make oferece</p>
-                  {[
-                    'Planejamento e orientação para implantação da disciplina',
-                    'Onboarding presencial de implantação',
-                    'Apoio à organização do espaço maker em nível compatível com a proposta',
-                    'Memorial descritivo do espaço maker (projeto arquitetônico)',
-                    'Acompanhamento pedagógico recorrente ao longo da vigência',
-                    'Assessoria tecnológica e teológica para uso do espaço',
-                  ].map((item, i) => (
-                    <Reveal key={item} delay={i * 40}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '7px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.mint, flexShrink: 0, marginTop: 5 }} />
-                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.62)', lineHeight: 1.5 }}>{item}</span>
+                <div style={{ borderRadius: 16, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', padding: '16px 20px' }}>
+                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.16em', color: C.mint, marginBottom: 12 }}>O que a We Make oferece</p>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 24px' }}>
+                    {[
+                      'Planejamento e orientação para implantação da disciplina',
+                      'Onboarding presencial de implantação',
+                      'Apoio à organização do espaço maker compatível com a proposta',
+                      'Memorial descritivo do espaço maker (projeto arquitetônico)',
+                      'Acompanhamento pedagógico recorrente ao longo da vigência',
+                      'Assessoria tecnológica e teológica para uso do espaço',
+                    ].map((item) => (
+                      <div key={item} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '7px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div style={{ width: 5, height: 5, borderRadius: '50%', background: C.mint, flexShrink: 0, marginTop: 6 }} />
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.45 }}>{item}</span>
                       </div>
-                    </Reveal>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </Reveal>
 
-              {/* Tabela de referência de custos — exibe se houver dados no dados_calculo */}
+              {/* tabela condicional de equipamentos */}
               {comItens.length > 0 && (
                 <Reveal delay={220}>
-                  <div style={{ marginBottom: 20 }}>
-                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.16em', color: C.mint, marginBottom: 10 }}>
+                  <div>
+                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.16em', color: C.mint, marginBottom: 8 }}>
                       Simulação de custos — referência para aquisição
                     </p>
                     <div style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
-                      {/* cabeçalho */}
-                      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', background: 'rgba(11,31,68,0.6)', padding: '10px 18px', gap: 8 }}>
-                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.45)' }}>Item</span>
-                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.45)', textAlign: 'right' }}>Valor</span>
-                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.45)', textAlign: 'right' }}>%</span>
+                      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', background: 'rgba(11,31,68,0.6)', padding: '8px 18px', gap: 8 }}>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.45)' }}>Item</span>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.45)', textAlign: 'right' }}>Valor</span>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.45)', textAlign: 'right' }}>%</span>
                       </div>
-                      {/* linha TOTAL */}
-                      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', padding: '11px 18px', gap: 8, background: 'rgba(118,243,205,0.07)', borderBottom: '2px solid rgba(118,243,205,0.15)' }}>
-                        <span style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: 'var(--text-sm)', color: C.white }}>TOTAL ESTIMADO</span>
-                        <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-sm)', color: C.mint, textAlign: 'right' }}>{R$(sumEquip)}</span>
-                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: C.white, textAlign: 'right', fontWeight: 600 }}>100%</span>
+                      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', padding: '9px 18px', gap: 8, background: 'rgba(118,243,205,0.07)', borderBottom: '2px solid rgba(118,243,205,0.15)' }}>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: '0.78rem', color: C.white }}>TOTAL ESTIMADO</span>
+                        <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: '0.78rem', color: C.mint, textAlign: 'right' }}>{R$(sumEquip)}</span>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.78rem', color: C.white, textAlign: 'right', fontWeight: 600 }}>100%</span>
                       </div>
-                      {/* itens */}
                       {comItens.map((item, i) => (
-                        <div key={item.nome} style={{
-                          display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', padding: '8px 18px', gap: 8,
-                          borderBottom: '1px solid rgba(255,255,255,0.04)',
-                          background: i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent',
-                        }}>
-                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.65)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <span style={{ width: 3, height: 10, borderRadius: 2, background: C.mint, flexShrink: 0 }} />
-                            {item.nome}
+                        <div key={item.nome} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', padding: '7px 18px', gap: 8, borderBottom: '1px solid rgba(255,255,255,0.04)', background: i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent' }}>
+                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.65)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{ width: 3, height: 10, borderRadius: 2, background: C.mint, flexShrink: 0 }} />{item.nome}
                           </span>
-                          <span style={{ fontFamily: 'Fraunces, serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.8)', textAlign: 'right' }}>{R$(item.total)}</span>
-                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', textAlign: 'right' }}>
-                            {sumEquip > 0 ? `${((item.total / sumEquip) * 100).toFixed(1)}%` : '—'}
-                          </span>
+                          <span style={{ fontFamily: 'Fraunces, serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.8)', textAlign: 'right' }}>{R$(item.total)}</span>
+                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.63rem', color: 'rgba(255,255,255,0.35)', textAlign: 'right' }}>{sumEquip > 0 ? `${((item.total / sumEquip) * 100).toFixed(1)}%` : '—'}</span>
                         </div>
                       ))}
-                      {/* rodapé */}
-                      <div style={{ padding: '8px 18px', background: 'rgba(11,31,68,0.4)' }}>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)', lineHeight: 1.55 }}>
-                          * Simulação com base no memorial descritivo We Make. Valores referenciais sujeitos a atualização na aquisição.
-                        </p>
+                      <div style={{ padding: '7px 18px', background: 'rgba(11,31,68,0.4)' }}>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.25)', lineHeight: 1.5 }}>* Simulação com base no memorial descritivo We Make. Valores referenciais sujeitos a atualização na aquisição.</p>
                       </div>
                     </div>
                   </div>
                 </Reveal>
               )}
 
-              <Reveal delay={360}>
-                <div style={{ padding: '12px 18px', borderLeft: `3px solid ${C.mint}`, background: 'rgba(118,243,205,0.06)', borderRadius: '0 12px 12px 0' }}>
-                  <p style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7 }}>
-                    A aquisição dos equipamentos, máquinas e recursos do espaço maker é de responsabilidade da escola. Não está incluída nesta proposta, salvo contratação específica.
+              {/* base: nota */}
+              <Reveal delay={300}>
+                <div style={{ padding: '10px 16px', borderLeft: `3px solid ${C.mint}`, background: 'rgba(118,243,205,0.05)', borderRadius: '0 10px 10px 0' }}>
+                  <p style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>
+                    A aquisição dos equipamentos e recursos do espaço maker é de responsabilidade da escola — não está incluída nesta proposta, salvo contratação específica.
                   </p>
                 </div>
               </Reveal>
-            </div></div>
+            </div>
 
             {/* coluna imagem — direita */}
             <div style={{ width: 'clamp(260px,36%,460px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
