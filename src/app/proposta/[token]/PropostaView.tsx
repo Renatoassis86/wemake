@@ -376,7 +376,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
             <img
               src="/proposta/foto_propostacomercial.png"
               alt=""
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center center' }}
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center' }}
             />
             <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg,rgba(11,31,68,0.55) 0%,transparent 30%,transparent 70%,rgba(11,31,68,0.75) 100%)` }} />
             <Glow color="rgba(118,243,205,0.14)" size={400} style={{ bottom: -100, left: -80 }} />
