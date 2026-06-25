@@ -128,6 +128,7 @@ export async function upsertEscola(formData: FormData) {
       const VALIDOS = ['feira','instagram','network','site','whatsapp','email','telefone','visita','evento','parceiro','outro']
       return v && VALIDOS.includes(v) ? v : null
     })(),
+    maior_sala:         parseInt(formData.get('maior_sala') as string) || 0,
     responsavel_id:     formData.get('responsavel_id') as string || null,
     observacoes:        formData.get('observacoes') as string || null,
     updated_by:         user.id,

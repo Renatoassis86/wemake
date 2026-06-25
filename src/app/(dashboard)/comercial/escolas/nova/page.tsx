@@ -301,6 +301,27 @@ export default async function EscolaNova({ searchParams }: Props) {
 
               </div>
 
+              {/* Maior turma — determina nº de notebooks no comodato */}
+              <div style={{ marginTop: '1.5rem', padding: '1.1rem 1.25rem', background: 'linear-gradient(135deg, #eff6ff, #f5f3ff)', border: '2px solid #bfdbfe', borderRadius: 14, display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+                <div style={{ flex: '0 0 auto' }}>
+                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#2563eb', marginBottom: '.3rem' }}>
+                    Maior Turma <span style={{ color: '#dc2626' }}>*</span>
+                  </div>
+                  <div style={{ fontSize: '.68rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)', lineHeight: 1.5, maxWidth: 340 }}>
+                    Quantidade de alunos na maior turma da escola. Usado para calcular o nº de notebooks no Comodato (1 notebook a cada 2 alunos).
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
+                  <input
+                    name="maior_sala" type="number" min="0" max="60" defaultValue="0"
+                    style={{ ...input, width: 90, textAlign: 'center', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.4rem', fontWeight: 700, padding: '.55rem', borderColor: '#93c5fd', background: '#fff' }}
+                  />
+                  <div style={{ fontSize: '.7rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', lineHeight: 1.7 }}>
+                    alunos<br /><span style={{ color: '#7c3aed', fontWeight: 700 }}>= ⌈n÷2⌉ notebooks</span>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
 
