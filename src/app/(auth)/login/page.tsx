@@ -34,10 +34,12 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
+    // Aceita usuário simples (ex: "chris") ou e-mail completo
+    const loginEmail = email.includes('@') ? email : `${email}@wemake.tec.br`
     const supabase = createClient()
-    const { error: err } = await supabase.auth.signInWithPassword({ email, password })
+    const { error: err } = await supabase.auth.signInWithPassword({ email: loginEmail, password })
     if (err) {
-      setError('E-mail ou senha inválidos.')
+      setError('Usuário ou senha inválidos.')
       setLoading(false)
       return
     }
@@ -399,10 +401,10 @@ export default function LoginPage() {
                   color: 'rgba(255,255,255,.45)', marginBottom: '.4rem',
                   textTransform: 'uppercase', letterSpacing: '.08em',
                   fontFamily: 'var(--font-montserrat, sans-serif)',
-                }}>E-mail</label>
+                }}>Usuário ou E-mail</label>
                 <input
-                  type="email" value={email} onChange={e => setEmail(e.target.value)}
-                  required autoFocus placeholder="seu@wemake.tec.br"
+                  type="text" value={email} onChange={e => setEmail(e.target.value)}
+                  required autoFocus placeholder="usuário ou seu@email.com.br"
                   style={{
                     width: '100%', padding: '.75rem 1rem',
                     background: 'rgba(255,255,255,.06)',
