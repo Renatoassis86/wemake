@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
 import { LeadsTable } from '@/components/leads/LeadsTable'
+import { ExportContatosModal } from '@/components/leads/ExportContatosModal'
 
 interface Props {
   searchParams: Promise<{ q?: string; fonte?: string; tipo?: string; uf?: string; pagina?: string }>
@@ -136,9 +137,8 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
     return `/leads-banco?${params.toString()}`
   }
 
-  // URLs de exportação com os filtros aplicados
-  const exportUrl        = `/api/leads-export?${new URLSearchParams({ q, fonte, tipo, uf }).toString()}`
-  const exportSimplUrl   = `/api/leads-export?${new URLSearchParams({ q, fonte, tipo, uf, modo: 'simples' }).toString()}`
+  // URL de exportação completa com os filtros da página
+  const exportUrl = `/api/leads-export?${new URLSearchParams({ q, fonte, tipo, uf }).toString()}`
 
   const svgDownload = (
     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -155,18 +155,8 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
         subtitle={`${(totalGeral ?? 0).toLocaleString('pt-BR')} leads importados`}
         actions={
           <div style={{ display: 'flex', gap: '.5rem' }}>
-            {/* Exportar Contatos (simplificado: nome, cargo, escola, tel, email, evento) */}
-            <a href={exportSimplUrl} title="Nome · Cargo · Escola · Telefone · E-mail · Evento — filtrado por estado e evento selecionados" style={{
-              display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-              padding: '.45rem 1rem', borderRadius: 9999,
-              background: '#0b1f44', color: '#fff', textDecoration: 'none',
-              fontSize: '.78rem', fontWeight: 700,
-              fontFamily: 'var(--font-montserrat,sans-serif)',
-              boxShadow: '0 4px 12px rgba(11,31,68,.3)',
-            }}>
-              {svgDownload}
-              Exportar Contatos
-            </a>
+            {/* Exportar Contatos — abre modal com filtros de evento, estado e qualidade */}
+            <ExportContatosModal ufsDisponiveis={ufsUnicas} />
             {/* Exportar Excel completo */}
             <a href={exportUrl} title="Exportação completa com todos os campos" style={{
               display: 'inline-flex', alignItems: 'center', gap: '.4rem',

@@ -24,11 +24,14 @@ export async function GET(request: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
 
   const { searchParams } = new URL(request.url)
-  const q     = searchParams.get('q')     ?? ''
-  const fonte = searchParams.get('fonte') ?? ''
-  const tipo  = searchParams.get('tipo')  ?? ''
-  const uf    = searchParams.get('uf')    ?? ''
-  const modo  = searchParams.get('modo')  ?? ''   // 'simples' → export de contatos enxuto
+  const q          = searchParams.get('q')          ?? ''
+  const fonte      = searchParams.get('fonte')      ?? ''
+  const tipo       = searchParams.get('tipo')       ?? ''
+  const uf         = searchParams.get('uf')         ?? ''
+  const modo       = searchParams.get('modo')       ?? ''  // 'simples' → export de contatos enxuto
+  const comNome    = searchParams.get('com_nome')   === '1'
+  const comTel     = searchParams.get('com_tel')    === '1'
+  const comEmail   = searchParams.get('com_email')  === '1'
 
   // Buscar todos os registros (sem paginação) com os filtros aplicados
   let query = supabase
@@ -37,9 +40,12 @@ export async function GET(request: NextRequest) {
     .order('nome')
     .limit(10000)
 
-  if (q)     query = query.or(`nome.ilike.%${q}%,email.ilike.%${q}%,escola_nome.ilike.%${q}%`)
-  if (fonte) query = query.eq('fonte', fonte)
-  if (uf)    query = query.eq('uf', uf.toUpperCase())
+  if (q)        query = query.or(`nome.ilike.%${q}%,email.ilike.%${q}%,escola_nome.ilike.%${q}%`)
+  if (fonte)    query = query.eq('fonte', fonte)
+  if (uf)       query = query.eq('uf', uf.toUpperCase())
+  if (comNome)  query = query.not('nome', 'is', null)
+  if (comTel)   query = query.not('tel_celular', 'is', null)
+  if (comEmail) query = query.not('email', 'is', null)
 
   const isCRM = fonte === 'crm'
   if (!isCRM) {
