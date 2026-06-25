@@ -530,89 +530,86 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
-            3 · CONFIGURAÇÃO — tone: royal (azul We Make, como Services)
+            3 · CONFIGURAÇÃO — tone: navy
         ══════════════════════════════════════════════════════════════ */}
-        <section ref={sec(3)} style={{ scrollSnapAlign: 'start', height: '100dvh', background: C.royal, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
-          <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(160deg,${C.royal},${C.royalD})` }} />
-          <Glow color="rgba(118,243,205,0.18)" size={480} style={{ top: -100, right: -100 }} />
-          <Glow color="rgba(11,31,68,0.3)" size={400} style={{ bottom: -80, left: -80 }} />
-          <Aurora color1="rgba(118,243,205,0.1)" color2="rgba(11,31,68,0.15)" style={{ bottom: -200, right: -120 }} />
+        <section ref={sec(3)} style={{ scrollSnapAlign: 'start', height: '100dvh', background: C.navy, display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
+          <Glow color="rgba(118,243,205,0.1)" size={560} style={{ top: -140, left: -100 }} />
+          <Glow color="rgba(76,138,222,0.15)" size={440} style={{ bottom: -80, left: 200 }} />
+          <Aurora color1="rgba(76,138,222,0.07)" color2="rgba(118,243,205,0.05)" style={{ top: -160, right: -80 }} />
 
-          {/* coluna conteúdo — esquerda */}
-          <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div>
+          {/* coluna conteúdo — esquerda, sem scroll */}
+          <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 'clamp(32px,5vh,52px) var(--gutter)', overflow: 'hidden' }}>
+
+            {/* topo: eyebrow + título + subtexto */}
             <Reveal>
               <Eyebrow>Objetivo da Parceria</Eyebrow>
               <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.white, marginBottom: 8, letterSpacing: '-0.02em', lineHeight: 1.05, textWrap: 'balance' } as React.CSSProperties}>
                 Configuração considerada
               </h2>
-              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.7)', marginBottom: 10, maxWidth: 540, lineHeight: 1.7 }}>
-                A presente proposta tem como objetivo apoiar a escola na implantação e/ou consolidação da disciplina de Educação Tecnológica e Maker, contemplando:
-              </p>
-              <ul style={{ margin: '0 0 clamp(14px,2vh,22px) 0', padding: '0 0 0 18px', display: 'flex', flexDirection: 'column', gap: 4 }}>
-                {['Currículo estruturado por segmento', 'Livro Maker do Aluno', 'Acesso à Plataforma da We Make', 'Acompanhamento pedagógico, tecnológico e teológico', 'Formação e orientação de professores', 'Onboarding de implantação presencial', 'Apoio à coordenação pedagógica', 'Suporte ao longo de toda a vigência contratual'].map(item => (
-                  <li key={item} style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.5, listStyleType: 'none', display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-                    <span style={{ width: 4, height: 4, borderRadius: '50%', background: C.mint, flexShrink: 0, marginTop: 6 }} />{item}
-                  </li>
-                ))}
-              </ul>
-              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', marginBottom: 'clamp(14px,2vh,22px)', maxWidth: 520, lineHeight: 1.6 }}>
-                Para esta proposta, está sendo considerado o atendimento a <strong style={{ color: 'rgba(255,255,255,0.75)' }}>{p.num_alunos.toLocaleString('pt-BR')} alunos</strong> em <strong style={{ color: 'rgba(255,255,255,0.75)' }}>{p.segmentos === 3 ? '3 segmentos (EF1, EF2 e Médio)' : p.segmentos === 2 ? '2 segmentos' : '1 segmento'}</strong>, pelo prazo de <strong style={{ color: 'rgba(255,255,255,0.75)' }}>{p.duracao_meses} meses</strong>.
+              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)', maxWidth: 520, lineHeight: 1.6 }}>
+                Atendimento a <strong style={{ color: C.mint }}>{p.num_alunos.toLocaleString('pt-BR')} alunos</strong> em <strong style={{ color: C.mint }}>{p.segmentos === 3 ? '3 segmentos (EF1, EF2 e Médio)' : p.segmentos === 2 ? '2 segmentos' : '1 segmento'}</strong>, pelo prazo de <strong style={{ color: C.mint }}>{p.duracao_meses} meses</strong>.
               </p>
             </Reveal>
 
             {/* 3 stat cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 10 }}>
-              {[
-                { icon: I.users(), label: 'Alunos', val: p.num_alunos, suffix: '', note: 'alunos no escopo' },
-                { icon: I.book(),  label: 'Segmentos', val: p.segmentos, suffix: '', note: segLabel(p.segmentos) },
-                { icon: I.clock(), label: 'Duração',  val: p.duracao_meses, suffix: ' meses', note: `${p.duracao_meses / 12} anos de contrato` },
-              ].map((s, i) => (
-                <Reveal key={s.label} delay={i * 80}>
-                  <div className="surface-card-royal card-lift" style={{ borderRadius: 16, padding: '18px 20px' }}>
+            <Reveal delay={80}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
+                {[
+                  { icon: I.users(), label: 'Alunos',    val: p.num_alunos,      suffix: '',       note: 'alunos no escopo' },
+                  { icon: I.book(),  label: 'Segmentos', val: p.segmentos,        suffix: '',       note: segLabel(p.segmentos) },
+                  { icon: I.clock(), label: 'Duração',   val: p.duracao_meses,   suffix: ' meses', note: `${p.duracao_meses / 12} anos de contrato` },
+                ].map((s, i) => (
+                  <div key={s.label} style={{ borderRadius: 18, padding: '20px 22px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)' }}>
                     <div style={{ color: C.mint, marginBottom: 10 }}>{s.icon}</div>
-                    <div style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,255,255,0.38)', marginBottom: 6 }}>{s.label}</div>
-                    <div style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-4xl)', color: C.white, lineHeight: 1.05, marginBottom: 4 }}>
+                    <div style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'rgba(255,255,255,0.35)', marginBottom: 6 }}>{s.label}</div>
+                    <div style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-4xl)', color: C.white, lineHeight: 1, marginBottom: 4 }}>
                       <Counter to={s.val} suffix={s.suffix} />
                     </div>
-                    <div style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.48)', lineHeight: 1.4 }}>{s.note}</div>
+                    <div style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)' }}>{s.note}</div>
                   </div>
-                </Reveal>
-              ))}
-            </div>
+                ))}
+              </div>
+            </Reveal>
 
-            {/* incluído / não incluído */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              <Reveal delay={260}>
-                <div className="surface-card-royal" style={{ borderRadius: 14, padding: '14px 18px' }}>
-                  <div style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: '0.65rem', color: C.mint, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+            {/* incluído / não incluído — cards destacados */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              <Reveal delay={200}>
+                <div style={{ borderRadius: 18, padding: '18px 22px', background: 'rgba(118,243,205,0.06)', border: '1px solid rgba(118,243,205,0.22)', height: '100%' }}>
+                  <div style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: '0.6rem', color: C.mint, textTransform: 'uppercase', letterSpacing: '0.16em', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
                     {I.check(C.mint)} Incluído
                   </div>
-                  {['Currículo completo anual', 'Livro Maker do aluno', 'Plataforma digital', 'Acompanhamento pedagógico', 'Formação docente contínua', 'Onboarding presencial', 'Suporte contínuo', 'Memorial descritivo'].map(item => (
-                    <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '3px 0', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.72)', lineHeight: 1.4 }}>
-                      <div style={{ width: 4, height: 4, borderRadius: '50%', background: C.mint, flexShrink: 0 }} />{item}
-                    </div>
-                  ))}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 12px' }}>
+                    {['Currículo completo anual', 'Livro Maker do aluno', 'Plataforma digital', 'Acompanhamento pedagógico', 'Formação docente contínua', 'Onboarding presencial', 'Suporte contínuo', 'Memorial descritivo'].map(item => (
+                      <div key={item} style={{ display: 'flex', alignItems: 'flex-start', gap: 6, padding: '5px 0', borderBottom: '1px solid rgba(118,243,205,0.08)' }}>
+                        <div style={{ width: 4, height: 4, borderRadius: '50%', background: C.mint, flexShrink: 0, marginTop: 5 }} />
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.73rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.35 }}>{item}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </Reveal>
-              <Reveal delay={340}>
-                <div className="surface-card-royal" style={{ borderRadius: 14, padding: '14px 18px' }}>
-                  <div style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: '0.65rem', color: '#fca5a5', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Reveal delay={300}>
+                <div style={{ borderRadius: 18, padding: '18px 22px', background: 'rgba(252,165,165,0.05)', border: '1px solid rgba(252,165,165,0.18)', height: '100%' }}>
+                  <div style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: '0.6rem', color: '#fca5a5', textTransform: 'uppercase', letterSpacing: '0.16em', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
                     {I.x('#fca5a5')} Não incluído
                   </div>
-                  {['Visitas presenciais extras', 'Formações extraordinárias', 'Personalizações fora do escopo padrão', 'Produção de materiais adicionais não previstos', 'Aquisição de kits, insumos, máquinas, ferramentas ou equipamentos'].map(item => (
-                    <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '3px 0', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.48)', lineHeight: 1.4 }}>
-                      <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#fca5a5', flexShrink: 0, opacity: 0.7 }} />{item}
-                    </div>
-                  ))}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {['Visitas presenciais extras', 'Formações extraordinárias', 'Personalizações fora do escopo padrão', 'Produção de materiais adicionais não previstos', 'Aquisição de kits, insumos, máquinas, ferramentas ou equipamentos'].map(item => (
+                      <div key={item} style={{ display: 'flex', alignItems: 'flex-start', gap: 6, padding: '6px 0', borderBottom: '1px solid rgba(252,165,165,0.08)' }}>
+                        <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#fca5a5', flexShrink: 0, marginTop: 5, opacity: 0.7 }} />
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.73rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.35 }}>{item}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </Reveal>
-            </div></div>
+            </div>
           </div>
 
-          {/* coluna imagem — direita */}
-          <div style={{ width: 'clamp(280px,38%,480px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
-            <img src="/proposta/proposta1.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(76,138,222,0.75) 0%, rgba(76,138,222,0.2) 35%, transparent 70%)' }} />
+          {/* coluna imagem — direita (livros) */}
+          <div style={{ width: 'clamp(260px,35%,460px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)' }}>
+            <img src="/proposta/livros-wemake.png" alt="Livros We Make" style={{ width: '90%', height: '90%', objectFit: 'contain', objectPosition: 'center', display: 'block' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(11,31,68,0.6) 0%, rgba(11,31,68,0.1) 40%, transparent 70%)' }} />
           </div>
         </section>
 
