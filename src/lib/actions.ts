@@ -728,6 +728,7 @@ export async function enviarFormularioPublico(formData: FormData): Promise<Actio
     const alunos_fundamental_1 = toNum('alunos_fundamental_1')
     const alunos_fundamental_2 = toNum('alunos_fundamental_2')
     const alunos_ensino_medio = toNum('alunos_ensino_medio')
+    const maior_sala = toNum('maior_sala')
 
     // Datas e formato
     const data_inicio_letivo = formData.get('data_inicio_letivo') as string || null
@@ -772,6 +773,7 @@ export async function enviarFormularioPublico(formData: FormData): Promise<Actio
       alunos_fundamental_1,
       alunos_fundamental_2,
       alunos_ensino_medio,
+      maior_sala,
       data_inicio_letivo,
       data_fim_letivo,
       formato_ano_letivo,

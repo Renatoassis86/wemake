@@ -458,6 +458,27 @@ export default function FormularioPublico() {
                 </Row>
               </div>
 
+              {/* Maior turma */}
+              <div style={{ marginBottom: '1.5rem', padding: '1.1rem 1.25rem', background: 'linear-gradient(135deg, #eff6ff, #f5f3ff)', border: '2px solid #bfdbfe', borderRadius: 12, display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+                <div style={{ flex: '1 1 240px' }}>
+                  <div style={{ fontSize: '.85rem', fontWeight: 700, color: '#2563eb', marginBottom: '.3rem' }}>
+                    Quantidade de alunos na maior turma <span style={{ color: '#dc2626' }}>*</span>
+                  </div>
+                  <div style={{ fontSize: '.78rem', color: '#64748b', lineHeight: 1.5 }}>
+                    Informe quantos alunos tem a turma com mais alunos da escola (ex.: se o 3º Ano tem 35 alunos e é a maior, escreva 35).
+                  </div>
+                </div>
+                <div style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
+                  <input
+                    name="maior_sala" type="number" min="0" max="80" defaultValue={0}
+                    style={{ width: 90, padding: '.65rem .75rem', fontSize: '1.4rem', fontWeight: 700, textAlign: 'center', border: '2px solid #93c5fd', borderRadius: 8, outline: 'none', background: '#fff', color: '#0f172a' }}
+                    onFocus={e => { e.target.style.borderColor = '#2563eb'; e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,.15)' }}
+                    onBlur={e => { e.target.style.borderColor = '#93c5fd'; e.target.style.boxShadow = 'none' }}
+                  />
+                  <span style={{ fontSize: '.8rem', color: '#64748b' }}>alunos</span>
+                </div>
+              </div>
+
               <Row>
                 <Field label="Previsão de Início do Ano Letivo 2027" name="data_inicio_letivo" type="date" required />
                 <Field label="Previsão de Término do Ano Letivo 2027" name="data_fim_letivo" type="date" required />
