@@ -336,126 +336,116 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
       <div ref={containerRef} style={{ height: '100dvh', overflowY: 'scroll', scrollSnapType: 'y proximity', scrollBehavior: 'smooth' }}>
 
         {/* ══════════════════════════════════════════════════════════════
-            0 · CAPA  — layout fiel ao PDF, visual We Make
+            0 · CAPA  — fullscreen navy cover premium, sem fotos
         ══════════════════════════════════════════════════════════════ */}
-        <section ref={sec(0)} style={{ scrollSnapAlign: 'start', height: '100dvh', display: 'flex', flexDirection: 'column', background: '#fff', overflow: 'hidden', position: 'relative' }}>
+        <section ref={sec(0)} style={{ scrollSnapAlign: 'start', height: '100dvh', display: 'flex', flexDirection: 'column', background: C.navy, overflow: 'hidden', position: 'relative' }}>
+          {/* glows decorativos */}
+          <Glow color="rgba(76,138,222,0.28)" size={700} style={{ top: -200, left: '50%', transform: 'translateX(-50%)' }} />
+          <Glow color="rgba(118,243,205,0.14)" size={500} style={{ bottom: -150, right: -100 }} />
+          <Aurora color1="rgba(118,243,205,0.12)" color2="rgba(76,138,222,0.18)" style={{ top: -180, left: -180 }} />
+          <Aurora color1="rgba(76,138,222,0.08)" color2="rgba(118,243,205,0.06)" style={{ bottom: -200, right: -200 }} />
+          {/* linha decorativa horizontal */}
+          <div aria-hidden style={{ position: 'absolute', width: '100%', height: 1, background: `linear-gradient(90deg,transparent,rgba(76,138,222,0.3),rgba(118,243,205,0.3),transparent)`, top: '38%', zIndex: 1 }} />
 
-          {/* topo: 2 colunas */}
-          <div style={{ display: 'flex', flex: '0 0 clamp(44%,48%,54%)', minHeight: 0 }}>
+          {/* conteúdo central */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', position: 'relative', zIndex: 2, padding: 'clamp(40px,6vh,80px) clamp(20px,5vw,80px)' }}>
+            {/* We Make logo */}
+            <Reveal>
+              <img src="/proposta/logo-white.png" alt="We Make" style={{ height: 36, objectFit: 'contain', marginBottom: 36, opacity: 0.9 }} />
+            </Reveal>
 
-            {/* esquerda — royal blue */}
-            <div style={{ width: '42%', background: C.royal, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: 'var(--gutter) var(--gutter) clamp(36px,5vw,56px)', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(160deg,${C.royal},${C.royalD})` }} />
-              <Glow color="rgba(118,243,205,0.2)" size={320} style={{ bottom: -80, right: -80 }} />
-              <Aurora color1="rgba(118,243,205,0.15)" color2="rgba(42,105,186,0.08)" style={{ bottom: -160, right: -160 }} />
-              <div style={{ position: 'relative', zIndex: 2 }}>
-                <p style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: '0.62rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.65)', marginBottom: 16 }}>
-                  PROPOSTA DE PARCERIA
-                </p>
-                <h1 style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-4xl)', color: '#fff', lineHeight: 1.08, textTransform: 'uppercase', letterSpacing: '-0.01em', textWrap: 'balance' } as React.CSSProperties}>
-                  {p.escola_nome}
-                </h1>
-                <div style={{ marginTop: 24, display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 32, height: 3, background: C.mint, borderRadius: 2 }} />
-                  <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: C.mint, letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 600 }}>We Make</span>
+            {/* eyebrow */}
+            <Reveal delay={60}>
+              <p style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: '0.62rem', letterSpacing: '0.28em', textTransform: 'uppercase', color: C.mint, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={{ display: 'inline-block', width: 28, height: 1.5, background: C.mint, opacity: 0.6, borderRadius: 1 }} />
+                Proposta de Parceria
+                <span style={{ display: 'inline-block', width: 28, height: 1.5, background: C.mint, opacity: 0.6, borderRadius: 1 }} />
+              </p>
+            </Reveal>
+
+            {/* nome da escola — grande */}
+            <Reveal delay={120}>
+              <h1 style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'clamp(2.4rem,6vw,5rem)', color: C.white, lineHeight: 1.05, textAlign: 'center', letterSpacing: '-0.02em', textWrap: 'balance', marginBottom: 12 } as React.CSSProperties}>
+                {p.escola_nome}
+              </h1>
+            </Reveal>
+
+            {/* logo da escola — pequena e discreta (se existir) */}
+            {p.escola_logo_url && (
+              <Reveal delay={160}>
+                <div style={{ marginBottom: 40, marginTop: 4 }}>
+                  <img src={p.escola_logo_url} alt={p.escola_nome} style={{ height: 42, objectFit: 'contain', opacity: 0.55, filter: 'brightness(0) invert(1)' }} />
                 </div>
-              </div>
-            </div>
+              </Reveal>
+            )}
+            {!p.escola_logo_url && <div style={{ marginBottom: 40 }} />}
 
-            {/* direita — logo escola */}
-            <div style={{ flex: 1, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(12px,2vw,24px)', borderBottom: '1px solid rgba(226,232,240,0.7)' }}>
-              {p.escola_logo_url
-                ? <img src={p.escola_logo_url} alt={p.escola_nome} style={{ width: '78%', height: '78%', objectFit: 'contain' }} />
-                : <div style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-5xl)', color: C.navy, opacity: 0.15 }}>{p.escola_nome.charAt(0)}</div>
-              }
-            </div>
+            {/* cards de diagnóstico — 4 dados chave */}
+            <Reveal delay={220}>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 0, maxWidth: 760 }}>
+                {[
+                  { label: 'Alunos', value: p.num_alunos.toLocaleString('pt-BR'), note: 'no escopo da proposta' },
+                  { label: 'Segmentos', value: String(p.segmentos), note: segLabel(p.segmentos) },
+                  { label: 'Duração', value: `${p.duracao_meses}m`, note: `${p.duracao_meses / 12} ${p.duracao_meses / 12 === 1 ? 'ano' : 'anos'} de contrato` },
+                  { label: 'Validade', value: fmtDate(p.validade).split(' de ')[0] + '/' + fmtDate(p.validade).split(' de ')[1]?.slice(0,3), note: 'data limite da proposta' },
+                ].map((item, i) => (
+                  <div key={item.label} style={{
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 16,
+                    padding: '16px 22px',
+                    textAlign: 'center',
+                    minWidth: 130,
+                    backdropFilter: 'blur(8px)',
+                    transition: 'border-color 0.3s',
+                  }}>
+                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.55rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: C.mint, marginBottom: 6, opacity: 0.8 }}>{item.label}</p>
+                    <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'clamp(1.3rem,2.5vw,1.9rem)', color: C.white, lineHeight: 1.1, marginBottom: 4 }}>{item.value}</p>
+                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.35)', lineHeight: 1.4 }}>{item.note}</p>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
           </div>
 
-          {/* baixo — foto de fundo */}
-          <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: C.navy }}>
-            <img
-              src="/proposta/foto_propostacomercial.png"
-              alt=""
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center center' }}
-            />
-            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg,rgba(11,31,68,0.55) 0%,transparent 30%,transparent 70%,rgba(11,31,68,0.75) 100%)` }} />
-            <Glow color="rgba(118,243,205,0.14)" size={400} style={{ bottom: -100, left: -80 }} />
-
-            {/* We Make logo */}
-            <div style={{ position: 'absolute', bottom: 28, left: 'var(--gutter)' }}>
-              <img src="/proposta/logo-white.png" alt="We Make" style={{ height: 36, objectFit: 'contain' }} />
+          {/* rodapé: countdown minimalista + botão DESLIZAR */}
+          <div style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 clamp(16px,3vw,48px) clamp(18px,3vh,28px)' }}>
+            {/* countdown minimalista */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              {countdown?.expired ? (
+                <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: '#f87171', letterSpacing: '0.06em' }}>Proposta expirada</span>
+              ) : (
+                <>
+                  <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em' }}>válida por</span>
+                  <span style={{ fontFamily: 'Geist Mono, monospace', fontSize: '0.72rem', color: 'rgba(255,255,255,0.55)', letterSpacing: '0.04em' }}>
+                    {countdown?.days !== undefined ? `${String(countdown.days).padStart(2,'0')}d` : '--d'}{' '}
+                    {countdown?.hours !== undefined ? `${String(countdown.hours).padStart(2,'0')}h` : '--h'}{' '}
+                    {countdown?.minutes !== undefined ? `${String(countdown.minutes).padStart(2,'0')}m` : '--m'}
+                  </span>
+                </>
+              )}
             </div>
-
-            {/* direita: validade + scroll */}
-            <div style={{ position: 'absolute', bottom: 28, right: 'var(--gutter)', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 12 }}>
-              <div style={{ background: 'rgba(255,204,0,0.1)', border: '1px solid rgba(255,204,0,0.3)', borderRadius: 12, padding: '8px 14px', textAlign: 'right' }}>
-                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,204,0,0.55)', marginBottom: 4 }}>
-                  {countdown?.expired ? 'Proposta expirada' : 'Proposta válida por'}
-                </p>
-                {countdown?.expired ? (
-                  <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: '0.9rem', color: '#f87171', lineHeight: 1 }}>Expirada</p>
-                ) : (
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'baseline', justifyContent: 'flex-end' }}>
-                    {([
-                      { v: countdown?.days,    u: 'd' },
-                      { v: countdown?.hours,   u: 'h' },
-                      { v: countdown?.minutes, u: 'm' },
-                      { v: countdown?.seconds, u: 's' },
-                    ] as { v: number | undefined; u: string }[]).map(({ v, u }) => (
-                      <span key={u} style={{ fontFamily: 'Geist Mono, monospace', fontSize: '0.9rem', fontWeight: 700, color: C.amber, lineHeight: 1 }}>
-                        {v !== undefined ? String(v).padStart(2, '0') : '--'}<span style={{ fontSize: '0.55rem', color: 'rgba(255,204,0,0.5)', marginLeft: 1 }}>{u}</span>
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', color: 'rgba(255,204,0,0.4)', marginTop: 3 }}>
-                  até {fmtDate(p.validade)}
-                </p>
-              </div>
-              <button onClick={() => scrollTo(1)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.35)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', letterSpacing: '0.14em' }}>
-                DESLIZAR
-                <span style={{ animation: 'bob 1.8s ease-in-out infinite', display: 'block' }}>{I.arrow()}</span>
-              </button>
-            </div>
-
-            {/* disclaimer */}
-            <p style={{ position: 'absolute', top: 14, left: 0, right: 0, textAlign: 'center', fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.28)', padding: '0 48px', letterSpacing: '0.04em' }}>
-              Esta proposta é confidencial e deve ser tratada com sigilo.
+            {/* disclaimer center */}
+            <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.55rem', color: 'rgba(255,255,255,0.18)', letterSpacing: '0.04em', textAlign: 'center' }}>
+              Proposta confidencial
             </p>
+            {/* botão deslizar */}
+            <button onClick={() => scrollTo(1)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.3)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, fontFamily: 'Geist, sans-serif', fontSize: '0.55rem', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
+              DESLIZAR
+              <span style={{ animation: 'bob 1.8s ease-in-out infinite', display: 'block' }}>{I.arrow()}</span>
+            </button>
           </div>
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
-            1 · CARTA CEO  — tone: ivory (branco, como o site)
+            1 · CARTA CEO  — minimalista, ivory, foto pequena
         ══════════════════════════════════════════════════════════════ */}
         <section ref={sec(1)} style={{ scrollSnapAlign: 'start', height: '100dvh', display: 'flex', alignItems: 'stretch', background: C.ivory, overflow: 'hidden', position: 'relative' }}>
           <Glow color="rgba(76,138,222,0.06)" size={500} style={{ top: -120, right: -120 }} />
+          <Glow color="rgba(118,243,205,0.04)" size={380} style={{ bottom: -100, left: -80 }} />
 
-          {/* foto lateral — preenchimento total da coluna */}
-          <div style={{ width: 'clamp(280px,38%,480px)', flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
-            {/* foto preenchendo toda a coluna */}
-            <img
-              src="/proposta/denis_ceo.png"
-              alt="Denis Júlio"
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
-            />
-            {/* gradiente: navy nas bordas para fundir */}
-            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to right, ${C.navy} 0%, rgba(11,31,68,0.15) 30%, transparent 60%)` }} />
-            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, ${C.navy} 0%, rgba(11,31,68,0.4) 20%, transparent 50%)` }} />
-            {/* anel de glow decorativo */}
-            <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 60% 40%, rgba(118,243,205,0.08) 0%, transparent 60%)`, pointerEvents: 'none' }} />
-            {/* badge de nome na base */}
-            <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', background: 'rgba(11,31,68,0.88)', backdropFilter: 'blur(16px)', border: `1px solid rgba(118,243,205,0.3)`, borderRadius: 999, padding: '10px 22px', display: 'flex', alignItems: 'center', gap: 10, whiteSpace: 'nowrap', boxShadow: '0 4px 24px rgba(0,0,0,0.5)', zIndex: 2 }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: C.mint, flexShrink: 0, boxShadow: `0 0 8px ${C.mint}` }} />
-              <div>
-                <p style={{ fontFamily: 'Fraunces, serif', fontSize: '0.9rem', color: C.white, fontWeight: 600, lineHeight: 1.2 }}>Dênis Júlio</p>
-                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: C.mint, letterSpacing: '0.1em', textTransform: 'uppercase', lineHeight: 1.2 }}>Fundador · We Make</p>
-              </div>
-            </div>
-          </div>
-
-          {/* carta */}
-          <div style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'clamp(48px,7vh,80px) clamp(20px,3vw,48px) clamp(32px,5vh,56px)', position: 'relative', zIndex: 2 }}>
+          {/* carta — coluna única ocupa toda a largura */}
+          <div style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'clamp(40px,6vh,72px) clamp(24px,5vw,80px) clamp(32px,5vh,56px)', position: 'relative', zIndex: 2, maxWidth: 860, margin: '0 auto', width: '100%' }}>
             <Reveal>
               <Eyebrow dark>Carta do CEO</Eyebrow>
               <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 400, fontSize: 'var(--text-3xl)', color: C.navy, marginBottom: 20, lineHeight: 1.2, letterSpacing: '-0.015em', textWrap: 'balance' } as React.CSSProperties}>
@@ -479,14 +469,20 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-base)', color: '#334155', lineHeight: 1.75, marginBottom: 14 }}>
                 É com grande gratidão que agradecemos à <strong style={{ color: C.navy }}>{p.escola_nome}</strong> pela oportunidade de considerar a We Make como uma parceira estratégica para enriquecer o trabalho pedagógico envolvendo a tecnologia e a cultura maker.
               </p>
-              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-base)', color: '#334155', lineHeight: 1.75, marginBottom: 24 }}>
+              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-base)', color: '#334155', lineHeight: 1.75, marginBottom: 28 }}>
                 Valorizamos profundamente o compromisso da sua escola com a inovação educacional e estamos entusiasmados com a possibilidade de colaborar para promover experiências de aprendizagem criativas e significativas, mas sem abrir mão dos princípios e valores cristãos.
               </p>
-              <div className="surface-glass-ivory" style={{ padding: '16px 22px', display: 'inline-flex', alignItems: 'center', gap: 16, borderRadius: 14 }}>
+              {/* assinatura com foto pequena */}
+              <div className="surface-glass-ivory" style={{ padding: '16px 20px', display: 'inline-flex', alignItems: 'center', gap: 16, borderRadius: 16, boxShadow: '0 2px 16px rgba(11,31,68,0.08)' }}>
+                <img
+                  src="/proposta/denis_ceo.png"
+                  alt="Denis Júlio"
+                  style={{ width: 64, height: 80, objectFit: 'cover', objectPosition: 'center top', borderRadius: 10, flexShrink: 0, boxShadow: '0 2px 12px rgba(11,31,68,0.15)' }}
+                />
                 <div>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>Com gratidão,</p>
-                  <p style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--text-2xl)', color: C.navy, fontWeight: 600, fontStyle: 'italic', lineHeight: 1.1 }}>Denis Júlio</p>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: C.royal, marginTop: 2 }}>CEO — We Make Tecnologia Educacional</p>
+                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Com gratidão,</p>
+                  <p style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--text-2xl)', color: C.navy, fontWeight: 600, fontStyle: 'italic', lineHeight: 1.1, marginBottom: 2 }}>Denis Júlio</p>
+                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: C.royal }}>CEO — We Make Tecnologia Educacional</p>
                 </div>
               </div>
             </Reveal>
@@ -594,11 +590,6 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
             </div></div>
           </div>
 
-          {/* coluna imagem — direita */}
-          <div style={{ width: 'clamp(280px,38%,480px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
-            <img src="/proposta/proposta1.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(76,138,222,0.75) 0%, rgba(76,138,222,0.2) 35%, transparent 70%)' }} />
-          </div>
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
@@ -647,11 +638,6 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
 
           </div></div>
 
-          {/* coluna imagem — direita */}
-          <div style={{ width: 'clamp(280px,36%,460px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
-            <img src="/proposta/proposta5.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(11,31,68,0.8) 0%, rgba(11,31,68,0.2) 40%, transparent 70%)' }} />
-          </div>
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
@@ -756,11 +742,6 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               </Reveal>
             </div></div>
 
-            {/* coluna imagem — direita */}
-            <div style={{ width: 'clamp(260px,36%,460px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
-              <img src="/proposta/proposta4.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(11,31,68,0.85) 0%, rgba(11,31,68,0.25) 40%, transparent 70%)' }} />
-            </div>
           </section>
         )}
 
@@ -876,15 +857,6 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                 </div>
               </div>
 
-              {/* coluna fotos — direita */}
-              <div style={{ width: 'clamp(220px,30%,380px)', flexShrink: 0, display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 2 }}>
-                {['proposta3.png', 'proposta4.png', 'proposta5.png'].map((src) => (
-                  <div key={src} style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-                    <img src={`/proposta/${src}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(11,31,68,0.6) 0%, transparent 55%)' }} />
-                  </div>
-                ))}
-              </div>
             </section>
 
             {/* 7 · MODELO 1 — Investimento Patrimonial (tabela de custos) */}
@@ -948,12 +920,6 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                 </Reveal>
               </div></div>
 
-              {/* coluna imagem — direita */}
-              <div style={{ width: 'clamp(240px,32%,400px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
-                <img src="/proposta/proposta3.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(248,250,252,0.9) 0%, rgba(248,250,252,0.3) 30%, transparent 60%)' }} />
-                <div style={{ position: 'absolute', inset: 0, background: 'rgba(11,31,68,0.06)' }} />
-              </div>
             </section>
 
             {/* 8 · MODELO 2 (COMODATO) — tone: royal */}
@@ -962,13 +928,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               <Glow color="rgba(118,243,205,0.18)" size={460} style={{ top: -80, right: -80 }} />
               <Aurora color1="rgba(118,243,205,0.1)" color2="rgba(11,31,68,0.15)" style={{ bottom: -200, left: -160 }} />
 
-              {/* coluna imagem — esquerda */}
-              <div style={{ width: 'clamp(260px,36%,460px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
-                <img src="/proposta/proposta4.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(42,105,186,0.85) 0%, rgba(76,138,222,0.25) 35%, transparent 65%)' }} />
-              </div>
-
-              {/* coluna conteúdo — direita */}
+              {/* conteúdo */}
               <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) clamp(20px,3vw,48px)', overflowY: 'auto' }}><div style={{ maxWidth: 700, width: '100%' }}>
                 <Reveal>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
@@ -1059,13 +1019,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
           <Glow color="rgba(76,138,222,0.2)" size={500} style={{ bottom: -120, left: -120 }} />
           <Aurora color1="rgba(76,138,222,0.08)" color2="rgba(118,243,205,0.06)" style={{ top: -200, left: -100 }} />
 
-          {/* coluna imagem — esquerda */}
-          <div style={{ width: 'clamp(240px,34%,420px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden' }}>
-            <img src="/proposta/proposta2.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(11,31,68,0.8) 0%, rgba(11,31,68,0.25) 40%, transparent 75%)' }} />
-          </div>
-
-          {/* coluna conteúdo — direita */}
+          {/* conteúdo */}
           <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div style={{ maxWidth: 700, width: '100%' }}>
 
             <Reveal>
