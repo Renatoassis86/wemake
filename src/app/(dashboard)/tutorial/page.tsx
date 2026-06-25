@@ -508,7 +508,7 @@ const MODULOS = [
     ilustracao: <IlustrBancoLeads />,
     para: 'Base unificada de leads dos congressos CIECC 2025/2026 e CRM.',
     como: [
-      'Filtre por fonte (1º CIECC, 2º CIECC, CRM Education, Oikos Live)',
+      'Filtre por fonte (1º CIECC, 2º CIECC, CRM Parceiros, Famílias Educadoras)',
       'Filtre por tipo: só decisores (gestores, diretores, mantenedores, coordenadores)',
       'Use a busca por nome, e-mail ou escola',
       'Envie e-mail ou WhatsApp diretamente pelo ícone na linha',
@@ -529,7 +529,7 @@ const MODULOS = [
     ilustracao: <IlustrImportacao />,
     para: 'Importe planilhas Excel e selecione exatamente as colunas desejadas.',
     como: [
-      'Escolha a fonte (CIECC 2025, CIECC 2026, CRM Education, Oikos Live)',
+      'Escolha a fonte (CIECC 2025, CIECC 2026, CRM Parceiros, Famílias Educadoras)',
       'Faça upload da planilha (.xlsx, .xls, .csv)',
       'Para CIECC: filtre por tipo de inscrição antes de ver as colunas',
       'Selecione as colunas que deseja importar (pré-marcadas = compatíveis com cadastro de escola)',

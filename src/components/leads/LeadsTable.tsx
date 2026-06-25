@@ -44,8 +44,8 @@ interface Props {
 const FONTE_COR: Record<string, { label: string; cor: string; bg: string; border: string }> = {
   ciecc_2025: { label: '1º CIECC 2025', cor: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' },
   ciecc_2026: { label: '2º CIECC 2026', cor: '#2563eb', bg: '#eff6ff', border: '#bfdbfe' },
-  crm:        { label: 'CRM Education', cor: '#4A7FDB', bg: '#fffbeb', border: '#fde68a' },
-  oikos:      { label: 'Oikos Live',    cor: '#0d9488', bg: '#f0fdfa', border: '#99f6e4' },
+  crm:        { label: 'CRM Parceiros',       cor: '#4A7FDB', bg: '#fffbeb', border: '#fde68a' },
+  oikos:      { label: 'Famílias Educadoras', cor: '#0d9488', bg: '#f0fdfa', border: '#99f6e4' },
   outro:      { label: 'Outro',         cor: '#64748b', bg: '#f8fafc', border: '#e2e8f0' },
 }
 
@@ -304,7 +304,7 @@ function ModalEmail({ destinatarios, onClose }: {
               {/* Assunto */}
               <div>
                 <label style={{ display: 'block', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#64748b', marginBottom: '.3rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Assunto *</label>
-                <input value={assunto} onChange={e => setAssunto(e.target.value)} style={inp} placeholder="Ex: Apresentação do Parceria Educacional — We Make Education" />
+                <input value={assunto} onChange={e => setAssunto(e.target.value)} style={inp} placeholder="Ex: Apresentação do Parceria Educacional — We Make" />
               </div>
 
               {/* Toggle HTML/Texto */}
@@ -347,9 +347,9 @@ function ModalEmail({ destinatarios, onClose }: {
                 <div style={{ fontSize: '.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', marginBottom: '.4rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Templates rápidos:</div>
                 <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
                   {[
-                    { label: 'Apresentação', assunto: 'Apresentação We Make Education — Parceria Educacional', corpo: `Olá {{nome}},\n\nMeu nome é da equipe comercial da We Make.\n\nGostaríamos de apresentar o Parceria Educacional, nosso sistema de ensino cristão clássico que já transforma a educação em diversas escolas parceiras.\n\nPodemos agendar uma conversa para apresentar nossa proposta?\n\nAtenciosamente,\nEquipe Comercial We Make Education` },
-                    { label: 'Follow-up', assunto: 'Retomando contato — We Make Education', corpo: `Olá {{nome}},\n\nEstou retomando nosso contato para saber se teria interesse em conhecer mais sobre o Parceria Educacional.\n\nFico à disposição!\n\nAtenciosamente,\nEquipe Comercial We Make Education` },
-                    { label: 'Demo Paideia', assunto: 'Acesso à plataforma de demonstração — Parceria Educacional', corpo: `Olá {{nome}},\n\nSegue o acesso à nossa plataforma de demonstração do Parceria Educacional:\n\n🔗 Link: https://hub.cidadeviva.education/hub/login?t=professor\n📧 Login: demonstracao.plataforma.paideia@cidadeviva.org\n🔑 Senha: 12345678\n\n⏱ Disponível por 48 horas.\n\nQualquer dúvida, estou à disposição!\n\nAtenciosamente,\nEquipe Comercial We Make Education` },
+                    { label: 'Apresentação', assunto: 'Apresentação We Make — Parceria Educacional', corpo: `Olá {{nome}},\n\nMeu nome é da equipe comercial da We Make.\n\nGostaríamos de apresentar o Parceria Educacional, nosso sistema de ensino cristão clássico que já transforma a educação em diversas escolas parceiras.\n\nPodemos agendar uma conversa para apresentar nossa proposta?\n\nAtenciosamente,\nEquipe Comercial We Make` },
+                    { label: 'Follow-up', assunto: 'Retomando contato — We Make', corpo: `Olá {{nome}},\n\nEstou retomando nosso contato para saber se teria interesse em conhecer mais sobre o Parceria Educacional.\n\nFico à disposição!\n\nAtenciosamente,\nEquipe Comercial We Make` },
+                    { label: 'Demo Paideia', assunto: 'Acesso à plataforma de demonstração — Parceria Educacional', corpo: `Olá {{nome}},\n\nSegue o acesso à nossa plataforma de demonstração do Parceria Educacional:\n\n🔗 Link: https://hub.cidadeviva.education/hub/login?t=professor\n📧 Login: demonstracao.plataforma.paideia@cidadeviva.org\n🔑 Senha: 12345678\n\n⏱ Disponível por 48 horas.\n\nQualquer dúvida, estou à disposição!\n\nAtenciosamente,\nEquipe Comercial We Make` },
                   ].map(t => (
                     <button key={t.label} onClick={() => { setAssunto(t.assunto); setCorpo(t.corpo); setIsHtml(false) }}
                       style={{ padding: '.3rem .75rem', borderRadius: 7, border: '1px solid #e2e8f0', background: '#f8fafc', color: '#475569', fontSize: '.68rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)' }}>

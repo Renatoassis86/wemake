@@ -3,7 +3,7 @@ import { Resend } from 'resend'
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 // Usa domínio verificado ou fallback para testes via Resend
-const FROM = 'CVE Agenda <agenda@gestaoeducation.arkosintelligence.com>'
+const FROM = 'We Make Agenda <agenda@gestaoeducation.arkosintelligence.com>'
 
 interface ConviteParams {
   para: string
@@ -117,7 +117,7 @@ function htmlConvite(p: ConviteParams) {
         <tr>
           <td style="background:#f8fafc;border-top:1px solid #e2e8f0;border-radius:0 0 16px 16px;padding:20px 40px;text-align:center;">
             <div style="font-size:12px;color:#94a3b8;">
-              © ${new Date().getFullYear()} Cidade Viva Education · CVE Gestão Comercial
+              © ${new Date().getFullYear()} We Make · CVE Gestão Comercial
             </div>
           </td>
         </tr>
@@ -135,7 +135,7 @@ export async function enviarConviteReuniao(params: ConviteParams) {
     const { error } = await resend.emails.send({
       from:    FROM,
       to:      [params.para],
-      subject: `📅 Convite: ${params.tituloEvento} — CVE Education`,
+      subject: `📅 Convite: ${params.tituloEvento} — We Make`,
       html:    htmlConvite(params),
     })
     if (error) {

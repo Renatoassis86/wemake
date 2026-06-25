@@ -7,8 +7,8 @@ const FONTE_OPTS = [
   { value: 'ciecc_2025',        label: '1º CIECC 2025' },
   { value: 'ciecc_2026',        label: '2º CIECC 2026' },
   { value: 'formulario_wemake', label: 'Formulário We Make' },
-  { value: 'crm',               label: 'CRM Education' },
-  { value: 'oikos',             label: 'Oikos Live' },
+  { value: 'crm',               label: 'CRM Parceiros' },
+  { value: 'oikos',             label: 'Famílias Educadoras' },
   { value: 'outro',             label: 'Outro' },
 ]
 

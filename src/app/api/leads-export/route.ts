@@ -5,9 +5,9 @@ import { createClient } from '@/lib/supabase/server'
 const FONTE_LABEL: Record<string, string> = {
   ciecc_2025:        '1º CIECC 2025',
   ciecc_2026:        '2º CIECC 2026',
-  crm:               'CRM Education',
+  crm:               'CRM Parceiros',
   formulario_wemake: 'Formulário We Make',
-  oikos:             'Oikos Live',
+  oikos:             'Famílias Educadoras',
   outro:             'Outro',
 }
 

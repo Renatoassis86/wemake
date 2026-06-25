@@ -7,7 +7,7 @@ export default function AlmaPage() {
       subtitle="Assistente de Leitura e Missão Analítica da We Make"
       tag="Em Breve"
       headline="ALMA: a inteligência que conhece cada escola tanto quanto você"
-      description="ALMA é a IA comercial da We Make Education. Ela analisa o histórico completo de cada parceiro, sugere o próximo passo estratégico, identifica leads negligenciados e gera insights para acelerar o fechamento de contratos — tudo com base nos dados reais da sua operação."
+      description="ALMA é a IA comercial da We Make. Ela analisa o histórico completo de cada parceiro, sugere o próximo passo estratégico, identifica leads negligenciados e gera insights para acelerar o fechamento de contratos — tudo com base nos dados reais da sua operação."
       features={[
         { icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>, title: "Chat com Contexto Completo", desc: "Pergunte sobre qualquer escola — a ALMA já conhece todo o histórico de relacionamento." },
         { icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>, title: "Sugestão de Próximo Passo", desc: "Com base na jornada atual, indica a ação mais estratégica para avançar na negociação." },

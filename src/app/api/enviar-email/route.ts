@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { createClient } from '@/lib/supabase/server'
 
-const FROM = 'CVE Education <agenda@gestaoeducation.arkosintelligence.com>'
+const FROM = 'We Make <agenda@gestaoeducation.arkosintelligence.com>'
 
 export async function POST(request: NextRequest) {
   const resend = new Resend(process.env.RESEND_API_KEY)
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
   const { data: profile } = await supabase
     .from('profiles').select('full_name, email').eq('id', user.id).single()
 
-  const nomeRemetente = profile?.full_name ?? 'CVE Education'
+  const nomeRemetente = profile?.full_name ?? 'We Make'
 
   let enviados = 0
   let erros: string[] = []

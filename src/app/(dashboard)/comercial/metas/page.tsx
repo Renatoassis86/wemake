@@ -172,7 +172,7 @@ export default async function MetasPage() {
     <div>
       <PageHeader
         title="Metas 2027"
-        subtitle="Plano estratégico de crescimento We Make Education"
+        subtitle="Plano estratégico de crescimento We Make"
       />
       <div style={{ padding: '2rem 2.5rem' }}>
 

@@ -63,7 +63,7 @@ export async function criarEvento(formData: FormData): Promise<AgendaResult> {
     .select('full_name')
     .eq('id', user.id)
     .single()
-  const organizadorNome = orgProfile?.full_name ?? user.email ?? 'CVE Education'
+  const organizadorNome = orgProfile?.full_name ?? user.email ?? 'We Make'
 
   // Adicionar demais participantes e enviar convites
   const participantesRaw = formData.get('participantes') as string
