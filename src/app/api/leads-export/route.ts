@@ -2,6 +2,22 @@ import { NextRequest, NextResponse } from 'next/server'
 import * as XLSX from 'xlsx'
 import { createClient } from '@/lib/supabase/server'
 
+const FONTE_LABEL: Record<string, string> = {
+  ciecc_2025:        '1º CIECC 2025',
+  ciecc_2026:        '2º CIECC 2026',
+  crm:               'CRM Education',
+  formulario_wemake: 'Formulário We Make',
+  oikos:             'Oikos Live',
+  outro:             'Outro',
+}
+
+function autoColWidths(rows: Record<string, string>[], maxSample = 50) {
+  if (!rows.length) return []
+  return Object.keys(rows[0]).map(key => ({
+    wch: Math.max(key.length, ...rows.slice(0, maxSample).map(r => String(r[key] ?? '').length), 10),
+  }))
+}
+
 export async function GET(request: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -12,6 +28,7 @@ export async function GET(request: NextRequest) {
   const fonte = searchParams.get('fonte') ?? ''
   const tipo  = searchParams.get('tipo')  ?? ''
   const uf    = searchParams.get('uf')    ?? ''
+  const modo  = searchParams.get('modo')  ?? ''   // 'simples' → export de contatos enxuto
 
   // Buscar todos os registros (sem paginação) com os filtros aplicados
   let query = supabase
@@ -24,11 +41,9 @@ export async function GET(request: NextRequest) {
   if (fonte) query = query.eq('fonte', fonte)
   if (uf)    query = query.eq('uf', uf.toUpperCase())
 
-  // Filtro por tipo só se a fonte NÃO for crm
-  // (CRM não tem tipo_inscricao — todos são representantes de escolas)
   const isCRM = fonte === 'crm'
   if (!isCRM) {
-    if (tipo === 'decisores')    query = query.or('tipo_inscricao.ilike.%gestor%,tipo_inscricao.ilike.%diretor%,tipo_inscricao.ilike.%mantenedor%,tipo_inscricao.ilike.%coordenador%')
+    if (tipo === 'decisores')         query = query.or('tipo_inscricao.ilike.%gestor%,tipo_inscricao.ilike.%diretor%,tipo_inscricao.ilike.%mantenedor%,tipo_inscricao.ilike.%coordenador%')
     else if (tipo === 'gestores')     query = query.ilike('tipo_inscricao', '%gestor%')
     else if (tipo === 'diretores')    query = query.ilike('tipo_inscricao', '%diretor%')
     else if (tipo === 'mantenedores') query = query.ilike('tipo_inscricao', '%mantenedor%')
@@ -40,57 +55,92 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Nenhum dado para exportar' }, { status: 404 })
   }
 
-  // Montar label da fonte
-  const FONTE_LABEL: Record<string, string> = {
-    ciecc_2025: '1º CIECC 2025',
-    ciecc_2026: '2º CIECC 2026',
-    crm: 'CRM Education',
-    oikos: 'Oikos Live',
-    outro: 'Outro',
+  const now   = new Date()
+  const stamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`
+  const label = fonte ? `_${(FONTE_LABEL[fonte] ?? fonte).replace(/\s+/g,'-')}` : ''
+  const ufLabel = uf ? `_${uf.toUpperCase()}` : ''
+
+  const wb = XLSX.utils.book_new()
+
+  if (modo === 'simples') {
+    // ── Modo Contatos: 6 colunas limpas para prospecção ──────────────────────
+    const rows = leads.map((l: any) => {
+      const eventoLabel = FONTE_LABEL[l.fonte] ?? l.fonte ?? ''
+      const evento = l.lote ? `${eventoLabel} — ${l.lote}` : eventoLabel
+      return {
+        'Nome':         l.nome         ?? '',
+        'Cargo':        l.cargo        ?? l.tipo_inscricao ?? '',
+        'Escola':       l.escola_nome  ?? '',
+        'Telefone':     l.tel_celular  ?? l.tel_fixo ?? '',
+        'E-mail':       l.email        ?? '',
+        'Evento':       evento,
+        'Estado (UF)':  l.uf           ?? '',
+      }
+    })
+
+    const ws = XLSX.utils.json_to_sheet(rows)
+    ws['!cols'] = autoColWidths(rows)
+    XLSX.utils.book_append_sheet(wb, ws, 'Contatos')
+
+    const dataExport = now.toLocaleDateString('pt-BR')
+    const resumo = [
+      ['We Make — Exportação de Contatos'],
+      ['Data de exportação:', dataExport],
+      ['Total de registros:', leads.length.toString()],
+      [''],
+      ['Filtros aplicados:'],
+      ['Evento / Fonte:', FONTE_LABEL[fonte] || 'Todos'],
+      ['Estado (UF):', uf || 'Todos'],
+      ['Tipo:', tipo || 'Todos'],
+      ['Busca:', q || '—'],
+    ]
+    const wsResumo = XLSX.utils.aoa_to_sheet(resumo)
+    wsResumo['!cols'] = [{ wch: 22 }, { wch: 30 }]
+    XLSX.utils.book_append_sheet(wb, wsResumo, 'Resumo')
+
+    const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' })
+    const filename = `WeMake_Contatos${label}${ufLabel}_${stamp}.xlsx`
+    return new NextResponse(buf, {
+      headers: {
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+      },
+    })
   }
 
-  // Construir linhas da planilha
+  // ── Modo Completo (padrão): todas as colunas + dados_extras ──────────────
   const rows = leads.map((l: any) => {
     const extras = l.dados_extras ?? {}
     return {
-      'Nome':           l.nome ?? '',
-      'E-mail':         l.email ?? '',
-      'Telefone':       l.tel_celular ?? '',
-      'Tel. Fixo':      l.tel_fixo ?? '',
+      'Nome':           l.nome           ?? '',
+      'E-mail':         l.email          ?? '',
+      'Telefone':       l.tel_celular    ?? '',
+      'Tel. Fixo':      l.tel_fixo       ?? '',
       'Tipo/Cargo':     l.tipo_inscricao ?? '',
-      'Cargo Original': l.cargo ?? '',
-      'Escola':         l.escola_nome ?? '',
-      'CNPJ Escola':    l.escola_cnpj ?? '',
-      'Cidade':         l.cidade ?? '',
-      'UF':             l.uf ?? '',
-      'Lote':           l.lote ?? '',
+      'Cargo Original': l.cargo          ?? '',
+      'Escola':         l.escola_nome    ?? '',
+      'CNPJ Escola':    l.escola_cnpj    ?? '',
+      'Cidade':         l.cidade         ?? '',
+      'UF':             l.uf             ?? '',
+      'Lote':           l.lote           ?? '',
       'Data Inscrição': l.data_inscricao ?? '',
       'Fonte':          FONTE_LABEL[l.fonte] ?? l.fonte ?? '',
-      // Campos extras do JSONB — expande dinamicamente
       ...Object.fromEntries(
         Object.entries(extras).map(([k, v]) => [k, String(v ?? '')])
       ),
     }
   })
 
-  // Criar workbook
-  const wb  = XLSX.utils.book_new()
-  const ws  = XLSX.utils.json_to_sheet(rows)
-
-  // Larguras automáticas das colunas
-  const colWidths = Object.keys(rows[0]).map(key => ({
-    wch: Math.max(key.length, ...rows.slice(0, 50).map(r => String((r as any)[key] ?? '').length), 10)
-  }))
-  ws['!cols'] = colWidths
-
+  const ws = XLSX.utils.json_to_sheet(rows)
+  ws['!cols'] = autoColWidths(rows)
   XLSX.utils.book_append_sheet(wb, ws, 'Leads')
 
-  // Aba de resumo
-  const dataExport = new Date().toLocaleDateString('pt-BR')
+  const dataExport = now.toLocaleDateString('pt-BR')
   const resumo = [
     ['CVE Gestão Comercial — Exportação de Leads'],
     ['Data de exportação:', dataExport],
     ['Total de registros:', leads.length.toString()],
+    [''],
     ['Filtros aplicados:'],
     ['Fonte:', FONTE_LABEL[fonte] || 'Todas'],
     ['Tipo:', tipo || 'Todos'],
@@ -98,15 +148,10 @@ export async function GET(request: NextRequest) {
     ['Busca:', q || '—'],
   ]
   const wsResumo = XLSX.utils.aoa_to_sheet(resumo)
+  wsResumo['!cols'] = [{ wch: 22 }, { wch: 30 }]
   XLSX.utils.book_append_sheet(wb, wsResumo, 'Resumo')
 
-  // Gerar buffer
   const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' })
-
-  // Montar nome do arquivo
-  const now   = new Date()
-  const stamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`
-  const label = fonte ? `_${FONTE_LABEL[fonte]?.replace(/\s+/g,'-') ?? fonte}` : ''
   const filename = `CVE_Leads${label}_${stamp}.xlsx`
 
   return new NextResponse(buf, {

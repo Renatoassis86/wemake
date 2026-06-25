@@ -136,8 +136,17 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
     return `/leads-banco?${params.toString()}`
   }
 
-  // URL de exportação com os filtros aplicados
-  const exportUrl = `/api/leads-export?${new URLSearchParams({ q, fonte, tipo, uf }).toString()}`
+  // URLs de exportação com os filtros aplicados
+  const exportUrl        = `/api/leads-export?${new URLSearchParams({ q, fonte, tipo, uf }).toString()}`
+  const exportSimplUrl   = `/api/leads-export?${new URLSearchParams({ q, fonte, tipo, uf, modo: 'simples' }).toString()}`
+
+  const svgDownload = (
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+  )
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
@@ -146,8 +155,20 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
         subtitle={`${(totalGeral ?? 0).toLocaleString('pt-BR')} leads importados`}
         actions={
           <div style={{ display: 'flex', gap: '.5rem' }}>
-            {/* Exportar Excel */}
-            <a href={exportUrl} style={{
+            {/* Exportar Contatos (simplificado: nome, cargo, escola, tel, email, evento) */}
+            <a href={exportSimplUrl} title="Nome · Cargo · Escola · Telefone · E-mail · Evento — filtrado por estado e evento selecionados" style={{
+              display: 'inline-flex', alignItems: 'center', gap: '.4rem',
+              padding: '.45rem 1rem', borderRadius: 9999,
+              background: '#0b1f44', color: '#fff', textDecoration: 'none',
+              fontSize: '.78rem', fontWeight: 700,
+              fontFamily: 'var(--font-montserrat,sans-serif)',
+              boxShadow: '0 4px 12px rgba(11,31,68,.3)',
+            }}>
+              {svgDownload}
+              Exportar Contatos
+            </a>
+            {/* Exportar Excel completo */}
+            <a href={exportUrl} title="Exportação completa com todos os campos" style={{
               display: 'inline-flex', alignItems: 'center', gap: '.4rem',
               padding: '.45rem 1rem', borderRadius: 9999,
               background: '#16a34a', color: '#fff', textDecoration: 'none',
@@ -155,12 +176,8 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
               fontFamily: 'var(--font-montserrat,sans-serif)',
               boxShadow: '0 4px 12px rgba(22,163,74,.3)',
             }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-              Baixar Excel
+              {svgDownload}
+              Excel Completo
             </a>
             {/* Importar */}
             <Link href="/importacao" style={{
