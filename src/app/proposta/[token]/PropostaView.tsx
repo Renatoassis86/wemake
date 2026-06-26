@@ -267,8 +267,8 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
   const mensalComd   = p.comodato_parcela ?? 0
   const descPct      = Math.max(0, Math.round((1 - p.valor_aluno_ano / 420) * 100))
 
-  // Itens reais do comodato vindos do dados_calculo
-  type ComItem = { nome: string; total: number }
+  // Itens reais do comodato vindos do dados_calculo (espelha tabela editável da calculadora)
+  type ComItem = { nome: string; qty: number; unit: number; qtyReal?: number; fixedQty?: boolean; total: number; nota?: string }
   const comData = (p.dados_calculo as Record<string, Record<string, unknown>>)?.com ?? {}
   const comItens: ComItem[] = (comData.itens as ComItem[] | undefined) ?? []
   // Exclui computadores/notebooks — preço negociado diretamente pela escola
@@ -731,23 +731,36 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                       Simulação de custos — referência para aquisição
                     </p>
                     <div style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', background: 'rgba(11,31,68,0.7)', padding: '9px 18px', gap: 8 }}>
-                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.4)' }}>Item</span>
-                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>Valor ref.</span>
-                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.4)', textAlign: 'right' }}>%</span>
+                      {/* cabeçalho — 5 colunas igual à calculadora */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '2fr 0.6fr 1fr 1fr 0.7fr', background: 'rgba(11,31,68,0.7)', padding: '9px 18px', gap: 8 }}>
+                        {['Item', 'Qtd', 'Valor unit.', 'Total', '%'].map((h, i) => (
+                          <span key={h} style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.4)', textAlign: i > 0 ? 'right' : 'left' }}>{h}</span>
+                        ))}
                       </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', padding: '10px 18px', gap: 8, background: 'rgba(118,243,205,0.08)', borderBottom: '2px solid rgba(118,243,205,0.18)' }}>
-                        <span style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: '0.8rem', color: C.white }}>TOTAL ESTIMADO</span>
+                      {/* linha de total */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '2fr 0.6fr 1fr 1fr 0.7fr', padding: '10px 18px', gap: 8, background: 'rgba(118,243,205,0.08)', borderBottom: '2px solid rgba(118,243,205,0.18)' }}>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: '0.8rem', color: C.white, gridColumn: '1 / 4' }}>TOTAL ESTIMADO</span>
                         <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: '0.8rem', color: C.mint, textAlign: 'right' }}>{R$(sumDisplay)}</span>
                         <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.8rem', color: C.white, fontWeight: 600, textAlign: 'right' }}>100%</span>
                       </div>
+                      {/* linhas de itens — vindos do dados_calculo (espelha tabela editável) */}
                       {comItensDisplay.map((item, i) => (
-                        <div key={item.nome} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', padding: '8px 18px', gap: 8, borderBottom: '1px solid rgba(255,255,255,0.05)', background: i % 2 === 0 ? 'rgba(255,255,255,0.025)' : 'transparent' }}>
-                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.7)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div key={item.nome} style={{ display: 'grid', gridTemplateColumns: '2fr 0.6fr 1fr 1fr 0.7fr', padding: '7px 18px', gap: 8, borderBottom: '1px solid rgba(255,255,255,0.05)', background: i % 2 === 0 ? 'rgba(255,255,255,0.025)' : 'transparent' }}>
+                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.75)', display: 'flex', alignItems: 'center', gap: 7 }}>
                             <span style={{ width: 3, height: 10, borderRadius: 2, background: C.mint, flexShrink: 0 }} />{item.nome}
                           </span>
-                          <span style={{ fontFamily: 'Fraunces, serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.85)', textAlign: 'right' }}>{R$(item.total)}</span>
-                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', textAlign: 'right' }}>{sumDisplay > 0 ? `${((item.total / sumDisplay) * 100).toFixed(1)}%` : '—'}</span>
+                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.45)', textAlign: 'right' }}>
+                            {item.qtyReal ?? item.qty ?? 1}×
+                          </span>
+                          <span style={{ fontFamily: 'Fraunces, serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.55)', textAlign: 'right' }}>
+                            {item.unit != null ? R$(item.unit) : '—'}
+                          </span>
+                          <span style={{ fontFamily: 'Fraunces, serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.9)', textAlign: 'right', fontWeight: 600 }}>
+                            {R$(item.total)}
+                          </span>
+                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.63rem', color: 'rgba(255,255,255,0.35)', textAlign: 'right' }}>
+                            {sumDisplay > 0 ? `${((item.total / sumDisplay) * 100).toFixed(1)}%` : '—'}
+                          </span>
                         </div>
                       ))}
                       <div style={{ padding: '8px 18px', background: 'rgba(11,31,68,0.5)' }}>
