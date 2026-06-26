@@ -394,13 +394,13 @@ export default function CalculadoraPage() {
         num_alunos:           alunos,
         segmentos:            segs,
         valor_aluno_ano:      parseFloat(valorCustom.replace(',', '.')) || sis.valorFinal,
-        num_parcelas:         incluiComodato ? 12 : parcelas,
+        num_parcelas:         modalForm.tipo === 'curriculo_comodato' ? 12 : parcelas,
         duracao_meses:        lp.duracaoMeses,
-        comodato_pv:          incluiComodato ? com.PV : null,
-        comodato_parcela:     incluiComodato ? com.parcelaPrice : null,
-        comodato_retorno_pct: incluiComodato ? lp.retornoAlvo : null,
-        comodato_tx_rate:     incluiComodato ? com.txRate : null,
-        comodato_notebooks:   incluiComodato ? com.qtdNB : null,
+        comodato_pv:          modalForm.tipo === 'curriculo_comodato' ? com.PV : null,
+        comodato_parcela:     modalForm.tipo === 'curriculo_comodato' ? com.parcelaPrice : null,
+        comodato_retorno_pct: modalForm.tipo === 'curriculo_comodato' ? lp.retornoAlvo : null,
+        comodato_tx_rate:     modalForm.tipo === 'curriculo_comodato' ? com.txRate : null,
+        comodato_notebooks:   modalForm.tipo === 'curriculo_comodato' ? com.qtdNB : null,
         dados_calculo:        { sis, com, lp, sp },
         texto_personalizado:  modalForm.texto.trim() || null,
       }
@@ -1616,7 +1616,7 @@ export default function CalculadoraPage() {
                       Dados da calculadora (incluídos automaticamente)
                     </div>
                     <strong>{alunos} alunos</strong> &middot; {segs} segmento{segs > 1 ? 's' : ''} &middot; {R$(parseFloat(valorCustom) || sis.valorFinal)}/aluno/ano
-                    {incluiComodato && (
+                    {modalForm.tipo === 'curriculo_comodato' && (
                       <> &middot; Comodato PV {R$(com.PV)} &middot; {com.N}x de {R$(com.parcelaPrice)}</>
                     )}
                   </div>
