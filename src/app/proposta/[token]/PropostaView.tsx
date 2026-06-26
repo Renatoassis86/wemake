@@ -610,9 +610,9 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
           </div>
 
           {/* coluna imagem — direita (livros) */}
-          <div style={{ width: 'clamp(260px,35%,460px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)' }}>
-            <img src="/proposta/livros-wemake.png" alt="Livros We Make" style={{ width: '90%', height: '90%', objectFit: 'contain', objectPosition: 'center', display: 'block' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(11,31,68,0.6) 0%, rgba(11,31,68,0.1) 40%, transparent 70%)' }} />
+          <div style={{ width: 'clamp(260px,35%,460px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.25)' }}>
+            <img src="/proposta/livros-wemake.png" alt="Livros We Make" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} style={{ width: '85%', maxHeight: '85%', objectFit: 'contain', objectPosition: 'center', display: 'block', position: 'relative', zIndex: 1, filter: 'drop-shadow(0 24px 48px rgba(0,0,0,0.6))' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(11,31,68,0.5) 0%, transparent 60%)' }} />
           </div>
         </section>
 
@@ -679,10 +679,10 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
             <Aurora color1="rgba(76,138,222,0.08)" color2="rgba(118,243,205,0.06)" style={{ top: -180, right: -80 }} />
 
             {/* layout adaptativo: 2 sub-colunas quando há tabela, coluna+imagem quando não há */}
-            <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', alignItems: 'stretch', overflow: 'hidden' }}>
+            <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', alignItems: 'stretch', overflowY: 'auto' }}>
 
               {/* sub-coluna esquerda — serviços */}
-              <div style={{ flex: comItensDisplay.length > 0 ? '0 0 42%' : 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 'clamp(32px,5vh,52px) clamp(20px,3vw,40px)', overflow: 'hidden' }}>
+              <div style={{ flex: comItensDisplay.length > 0 ? '0 0 42%' : 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 'clamp(32px,5vh,52px) clamp(20px,3vw,40px)' }}>
                 <Reveal>
                   <Eyebrow>Espaço Maker</Eyebrow>
                   <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.white, marginBottom: 10, letterSpacing: '-0.02em', lineHeight: 1.05, textWrap: 'balance' } as React.CSSProperties}>
