@@ -271,10 +271,9 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
   type ComItem = { nome: string; qty: number; unit: number; qtyReal?: number; fixedQty?: boolean; total: number; nota?: string }
   const comData = (p.dados_calculo as Record<string, Record<string, unknown>>)?.com ?? {}
   const comItens: ComItem[] = (comData.itens as ComItem[] | undefined) ?? []
-  // Exclui computadores/notebooks — preço negociado diretamente pela escola
-  const comItensDisplay = comItens.filter(it => !it.nome.toLowerCase().includes('computador'))
+  const comItensDisplay = comItens  // todos os itens, incluindo notebooks
   const sumEquip = comItens.reduce((s, it) => s + it.total, 0)
-  const sumDisplay = comItensDisplay.reduce((s, it) => s + it.total, 0)
+  const sumDisplay = sumEquip
 
   const sections = [
     'capa', 'carta', 'div1', 'config', 'escopo',
@@ -765,7 +764,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                       ))}
                       <div style={{ padding: '8px 18px', background: 'rgba(11,31,68,0.5)' }}>
                         <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.25)', lineHeight: 1.5 }}>
-                          * Valores referenciais We Make. Notebooks não incluídos — cotação direta pela escola. Sujeito a atualização.
+                          * Simulação com base no memorial descritivo We Make. Valores referenciais sujeitos a atualização na aquisição.
                         </p>
                       </div>
                     </div>
