@@ -39,11 +39,11 @@ const DEFAULT_SIS: SisParams = {
   faixas: [
     // scoreCap = teto máximo de score permitido para esta faixa (garante preço máximo por volume)
     { nome: 'Faixa 1', min:    1, max:  100, s1: 0.90, scoreCap: 1.00 }, // máx R$420
-    { nome: 'Faixa 2', min:  101, max:  300, s1: 0.60, scoreCap: 0.85 }, // máx R$396
-    { nome: 'Faixa 3', min:  301, max:  500, s1: 0.30, scoreCap: 0.60 }, // máx R$356
-    { nome: 'Faixa 4', min:  501, max:  800, s1: 0.10, scoreCap: 0.40 }, // máx R$324
-    { nome: 'Faixa 5', min:  801, max: 1200, s1: 0.00, scoreCap: 0.22 }, // máx R$295 (<R$300)
-    { nome: 'Faixa 6', min: 1201, max: 9999, s1: 0.00, scoreCap: 0.15 }, // máx R$284 (perto do piso)
+    { nome: 'Faixa 2', min:  101, max:  300, s1: 0.60, scoreCap: 0.88 }, // máx R$401
+    { nome: 'Faixa 3', min:  301, max:  500, s1: 0.30, scoreCap: 0.69 }, // máx R$370
+    { nome: 'Faixa 4', min:  501, max:  800, s1: 0.10, scoreCap: 0.55 }, // máx R$348
+    { nome: 'Faixa 5', min:  801, max: 1200, s1: 0.00, scoreCap: 0.50 }, // máx R$340
+    { nome: 'Faixa 6', min: 1201, max: 9999, s1: 0.00, scoreCap: 0.40 }, // máx R$324
   ],
 }
 
