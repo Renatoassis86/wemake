@@ -30,6 +30,7 @@ interface PreCadastro {
   alunos_fundamental_1: number | null
   alunos_fundamental_2: number | null
   alunos_ensino_medio: number | null
+  maior_sala: number | null
   // Ano letivo
   data_inicio_letivo: string | null
   data_fim_letivo: string | null
@@ -145,6 +146,7 @@ function RowDetails({ r }: { r: PreCadastro }) {
         <Field label="Início do ano letivo" value={r.data_inicio_letivo} />
         <Field label="Fim do ano letivo" value={r.data_fim_letivo} />
         <Field label="Total de alunos" value={totalAlunos(r)} />
+        <Field label="Maior turma" value={r.maior_sala ? `${r.maior_sala} alunos` : '—'} />
         <Field label="Infantil" value={r.seg_infantil ? `${r.alunos_infantil ?? 0} alunos` : 'Não'} />
         <Field label="Fundamental 1" value={r.seg_fundamental_1 ? `${r.alunos_fundamental_1 ?? 0} alunos` : 'Não'} />
         <Field label="Fundamental 2" value={r.seg_fundamental_2 ? `${r.alunos_fundamental_2 ?? 0} alunos` : 'Não'} />
