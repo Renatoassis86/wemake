@@ -1104,22 +1104,15 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
 
                 <Reveal delay={320}>
                   <div style={{ marginTop: 24 }}>
-                    {/* rótulo deixando claro que compara os DOIS modelos, não é específico do Modelo 2 */}
                     <p style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,255,255,0.45)', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ width: 18, height: 1.5, background: 'rgba(255,255,255,0.3)', display: 'inline-block' }} />
-                      Comparativo — Currículo x Currículo + Comodato
+                      Investimento — Currículo + Comodato
                     </p>
                     <div style={{ borderRadius: 16, padding: '20px 28px', background: 'rgba(11,31,68,0.45)', border: '1px solid rgba(255,255,255,0.18)' }}>
-                    {/* comparação: valor por aluno/ano só currículo vs. currículo + comodato */}
-                    <div className="pv-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 16 }}>
-                      <div>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Por aluno / ano — Currículo</p>
-                        <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-2xl)', color: C.white, lineHeight: 1 }}>{R$(p.valor_aluno_ano)}</p>
-                      </div>
-                      <div>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Por aluno / ano — Currículo + Comodato</p>
-                        <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-2xl)', color: C.mint, lineHeight: 1 }}>{R$(valorAlunoAnoComodato)}</p>
-                      </div>
+                    {/* só o valor do comodato aqui — o comparativo com "Somente Currículo" fica na seção de Investimento, mais abaixo */}
+                    <div style={{ marginBottom: 16 }}>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Por aluno / ano — Currículo + Comodato</p>
+                      <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-3xl)', color: C.mint, lineHeight: 1 }}>{R$(valorAlunoAnoComodato)}</p>
                     </div>
                     <div style={{ height: 1, background: 'rgba(255,255,255,0.15)', marginBottom: 16 }} />
                     <div style={{ display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap' }}>
