@@ -925,7 +925,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                   <Reveal delay={200}>
                     <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 12 }}>
                       <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.2)', lineHeight: 1.6 }}>
-                        * Não incluídos: adequações estruturais, reformas, instalações elétricas, climatização, mobiliário planejado ou materiais consumíveis.
+                        É importante destacar que os modelos apresentados dizem respeito aos recursos reutilizáveis do espaço maker. Não estão incluídos adequações estruturais do ambiente, reformas, instalações elétricas ou lógicas, climatização, marcenaria, mobiliário planejado, bancadas fixas, armários sob medida, nem os materiais consumíveis utilizados nas aulas.
                       </p>
                     </div>
                   </Reveal>
@@ -998,7 +998,9 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     <div style={{ padding: '10px 24px', background: 'rgba(11,31,68,0.03)', borderTop: '1px solid rgba(11,31,68,0.06)' }}>
                       <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: '#94a3b8', lineHeight: 1.6 }}>
                         * Relação de referência conforme memorial descritivo We Make. Valores finais sujeitos a atualização no momento da aquisição.
-                        Não estão incluídos: adequações estruturais, reformas, instalações elétricas, mobiliário e materiais consumíveis.
+                      </p>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: '#94a3b8', lineHeight: 1.6, marginTop: 6 }}>
+                        É importante destacar que os modelos apresentados dizem respeito aos recursos reutilizáveis do espaço maker. Não estão incluídos adequações estruturais do ambiente, reformas, instalações elétricas ou lógicas, climatização, marcenaria, mobiliário planejado, bancadas fixas, armários sob medida, nem os materiais consumíveis utilizados nas aulas.
                       </p>
                     </div>
                   </div>
@@ -1094,7 +1096,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                         * Relação de referência conforme memorial descritivo We Make. Recursos disponibilizados em comodato durante a vigência contratual e transferidos ao final do período, cumpridas as condições estabelecidas.
                       </p>
                       <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.35)', lineHeight: 1.6, marginTop: 6 }}>
-                        * O comodato não contempla marcenaria, mobiliário planejado ou demais móveis.
+                        É importante destacar que os modelos apresentados dizem respeito aos recursos reutilizáveis do espaço maker. Não estão incluídos adequações estruturais do ambiente, reformas, instalações elétricas ou lógicas, climatização, marcenaria, mobiliário planejado, bancadas fixas, armários sob medida, nem os materiais consumíveis utilizados nas aulas.
                       </p>
                     </div>
                   </div>
