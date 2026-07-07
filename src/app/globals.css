@@ -1121,3 +1121,34 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
 
 /* ── Tipografia responsiva de section title ──────────────── */
 .mp-section-title { font-size: clamp(1rem, 4vw, 1.3rem); }
+
+/* ══════════════════════════════════════════════════════════
+   GAPS ESPECÍFICOS — grids com largura fixa fora do range que
+   o catch-all genérico reconhece (auditoria de responsividade)
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Contratos: linha "180px 1fr 1fr" (label + 2 inputs por série) ── */
+@media (max-width: 480px) {
+  .mp-contrato-row { grid-template-columns: 1fr !important; gap: .4rem !important; }
+}
+
+/* ── Tutorial: cards de módulo "380px 1fr" / "1fr 380px" ─────────── */
+@media (max-width: 768px) {
+  .mp-tutorial-card { grid-template-columns: 1fr !important; }
+}
+
+/* ── Banners "1fr auto" (Sobre, Transcrições) ────────────────────── */
+@media (max-width: 900px) {
+  .mp-banner-stack { grid-template-columns: 1fr !important; overflow: hidden !important; }
+}
+
+/* ── Jornada: grid principal "1fr 240px" (timeline + sidebar) ────── */
+@media (max-width: 768px) {
+  .mp-jornada-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── Calculadora: tabelas editáveis densas (faixas/equipamentos) ─── */
+@media (max-width: 480px) {
+  .mp-calc-table th, .mp-calc-table td { padding: .35rem .4rem !important; font-size: .68rem !important; }
+  .mp-calc-table input, .mp-calc-table select { padding: .3rem .35rem !important; font-size: .7rem !important; min-height: 34px !important; }
+}

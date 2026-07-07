@@ -215,6 +215,20 @@ export interface Contrato {
   fund1_ano4_valor: number
   fund1_ano5_qtd: number
   fund1_ano5_valor: number
+  fund2_ano6_qtd: number
+  fund2_ano6_valor: number
+  fund2_ano7_qtd: number
+  fund2_ano7_valor: number
+  fund2_ano8_qtd: number
+  fund2_ano8_valor: number
+  fund2_ano9_qtd: number
+  fund2_ano9_valor: number
+  medio_1s_qtd: number
+  medio_1s_valor: number
+  medio_2s_qtd: number
+  medio_2s_valor: number
+  medio_3s_qtd: number
+  medio_3s_valor: number
   tempo_contrato: number
   valor_total: number
   valor_total_calculado: number

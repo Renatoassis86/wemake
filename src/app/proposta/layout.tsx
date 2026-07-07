@@ -158,6 +158,54 @@ export default function PropostaLayout({ children }: { children: React.ReactNode
         @keyframes aurora    { 0%,100%{transform:rotate(0deg) translate(0,0)} 50%{transform:rotate(15deg) translate(40px,20px)} }
         @keyframes fade-up   { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
         @keyframes shimmer   { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
+
+        /* ── Mobile (≤768px): a landing de seção única (100dvh + scroll-snap)
+           vira rolagem contínua — seções empilham em altura natural, colunas
+           viram blocos verticais e imagens decorativas viram uma faixa/banner
+           acima do texto em vez de coluna lateral.                          */
+        @media (max-width: 768px) {
+          .pv-scroll { scroll-snap-type: none !important; }
+          .pv-navdots { display: none !important; }
+
+          .pv-section {
+            height: auto !important;
+            min-height: auto !important;
+            scroll-snap-align: none !important;
+          }
+
+          .pv-row { flex-direction: column !important; }
+          .pv-flex-reset { flex: none !important; width: 100% !important; }
+
+          .pv-media {
+            width: 100% !important;
+            height: 200px !important;
+            order: -1 !important;
+            flex: none !important;
+          }
+          .pv-media-multi { flex-direction: row !important; height: 160px !important; }
+          .pv-media-auto {
+            width: 100% !important;
+            height: auto !important;
+            order: -1 !important;
+            flex: none !important;
+            padding-top: 28px !important;
+          }
+
+          .pv-divider-v { display: none !important; }
+
+          .pv-grid-2, .pv-grid-3 { grid-template-columns: 1fr !important; }
+
+          .pv-hero-top       { flex-direction: column !important; height: auto !important; flex: none !important; }
+          .pv-hero-royal     { width: 100% !important; }
+          .pv-hero-logo      { flex: none !important; width: 100% !important; height: 140px !important; }
+          .pv-hero-photo     { flex: none !important; height: 300px !important; min-height: 300px !important; }
+          .pv-hero-countdown { left: var(--gutter) !important; align-items: center !important; }
+
+          .pv-table-desktop { display: none !important; }
+          .pv-table-mobile  { display: flex !important; }
+        }
+
+        .pv-table-mobile { display: none; }
       `}</style>
       {children}
     </>

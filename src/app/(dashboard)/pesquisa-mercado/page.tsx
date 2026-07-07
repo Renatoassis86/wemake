@@ -426,7 +426,7 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
             </div>
 
             {/* Linha 2 — Congressos + Oikos + Qualificação */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr', gap: '.85rem', marginBottom: '.85rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '.85rem', marginBottom: '.85rem' }}>
               {[
                 { label: '1º CIECC 2025', val: kpiLeads.por2025.toLocaleString('pt-BR'), sub: 'participações', cor: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' },
                 { label: '2º CIECC 2026', val: kpiLeads.por2026.toLocaleString('pt-BR'), sub: 'participações', cor: '#2563eb', bg: '#eff6ff', border: '#bfdbfe' },

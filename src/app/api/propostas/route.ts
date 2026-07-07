@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       num_alunos:         num_alunos ?? 100,
       segmentos:          segmentos ?? 2,
       valor_aluno_ano:    valor_aluno_ano ?? 0,
-      num_parcelas:       num_parcelas ?? 12,
+      num_parcelas:       num_parcelas ?? 5,
       duracao_meses:      duracao_meses ?? 48,
       criado_por:         user.id,
     }

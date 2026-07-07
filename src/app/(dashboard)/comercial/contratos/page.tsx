@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { formatCurrency } from '@/lib/utils'
 import { EscolaSelector } from '@/components/ui/EscolaSelector'
 import { ContratoUpload } from '@/components/comercial/ContratoUpload'
+import { calcValorTotalContrato, calcTotalAlunosContrato } from '@/lib/contratos'
 
 interface Props { searchParams: Promise<{ escola?: string }> }
 
@@ -104,11 +105,9 @@ export default async function ContratosPage({ searchParams }: Props) {
 
   /* ── Metas ── */
   const total_alunos  = contratos_geral?.reduce((acc: number, x: any) =>
-    acc + ((x.infantil2_qtd ?? 0) + (x.infantil3_qtd ?? 0) + (x.infantil4_qtd ?? 0) +
-           (x.infantil5_qtd ?? 0) + (x.fund1_ano1_qtd ?? 0) + (x.fund1_ano2_qtd ?? 0) +
-           (x.fund1_ano3_qtd ?? 0) + (x.fund1_ano4_qtd ?? 0) + (x.fund1_ano5_qtd ?? 0)), 0) ?? 0
+    acc + calcTotalAlunosContrato(x), 0) ?? 0
   const total_receita = contratos_geral?.reduce((acc: number, x: any) =>
-    acc + (x.valor_total_calculado ?? x.valor_total ?? 0), 0) ?? 0
+    acc + calcValorTotalContrato(x), 0) ?? 0
   const pct_alunos   = Math.min(100, Math.round((total_alunos  / META_ALUNOS)  * 100))
   const pct_receita  = Math.min(100, Math.round((total_receita / META_RECEITA) * 100))
 
@@ -272,8 +271,15 @@ export default async function ContratosPage({ searchParams }: Props) {
                   { label: '3º Ano Fund I', qtd: 'fund1_ano3_qtd', val: 'fund1_ano3_valor' },
                   { label: '4º Ano Fund I', qtd: 'fund1_ano4_qtd', val: 'fund1_ano4_valor' },
                   { label: '5º Ano Fund I', qtd: 'fund1_ano5_qtd', val: 'fund1_ano5_valor' },
+                  { label: '6º Ano Fund II', qtd: 'fund2_ano6_qtd', val: 'fund2_ano6_valor' },
+                  { label: '7º Ano Fund II', qtd: 'fund2_ano7_qtd', val: 'fund2_ano7_valor' },
+                  { label: '8º Ano Fund II', qtd: 'fund2_ano8_qtd', val: 'fund2_ano8_valor' },
+                  { label: '9º Ano Fund II', qtd: 'fund2_ano9_qtd', val: 'fund2_ano9_valor' },
+                  { label: '1ª Série Médio', qtd: 'medio_1s_qtd', val: 'medio_1s_valor' },
+                  { label: '2ª Série Médio', qtd: 'medio_2s_qtd', val: 'medio_2s_valor' },
+                  { label: '3ª Série Médio', qtd: 'medio_3s_qtd', val: 'medio_3s_valor' },
                 ].map(seg => (
-                  <div key={seg.qtd} style={{ display: 'grid', gridTemplateColumns: '180px 1fr 1fr', gap: '1rem', alignItems: 'center', padding: '.65rem 0', borderBottom: '1px solid #f1f5f9' }}>
+                  <div key={seg.qtd} className="mp-contrato-row" style={{ display: 'grid', gridTemplateColumns: '180px 1fr 1fr', gap: '1rem', alignItems: 'center', padding: '.65rem 0', borderBottom: '1px solid #f1f5f9' }}>
                     <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.82rem', fontWeight: 600, color: '#0f172a' }}>{seg.label}</div>
                     <div>
                       <label style={{ ...lbl, marginBottom: '.25rem' }}>Qtd. Alunos</label>
@@ -289,18 +295,18 @@ export default async function ContratosPage({ searchParams }: Props) {
                 ))}
 
                 {/* Tempo e Total */}
-                <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr 1fr', gap: '1rem', alignItems: 'center', padding: '.85rem 0', marginTop: '.25rem' }}>
+                <div className="mp-contrato-row" style={{ display: 'grid', gridTemplateColumns: '180px 1fr 1fr', gap: '1rem', alignItems: 'center', padding: '.85rem 0', marginTop: '.25rem' }}>
                   <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.82rem', fontWeight: 600, color: '#0f172a' }}>Tempo de Contrato</div>
                   <div>
                     <label style={{ ...lbl, marginBottom: '.25rem' }}>Anos</label>
                     <input name="tempo_contrato" type="number" min="1" defaultValue={c?.tempo_contrato ?? 1}
                       style={{ ...inp, padding: '.6rem .85rem', textAlign: 'center', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700 }} />
                   </div>
-                  {(c?.valor_total_calculado > 0 || c?.valor_total > 0) && (
+                  {calcValorTotalContrato(c) > 0 && (
                     <div style={{ background: '#fffbeb', border: '1px solid #fef3c7', borderRadius: 10, padding: '.85rem 1rem', textAlign: 'center' }}>
                       <div style={{ fontSize: '.65rem', color: '#92400e', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>Valor Total Estimado</div>
                       <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: '#4A7FDB' }}>
-                        {formatCurrency(c.valor_total_calculado ?? c.valor_total ?? 0)}
+                        {formatCurrency(calcValorTotalContrato(c))}
                       </div>
                     </div>
                   )}
@@ -400,7 +406,7 @@ export default async function ContratosPage({ searchParams }: Props) {
                         </td>
                       ))}
                       <td style={{ padding: '.85rem 1rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '.95rem', fontWeight: 700, color: '#16a34a', whiteSpace: 'nowrap' }}>
-                        {(ct.valor_total_calculado > 0 || ct.valor_total > 0) ? formatCurrency(ct.valor_total_calculado ?? ct.valor_total ?? 0) : '—'}
+                        {calcValorTotalContrato(ct) > 0 ? formatCurrency(calcValorTotalContrato(ct)) : '—'}
                       </td>
                     </tr>
                   ))}

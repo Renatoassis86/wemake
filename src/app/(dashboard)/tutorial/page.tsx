@@ -572,7 +572,7 @@ export default function TutorialPage() {
       <div style={{ padding: '2rem 2.5rem' }}>
 
         {/* ── Hero ─────────────────────────────────────────────── */}
-        <div style={{
+        <div className="mp-banner-stack" style={{
           background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a5f 100%)',
           borderRadius: 20, padding: '2.5rem 3rem', marginBottom: '2.5rem',
           display: 'grid', gridTemplateColumns: '1fr auto',
@@ -653,7 +653,7 @@ export default function TutorialPage() {
             {/* Cards do grupo */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               {MODULOS.filter(m => m.tag === grupo).map((m, idx) => (
-                <div key={m.id} id={m.id} style={{
+                <div key={m.id} id={m.id} className="mp-tutorial-card" style={{
                   background: '#fff', border: '1px solid #e2e8f0', borderRadius: 20,
                   overflow: 'hidden', boxShadow: '0 2px 12px rgba(15,23,42,.06)',
                   display: 'grid',

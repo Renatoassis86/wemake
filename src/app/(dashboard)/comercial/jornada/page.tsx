@@ -558,7 +558,7 @@ export default async function JornadaPage({ searchParams }: Props) {
           </div>
 
           {/* ── CORPO: TIMELINE + SIDEBAR ───────────────────────────────── */}
-          <div style={{
+          <div className="mp-jornada-grid" style={{
             maxWidth: 1200, margin: '0 auto',
             padding: '2rem 1.75rem',
             display: 'grid',

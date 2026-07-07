@@ -329,6 +329,10 @@ export default function CalculadoraPage() {
   const [logoFile, setLogoFile]         = useState<File | null>(null)
   const [logoPreview, setLogoPreview]   = useState<string | null>(null)
   const [valorCustom, setValorCustom]   = useState<string>('')
+  // Quantidade de parcelas do valor total do contrato (comodato) — a periodicidade
+  // (mensal, bimestral etc.) é acertada diretamente com a escola, por isso não
+  // assumimos mais 12x fixo; aparece na proposta apenas como texto.
+  const [numParcelasComodato, setNumParcelasComodato] = useState(5)
   const [modalLoading, setModalLoading] = useState(false)
   const [modalError, setModalError]     = useState<string | null>(null)
   const [propostaResult, setPropostaResult] = useState<{
@@ -347,6 +351,7 @@ export default function CalculadoraPage() {
     setLogoFile(null)
     setLogoPreview(null)
     setValorCustom(sis.valorFinal.toFixed(2))
+    setNumParcelasComodato(5)
     setModalLoading(false)
     setModalError(null)
     setPropostaResult(null)
@@ -394,7 +399,7 @@ export default function CalculadoraPage() {
         num_alunos:           alunos,
         segmentos:            segs,
         valor_aluno_ano:      parseFloat(valorCustom.replace(',', '.')) || sis.valorFinal,
-        num_parcelas:         modalForm.tipo === 'curriculo_comodato' ? 12 : parcelas,
+        num_parcelas:         modalForm.tipo === 'curriculo_comodato' ? numParcelasComodato : parcelas,
         duracao_meses:        lp.duracaoMeses,
         comodato_pv:          modalForm.tipo === 'curriculo_comodato' ? com.PV : null,
         comodato_parcela:     modalForm.tipo === 'curriculo_comodato' ? com.parcelaPrice : null,
@@ -597,7 +602,7 @@ export default function CalculadoraPage() {
                       Faixas de escala — score fixo (s1) + teto de score por faixa (garante preço máximo por volume)
                     </div>
                     <div style={{ overflowX: 'auto', marginBottom: '.65rem' }}>
-                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <table className="mp-calc-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
                           <tr>
                             {['Faixa', 'Alunos de', 'Alunos até', 'Score s1 (fixo)', 'Teto score (cap)', 'Preço máx', 'Ativa?'].map(h => (
@@ -1145,7 +1150,7 @@ export default function CalculadoraPage() {
                 </button>
               </div>
               <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <table className="mp-calc-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr>
                       {['Item', 'Qtd.', 'Valor unitário (R$)', 'Total (R$)', 'Nota'].map(h => <th key={h} style={th}>{h}</th>)}
@@ -1453,6 +1458,7 @@ export default function CalculadoraPage() {
                         setModalForm({ escolaNome: '', escolaEmail: '', tipo: incluiComodato ? 'curriculo_comodato' : 'curriculo', validade: defaultValidade(), texto: '' })
                         setLogoFile(null)
                         setLogoPreview(null)
+                        setNumParcelasComodato(5)
                         setModalError(null)
                       }}
                       style={{ padding: '.55rem 1.2rem', borderRadius: 8, border: '1.5px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#475569' }}
@@ -1568,6 +1574,26 @@ export default function CalculadoraPage() {
                       style={INP}
                     />
                   </div>
+
+                  {/* Quantidade de parcelas (comodato) — periodicidade combinada com a escola,
+                      aparece na proposta apenas como texto, não gera valor "por mês" */}
+                  {modalForm.tipo === 'curriculo_comodato' && (
+                    <div>
+                      <label style={LBL}>Quantidade de parcelas do contrato</label>
+                      <input
+                        type="number"
+                        min={1}
+                        max={24}
+                        value={numParcelasComodato || ''}
+                        onChange={e => setNumParcelasComodato(+e.target.value)}
+                        onBlur={() => setNumParcelasComodato(n => Math.min(24, Math.max(1, n || 5)))}
+                        style={INP}
+                      />
+                      <div style={{ marginTop: 4, fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
+                        A periodicidade (mensal, bimestral etc.) é acertada diretamente com a escola. Na proposta aparece apenas como texto — não é usada para calcular valor por mês.
+                      </div>
+                    </div>
+                  )}
 
                   {/* Valor por aluno/ano (editável para estratégia de negociação) */}
                   <div>

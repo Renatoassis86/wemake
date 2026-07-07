@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { formatDate, formatCurrency } from '@/lib/utils'
 import { LABEL } from '@/types/database'
 import { EscolaSelector } from '@/components/ui/EscolaSelector'
+import { calcValorTotalContrato } from '@/lib/contratos'
 
 export const dynamic = 'force-dynamic'
 
@@ -1229,7 +1230,7 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
                     </div>
 
                     {/* Valor do contrato */}
-                    {contrato?.valor_total_calculado > 0 && (
+                    {calcValorTotalContrato(contrato) > 0 && (
                       <div style={{
                         marginTop: '1.1rem',
                         background: 'linear-gradient(135deg, #fffbeb, #fef3c7)',
@@ -1251,7 +1252,7 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
                           fontSize: '1.5rem', fontWeight: 700, color: '#2563b8',
                           lineHeight: 1,
                         }}>
-                          {formatCurrency(contrato.valor_total_calculado)}
+                          {formatCurrency(calcValorTotalContrato(contrato))}
                         </div>
                       </div>
                     )}

@@ -32,7 +32,7 @@ export default async function TranscricoesPage() {
       <div style={{ padding: '2rem 2.5rem' }}>
 
         {/* ── Diretrizes do módulo ─────────────────────────── */}
-        <div style={{
+        <div className="mp-banner-stack" style={{
           background: 'linear-gradient(135deg, #0f172a, #1e293b)',
           borderRadius: 16, padding: '1.5rem 2rem',
           marginBottom: '2rem',

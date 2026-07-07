@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import PageHeader from '@/components/layout/PageHeader'
 import { formatCurrency } from '@/lib/utils'
 import { ContadorRegressivo } from '@/components/metas/ContadorRegressivo'
+import { calcTotalAlunosContrato } from '@/lib/contratos'
 
 // ══════════════════════════════════════════════════
 // METAS 2027 — Plano Estratégico We Make
@@ -107,6 +108,8 @@ export default async function MetasPage() {
         escola_id, contrato_assinado,
         infantil2_qtd, infantil3_qtd, infantil4_qtd, infantil5_qtd,
         fund1_ano1_qtd, fund1_ano2_qtd, fund1_ano3_qtd, fund1_ano4_qtd, fund1_ano5_qtd,
+        fund2_ano6_qtd, fund2_ano7_qtd, fund2_ano8_qtd, fund2_ano9_qtd,
+        medio_1s_qtd, medio_2s_qtd, medio_3s_qtd,
         escola:escolas(id, nome, cidade, estado, total_alunos, created_at)
       `)
       .eq('contrato_assinado', true),
@@ -134,10 +137,7 @@ export default async function MetasPage() {
   // Prioridade: se tem alunos no contrato (formulário preenchido), usa esses dados
   // Senão, usa total_alunos da escola cadastrada
   const alunosNovasEscolas = (contratosAssinados ?? []).reduce((acc: number, c: any) => {
-    const alunosContrato = (c.infantil2_qtd ?? 0) + (c.infantil3_qtd ?? 0) +
-      (c.infantil4_qtd ?? 0) + (c.infantil5_qtd ?? 0) + (c.fund1_ano1_qtd ?? 0) +
-      (c.fund1_ano2_qtd ?? 0) + (c.fund1_ano3_qtd ?? 0) + (c.fund1_ano4_qtd ?? 0) +
-      (c.fund1_ano5_qtd ?? 0)
+    const alunosContrato = calcTotalAlunosContrato(c)
     const alunosEscola = (c.escola as any)?.total_alunos ?? 0
     return acc + (alunosContrato > 0 ? alunosContrato : alunosEscola)
   }, 0)
