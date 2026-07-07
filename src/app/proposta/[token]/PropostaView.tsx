@@ -1093,6 +1093,9 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                       <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.35)', lineHeight: 1.6 }}>
                         * Relação de referência conforme memorial descritivo We Make. Recursos disponibilizados em comodato durante a vigência contratual e transferidos ao final do período, cumpridas as condições estabelecidas.
                       </p>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.35)', lineHeight: 1.6, marginTop: 6 }}>
+                        * O comodato não contempla marcenaria, mobiliário planejado ou demais móveis.
+                      </p>
                     </div>
                   </div>
                 </Reveal>
