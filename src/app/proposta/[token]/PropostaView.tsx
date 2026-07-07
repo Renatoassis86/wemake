@@ -1338,7 +1338,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                       <>
                         {/* desktop — grid de 3 colunas */}
                         <div className="pv-table-desktop" style={{ flexDirection: 'column' }}>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', background: 'rgba(255,255,255,0.06)', padding: '12px 20px', gap: 16, borderBottom: '1px solid rgba(255,255,255,0.1)', position: 'sticky', top: 0, zIndex: 1 }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', background: '#0e2450', padding: '12px 20px', gap: 16, borderBottom: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 4px 12px -4px rgba(0,0,0,0.4)', position: 'sticky', top: 0, zIndex: 1 }}>
                             <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,255,255,0.4)' }}>Critério</span>
                             <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: C.royal }}>Modelo 1 — Investimento Patrimonial da Escola</span>
                             <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: C.mint }}>Modelo 2 — Cessão de Uso com Transferência Final</span>
