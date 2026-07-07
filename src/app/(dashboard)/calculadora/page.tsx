@@ -329,6 +329,9 @@ export default function CalculadoraPage() {
   const [logoFile, setLogoFile]         = useState<File | null>(null)
   const [logoPreview, setLogoPreview]   = useState<string | null>(null)
   const [valorCustom, setValorCustom]   = useState<string>('')
+  // Valor por aluno/ano do cenário "Currículo + Comodato" — editável separadamente
+  // do valor "Somente Currículo" para que a proposta mostre os dois lado a lado.
+  const [valorComodatoCustom, setValorComodatoCustom] = useState<string>('')
   // Quantidade de parcelas do valor total do contrato (comodato) — a periodicidade
   // (mensal, bimestral etc.) é acertada diretamente com a escola, por isso não
   // assumimos mais 12x fixo; aparece na proposta apenas como texto.
@@ -351,6 +354,7 @@ export default function CalculadoraPage() {
     setLogoFile(null)
     setLogoPreview(null)
     setValorCustom(sis.valorFinal.toFixed(2))
+    setValorComodatoCustom(((mensalidadeEscola * 12) / (alunos || 1)).toFixed(2))
     setNumParcelasComodato(5)
     setModalLoading(false)
     setModalError(null)
@@ -399,6 +403,9 @@ export default function CalculadoraPage() {
         num_alunos:           alunos,
         segmentos:            segs,
         valor_aluno_ano:      parseFloat(valorCustom.replace(',', '.')) || sis.valorFinal,
+        valor_aluno_ano_comodato: modalForm.tipo === 'curriculo_comodato'
+          ? (parseFloat(valorComodatoCustom.replace(',', '.')) || (mensalidadeEscola * 12) / (alunos || 1))
+          : null,
         num_parcelas:         modalForm.tipo === 'curriculo_comodato' ? numParcelasComodato : parcelas,
         duracao_meses:        lp.duracaoMeses,
         comodato_pv:          modalForm.tipo === 'curriculo_comodato' ? com.PV : null,
@@ -1458,6 +1465,7 @@ export default function CalculadoraPage() {
                         setModalForm({ escolaNome: '', escolaEmail: '', tipo: incluiComodato ? 'curriculo_comodato' : 'curriculo', validade: defaultValidade(), texto: '' })
                         setLogoFile(null)
                         setLogoPreview(null)
+                        setValorComodatoCustom(((mensalidadeEscola * 12) / (alunos || 1)).toFixed(2))
                         setNumParcelasComodato(5)
                         setModalError(null)
                       }}
@@ -1595,9 +1603,9 @@ export default function CalculadoraPage() {
                     </div>
                   )}
 
-                  {/* Valor por aluno/ano (editável para estratégia de negociação) */}
+                  {/* Valor por aluno/ano — Somente Currículo (editável para estratégia de negociação) */}
                   <div>
-                    <label style={LBL}>Valor por aluno / ano (R$)</label>
+                    <label style={LBL}>Valor por aluno / ano — Somente Currículo (R$)</label>
                     <div style={{ position: 'relative' }}>
                       <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.82rem', pointerEvents: 'none' }}>R$</span>
                       <input
@@ -1623,6 +1631,28 @@ export default function CalculadoraPage() {
                       </span>
                     </div>
                   </div>
+
+                  {/* Valor por aluno/ano — Currículo + Comodato (só aparece nesse tipo de proposta;
+                      a escola compara os dois valores lado a lado na proposta) */}
+                  {modalForm.tipo === 'curriculo_comodato' && (
+                    <div>
+                      <label style={LBL}>Valor por aluno / ano — Currículo + Comodato (R$)</label>
+                      <div style={{ position: 'relative' }}>
+                        <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.82rem', pointerEvents: 'none' }}>R$</span>
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={valorComodatoCustom}
+                          onChange={e => setValorComodatoCustom(e.target.value)}
+                          style={{ ...INP, paddingLeft: 36 }}
+                        />
+                      </div>
+                      <div style={{ marginTop: 4, fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
+                        Calculadora: <strong style={{ color: '#475569' }}>{((mensalidadeEscola * 12) / (alunos || 1)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong> (currículo + comodato, anualizado)
+                      </div>
+                    </div>
+                  )}
 
                   {/* Texto personalizado */}
                   <div>

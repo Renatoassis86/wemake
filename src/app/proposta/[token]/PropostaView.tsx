@@ -33,6 +33,7 @@ interface Proposta {
   tipo: 'curriculo' | 'curriculo_comodato'
   validade: string; num_alunos: number; segmentos: number
   valor_aluno_ano: number; num_parcelas: number; duracao_meses: number
+  valor_aluno_ano_comodato: number | null
   comodato_pv: number | null; comodato_parcela: number | null
   comodato_retorno_pct: number | null; comodato_notebooks: number | null
   dados_calculo: Record<string, unknown>; texto_personalizado: string | null
@@ -278,6 +279,10 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
   const totalAnual   = p.valor_aluno_ano * p.num_alunos
   const mensalComd   = p.comodato_parcela ?? 0
   const descPct      = Math.max(0, Math.round((1 - p.valor_aluno_ano / 420) * 100))
+  // Valor por aluno/ano do cenário Currículo + Comodato — usa o valor editado na
+  // calculadora quando existir; propostas antigas (sem esse campo) caem no cálculo
+  // anualizado a partir da parcela do comodato.
+  const valorAlunoAnoComodato = p.valor_aluno_ano_comodato ?? ((totalAnual / 12 + mensalComd) * 12 / (p.num_alunos || 1))
 
   // Itens reais do comodato vindos do dados_calculo (espelha tabela editável da calculadora)
   type ComItem = { nome: string; qty: number; unit: number; qtyReal?: number; fixedQty?: boolean; total: number; nota?: string }
@@ -1093,24 +1098,34 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                 </Reveal>
 
                 <Reveal delay={320}>
-                  <div style={{ borderRadius: 16, padding: '20px 28px', display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap', background: 'rgba(118,243,205,0.08)', border: '1px solid rgba(118,243,205,0.2)' }}>
-                    <div>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Parcela mensal — equipamentos</p>
-                      <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-3xl)', color: C.mint, lineHeight: 1 }}>{R$(mensalComd)}</p>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>
-                        Referente à cessão de uso dos equipamentos
+                  <div style={{ borderRadius: 16, padding: '20px 28px', background: 'rgba(118,243,205,0.08)', border: '1px solid rgba(118,243,205,0.2)' }}>
+                    {/* comparação: valor por aluno/ano só currículo vs. currículo + comodato */}
+                    <div className="pv-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 16 }}>
+                      <div>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Por aluno / ano — Currículo</p>
+                        <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-2xl)', color: C.white, lineHeight: 1 }}>{R$(p.valor_aluno_ano)}</p>
+                      </div>
+                      <div>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Por aluno / ano — Currículo + Comodato</p>
+                        <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-2xl)', color: C.mint, lineHeight: 1 }}>{R$(valorAlunoAnoComodato)}</p>
+                      </div>
+                    </div>
+                    <div style={{ height: 1, background: 'rgba(255,255,255,0.15)', marginBottom: 16 }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap' }}>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, flex: '1 1 260px' }}>
+                        Parcelamento em até {p.num_parcelas}x — periodicidade e condições definidas diretamente com a escola.
                       </p>
-                    </div>
-                    <div style={{ height: 44, width: 1, background: 'rgba(255,255,255,0.15)' }} />
-                    <div>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Duração</p>
-                      <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-2xl)', color: C.white, lineHeight: 1 }}>{p.duracao_meses} meses</p>
-                    </div>
-                    <div style={{ height: 44, width: 1, background: 'rgba(255,255,255,0.15)' }} />
-                    <div>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Condições</p>
-                      <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-lg)', color: C.white, lineHeight: 1 }}>Boleto · Dia 7</p>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>Reajuste anual IPCA</p>
+                      <div style={{ height: 44, width: 1, background: 'rgba(255,255,255,0.15)' }} />
+                      <div>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Duração</p>
+                        <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-2xl)', color: C.white, lineHeight: 1 }}>{p.duracao_meses} meses</p>
+                      </div>
+                      <div style={{ height: 44, width: 1, background: 'rgba(255,255,255,0.15)' }} />
+                      <div>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Condições</p>
+                        <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-lg)', color: C.white, lineHeight: 1 }}>Boleto · Dia 7</p>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>Reajuste anual IPCA</p>
+                      </div>
                     </div>
                   </div>
                 </Reveal>
@@ -1180,7 +1195,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                           <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>Por aluno / ano</span>
-                          <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-xl)', color: C.mint }}>{R$((totalAnual / 12 + mensalComd) * 12 / p.num_alunos)}</span>
+                          <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-xl)', color: C.mint }}>{R$(valorAlunoAnoComodato)}</span>
                         </div>
                         <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.32)', lineHeight: 1.6 }}>
                           Parcelamento em até {p.num_parcelas}x — periodicidade e condições definidas diretamente com a escola.
@@ -1296,7 +1311,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                       {
                         criterio: 'Investimento anual por aluno',
                         m1: `${R$(p.valor_aluno_ano)} por aluno/ano`,
-                        m2: `${R$((totalAnual / 12 + mensalComd) * 12 / (p.num_alunos || 1))} por aluno/ano`,
+                        m2: `${R$(valorAlunoAnoComodato)} por aluno/ano`,
                       },
                       {
                         criterio: 'Vantagem principal',
