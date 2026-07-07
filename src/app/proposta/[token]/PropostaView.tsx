@@ -864,7 +864,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     <h2 className="text-gradient-cinematic" style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-4xl)', lineHeight: 1.05, marginBottom: 14, letterSpacing: '-0.025em' }}>
                       Espaço Maker We Make
                     </h2>
-                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.82rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.75, marginBottom: 14 }}>
+                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.95rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, marginBottom: 14 }}>
                       Para apoiar a escola na organização de um espaço adequado ao desenvolvimento da Educação Tecnológica e Maker, a We Make apresenta duas possibilidades de implantação dos recursos necessários à operação da disciplina.
                     </p>
                   </Reveal>
@@ -873,7 +873,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                   <Reveal delay={50}>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 18 }}>
                       {['Máquinas Digitais', 'Robótica & Eletrônica', 'Computadores', 'Ferramentas', 'Mídias', 'Organização & Segurança'].map(tag => (
-                        <span key={tag} style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', fontWeight: 600, color: C.mint, background: 'rgba(118,243,205,0.08)', border: '1px solid rgba(118,243,205,0.2)', borderRadius: 99, padding: '3px 10px' }}>{tag}</span>
+                        <span key={tag} style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', fontWeight: 600, color: C.mint, background: 'rgba(118,243,205,0.08)', border: '1px solid rgba(118,243,205,0.2)', borderRadius: 99, padding: '4px 12px' }}>{tag}</span>
                       ))}
                     </div>
                   </Reveal>
@@ -887,11 +887,11 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                   <Reveal delay={100}>
                     <div style={{ display: 'flex', gap: 14, marginBottom: 18 }}>
                       <div style={{ flexShrink: 0, paddingTop: 3 }}>
-                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.royal, background: 'rgba(76,138,222,0.15)', border: '1px solid rgba(76,138,222,0.3)', borderRadius: 999, padding: '3px 10px', whiteSpace: 'nowrap' }}>Modelo 1</span>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.royal, background: 'rgba(76,138,222,0.15)', border: '1px solid rgba(76,138,222,0.3)', borderRadius: 999, padding: '4px 11px', whiteSpace: 'nowrap' }}>Modelo 1</span>
                       </div>
                       <div>
-                        <h3 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: '0.95rem', color: C.white, marginBottom: 6, lineHeight: 1.2 }}>Investimento Patrimonial da Escola</h3>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', color: 'rgba(255,255,255,0.48)', lineHeight: 1.7 }}>
+                        <h3 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: '1.1rem', color: C.white, marginBottom: 6, lineHeight: 1.25 }}>Investimento Patrimonial da Escola</h3>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.86rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
                           A própria instituição realiza a aquisição dos recursos reutilizáveis, máquinas, ferramentas, equipamentos e demais itens necessários para a composição do espaço maker. Os bens adquiridos passam a integrar o patrimônio da escola e podem ser utilizados em outras atividades pedagógicas, projetos interdisciplinares, formações docentes e experiências educativas desenvolvidas pela própria instituição.
                         </p>
                       </div>
@@ -907,14 +907,14 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                   <Reveal delay={160}>
                     <div style={{ display: 'flex', gap: 14, marginBottom: 18 }}>
                       <div style={{ flexShrink: 0, paddingTop: 3 }}>
-                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.mint, background: 'rgba(118,243,205,0.12)', border: '1px solid rgba(118,243,205,0.3)', borderRadius: 999, padding: '3px 10px', whiteSpace: 'nowrap' }}>Modelo 2</span>
+                        <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.mint, background: 'rgba(118,243,205,0.12)', border: '1px solid rgba(118,243,205,0.3)', borderRadius: 999, padding: '4px 11px', whiteSpace: 'nowrap' }}>Modelo 2</span>
                       </div>
                       <div>
-                        <h3 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: '0.95rem', color: C.white, marginBottom: 6, lineHeight: 1.2 }}>Cessão de Uso com Transferência Final</h3>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', color: 'rgba(255,255,255,0.48)', lineHeight: 1.7 }}>
+                        <h3 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: '1.1rem', color: C.white, marginBottom: 6, lineHeight: 1.25 }}>Cessão de Uso com Transferência Final</h3>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.86rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
                           A We Make disponibiliza à escola, durante o período do contrato, os recursos reutilizáveis necessários ao desenvolvimento das aulas previstas na proposta pedagógica. Ao final da vigência contratual, desde que cumpridas integralmente as condições estabelecidas, esses recursos poderão ser transferidos definitivamente à escola, passando a compor seu patrimônio.
                         </p>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.75rem', color: 'rgba(255,255,255,0.38)', lineHeight: 1.7, marginTop: 8 }}>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.86rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.7, marginTop: 8 }}>
                           Esse modelo permite que a escola reduza o investimento inicial necessário para a implantação do espaço maker, sem abrir mão da possibilidade de, ao final da parceria, consolidar uma estrutura própria para a continuidade da Educação Tecnológica e Maker.
                         </p>
                       </div>
@@ -924,7 +924,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                   {/* nota rodapé */}
                   <Reveal delay={200}>
                     <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 12 }}>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.2)', lineHeight: 1.6 }}>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65 }}>
                         É importante destacar que os modelos apresentados dizem respeito aos recursos reutilizáveis do espaço maker. Não estão incluídos adequações estruturais do ambiente, reformas, instalações elétricas ou lógicas, climatização, marcenaria, mobiliário planejado, bancadas fixas, armários sob medida, nem os materiais consumíveis utilizados nas aulas.
                       </p>
                     </div>
@@ -999,7 +999,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                       <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: '#94a3b8', lineHeight: 1.6 }}>
                         * Relação de referência conforme memorial descritivo We Make. Valores finais sujeitos a atualização no momento da aquisição.
                       </p>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: '#94a3b8', lineHeight: 1.6, marginTop: 6 }}>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: '#94a3b8', lineHeight: 1.65, marginTop: 6 }}>
                         É importante destacar que os modelos apresentados dizem respeito aos recursos reutilizáveis do espaço maker. Não estão incluídos adequações estruturais do ambiente, reformas, instalações elétricas ou lógicas, climatização, marcenaria, mobiliário planejado, bancadas fixas, armários sob medida, nem os materiais consumíveis utilizados nas aulas.
                       </p>
                     </div>
@@ -1095,7 +1095,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                       <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.35)', lineHeight: 1.6 }}>
                         * Relação de referência conforme memorial descritivo We Make. Recursos disponibilizados em comodato durante a vigência contratual e transferidos ao final do período, cumpridas as condições estabelecidas.
                       </p>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.35)', lineHeight: 1.6, marginTop: 6 }}>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65, marginTop: 6 }}>
                         É importante destacar que os modelos apresentados dizem respeito aos recursos reutilizáveis do espaço maker. Não estão incluídos adequações estruturais do ambiente, reformas, instalações elétricas ou lógicas, climatização, marcenaria, mobiliário planejado, bancadas fixas, armários sob medida, nem os materiais consumíveis utilizados nas aulas.
                       </p>
                     </div>
