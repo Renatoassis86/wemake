@@ -1103,7 +1103,13 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                 </Reveal>
 
                 <Reveal delay={320}>
-                  <div style={{ borderRadius: 16, padding: '20px 28px', background: 'rgba(118,243,205,0.08)', border: '1px solid rgba(118,243,205,0.2)' }}>
+                  <div style={{ marginTop: 24 }}>
+                    {/* rótulo deixando claro que compara os DOIS modelos, não é específico do Modelo 2 */}
+                    <p style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,255,255,0.45)', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ width: 18, height: 1.5, background: 'rgba(255,255,255,0.3)', display: 'inline-block' }} />
+                      Comparativo — Currículo x Currículo + Comodato
+                    </p>
+                    <div style={{ borderRadius: 16, padding: '20px 28px', background: 'rgba(11,31,68,0.45)', border: '1px solid rgba(255,255,255,0.18)' }}>
                     {/* comparação: valor por aluno/ano só currículo vs. currículo + comodato */}
                     <div className="pv-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 16 }}>
                       <div>
@@ -1131,6 +1137,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                         <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-lg)', color: C.white, lineHeight: 1 }}>Boleto · Dia 7</p>
                         <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>Reajuste anual IPCA</p>
                       </div>
+                    </div>
                     </div>
                   </div>
                 </Reveal>
