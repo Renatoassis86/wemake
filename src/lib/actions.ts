@@ -1028,3 +1028,80 @@ export async function resetarSenhaUsuario(userId: string, novaSenha: string): Pr
   revalidatePath('/adminpanel')
   return { success: true }
 }
+
+// ─── Proposta ──────────────────────────────────────────────────────────────────
+
+export async function atualizarProposta(formData: FormData): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado' }
+
+  const id = formData.get('id') as string
+  if (!id) return { success: false, error: 'id é obrigatório' }
+
+  const toNum = (k: string) => parseFloat((formData.get(k) as string)?.replace(',', '.')) || 0
+  const tipo = formData.get('tipo') as string
+
+  const payload = {
+    escola_nome:              formData.get('escola_nome') as string,
+    escola_email:             (formData.get('escola_email') as string) || null,
+    tipo,
+    validade:                 formData.get('validade') as string,
+    valor_aluno_ano:          toNum('valor_aluno_ano'),
+    valor_aluno_ano_comodato: tipo === 'curriculo_comodato' ? toNum('valor_aluno_ano_comodato') : null,
+    num_parcelas:             parseInt(formData.get('num_parcelas') as string) || 5,
+    duracao_meses:            parseInt(formData.get('duracao_meses') as string) || 48,
+    texto_personalizado:      (formData.get('texto_personalizado') as string) || null,
+    status:                   formData.get('status') as string,
+  }
+
+  try {
+    const { error } = await supabase.from('propostas').update(payload).eq('id', id)
+    if (error) return { success: false, error: error.message }
+
+    await createAuditLog('UPDATE', 'propostas', id, payload)
+    revalidatePath('/comercial/propostas')
+    revalidatePath(`/comercial/propostas/${id}/editar`)
+
+    return { success: true, id }
+  } catch (err: any) {
+    return { success: false, error: err.message ?? 'Erro ao salvar proposta' }
+  }
+}
+
+export async function arquivarProposta(id: string): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado' }
+
+  try {
+    const arquivada_em = new Date().toISOString()
+    const { error } = await supabase.from('propostas').update({ arquivada_em }).eq('id', id)
+    if (error) return { success: false, error: error.message }
+
+    await createAuditLog('DELETE', 'propostas', id, { arquivada_em })
+    revalidatePath('/comercial/propostas')
+
+    return { success: true, id }
+  } catch (err: any) {
+    return { success: false, error: err.message ?? 'Erro ao arquivar proposta' }
+  }
+}
+
+export async function desarquivarProposta(id: string): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado' }
+
+  try {
+    const { error } = await supabase.from('propostas').update({ arquivada_em: null }).eq('id', id)
+    if (error) return { success: false, error: error.message }
+
+    await createAuditLog('UPDATE', 'propostas', id, { arquivada_em: null })
+    revalidatePath('/comercial/propostas')
+
+    return { success: true, id }
+  } catch (err: any) {
+    return { success: false, error: err.message ?? 'Erro ao restaurar proposta' }
+  }
+}
