@@ -9,10 +9,40 @@ const R$ = (v: number) =>
 const fmtDate = (d: string) =>
   new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
 
-const segLabel = (n: number) =>
-  n === 1 ? 'Fundamental I'
-  : n === 2 ? 'Fund. I e Fund. II'
-  : 'Fund. I, II e Ensino Médio'
+const getPropostaSegmentosList = (p: Proposta): string[] => {
+  const list: string[] = []
+  if (p.seg_infantil) list.push('Infantil')
+  if (p.seg_fundamental_1) list.push('Fund. I')
+  if (p.seg_fundamental_2) list.push('Fund. II')
+  if (p.seg_ensino_medio) list.push('Ensino Médio')
+
+  // Fallback para propostas legadas
+  if (list.length === 0) {
+    if (p.segmentos === 1) return ['Fund. I']
+    if (p.segmentos === 2) return ['Fund. I', 'Fund. II']
+    if (p.segmentos === 3) return ['Fund. I', 'Fund. II', 'Ensino Médio']
+    if (p.segmentos === 4) return ['Infantil', 'Fund. I', 'Fund. II', 'Ensino Médio']
+  }
+  return list
+}
+
+const formatPropostaSegmentosLabel = (list: string[]): string => {
+  if (list.length === 0) return 'Nenhum segmento'
+  if (list.length === 1) return list[0]
+  if (list.length === 2) return `${list[0]} e ${list[1]}`
+  
+  if (list.includes('Fund. I') && list.includes('Fund. II') && list.includes('Ensino Médio') && list.includes('Infantil')) {
+    return 'Infantil, Fund. I, II e Ensino Médio'
+  }
+  if (list.includes('Fund. I') && list.includes('Fund. II') && list.includes('Ensino Médio') && !list.includes('Infantil')) {
+    return 'Fund. I, II e Ensino Médio'
+  }
+  if (list.includes('Infantil') && list.includes('Fund. I') && list.includes('Fund. II') && !list.includes('Ensino Médio')) {
+    return 'Infantil, Fund. I e Fund. II'
+  }
+
+  return `${list.slice(0, -1).join(', ')} e ${list[list.length - 1]}`
+}
 
 // ── exact site colors ─────────────────────────────────────────────────────────
 const C = {
@@ -38,6 +68,10 @@ interface Proposta {
   comodato_retorno_pct: number | null; comodato_notebooks: number | null
   dados_calculo: Record<string, unknown>; texto_personalizado: string | null
   created_at: string
+  seg_infantil?: boolean
+  seg_fundamental_1?: boolean
+  seg_fundamental_2?: boolean
+  seg_ensino_medio?: boolean
 }
 
 // ── glow orb ─────────────────────────────────────────────────────────────────
@@ -560,35 +594,45 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
           <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 'clamp(32px,5vh,52px) var(--gutter)', overflow: 'hidden' }}>
 
             {/* topo: eyebrow + título + subtexto */}
-            <Reveal>
-              <Eyebrow>Objetivo da Parceria</Eyebrow>
-              <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.white, marginBottom: 8, letterSpacing: '-0.02em', lineHeight: 1.05, textWrap: 'balance' } as React.CSSProperties}>
-                Configuração considerada
-              </h2>
-              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)', maxWidth: 520, lineHeight: 1.6 }}>
-                Atendimento a <strong style={{ color: C.mint }}>{p.num_alunos.toLocaleString('pt-BR')} alunos</strong> em <strong style={{ color: C.mint }}>{p.segmentos === 3 ? '3 segmentos (EF1, EF2 e Médio)' : p.segmentos === 2 ? '2 segmentos' : '1 segmento'}</strong>, pelo prazo de <strong style={{ color: C.mint }}>{p.duracao_meses} meses</strong>.
-              </p>
-            </Reveal>
+            {(() => {
+              const segsList = getPropostaSegmentosList(p)
+              const segsCount = segsList.length || p.segmentos || 1
+              const segsLabelText = formatPropostaSegmentosLabel(segsList)
 
-            {/* 3 stat cards */}
-            <Reveal delay={80}>
-              <div className="pv-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
-                {[
-                  { icon: I.users(), label: 'Alunos',    val: p.num_alunos,      suffix: '',       note: 'alunos no escopo' },
-                  { icon: I.book(),  label: 'Segmentos', val: p.segmentos,        suffix: '',       note: segLabel(p.segmentos) },
-                  { icon: I.clock(), label: 'Duração',   val: p.duracao_meses,   suffix: ' meses', note: `${p.duracao_meses / 12} anos de contrato` },
-                ].map((s, i) => (
-                  <div key={s.label} style={{ borderRadius: 18, padding: '20px 22px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)' }}>
-                    <div style={{ color: C.mint, marginBottom: 10 }}>{s.icon}</div>
-                    <div style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'rgba(255,255,255,0.35)', marginBottom: 6 }}>{s.label}</div>
-                    <div style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-4xl)', color: C.white, lineHeight: 1, marginBottom: 4 }}>
-                      <Counter to={s.val} suffix={s.suffix} />
+              return (
+                <>
+                  <Reveal>
+                    <Eyebrow>Objetivo da Parceria</Eyebrow>
+                    <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.white, marginBottom: 8, letterSpacing: '-0.02em', lineHeight: 1.05, textWrap: 'balance' } as React.CSSProperties}>
+                      Configuração considerada
+                    </h2>
+                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)', maxWidth: 520, lineHeight: 1.6 }}>
+                      Atendimento a <strong style={{ color: C.mint }}>{p.num_alunos.toLocaleString('pt-BR')} alunos</strong> em <strong style={{ color: C.mint }}>{segsCount} {segsCount === 1 ? 'segmento' : 'segmentos'} ({segsLabelText})</strong>, pelo prazo de <strong style={{ color: C.mint }}>{p.duracao_meses} meses</strong>.
+                    </p>
+                  </Reveal>
+
+                  {/* 3 stat cards */}
+                  <Reveal delay={80}>
+                    <div className="pv-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
+                      {[
+                        { icon: I.users(), label: 'Alunos',    val: p.num_alunos,      suffix: '',       note: 'alunos no escopo' },
+                        { icon: I.book(),  label: 'Segmentos', val: segsCount,        suffix: '',       note: segsLabelText },
+                        { icon: I.clock(), label: 'Duração',   val: p.duracao_meses,   suffix: ' meses', note: `${p.duracao_meses / 12} anos de contrato` },
+                      ].map((s, i) => (
+                        <div key={s.label} style={{ borderRadius: 18, padding: '20px 22px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)' }}>
+                          <div style={{ color: C.mint, marginBottom: 10 }}>{s.icon}</div>
+                          <div style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'rgba(255,255,255,0.35)', marginBottom: 6 }}>{s.label}</div>
+                          <div style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-4xl)', color: C.white, lineHeight: 1, marginBottom: 4 }}>
+                            <Counter to={s.val} suffix={s.suffix} />
+                          </div>
+                          <div style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)' }}>{s.note}</div>
+                        </div>
+                      ))}
                     </div>
-                    <div style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)' }}>{s.note}</div>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
+                  </Reveal>
+                </>
+              )
+            })()}
 
             {/* incluído / não incluído — cards destacados */}
             <div className="pv-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>

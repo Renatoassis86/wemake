@@ -58,6 +58,10 @@ export async function POST(request: NextRequest) {
       validade,
       escola_email,
       texto_personalizado,
+      seg_infantil,
+      seg_fundamental_1,
+      seg_fundamental_2,
+      seg_ensino_medio,
     } = body
 
     if (!escola_nome) {
@@ -73,6 +77,10 @@ export async function POST(request: NextRequest) {
       num_parcelas:       num_parcelas ?? 5,
       duracao_meses:      duracao_meses ?? 48,
       criado_por:         user.id,
+      seg_infantil:       !!seg_infantil,
+      seg_fundamental_1:  !!seg_fundamental_1,
+      seg_fundamental_2:  !!seg_fundamental_2,
+      seg_ensino_medio:   !!seg_ensino_medio,
     }
 
     if (escola_id !== undefined)            insert.escola_id            = escola_id

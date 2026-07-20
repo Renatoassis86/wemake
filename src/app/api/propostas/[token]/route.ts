@@ -13,10 +13,10 @@ function anonClient() {
 // GET — busca proposta pelo token (público, sem autenticação)
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
-    const { token } = params
+    const { token } = await params
 
     if (!token) {
       return NextResponse.json({ error: 'Token obrigatório' }, { status: 400 })

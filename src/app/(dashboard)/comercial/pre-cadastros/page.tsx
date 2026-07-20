@@ -1,6 +1,7 @@
+import Link from 'next/link'
 import { createAdminClient } from '@/lib/supabase/admin'
 import PageHeader from '@/components/layout/PageHeader'
-import { ClipboardList, MapPin, Mail, Phone, FileText, CalendarDays, GraduationCap } from 'lucide-react'
+import { ClipboardList, MapPin, Mail, Phone, FileText, CalendarDays, GraduationCap, Calculator } from 'lucide-react'
 import PreCadastroActions from './PreCadastroActions'
 import SincronizarLeadsButton from './SincronizarLeadsButton'
 
@@ -65,6 +66,21 @@ function totalAlunos(r: PreCadastro) {
     + (r.alunos_fundamental_1 ?? 0)
     + (r.alunos_fundamental_2 ?? 0)
     + (r.alunos_ensino_medio ?? 0)
+}
+
+function proposalHref(r: PreCadastro) {
+  const params = new URLSearchParams()
+  const nome = r.nome_fantasia || r.razao_social
+  if (nome) params.set('escola', nome)
+  if (r.email_institucional) params.set('email', r.email_institucional)
+  if (r.seg_infantil)       params.set('seg_infantil', '1')
+  if (r.seg_fundamental_1)  params.set('seg_fund1', '1')
+  if (r.seg_fundamental_2)  params.set('seg_fund2', '1')
+  if (r.seg_ensino_medio)   params.set('seg_medio', '1')
+  const total = totalAlunos(r)
+  if (total > 0) params.set('alunos', String(total))
+  if (r.maior_sala) params.set('maior_sala', String(r.maior_sala))
+  return `/calculadora?${params.toString()}`
 }
 
 function StatusBadge({ status }: { status: string | null }) {
@@ -323,8 +339,20 @@ export default async function PreCadastrosPage() {
                 {/* Detalhes expansíveis */}
                 <RowDetails r={r} />
 
-                {/* Ações: editar / excluir */}
-                <div style={{ marginTop: '.75rem', paddingTop: '.65rem', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'flex-end' }}>
+                {/* Ações: gerar proposta / editar / excluir */}
+                <div style={{ marginTop: '.75rem', paddingTop: '.65rem', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'flex-end', gap: '.4rem' }}>
+                  <Link
+                    href={proposalHref(r)}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '.35rem',
+                      padding: '.4rem .8rem', borderRadius: 8,
+                      fontSize: '.75rem', fontWeight: 600, textDecoration: 'none',
+                      fontFamily: 'var(--font-montserrat,sans-serif)',
+                      background: '#f0fdf4', color: '#166534', border: '1px solid #86efac',
+                    }}
+                  >
+                    <Calculator size={12} /> Gerar proposta
+                  </Link>
                   <PreCadastroActions registro={r} />
                 </div>
               </article>

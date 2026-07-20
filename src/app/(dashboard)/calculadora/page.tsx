@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import PageHeader from '@/components/layout/PageHeader'
 
 // ── Formatação ────────────────────────────────────────────────────
@@ -257,6 +258,15 @@ function InlineNum({ value, onChange, prefix, suffix, min = 0, step = 1, style }
 // COMPONENTE PRINCIPAL
 // ══════════════════════════════════════════════════════════════════
 export default function CalculadoraPage() {
+  return (
+    <Suspense fallback={null}>
+      <CalculadoraInner />
+    </Suspense>
+  )
+}
+
+function CalculadoraInner() {
+  const searchParams = useSearchParams()
   const [tab, setTab] = useState<'sistema' | 'comodato'>('sistema')
   const [incluiComodato, setIncluiComodato] = useState(false)
 
@@ -278,6 +288,27 @@ export default function CalculadoraPage() {
   const [desconto,  setDesconto]  = useState(0)
   const [parcelas,  setParcelas]  = useState(4)
   const [maiorSala, setMaiorSala] = useState(20)
+
+  // ── Segmentos atendidos pela escola (infantil/fund1/fund2/médio) ──
+  const [segInfantil, setSegInfantil] = useState(false)
+  const [segFund1,    setSegFund1]    = useState(true)
+  const [segFund2,    setSegFund2]    = useState(true)
+  const [segMedio,    setSegMedio]    = useState(false)
+
+  function handleToggleSegment(segKey: 'inf' | 'f1' | 'f2' | 'med', checked: boolean) {
+    const inf = segKey === 'inf' ? checked : segInfantil
+    const f1  = segKey === 'f1'  ? checked : segFund1
+    const f2  = segKey === 'f2'  ? checked : segFund2
+    const med = segKey === 'med' ? checked : segMedio
+
+    if (segKey === 'inf') setSegInfantil(checked)
+    if (segKey === 'f1')  setSegFund1(checked)
+    if (segKey === 'f2')  setSegFund2(checked)
+    if (segKey === 'med') setSegMedio(checked)
+
+    const activeCount = [inf, f1, f2, med].filter(Boolean).length
+    setSegs(Math.max(1, Math.min(3, activeCount)))
+  }
 
   // ── Parâmetros de Leasing ──────────────────────────────────────
   const [lp, setLp] = useState<LeasingParams>(DEFAULT_LEASING)
@@ -326,6 +357,9 @@ export default function CalculadoraPage() {
     validade: defaultValidade(),
     texto: '',
   })
+  // Nome/e-mail vindos de um pré-cadastro (link "Gerar proposta"), usados para
+  // preencher o modal mesmo depois de fechado e reaberto.
+  const [prefillEscola, setPrefillEscola] = useState({ nome: '', email: '' })
   const [logoFile, setLogoFile]         = useState<File | null>(null)
   const [logoPreview, setLogoPreview]   = useState<string | null>(null)
   const [valorCustom, setValorCustom]   = useState<string>('')
@@ -345,8 +379,8 @@ export default function CalculadoraPage() {
 
   function openModal() {
     setModalForm({
-      escolaNome: '',
-      escolaEmail: '',
+      escolaNome: prefillEscola.nome,
+      escolaEmail: prefillEscola.email,
       tipo: incluiComodato ? 'curriculo_comodato' : 'curriculo',
       validade: defaultValidade(),
       texto: '',
@@ -367,6 +401,42 @@ export default function CalculadoraPage() {
     setPropostaResult(null)
     setModalError(null)
   }
+
+  // ── Pré-preenchimento vindo do botão "Gerar proposta" de um pré-cadastro ──
+  const [cameFromPrecadastro, setCameFromPrecadastro] = useState(false)
+
+  useEffect(() => {
+    const nome = searchParams.get('escola')
+    if (!nome) return
+
+    const email        = searchParams.get('email') ?? ''
+    const alunosParam   = Number(searchParams.get('alunos'))
+    const maiorSalaParam = Number(searchParams.get('maior_sala'))
+    const inf = searchParams.get('seg_infantil') === '1'
+    const f1  = searchParams.get('seg_fund1') === '1'
+    const f2  = searchParams.get('seg_fund2') === '1'
+    const med = searchParams.get('seg_medio') === '1'
+
+    if (alunosParam > 0)    setAlunos(alunosParam)
+    if (maiorSalaParam > 0) setMaiorSala(maiorSalaParam)
+    setSegInfantil(inf)
+    setSegFund1(f1)
+    setSegFund2(f2)
+    setSegMedio(med)
+    const qtdSegs = [inf, f1, f2, med].filter(Boolean).length
+    if (qtdSegs > 0) setSegs(Math.min(3, qtdSegs))
+
+    setPrefillEscola({ nome, email })
+    setCameFromPrecadastro(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (!cameFromPrecadastro) return
+    openModal()
+    setCameFromPrecadastro(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cameFromPrecadastro])
 
   function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null
@@ -401,7 +471,7 @@ export default function CalculadoraPage() {
         tipo:                 modalForm.tipo,
         validade:             modalForm.validade,
         num_alunos:           alunos,
-        segmentos:            segs,
+        segmentos:            [segInfantil, segFund1, segFund2, segMedio].filter(Boolean).length || segs,
         valor_aluno_ano:      parseFloat(valorCustom.replace(',', '.')) || sis.valorFinal,
         valor_aluno_ano_comodato: modalForm.tipo === 'curriculo_comodato'
           ? (parseFloat(valorComodatoCustom.replace(',', '.')) || (mensalidadeEscola * 12) / (alunos || 1))
@@ -415,6 +485,10 @@ export default function CalculadoraPage() {
         comodato_notebooks:   modalForm.tipo === 'curriculo_comodato' ? com.qtdNB : null,
         dados_calculo:        { sis, com, lp, sp },
         texto_personalizado:  modalForm.texto.trim() || null,
+        seg_infantil:         segInfantil,
+        seg_fundamental_1:    segFund1,
+        seg_fundamental_2:    segFund2,
+        seg_ensino_medio:     segMedio,
       }
 
       const res = await fetch('/api/propostas', {
@@ -523,12 +597,27 @@ export default function CalculadoraPage() {
                 </div>
                 <div>
                   <label style={LBL}>Segmentos atendidos</label>
-                  <div style={{ display: 'flex', gap: '.4rem', padding: '.35rem', background: '#eff6ff', border: '2px solid #4A7FDB', borderRadius: 8, boxShadow: '0 0 0 3px rgba(74,127,219,0.12)' }}>
-                    {[1, 2, 3].map(n => (
-                      <button key={n} onClick={() => setSegs(n)} style={{ flex: 1, padding: '.5rem', borderRadius: 6, border: `1.5px solid ${segs === n ? '#1d4ed8' : '#93c5fd'}`, background: segs === n ? '#1d4ed8' : '#fff', color: segs === n ? '#fff' : '#1d4ed8', fontWeight: 700, fontSize: '.9rem', cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{n}</button>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.35rem', padding: '.45rem', background: '#eff6ff', border: '2px solid #4A7FDB', borderRadius: 8, boxShadow: '0 0 0 3px rgba(74,127,219,0.12)' }}>
+                    {[
+                      { key: 'inf', label: 'Infantil',       checked: segInfantil },
+                      { key: 'f1',  label: 'Fundamental 1',  checked: segFund1 },
+                      { key: 'f2',  label: 'Fundamental 2',  checked: segFund2 },
+                      { key: 'med', label: 'Ensino Médio',   checked: segMedio },
+                    ].map(s => (
+                      <label key={s.key} style={{ display: 'flex', alignItems: 'center', gap: '.35rem', fontSize: '.76rem', color: '#1e293b', fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font-inter,sans-serif)' }}>
+                        <input
+                          type="checkbox"
+                          checked={s.checked}
+                          onChange={e => handleToggleSegment(s.key as 'inf'|'f1'|'f2'|'med', e.target.checked)}
+                          style={{ width: 15, height: 15, cursor: 'pointer', accentColor: '#1d4ed8' }}
+                        />
+                        {s.label}
+                      </label>
                     ))}
                   </div>
-                  <div style={NOTA}>Ciclos escolares. 3 = score complexidade máximo.</div>
+                  <div style={NOTA}>
+                    {[segInfantil, segFund1, segFund2, segMedio].filter(Boolean).length} segmento(s) selecionado(s) · Score: {segs === 3 ? '1,000 (máx)' : segs === 2 ? '0,500' : '0,000'}.
+                  </div>
                 </div>
                 <div>
                   <label style={LBL}>Alta complexidade?</label>
@@ -1508,6 +1597,29 @@ export default function CalculadoraPage() {
                       onChange={e => setModalForm(f => ({ ...f, escolaEmail: e.target.value }))}
                       style={INP}
                     />
+                  </div>
+
+                  {/* Segmentos da escola (infantil/fund1/fund2/médio) */}
+                  <div>
+                    <label style={LBL}>Segmentos da escola</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '.5rem' }}>
+                      {[
+                        { key: 'inf', label: 'Infantil',       checked: segInfantil },
+                        { key: 'f1',  label: 'Fundamental 1',  checked: segFund1 },
+                        { key: 'f2',  label: 'Fundamental 2',  checked: segFund2 },
+                        { key: 'med', label: 'Ensino Médio',   checked: segMedio },
+                      ].map(s => (
+                        <label key={s.key} style={{ display: 'flex', alignItems: 'center', gap: '.4rem', fontSize: '.8rem', color: '#334155', cursor: 'pointer', fontFamily: 'var(--font-inter,sans-serif)' }}>
+                          <input
+                            type="checkbox"
+                            checked={s.checked}
+                            onChange={e => handleToggleSegment(s.key as 'inf'|'f1'|'f2'|'med', e.target.checked)}
+                            style={{ width: 16, height: 16, cursor: 'pointer', accentColor: '#4A7FDB' }}
+                          />
+                          {s.label}
+                        </label>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Logo da escola */}

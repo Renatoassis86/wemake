@@ -83,7 +83,7 @@ export default async function PropostaEditar({ params }: Props) {
         </div>
 
         {/* ── Formulário editável ────────────────────────────────────── */}
-        <form action={atualizarProposta}>
+        <form action={async (formData: FormData) => { 'use server'; await atualizarProposta(formData) }}>
           <input type="hidden" name="id" value={id} />
 
           <div className="card mb-4">
