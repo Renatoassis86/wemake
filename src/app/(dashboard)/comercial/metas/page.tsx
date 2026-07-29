@@ -177,7 +177,7 @@ export default async function MetasPage() {
       <div style={{ padding: '2rem 2.5rem' }}>
 
         {/* ── Hero de contexto ─────────────────────────────── */}
-        <div style={{
+        <div className="mp-metas-hero" style={{
           background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%)',
           borderRadius: 18, padding: '1.75rem 2rem',
           marginBottom: '2rem',
@@ -254,7 +254,7 @@ export default async function MetasPage() {
           </div>
           <div style={{ padding: '1.5rem 1.75rem' }}>
             {/* Equação visual 2.000 + 1.000 + 2.000 = 5.000 */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', marginBottom: '1.25rem', padding: '1rem 1.25rem', background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)', borderRadius: 12, border: '1px solid #e2e8f0' }}>
+            <div className="mp-metas-equation-row" style={{ display: 'flex', alignItems: 'center', gap: '.75rem', marginBottom: '1.25rem', padding: '1rem 1.25rem', background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)', borderRadius: 12, border: '1px solid #e2e8f0' }}>
               {[
                 { n: '2.000', label: 'Base atual\n(25 escolas parceiras)', cor: '#64748b', bg: '#f1f5f9' },
                 { n: '+1.000', label: 'Crescimento Fund. I\n(escolas já parceiras)', cor: '#4A7FDB', bg: '#fffbeb' },

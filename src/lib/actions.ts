@@ -1105,3 +1105,26 @@ export async function desarquivarProposta(id: string): Promise<ActionResult> {
     return { success: false, error: err.message ?? 'Erro ao restaurar proposta' }
   }
 }
+
+export async function renovarValidadeProposta(id: string, novaValidade: string): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado' }
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(novaValidade)) {
+    return { success: false, error: 'Data inválida' }
+  }
+
+  try {
+    const { error } = await supabase.from('propostas').update({ validade: novaValidade }).eq('id', id)
+    if (error) return { success: false, error: error.message }
+
+    await createAuditLog('UPDATE', 'propostas', id, { validade: novaValidade })
+    revalidatePath('/comercial/propostas')
+    revalidatePath(`/comercial/propostas/${id}/editar`)
+
+    return { success: true, id }
+  } catch (err: any) {
+    return { success: false, error: err.message ?? 'Erro ao renovar validade da proposta' }
+  }
+}

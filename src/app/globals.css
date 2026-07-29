@@ -498,8 +498,7 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
   /* Grids: 1 column on mobile */
-  [style*="grid-template-columns: 1fr 1fr"],
-  [style*="gridTemplateColumns: '1fr 1fr'"] {
+  [style*="grid-template-columns: 1fr 1fr"] {
     grid-template-columns: 1fr !important;
   }
   [style*="grid-template-columns: repeat(2"],
@@ -510,14 +509,14 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   }
 
   /* Hero sections: smaller padding */
-  [style*="padding: '2rem 2.5rem'"],
-  [style*="padding: '1.5rem 2.5rem'"] {
+  [style*="padding: 2rem 2.5rem"],
+  [style*="padding: 1.5rem 2.5rem"] {
     padding: 1rem !important;
   }
 
   /* Text scaling */
-  [style*="fontSize: '2rem'"],
-  [style*="fontSize: '1.8rem'"] {
+  [style*="font-size: 2rem"],
+  [style*="font-size: 1.8rem"] {
     font-size: 1.4rem !important;
   }
 
@@ -577,11 +576,11 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   }
 
   /* ── Conteúdo da dashboard ── */
-  div[style*="padding: '1.75rem 2.5rem'"],
-  div[style*="padding: '2rem 2.5rem'"],
-  div[style*="padding: '1.5rem 2rem'"],
-  div[style*="padding: '1.5rem 2.5rem'"],
-  div[style*="padding: '2rem'"] {
+  div[style*="padding: 1.75rem 2.5rem"],
+  div[style*="padding: 2rem 2.5rem"],
+  div[style*="padding: 1.5rem 2rem"],
+  div[style*="padding: 1.5rem 2.5rem"],
+  div[style*="padding: 2rem"] {
     padding: 1rem !important;
   }
 
@@ -637,42 +636,41 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   .card-body   { padding: 1rem !important; }
 
   /* ── Botões de ação: empilhar em coluna ── */
-  div[style*="display: 'flex'"][style*="gap: '.5rem'"] {
+  div[style*="display: flex"][style*="gap: .5rem"] {
     flex-wrap: wrap !important;
   }
 
   /* ── Filtros que ficam lado a lado: wrap ── */
-  div[style*="flexWrap: 'wrap'"] {
+  div[style*="flex-wrap: wrap"] {
     flex-wrap: wrap !important;
   }
 
   /* ── Headers de seção com muitos elementos ── */
-  div[style*="justifyContent: 'space-between'"][style*="alignItems: 'center'"] {
+  div[style*="justify-content: space-between"][style*="align-items: center"] {
     flex-wrap: wrap !important;
     gap: .5rem !important;
   }
 
   /* ── Pipeline kanban: scroll horizontal ── */
-  div[style*="overflowX: 'auto'"] {
+  div[style*="overflow-x: auto"] {
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
   }
 
   /* ── Modais: full screen em mobile ── */
-  div[style*="maxWidth: 580"],
-  div[style*="maxWidth: 640"],
-  div[style*="maxWidth: 700"] {
+  div[style*="max-width: 580"],
+  div[style*="max-width: 640"],
+  div[style*="max-width: 700"] {
     max-width: calc(100vw - 2rem) !important;
     margin: 1rem !important;
   }
 
   /* ── Formulários: padding reduzido ── */
-  form div[style*="padding: '1.5rem'"] {
+  form div[style*="padding: 1.5rem"] {
     padding: 1rem !important;
   }
 
   /* ── Estatísticas hero (fundo escuro) ── */
-  div[style*="background: 'linear-gradient(135deg, #0f172a"],
   div[style*="background: linear-gradient(135deg, #0f172a"] {
     padding: 1.25rem !important;
   }
@@ -683,8 +681,13 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
     word-break: break-word;
   }
 
-  /* ── Imagens e SVGs não excedem a viewport ── */
-  img, svg { max-width: 100% !important; height: auto !important; }
+  /* ── Imagens e SVGs não excedem a viewport ──
+     height:auto só entra quando a imagem NÃO tem altura explícita no
+     inline style — senão quebra logos/ícones dimensionados de propósito
+     com objectFit (viravam gigantes, escalados pela largura do container
+     em vez do tamanho pretendido). ── */
+  img, svg { max-width: 100% !important; }
+  img:not([style*="height:"]), svg:not([style*="height:"]) { height: auto !important; }
 
   /* ── Texto principal nas fichas ── */
   h1[style], h2[style] {
@@ -692,8 +695,8 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   }
 
   /* ── Espaçamento vertical entre seções ── */
-  div[style*="marginBottom: '2rem'"] { margin-bottom: 1.25rem !important; }
-  div[style*="marginBottom: '1.5rem'"] { margin-bottom: 1rem !important; }
+  div[style*="margin-bottom: 2rem"] { margin-bottom: 1.25rem !important; }
+  div[style*="margin-bottom: 1.5rem"] { margin-bottom: 1rem !important; }
 }
 
 @media (max-width: 480px) {
@@ -712,8 +715,8 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   }
 
   /* ── Padding mínimo ── */
-  div[style*="padding: '1rem"] { padding: .85rem !important; }
-  div[style*="padding: '1.25rem'"] { padding: .85rem !important; }
+  div[style*="padding: 1rem"] { padding: .85rem !important; }
+  div[style*="padding: 1.25rem"] { padding: .85rem !important; }
 
   /* ── Fonte mínima legível ── */
   * { font-size: max(inherit, 11px); }
@@ -798,7 +801,7 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   }
 
   /* Stack grids to 1 column on mobile */
-  [style*="gridTemplateColumns"], [style*="grid-template-columns"] {
+  [style*="grid-template-columns"] {
     display: grid !important;
   }
 
@@ -807,11 +810,14 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
     max-width: 100vw;
   }
 
-  /* Better image handling */
+  /* Better image handling — height:auto só quando não há altura
+     explícita no inline style (ver nota acima sobre logos/ícones). */
   img, video {
     max-width: 100% !important;
-    height: auto !important;
     display: block !important;
+  }
+  img:not([style*="height:"]), video:not([style*="height:"]) {
+    height: auto !important;
   }
 
   /* Softer shadows on mobile */
@@ -841,13 +847,13 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   }
 
   /* Hero section adjustments */
-  section[style*="minHeight: '100vh'"] {
+  section[style*="min-height: 100vh"] {
     min-height: calc(100vh - 60px) !important;
     padding-top: 1rem !important;
   }
 
   /* Modal/card adjustments */
-  div[style*="maxWidth:"], .card {
+  div[style*="max-width:"], .card {
     max-width: calc(100vw - 1rem) !important;
   }
 
@@ -1151,4 +1157,136 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
 @media (max-width: 480px) {
   .mp-calc-table th, .mp-calc-table td { padding: .35rem .4rem !important; font-size: .68rem !important; }
   .mp-calc-table input, .mp-calc-table select { padding: .3rem .35rem !important; font-size: .7rem !important; min-height: 34px !important; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   GAPS ESPECÍFICOS II — exports, leads-banco, pesquisa-mercado
+   (auditoria de páginas ainda não cobertas pelo sistema .mp-*)
+   ══════════════════════════════════════════════════════════ */
+
+/* ── UploadDoc (exports): label de upload é um alvo de toque
+   pequeno demais (padding 6px 14px ≈ 24px de altura) e não é
+   coberto pela regra genérica button/a/input — só <label> ── */
+@media (max-width: 768px) {
+  .mp-upload-btn {
+    min-height: 44px !important;
+    padding: .6rem 1rem !important;
+    font-size: .78rem !important;
+  }
+}
+
+/* ── Cabeçalhos de card "título + metadado" lado a lado
+   (exports: Biblioteca de Documentos / Formulários Recebidos;
+   pesquisa-mercado: Escolas com Dados de Pesquisa / Prospects
+   2026 / Histórico 2025) — sem flex-wrap, espremem ou são
+   cortados pelo overflow-x:hidden da página em telas estreitas ── */
+@media (max-width: 768px) {
+  .mp-card-header-flex {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: .5rem !important;
+  }
+  .mp-card-header-flex > * { max-width: 100%; }
+}
+
+/* ── Pesquisa de Mercado: label "Banco de Leads Consolidado —
+   CIECC 2025 + 2026 + Oikos Live" ultrapassa ~470px sem wrap ── */
+@media (max-width: 768px) {
+  .mp-pesquisa-label-row {
+    flex-wrap: wrap !important;
+    row-gap: .3rem !important;
+  }
+}
+
+/* ── Leads-banco: ações do PageHeader (Exportar Contatos, Excel
+   Completo, Importar Dados) ficam dentro de um <header> com
+   altura fixa (var(--topbar-h)) — não podem quebrar linha, então
+   viram uma faixa com scroll horizontal em vez de vazar/cortar ── */
+@media (max-width: 768px) {
+  .mp-leads-header-actions {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    max-width: 62vw;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none;
+  }
+  .mp-leads-header-actions::-webkit-scrollbar { display: none; }
+  .mp-leads-header-actions > * { flex-shrink: 0; white-space: nowrap; }
+}
+@media (max-width: 480px) {
+  .mp-leads-header-actions { max-width: 52vw; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   GAPS ESPECÍFICOS 2 — auditoria de subpáginas comercial/CRM
+   (leads, registros, tabela, metas, jornada-visual, pipeline-
+   proposta, propostas, escolas nova/editar)
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Formulários: barra de ações (Salvar/Cancelar[/nota]) ──────────
+   Vários formulários usam "display:flex, gap:'1rem'" sem flexWrap
+   para o botão salvar + cancelar (+ nota "campos obrigatórios").
+   O catch-all genérico só cobre gap:'.5rem'; aqui o gap é maior e o
+   texto de nota some, então empilha em coluna no mobile. ─────────── */
+@media (max-width: 768px) {
+  .mp-form-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: .6rem !important;
+  }
+  .mp-form-actions > button,
+  .mp-form-actions > a {
+    width: 100% !important;
+    text-align: center;
+    justify-content: center;
+  }
+  .mp-form-actions > span {
+    margin-left: 0 !important;
+    text-align: center;
+  }
+}
+
+/* ── Registro Novo: grade "Fundamental I" com repeat(5, 1fr) ───────
+   (com espaço após a vírgula — não coincide com os seletores
+   genéricos "repeat(5,1fr)"/"repeat(5,minmax(0,1fr))"). ──────────── */
+@media (max-width: 768px) {
+  .mp-registronovo-fundi-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 480px) {
+  .mp-registronovo-fundi-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── Metas: hero com grid "1fr auto" (texto + contador) ────────────
+   Não coincide com nenhum seletor genérico (só cobre "1fr 1fr" e
+   "1fr 300px"-like). Empilha em coluna no tablet/mobile. ─────────── */
+@media (max-width: 900px) {
+  .mp-metas-hero { grid-template-columns: 1fr !important; }
+}
+
+/* ── Metas: linha da equação 2.000 + 1.000 + 2.000 = 5.000 ─────────
+   4 blocos flex:1 lado a lado ficam ilegíveis em telas estreitas. ── */
+@media (max-width: 768px) {
+  .mp-metas-equation-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .mp-metas-equation-row > div { width: 100% !important; }
+}
+
+/* ── Jornada Visual: funil com repeat(5, 1fr) (10 etapas em 2
+   linhas de 5). Com espaço após a vírgula — mesmo problema do
+   registronovo-fundi-grid acima. Vira scroll horizontal no mobile,
+   como o padrão já usado no .mp-kanban-scroll. ───────────────────── */
+@media (max-width: 768px) {
+  .mp-jornada-etapas-row {
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    gap: .5rem !important;
+    padding-bottom: .35rem;
+  }
+  .mp-jornada-etapas-row > div {
+    min-width: 84px;
+    flex: 0 0 auto;
+  }
 }

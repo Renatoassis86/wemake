@@ -154,7 +154,7 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
         title="Banco de Leads"
         subtitle={`${(totalGeral ?? 0).toLocaleString('pt-BR')} leads importados`}
         actions={
-          <div style={{ display: 'flex', gap: '.5rem' }}>
+          <div className="mp-leads-header-actions" style={{ display: 'flex', gap: '.5rem' }}>
             {/* Exportar Contatos — abre modal com filtros de evento, estado e qualidade */}
             <ExportContatosModal ufsDisponiveis={ufsUnicas} />
             {/* Exportar Excel completo */}
@@ -188,7 +188,7 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
       <div style={{ padding: '1.5rem 1.75rem' }}>
 
         {/* ── KPIs — Métricas comerciais relevantes ─────────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0,1fr))', gap: '.85rem', marginBottom: '.85rem' }}>
+        <div className="mp-kpi-grid-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0,1fr))', gap: '.85rem', marginBottom: '.85rem' }}>
           {[
             {
               label: 'Total de Leads',

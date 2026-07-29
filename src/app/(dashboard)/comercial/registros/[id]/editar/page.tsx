@@ -238,7 +238,7 @@ export default async function RegistroEditar({ params }: Props) {
           </div>
 
           {/* Ações */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem 1.75rem', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16 }}>
+          <div className="mp-form-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem 1.75rem', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16 }}>
             <button type="submit" style={{ background: 'linear-gradient(135deg, #4A7FDB, #2563b8)', color: '#fff', padding: '.7rem 2rem', borderRadius: 9999, border: 'none', cursor: 'pointer', fontSize: '.875rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 14px rgba(74,127,219,.35)' }}>
               Salvar Alterações
             </button>

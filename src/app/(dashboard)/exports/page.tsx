@@ -96,7 +96,7 @@ export default async function ExportsPage() {
 
         {/* ── Documentos Oficiais ───────────────────────────────── */}
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 8px rgba(15,23,42,.05)', marginBottom: '1.5rem' }}>
-          <div style={{ background: '#0f172a', padding: '1rem 1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div className="mp-card-header-flex" style={{ background: '#0f172a', padding: '1rem 1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
               <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.2rem' }}>
                 Biblioteca de Documentos
@@ -210,7 +210,7 @@ export default async function ExportsPage() {
 
         {/* ── Formulários preenchidos ───────────────────────────── */}
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 8px rgba(15,23,42,.05)' }}>
-          <div style={{ background: '#0f172a', padding: '1rem 1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div className="mp-card-header-flex" style={{ background: '#0f172a', padding: '1rem 1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
               <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.2rem' }}>Formulários Recebidos</div>
               <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>

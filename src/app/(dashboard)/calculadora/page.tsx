@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import PageHeader from '@/components/layout/PageHeader'
+import { CopyButton } from '@/components/ui/CopyButton'
 
 // ── Formatação ────────────────────────────────────────────────────
 const R$ = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -1545,6 +1546,26 @@ function CalculadoraInner() {
                     <div style={{ fontSize: '.7rem', color: '#78716c', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.3rem' }}>
                       A escola usa este PIN para acessar a proposta em /proposta/acesso
                     </div>
+                  </div>
+
+                  {/* Mensagem pronta — mesmo texto sempre usado pra enviar a proposta,
+                      só trocando a referência da escola específica */}
+                  <div style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 10, padding: '1rem', marginBottom: '1.5rem', textAlign: 'left' }}>
+                    <div style={{ ...LBL, marginBottom: '.4rem' }}>Mensagem pronta para enviar</div>
+                    <div style={{ fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.78rem', color: '#334155', lineHeight: 1.6, whiteSpace: 'pre-line', marginBottom: '.7rem' }}>
+                      {`Foi um prazer conversar sobre a ${modalForm.escolaNome}. Acreditamos que formar estudantes que pensam, criam e vivem com intencionalidade cristã é um dos trabalhos mais importantes que uma escola confessional pode fazer, e é com esse propósito que a We Make se coloca como parceira.
+
+Como combinamos, aqui está a proposta personalizada para vocês:
+
+🔗 Link: ${(typeof window !== 'undefined' ? window.location.origin : '')}${propostaResult.link}
+🔑 PIN de acesso: ${propostaResult.pin}
+
+Essa foi a proposta oficial que enviamos para a escola.`}
+                    </div>
+                    <CopyButton
+                      text={`Foi um prazer conversar sobre a ${modalForm.escolaNome}. Acreditamos que formar estudantes que pensam, criam e vivem com intencionalidade cristã é um dos trabalhos mais importantes que uma escola confessional pode fazer, e é com esse propósito que a We Make se coloca como parceira.\n\nComo combinamos, aqui está a proposta personalizada para vocês:\n\n🔗 Link: ${(typeof window !== 'undefined' ? window.location.origin : '')}${propostaResult.link}\n🔑 PIN de acesso: ${propostaResult.pin}\n\nEssa foi a proposta oficial que enviamos para a escola.`}
+                      label="Copiar mensagem"
+                    />
                   </div>
 
                   <div style={{ display: 'flex', gap: '.75rem', justifyContent: 'center' }}>

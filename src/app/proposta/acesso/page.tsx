@@ -139,7 +139,7 @@ export default function AcessoPropostaPage() {
         <form onSubmit={handleSubmit}>
 
           {/* Campos PIN */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginBottom: 28 }} onPaste={handlePaste}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 'clamp(6px, 2vw, 10px)', marginBottom: 28, width: '100%' }} onPaste={handlePaste}>
             {pin.map((d, i) => (
               <input
                 key={i}
@@ -151,9 +151,10 @@ export default function AcessoPropostaPage() {
                 onChange={e => handleChange(i, e.target.value)}
                 onKeyDown={e => handleKeyDown(i, e)}
                 style={{
-                  width: 52, height: 64,
+                  flex: '1 1 0', minWidth: 0, maxWidth: 52,
+                  height: 'clamp(50px, 14vw, 64px)',
                   textAlign: 'center',
-                  fontSize: '1.6rem',
+                  fontSize: 'clamp(1.15rem, 5.5vw, 1.6rem)',
                   fontWeight: 700,
                   fontFamily: "'Fraunces', serif",
                   background: d ? 'rgba(76,138,222,0.12)' : 'rgba(255,255,255,0.05)',

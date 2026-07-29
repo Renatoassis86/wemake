@@ -143,7 +143,7 @@ export default function AcessoEscolaPage() {
           background: 'linear-gradient(90deg, #4c8ade 0%, #76f3cd 100%)',
         }} />
 
-        <div style={{ padding: '2.5rem 2.5rem 2rem' }}>
+        <div style={{ padding: 'clamp(1.5rem, 6vw, 2.5rem) clamp(1.25rem, 5vw, 2.5rem) 2rem' }}>
 
           {/* Logo */}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
@@ -267,8 +267,9 @@ export default function AcessoEscolaPage() {
 
               <div style={{
                 display: 'flex',
-                gap: '.5rem',
+                gap: 'clamp(.3rem, 2vw, .5rem)',
                 justifyContent: 'center',
+                width: '100%',
               }}>
                 {pin.map((digit, i) => (
                   <input
@@ -283,10 +284,12 @@ export default function AcessoEscolaPage() {
                     onPaste={i === 0 ? handlePinPaste : undefined}
                     autoComplete="off"
                     style={{
-                      width: 52,
-                      height: 58,
+                      flex: '1 1 0',
+                      minWidth: 0,
+                      maxWidth: 52,
+                      height: 'clamp(46px, 13vw, 58px)',
                       textAlign: 'center',
-                      fontSize: '1.5rem',
+                      fontSize: 'clamp(1.1rem, 5vw, 1.5rem)',
                       fontWeight: 700,
                       color: '#0b1f44',
                       border: `1.5px solid ${digit ? '#4c8ade' : '#dce4f0'}`,
@@ -462,14 +465,6 @@ export default function AcessoEscolaPage() {
       <style>{`
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         input::placeholder { color: #c0cce0 !important; }
-        @media (max-width: 480px) {
-          form > div:nth-child(2) > div { gap: .35rem !important; }
-          form > div:nth-child(2) > div input {
-            width: 44px !important;
-            height: 52px !important;
-            font-size: 1.25rem !important;
-          }
-        }
       `}</style>
     </div>
   )

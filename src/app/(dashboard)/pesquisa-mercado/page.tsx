@@ -375,7 +375,7 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
           <div style={{ marginBottom: '2rem' }}>
 
             {/* Label do bloco */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '.65rem', marginBottom: '1rem' }}>
+            <div className="mp-pesquisa-label-row" style={{ display: 'flex', alignItems: 'center', gap: '.65rem', marginBottom: '1rem' }}>
               <div style={{ width: 28, height: 28, borderRadius: 7, background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
               </div>
@@ -651,7 +651,7 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
         {/* ── Tabela de escolas com dados de pesquisa ─── */}
         {comEscola.length > 0 && (
           <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.05)', marginBottom: '1.5rem' }}>
-            <div style={{ padding: '.85rem 1.25rem', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div className="mp-card-header-flex" style={{ padding: '.85rem 1.25rem', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#fff' }}>
                 Escolas com Dados de Pesquisa ({comEscola.length})
               </div>
@@ -701,7 +701,7 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
         {/* ── Leads Decisores 2026 — Prospects Ativos ─── */}
         {leads2026Decisores.length > 0 && (
           <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.05)', marginBottom: '1.25rem' }}>
-            <div style={{ padding: '1rem 1.25rem', background: 'linear-gradient(135deg, #dc2626, #b91c1c)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div className="mp-card-header-flex" style={{ padding: '1rem 1.25rem', background: 'linear-gradient(135deg, #dc2626, #b91c1c)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>
                   Prospects 2026 — Escola não identificada
@@ -726,7 +726,7 @@ export default async function PesquisaMercadoPage({ searchParams }: Props) {
         {/* ── Leads Decisores 2025 — Referência histórica ─ */}
         {leads2025Decisores.length > 0 && (
           <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.05)' }}>
-            <div style={{ padding: '1rem 1.25rem', background: 'linear-gradient(135deg, #64748b, #475569)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div className="mp-card-header-flex" style={{ padding: '1rem 1.25rem', background: 'linear-gradient(135deg, #64748b, #475569)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>
                   Histórico 2025 — Decisores sem escola mapeada

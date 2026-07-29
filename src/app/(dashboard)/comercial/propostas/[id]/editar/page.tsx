@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { CopyButton } from '@/components/ui/CopyButton'
 import { ArquivarPropostaBtn } from '@/components/comercial/ArquivarPropostaBtn'
+import { RenovarValidadeBtn } from '@/components/comercial/RenovarValidadeBtn'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,6 +28,15 @@ export default async function PropostaEditar({ params }: Props) {
   if (!p) notFound()
 
   const arquivada = !!p.arquivada_em
+
+  const mensagemEnvio = `Foi um prazer conversar sobre a ${p.escola_nome}. Acreditamos que formar estudantes que pensam, criam e vivem com intencionalidade cristã é um dos trabalhos mais importantes que uma escola confessional pode fazer, e é com esse propósito que a We Make se coloca como parceira.
+
+Como combinamos, aqui está a proposta personalizada para vocês:
+
+🔗 Link: https://comercial.wemake.tec.br/proposta/${p.token}
+🔑 PIN de acesso: ${p.escola_pin}
+
+Essa foi a proposta oficial que enviamos para a escola.`
 
   return (
     <div>
@@ -75,6 +85,18 @@ export default async function PropostaEditar({ params }: Props) {
                 </a>
                 <CopyButton text={`/proposta/${p.token}`} absolute label="Copiar link" />
               </div>
+            </div>
+            <div>
+              <label style={labelStyle}>Mensagem pronta para enviar</label>
+              <div style={{
+                background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8,
+                padding: '.85rem 1rem', fontSize: '.78rem', color: '#334155',
+                lineHeight: 1.6, whiteSpace: 'pre-line', fontFamily: 'var(--font-inter,sans-serif)',
+                marginBottom: '.5rem',
+              }}>
+                {mensagemEnvio}
+              </div>
+              <CopyButton text={mensagemEnvio} label="Copiar mensagem" />
             </div>
             <div style={{ fontSize: '.7rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
               Criada em {formatDate(p.created_at)} · Tipo original: {p.tipo === 'curriculo_comodato' ? 'Currículo + Comodato' : 'Somente Currículo'}
@@ -196,7 +218,8 @@ export default async function PropostaEditar({ params }: Props) {
             }}>
               Cancelar
             </Link>
-            <div style={{ marginLeft: 'auto' }}>
+            <div style={{ marginLeft: 'auto', display: 'flex', gap: '.6rem' }}>
+              <RenovarValidadeBtn propostaId={id} escolaNome={p.escola_nome} variant="form" />
               <ArquivarPropostaBtn propostaId={id} escolaNome={p.escola_nome} arquivada={arquivada} variant="form" redirectTo="/comercial/propostas" />
             </div>
           </div>

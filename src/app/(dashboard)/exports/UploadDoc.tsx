@@ -54,6 +54,7 @@ export function UploadDoc({ tipo, label }: Props) {
         id={`upload-${tipo}`}
       />
       <label htmlFor={`upload-${tipo}`}
+        className="mp-upload-btn"
         style={{
           display: 'inline-flex', alignItems: 'center', gap: '.4rem',
           padding: '6px 14px', borderRadius: 8, cursor: loading ? 'not-allowed' : 'pointer',

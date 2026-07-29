@@ -266,7 +266,7 @@ export default async function EscolaEditar({ params }: Props) {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '.75rem' }}>
+          <div className="mp-form-actions" style={{ display: 'flex', gap: '.75rem' }}>
             <button type="submit" className="btn btn-primary">Salvar Alterações</button>
             <Link href={`/comercial/escolas/${id}`} className="btn btn-ghost">Cancelar</Link>
           </div>

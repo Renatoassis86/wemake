@@ -414,7 +414,7 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
 
                 {/* Linha 1 — etapas 1 a 5 */}
                 <div style={{ position: 'relative', marginBottom: '.5rem' }}>
-                  <div style={{
+                  <div className="mp-jornada-etapas-row" style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(5, 1fr)',
                     gap: '.25rem',
@@ -544,7 +544,7 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
 
                 {/* Linha 2 — etapas 6 a 10 */}
                 <div style={{ position: 'relative' }}>
-                  <div style={{
+                  <div className="mp-jornada-etapas-row" style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(5, 1fr)',
                     gap: '.25rem',

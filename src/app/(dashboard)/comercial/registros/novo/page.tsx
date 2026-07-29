@@ -276,7 +276,7 @@ export default async function RegistroNovo({ searchParams }: Props) {
                 {/* Fund I */}
                 <div style={{ background: '#eff6ff', padding: '1rem', borderRadius: 12, border: '1px solid #bfdbfe' }}>
                   <label style={{ ...lbl, color: '#1e40af', marginBottom: '.75rem' }}>Fundamental I</label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '.5rem' }}>
+                  <div className="mp-registronovo-fundi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '.5rem' }}>
                     {[
                       { n: 'qtd_fund1_ano1', l: '1º A' },
                       { n: 'qtd_fund1_ano2', l: '2º A' },
@@ -340,7 +340,7 @@ export default async function RegistroNovo({ searchParams }: Props) {
           </div>
 
           {/* ── AÇÕES ──────────────────────────────────────────── */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem 1.75rem', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16 }}>
+          <div className="mp-form-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem 1.75rem', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16 }}>
             <button type="submit" style={{
               background: 'linear-gradient(135deg, #4A7FDB, #2563b8)',
               color: '#fff', padding: '.7rem 2rem', borderRadius: 9999,

@@ -197,15 +197,43 @@ export default function PropostaLayout({ children }: { children: React.ReactNode
 
           .pv-hero-top       { flex-direction: column !important; height: auto !important; flex: none !important; }
           .pv-hero-royal     { width: 100% !important; }
-          .pv-hero-logo      { flex: none !important; width: 100% !important; height: 140px !important; }
-          .pv-hero-photo     { flex: none !important; height: 300px !important; min-height: 300px !important; }
-          .pv-hero-countdown { left: var(--gutter) !important; align-items: center !important; }
+          .pv-hero-logo      {
+            flex: none !important; width: 100% !important; height: 140px !important;
+            border-top: 1px solid rgba(15,23,42,.08) !important;
+          }
+          .pv-hero-photo     { flex: none !important; height: 260px !important; min-height: 260px !important; }
+
+          /* Foto vira só decorativa no mobile: contador dramático, "deslizar"
+             e o aviso de confidencialidade saem de cima dela (não cabiam sem
+             se sobrepor) e viram uma faixa de rodapé com fundo sólido — texto
+             informativo/legal não deve competir com imagem por espaço/contraste. */
+          .pv-hero-bottom-bar { justify-content: center !important; }
+          .pv-hero-countdown        { display: none !important; }
+          .pv-hero-disclaimer-desktop { display: none !important; }
+          .pv-hero-mobile-footer    { display: block !important; }
+
+          /* Seções que no desktop usam justify-content:space-between para se
+             distribuir na altura de 100dvh — em altura automática (mobile)
+             isso não sobra espaço nenhum e os blocos ficam colados uns nos
+             outros. Garante um respiro mínimo real entre eles. */
+          .pv-stack-gap { gap: 1.75rem !important; }
 
           .pv-table-desktop { display: none !important; }
           .pv-table-mobile  { display: flex !important; }
+
+          /* Comparativo dos Modelos: no desktop é uma caixa com altura travada
+             (calc(100dvh - 220px)) e scroll interno próprio, porque a seção é
+             100dvh. Em mobile a seção vira altura natural (scroll contínuo da
+             página) — travar a altura da caixa criava um scroll-dentro-do-scroll
+             confuso. Deixa a caixa fluir com o restante da página. */
+          .pv-comparativo-scroll {
+            max-height: none !important;
+            overflow: visible !important;
+          }
         }
 
         .pv-table-mobile { display: none; }
+        .pv-hero-mobile-footer { display: none; }
       `}</style>
       {children}
     </>

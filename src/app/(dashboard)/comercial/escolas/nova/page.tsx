@@ -359,7 +359,7 @@ export default async function EscolaNova({ searchParams }: Props) {
           </div>
 
           {/* ── AÇÕES ──────────────────────────────────────────── */}
-          <div style={{
+          <div className="mp-form-actions" style={{
             display: 'flex', alignItems: 'center', gap: '1rem',
             padding: '1.25rem 1.75rem',
             background: '#fff', border: '1px solid #e2e8f0',

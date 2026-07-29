@@ -434,46 +434,62 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
             <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg,rgba(11,31,68,0.55) 0%,transparent 30%,transparent 70%,rgba(11,31,68,0.75) 100%)` }} />
             <Glow color="rgba(118,243,205,0.14)" size={400} style={{ bottom: -100, left: -80 }} />
 
-            {/* We Make logo */}
-            <div style={{ position: 'absolute', bottom: 28, left: 'var(--gutter)' }}>
-              <img src="/proposta/logo-white.png" alt="We Make" style={{ height: 36, objectFit: 'contain' }} />
-            </div>
+            {/* We Make logo + validade/scroll — uma única barra flex (evita
+                sobreposição: em vez de dois elementos absolutos independentes
+                que dependiam de não colidir por acaso, agora dividem o mesmo
+                espaço com justify-content/gap reais). */}
+            <div className="pv-hero-bottom-bar" style={{ position: 'absolute', bottom: 28, left: 'var(--gutter)', right: 'var(--gutter)', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16 }}>
+              <img src="/proposta/logo-white.png" alt="We Make" style={{ height: 36, objectFit: 'contain', flexShrink: 0 }} />
 
-            {/* direita: validade + scroll */}
-            <div className="pv-hero-countdown" style={{ position: 'absolute', bottom: 28, right: 'var(--gutter)', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 12 }}>
-              <div style={{ background: 'rgba(255,204,0,0.1)', border: '1px solid rgba(255,204,0,0.3)', borderRadius: 12, padding: '8px 14px', textAlign: 'right' }}>
-                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,204,0,0.55)', marginBottom: 4 }}>
-                  {countdown?.expired ? 'Proposta expirada' : 'Proposta válida por'}
-                </p>
-                {countdown?.expired ? (
-                  <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: '0.9rem', color: '#f87171', lineHeight: 1 }}>Expirada</p>
-                ) : (
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'baseline', justifyContent: 'flex-end' }}>
-                    {([
-                      { v: countdown?.days,    u: 'd' },
-                      { v: countdown?.hours,   u: 'h' },
-                      { v: countdown?.minutes, u: 'm' },
-                      { v: countdown?.seconds, u: 's' },
-                    ] as { v: number | undefined; u: string }[]).map(({ v, u }) => (
-                      <span key={u} style={{ fontFamily: 'Geist Mono, monospace', fontSize: '0.9rem', fontWeight: 700, color: C.amber, lineHeight: 1 }}>
-                        {v !== undefined ? String(v).padStart(2, '0') : '--'}<span style={{ fontSize: '0.55rem', color: 'rgba(255,204,0,0.5)', marginLeft: 1 }}>{u}</span>
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', color: 'rgba(255,204,0,0.4)', marginTop: 3 }}>
-                  até {fmtDate(p.validade)}
-                </p>
+              <div className="pv-hero-countdown" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 12 }}>
+                <div style={{ background: 'rgba(255,204,0,0.1)', border: '1px solid rgba(255,204,0,0.3)', borderRadius: 12, padding: '8px 14px', textAlign: 'right' }}>
+                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,204,0,0.55)', marginBottom: 4 }}>
+                    {countdown?.expired ? 'Proposta expirada' : 'Proposta válida por'}
+                  </p>
+                  {countdown?.expired ? (
+                    <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: '0.9rem', color: '#f87171', lineHeight: 1 }}>Expirada</p>
+                  ) : (
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'baseline', justifyContent: 'flex-end' }}>
+                      {([
+                        { v: countdown?.days,    u: 'd' },
+                        { v: countdown?.hours,   u: 'h' },
+                        { v: countdown?.minutes, u: 'm' },
+                        { v: countdown?.seconds, u: 's' },
+                      ] as { v: number | undefined; u: string }[]).map(({ v, u }) => (
+                        <span key={u} style={{ fontFamily: 'Geist Mono, monospace', fontSize: '0.9rem', fontWeight: 700, color: C.amber, lineHeight: 1 }}>
+                          {v !== undefined ? String(v).padStart(2, '0') : '--'}<span style={{ fontSize: '0.55rem', color: 'rgba(255,204,0,0.5)', marginLeft: 1 }}>{u}</span>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.56rem', color: 'rgba(255,204,0,0.4)', marginTop: 3 }}>
+                    até {fmtDate(p.validade)}
+                  </p>
+                </div>
+                <button onClick={() => scrollTo(1)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.35)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', letterSpacing: '0.14em' }}>
+                  DESLIZAR
+                  <span style={{ animation: 'bob 1.8s ease-in-out infinite', display: 'block' }}>{I.arrow()}</span>
+                </button>
               </div>
-              <button onClick={() => scrollTo(1)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.35)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', letterSpacing: '0.14em' }}>
-                DESLIZAR
-                <span style={{ animation: 'bob 1.8s ease-in-out infinite', display: 'block' }}>{I.arrow()}</span>
-              </button>
             </div>
 
-            {/* disclaimer */}
-            <p style={{ position: 'absolute', top: 14, left: 0, right: 0, textAlign: 'center', fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.28)', padding: '0 48px', letterSpacing: '0.04em' }}>
+            {/* disclaimer — só no desktop; no mobile some pra faixa própria abaixo
+                (ver .pv-hero-mobile-footer), pra não brigar com a foto por espaço/contraste. */}
+            <p className="pv-hero-disclaimer-desktop" style={{ position: 'absolute', top: 14, left: 0, right: 0, textAlign: 'center', fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.28)', padding: '0 clamp(16px,8vw,48px)', letterSpacing: '0.04em' }}>
               Esta proposta é confidencial e deve ser tratada com sigilo.
+            </p>
+          </div>
+
+          {/* Faixa de rodapé só-mobile — fundo sólido em vez de sobrepor texto na
+              foto. Substitui o contador dramático (que não cabia sem se sobrepor)
+              por uma validade simples, e traz o aviso de confidencialidade pra um
+              lugar legível. Escondida no desktop (ver .pv-hero-mobile-footer). */}
+          <div className="pv-hero-mobile-footer" style={{ background: C.navy, padding: '16px var(--gutter)', textAlign: 'center' }}>
+            <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', fontWeight: 600, color: countdown?.expired ? '#f87171' : C.mint, letterSpacing: '0.04em', marginBottom: 4 }}>
+              {countdown?.expired ? 'Proposta expirada' : `Proposta válida até ${fmtDate(p.validade)}`}
+            </p>
+            <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.02em' }}>
+              Confidencial — trate com sigilo.
             </p>
           </div>
         </section>
@@ -509,7 +525,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
           <div className="pv-divider-v" style={{ width: 1, background: 'rgba(11,31,68,0.07)', margin: '56px 0', flexShrink: 0 }} />
 
           {/* coluna direita — carta usando toda a altura */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 'clamp(48px,7vh,80px) clamp(24px,3vw,56px)', position: 'relative', zIndex: 2, overflow: 'auto' }}>
+          <div className="pv-stack-gap" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 'clamp(48px,7vh,80px) clamp(24px,3vw,56px)', position: 'relative', zIndex: 2, overflow: 'auto' }}>
             {/* topo: eyebrow + saudação */}
             <div>
               <Reveal>
@@ -591,7 +607,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
           <Aurora color1="rgba(76,138,222,0.07)" color2="rgba(118,243,205,0.05)" style={{ top: -160, right: -80 }} />
 
           {/* coluna conteúdo — esquerda, sem scroll */}
-          <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 'clamp(32px,5vh,52px) var(--gutter)', overflow: 'hidden' }}>
+          <div className="pv-stack-gap" style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 'clamp(32px,5vh,52px) var(--gutter)', overflow: 'hidden' }}>
 
             {/* topo: eyebrow + título + subtexto */}
             {(() => {
@@ -742,7 +758,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
             <div className="pv-row" style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', alignItems: 'stretch', overflowY: 'auto' }}>
 
               {/* sub-coluna esquerda — serviços */}
-              <div className="pv-flex-reset" style={{ flex: comItensDisplay.length > 0 ? '0 0 42%' : 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 'clamp(32px,5vh,52px) clamp(20px,3vw,40px)' }}>
+              <div className="pv-flex-reset pv-stack-gap" style={{ flex: comItensDisplay.length > 0 ? '0 0 42%' : 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 'clamp(32px,5vh,52px) clamp(20px,3vw,40px)' }}>
                 <Reveal>
                   <Eyebrow>Espaço Maker</Eyebrow>
                   <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.white, marginBottom: 10, letterSpacing: '-0.02em', lineHeight: 1.05, textWrap: 'balance' } as React.CSSProperties}>
@@ -1339,7 +1355,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               </Reveal>
 
               <Reveal delay={80}>
-                <div style={{ borderRadius: 16, overflow: 'auto', marginBottom: 18, border: '1px solid rgba(255,255,255,0.08)', maxHeight: 'calc(100dvh - 220px)' }}>
+                <div className="pv-comparativo-scroll" style={{ borderRadius: 16, overflow: 'auto', marginBottom: 18, border: '1px solid rgba(255,255,255,0.08)', maxHeight: 'calc(100dvh - 220px)' }}>
                   {(() => {
                     const rows = [
                       {
