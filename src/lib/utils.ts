@@ -34,6 +34,28 @@ export function calcularPotencial(infantil: number, fund1: number, fund2: number
   )
 }
 
+const MAPA_ACENTOS: Record<string, string> = {
+  'á': 'a', 'à': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a',
+  'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e',
+  'í': 'i', 'ì': 'i', 'î': 'i', 'ï': 'i',
+  'ó': 'o', 'ò': 'o', 'ô': 'o', 'õ': 'o', 'ö': 'o',
+  'ú': 'u', 'ù': 'u', 'û': 'u', 'ü': 'u',
+  'ç': 'c', 'ñ': 'n',
+}
+
+// Normaliza nomes de escola para cruzar cadastros sem vínculo de ID entre si
+// (ex.: leads_universal.escola_nome, propostas.escola_nome — texto livre).
+export function normalizarNomeEscola(s: string | null | undefined): string {
+  return (s ?? '')
+    .toLowerCase()
+    .split('')
+    .map(ch => MAPA_ACENTOS[ch] ?? ch)
+    .join('')
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 export function diasDesdeData(date: string | null | undefined) {
   if (!date) return null
   const diff = Date.now() - new Date(date).getTime()

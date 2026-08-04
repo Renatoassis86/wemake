@@ -11,6 +11,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { LABEL } from '@/types/database'
+import { normalizarNomeEscola } from '@/lib/utils'
 import type { EscolaResumo, Negociacao, Contrato, StageNegociacao } from '@/types/database'
 
 // ─── Tipos exportados ─────────────────────────────────────────────────────────
@@ -57,27 +58,6 @@ export function bucketConfessionalidade(valor: string): string {
   if (v.includes('não é uma direção') || v.includes('nao e uma direcao')) return 'Não considera'
   if (v.includes('confessional')) return 'Confessional'
   return valor
-}
-
-// Normaliza nomes de escola para cruzar com dados sem vínculo de ID (propostas.escola_nome).
-const MAPA_ACENTOS: Record<string, string> = {
-  'á': 'a', 'à': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a',
-  'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e',
-  'í': 'i', 'ì': 'i', 'î': 'i', 'ï': 'i',
-  'ó': 'o', 'ò': 'o', 'ô': 'o', 'õ': 'o', 'ö': 'o',
-  'ú': 'u', 'ù': 'u', 'û': 'u', 'ü': 'u',
-  'ç': 'c', 'ñ': 'n',
-}
-
-function normalizarNome(s: string | null | undefined): string {
-  return (s ?? '')
-    .toLowerCase()
-    .split('')
-    .map(ch => MAPA_ACENTOS[ch] ?? ch)
-    .join('')
-    .replace(/[^a-z0-9\s]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
 }
 
 const STAGE_LABELS: Record<StageNegociacao, string> = {
@@ -166,7 +146,7 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
   const propostaPorNome = new Set<string>()
   for (const p of propostas) {
     if (p.escola_id) propostaPorEscolaId.add(p.escola_id)
-    else if (p.escola_nome) propostaPorNome.add(normalizarNome(p.escola_nome))
+    else if (p.escola_nome) propostaPorNome.add(normalizarNomeEscola(p.escola_nome))
   }
 
   // Índices para acesso rápido
@@ -217,7 +197,7 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
       ? escola.total_alunos
       : (alunosEstimadoPorEscola.get(escola.id) ?? 0)
 
-    const propostaEnviada = propostaPorEscolaId.has(escola.id) || propostaPorNome.has(normalizarNome(escola.nome))
+    const propostaEnviada = propostaPorEscolaId.has(escola.id) || propostaPorNome.has(normalizarNomeEscola(escola.nome))
 
     return {
       ...escola,

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { normalizarNomeEscola } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -68,6 +70,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'escola_nome é obrigatório' }, { status: 400 })
     }
 
+    // Resolve escola_id por nome quando o caller não informou (a calculadora hoje só
+    // manda texto livre) — permite vincular a proposta ao cadastro sem mexer na UI.
+    let escolaIdResolvido: string | undefined = escola_id
+    if (!escolaIdResolvido) {
+      const alvo = normalizarNomeEscola(escola_nome)
+      const { data: candidatas } = await supabase
+        .from('escolas')
+        .select('id, nome')
+        .eq('ativa', true)
+      const match = candidatas?.find(c => normalizarNomeEscola(c.nome) === alvo)
+      if (match) escolaIdResolvido = match.id
+    }
+
     const insert: Record<string, unknown> = {
       escola_nome,
       tipo:               tipo ?? 'curriculo',
@@ -83,7 +98,7 @@ export async function POST(request: NextRequest) {
       seg_ensino_medio:   !!seg_ensino_medio,
     }
 
-    if (escola_id !== undefined)            insert.escola_id            = escola_id
+    if (escolaIdResolvido !== undefined)    insert.escola_id            = escolaIdResolvido
     if (escola_logo_url !== undefined)      insert.escola_logo_url      = escola_logo_url
     if (escola_email !== undefined)         insert.escola_email         = escola_email
     if (texto_personalizado !== undefined)  insert.texto_personalizado  = texto_personalizado
@@ -110,6 +125,23 @@ export async function POST(request: NextRequest) {
         detail: error.details,
         hint:   error.hint,
       }, { status: 400 })
+    }
+
+    // Espelha automaticamente no banco de leads (leads_universal) — mesmo padrão do
+    // cadastro manual de escola e do formulário público.
+    try {
+      const admin = createAdminClient()
+      await admin.from('leads_universal').insert({
+        fonte: 'proposta_calculadora',
+        email: (escola_email as string | undefined) ?? null,
+        escola_nome,
+        qtd_alunos_total: num_alunos ?? null,
+        data_inscricao: new Date().toISOString(),
+        importado_por: user.id,
+        dados_extras: { escola_id: escolaIdResolvido ?? null, proposta_id: data.id, tipo },
+      })
+    } catch (leadErr) {
+      console.error('[propostas POST] Falha ao espelhar no banco de leads:', leadErr)
     }
 
     return NextResponse.json(data, { status: 201 })
