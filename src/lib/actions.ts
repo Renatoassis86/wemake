@@ -157,6 +157,36 @@ export async function upsertEscola(formData: FormData) {
 
     await createAuditLog('INSERT', 'escolas', newId, payload)
 
+    // Espelha automaticamente no banco de leads (leads_universal) — mesmo padrão do formulário público
+    try {
+      const admin = createAdminClient()
+      const qtdTotal = payload.qtd_infantil + payload.qtd_fund1 + payload.qtd_fund2 + payload.qtd_medio
+      await admin.from('leads_universal').insert({
+        fonte: 'crm',
+        nome: payload.contato_nome,
+        email: payload.email,
+        tel_celular: payload.telefone,
+        cidade: payload.cidade,
+        uf: payload.estado,
+        endereco: payload.rua,
+        bairro: payload.bairro,
+        cep: payload.cep,
+        escola_nome: payload.nome,
+        escola_cnpj: payload.cnpj,
+        tipo_inscricao: payload.contato_cargo,
+        qtd_infantil: payload.qtd_infantil || null,
+        qtd_fund1: payload.qtd_fund1 || null,
+        qtd_fund2: payload.qtd_fund2 || null,
+        qtd_medio: payload.qtd_medio || null,
+        qtd_alunos_total: qtdTotal || null,
+        data_inscricao: new Date().toISOString(),
+        importado_por: user.id,
+        dados_extras: { escola_id: newId, origem_lead: payload.origem_lead },
+      })
+    } catch (leadErr) {
+      console.error('[upsertEscola] Falha ao espelhar no banco de leads:', leadErr)
+    }
+
     // Garante que a escola seja visível imediatamente (força refresh)
     revalidatePath('/comercial/escolas', 'layout')
     revalidatePath('/comercial', 'layout')

@@ -13,17 +13,25 @@ import {
   Package, FlaskConical, BarChart2, Download,
   Bot, DollarSign, Table2, Info, FileSignature, ClipboardList,
   ExternalLink, GitBranch, Target, CalendarDays, FileAudio,
-  Upload, Database, BookOpen
+  Upload, Database, BookOpen, Crosshair
 } from 'lucide-react'
 
 interface SidebarProps { profile: Profile | null }
 
 // ── Nav groups ───────────────────────────────────────────────────────────────
 
-const NAV_CRM = [
+interface NavItemDef {
+  href: string
+  label: string
+  icon: React.ComponentType<{ size?: number; className?: string }>
+  badge?: number | string
+}
+
+const NAV_CRM: NavItemDef[] = [
   { href: '/comercial',                label: 'Dashboard',     icon: LayoutDashboard },
   { href: '/comercial/pre-cadastros',  label: 'Dados Proposta Comercial', icon: ClipboardList   },
   { href: '/comercial/escolas',        label: 'Escolas',       icon: School          },
+  { href: '/comercial/priorizacao',    label: 'Gestão de Priorização', icon: Crosshair, badge: 'Novo' },
   { href: '/comercial/registros',      label: 'Registros',     icon: FileText        },
 ]
 
@@ -293,6 +301,7 @@ export default function Sidebar({ profile }: SidebarProps) {
             label={item.label}
             icon={item.icon}
             active={isActive(item.href)}
+            badge={item.badge}
           />
         ))}
 

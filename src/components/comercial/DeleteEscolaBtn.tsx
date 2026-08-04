@@ -7,7 +7,7 @@ import { deletarEscola } from '@/lib/actions'
 interface Props {
   escolaId: string
   escolaNome: string
-  variant?: 'hero' | 'sidebar'
+  variant?: 'hero' | 'sidebar' | 'icon'
 }
 
 export function DeleteEscolaBtn({ escolaId, escolaNome, variant = 'sidebar' }: Props) {
@@ -20,12 +20,41 @@ export function DeleteEscolaBtn({ escolaId, escolaNome, variant = 'sidebar' }: P
     setLoading(true)
     const result = await deletarEscola(escolaId)
     if (result.success) {
-      router.push('/comercial/escolas')
+      if (variant === 'icon') {
+        router.refresh()
+      } else {
+        router.push('/comercial/escolas')
+      }
     } else {
       alert(result.error ?? 'Erro ao excluir')
       setLoading(false)
       setConfirm(false)
     }
+  }
+
+  if (variant === 'icon') {
+    return (
+      <button
+        onClick={handleDelete}
+        disabled={loading}
+        title={confirm ? 'Clique novamente para confirmar' : `Excluir ${escolaNome}`}
+        style={{
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          width: 30, height: 30, borderRadius: 7,
+          background: confirm ? '#DC2626' : '#FEF2F2',
+          border: `1px solid ${confirm ? '#DC2626' : '#FECACA'}`,
+          color: confirm ? '#fff' : '#DC2626',
+          cursor: loading ? 'not-allowed' : 'pointer',
+          opacity: loading ? .6 : 1,
+          transition: 'all .15s',
+        }}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+      </button>
+    )
   }
 
   if (variant === 'hero') {
