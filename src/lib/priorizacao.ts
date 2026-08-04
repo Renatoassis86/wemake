@@ -10,6 +10,7 @@
  */
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { LABEL } from '@/types/database'
 import { normalizarNomeEscola } from '@/lib/utils'
 import type { EscolaResumo, Negociacao, Contrato, StageNegociacao } from '@/types/database'
@@ -75,6 +76,11 @@ const STAGE_LABELS: Record<StageNegociacao, string> = {
 
 export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
   const supabase = await createClient()
+  // leads_escola e leads_perfil_escola não têm policy de SELECT para o role
+  // authenticated (confirmado: também bloqueadas para anon) — usa a service role
+  // para essas duas, mesmo padrão já usado no projeto para tabelas de leads
+  // (ver upsertEscola/enviarFormularioPublico em actions.ts).
+  const admin = createAdminClient()
 
   // Busca paralela: escolas ativas + negociações ativas + contratos + perfil da pesquisa comercial
   // + porte estimado (leads_escola) + propostas já geradas na calculadora
@@ -94,11 +100,11 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
       .from('contratos')
       .select('escola_id, contrato_assinado, contrato_enviado'),
 
-    supabase
+    admin
       .from('leads_perfil_escola')
       .select('escola_id, confessionalidade, csi, nps, interesse_solucao'),
 
-    supabase
+    admin
       .from('leads_escola')
       .select('escola_crm_id, qtd_alunos')
       .not('escola_crm_id', 'is', null),

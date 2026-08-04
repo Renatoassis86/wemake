@@ -198,7 +198,7 @@ function TabelaEscolas({
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ background: '#0F172A' }}>
-            {['#', 'Escola', 'UF / Cidade', 'Alunos', 'Proposta', 'Situação Comercial', 'Ações'].map(col => (
+            {['#', 'Escola', 'UF / Cidade', 'Alunos', 'Perfil', 'Proposta', 'Situação Comercial', 'Ações'].map(col => (
               <th key={col} style={{
                 padding: col === '#' ? '.7rem .9rem' : '.7rem 1rem',
                 textAlign: col === '#' || col === 'Alunos' || col === 'Proposta' ? 'center' : 'left',
@@ -215,7 +215,7 @@ function TabelaEscolas({
         <tbody>
           {escolas.length === 0 && (
             <tr>
-              <td colSpan={7} style={{
+              <td colSpan={8} style={{
                 padding: '2.5rem', textAlign: 'center',
                 color: '#94A3B8', fontSize: '.85rem',
                 fontFamily: 'var(--font-inter, sans-serif)',
@@ -265,21 +265,6 @@ function TabelaEscolas({
                         fontFamily: 'var(--font-montserrat, sans-serif)',
                       }}>Lead</span>
                     )}
-                    {escola.perfilPesquisa?.confessionalidade && (() => {
-                      const bucket = bucketConfessionalidade(escola.perfilPesquisa.confessionalidade)
-                      const cor = CONFESS_CORES[bucket] ?? CONFESS_CORES['Não considera']
-                      return (
-                        <span title={`Confessionalidade (pesquisa comercial): ${escola.perfilPesquisa.confessionalidade}`} style={{
-                          fontSize: '.55rem', fontWeight: 800,
-                          background: cor.bg, color: cor.text,
-                          border: `1px solid ${cor.border}`,
-                          padding: '1px 6px', borderRadius: 99,
-                          letterSpacing: '.05em', textTransform: 'uppercase',
-                          fontFamily: 'var(--font-montserrat, sans-serif)',
-                          whiteSpace: 'nowrap',
-                        }}>{bucket}</span>
-                      )
-                    })()}
                   </Link>
                   {escola.responsavel_nome && (
                     <span style={{
@@ -339,6 +324,30 @@ function TabelaEscolas({
                     {escola.alunosEstimado && '~'}{escola.alunosEfetivo.toLocaleString('pt-BR')}
                   </span>
                 </div>
+              </td>
+
+              {/* Perfil */}
+              <td style={{ padding: '.65rem 1rem', maxWidth: 260 }}>
+                {escola.perfilPesquisa?.confessionalidade ? (() => {
+                  const bucket = bucketConfessionalidade(escola.perfilPesquisa.confessionalidade)
+                  const cor = CONFESS_CORES[bucket] ?? CONFESS_CORES['Não considera']
+                  const partes = [
+                    escola.perfilPesquisa.csi && `Satisfação atual: ${escola.perfilPesquisa.csi}`,
+                    escola.perfilPesquisa.interesseSolucao && `Interesse: ${escola.perfilPesquisa.interesseSolucao}`,
+                  ].filter(Boolean)
+                  return (
+                    <span style={{
+                      fontSize: '.72rem', color: '#475569',
+                      fontFamily: 'var(--font-inter, sans-serif)',
+                      lineHeight: 1.4,
+                    }}>
+                      <strong style={{ color: cor.text, fontFamily: 'var(--font-montserrat, sans-serif)' }}>{bucket}</strong>
+                      {partes.length > 0 && ` | ${partes.join(' | ')}`}
+                    </span>
+                  )
+                })() : (
+                  <span style={{ fontSize: '.72rem', color: '#CBD5E1', fontFamily: 'var(--font-inter, sans-serif)' }}>—</span>
+                )}
               </td>
 
               {/* Proposta */}
