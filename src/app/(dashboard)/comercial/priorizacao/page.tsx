@@ -451,7 +451,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
 
   const {
     elegiveis, filaCompletarCadastro, clientesAtivos, acaoUrgente,
-    distribuicaoPorEstado, distribuicaoPorEstagio, distribuicaoPorPerfil,
+    distribuicaoPorEstado, distribuicaoPorEstagio,
     distribuicaoPorConfessionalidade, totalRespostasPesquisa,
     totalComAlunosCadastrados, totalSemAlunosCadastrados,
   } = await getFilaPriorizacao()
@@ -575,7 +575,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
       </div>
 
       {/* ── Gráficos ──────────────────────────────────────────────────────── */}
-      {(distribuicaoPorEstado.length > 0 || distribuicaoPorEstagio.length > 0 || distribuicaoPorPerfil.length > 0) && (
+      {(distribuicaoPorEstado.length > 0 || distribuicaoPorEstagio.length > 0) && (
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
@@ -591,11 +591,6 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
             title="Escolas por Estágio no Funil"
             data={distribuicaoPorEstagio.map(d => ({ label: d.label, count: d.count }))}
             colorHex="#5FE3D0"
-          />
-          <MiniBarChart
-            title="Escolas por Perfil Pedagógico"
-            data={distribuicaoPorPerfil.map(d => ({ label: d.label, count: d.count }))}
-            colorHex="#B45309"
           />
           {distribuicaoPorConfessionalidade.length > 0 && (
             <div>

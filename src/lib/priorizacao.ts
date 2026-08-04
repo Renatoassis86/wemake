@@ -11,7 +11,6 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { LABEL } from '@/types/database'
 import { normalizarNomeEscola } from '@/lib/utils'
 import type { EscolaResumo, Negociacao, Contrato, StageNegociacao } from '@/types/database'
 
@@ -43,7 +42,6 @@ export interface FilaPriorizacaoResult {
   acaoUrgente: number               // Contagem de ações urgentes
   distribuicaoPorEstado: { estado: string; count: number }[]
   distribuicaoPorEstagio: { stage: string; label: string; count: number }[]
-  distribuicaoPorPerfil: { perfil: string; label: string; count: number }[]
   distribuicaoPorConfessionalidade: { valor: string; count: number }[]
   totalRespostasPesquisa: number
   totalComAlunosCadastrados: number  // escolas com total_alunos > 0 confirmado no cadastro
@@ -82,8 +80,9 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
   // (ver upsertEscola/enviarFormularioPublico em actions.ts).
   const admin = createAdminClient()
 
-  // Busca paralela: escolas ativas + negociações ativas + contratos + perfil da pesquisa comercial
-  // + porte estimado (leads_escola) + propostas já geradas na calculadora
+  // Busca paralela: escolas ativas + todas as negociações (inclusive inativas — o histórico
+  // não pode desaparecer da Situação Comercial só porque foi arquivado) + contratos + perfil
+  // da pesquisa comercial + porte estimado (leads_escola) + propostas já geradas na calculadora
   const [escolasRes, negociacoesRes, contratosRes, perfilRes, leadsEscolaRes, propostasRes] = await Promise.all([
     supabase
       .from('escolas_resumo')
@@ -93,8 +92,7 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
 
     supabase
       .from('negociacoes')
-      .select('id, escola_id, stage, ativa')
-      .eq('ativa', true),
+      .select('id, escola_id, stage, ativa'),
 
     supabase
       .from('contratos')
@@ -263,20 +261,6 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
     }))
     .sort((a, b) => b.count - a.count)
 
-  // Distribuição por perfil pedagógico (dado real do cadastro da escola)
-  const perfilMap = new Map<string, number>()
-  for (const e of elegiveis) {
-    const key = e.perfil_pedagogico ?? 'nao_informado'
-    perfilMap.set(key, (perfilMap.get(key) ?? 0) + 1)
-  }
-  const distribuicaoPorPerfil = [...perfilMap.entries()]
-    .map(([perfil, count]) => ({
-      perfil,
-      label: perfil === 'nao_informado' ? 'Não informado' : (LABEL.perfil_pedagogico[perfil] ?? perfil),
-      count,
-    }))
-    .sort((a, b) => b.count - a.count)
-
   // Distribuição por confessionalidade — resposta real da pesquisa comercial (leads_perfil_escola)
   const confessMap = new Map<string, number>()
   for (const p of perfis) {
@@ -298,7 +282,6 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
     acaoUrgente,
     distribuicaoPorEstado,
     distribuicaoPorEstagio,
-    distribuicaoPorPerfil,
     distribuicaoPorConfessionalidade,
     totalRespostasPesquisa,
     totalComAlunosCadastrados,
