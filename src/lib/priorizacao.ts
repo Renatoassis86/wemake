@@ -3,8 +3,8 @@
  *
  * Critérios de priorização (v1):
  *  - Escolas sem negociação ativa em fechamento/ganho/perdido → "Fila de Abordagem"
- *  - Ordenação: total_alunos DESC (maior porte primeiro)
- *  - Escolas com total_alunos <= 0 → "Completar Cadastro"
+ *  - Ordenação: alunosEfetivo DESC (maior porte primeiro; usa estimativa de leads_escola quando o cadastro está vazio)
+ *  - Escolas sem porte (nem cadastro nem estimativa) → "Completar Cadastro"
  *  - Escolas com contrato assinado → "Parceiras Ativas"
  *  - Ação urgente: stage 'fechamento' ou contrato_enviado sem contrato_assinado
  */
@@ -29,11 +29,14 @@ export interface EscolaFila extends EscolaResumo {
   acaoUrgente: boolean
   whatsapp_url: string | null
   perfilPesquisa: PerfilPesquisa | null // dado real da pesquisa comercial (leads_perfil_escola), vinculado por escola_id
+  alunosEfetivo: number      // total_alunos do cadastro; se 0/vazio, cai para a estimativa de leads_escola
+  alunosEstimado: boolean    // true quando alunosEfetivo veio da estimativa (cadastro ainda não preenchido)
+  propostaEnviada: boolean   // true quando existe registro em `propostas` para esta escola
 }
 
 export interface FilaPriorizacaoResult {
-  elegiveis: EscolaFila[]           // Fila de Abordagem (com total_alunos > 0, sem deal fechado)
-  filaCompletarCadastro: EscolaFila[] // Sem dados de porte
+  elegiveis: EscolaFila[]           // Fila de Abordagem (com alunosEfetivo > 0, sem deal fechado)
+  filaCompletarCadastro: EscolaFila[] // Sem dados de porte (nem cadastro nem estimativa)
   clientesAtivos: EscolaFila[]      // Parceiras ativas (contrato assinado)
   acaoUrgente: number               // Contagem de ações urgentes
   distribuicaoPorEstado: { estado: string; count: number }[]
@@ -41,6 +44,8 @@ export interface FilaPriorizacaoResult {
   distribuicaoPorPerfil: { perfil: string; label: string; count: number }[]
   distribuicaoPorConfessionalidade: { valor: string; count: number }[]
   totalRespostasPesquisa: number
+  totalComAlunosCadastrados: number  // escolas com total_alunos > 0 confirmado no cadastro
+  totalSemAlunosCadastrados: number  // escolas sem dado de porte confirmado (mesmo que tenham estimativa)
 }
 
 // Agrupa as variações de texto da resposta de confessionalidade (mudou de redação entre
@@ -52,6 +57,27 @@ export function bucketConfessionalidade(valor: string): string {
   if (v.includes('não é uma direção') || v.includes('nao e uma direcao')) return 'Não considera'
   if (v.includes('confessional')) return 'Confessional'
   return valor
+}
+
+// Normaliza nomes de escola para cruzar com dados sem vínculo de ID (propostas.escola_nome).
+const MAPA_ACENTOS: Record<string, string> = {
+  'á': 'a', 'à': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a',
+  'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e',
+  'í': 'i', 'ì': 'i', 'î': 'i', 'ï': 'i',
+  'ó': 'o', 'ò': 'o', 'ô': 'o', 'õ': 'o', 'ö': 'o',
+  'ú': 'u', 'ù': 'u', 'û': 'u', 'ü': 'u',
+  'ç': 'c', 'ñ': 'n',
+}
+
+function normalizarNome(s: string | null | undefined): string {
+  return (s ?? '')
+    .toLowerCase()
+    .split('')
+    .map(ch => MAPA_ACENTOS[ch] ?? ch)
+    .join('')
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
 }
 
 const STAGE_LABELS: Record<StageNegociacao, string> = {
@@ -71,7 +97,8 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
   const supabase = await createClient()
 
   // Busca paralela: escolas ativas + negociações ativas + contratos + perfil da pesquisa comercial
-  const [escolasRes, negociacoesRes, contratosRes, perfilRes] = await Promise.all([
+  // + porte estimado (leads_escola) + propostas já geradas na calculadora
+  const [escolasRes, negociacoesRes, contratosRes, perfilRes, leadsEscolaRes, propostasRes] = await Promise.all([
     supabase
       .from('escolas_resumo')
       .select('*')
@@ -90,6 +117,15 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
     supabase
       .from('leads_perfil_escola')
       .select('escola_id, confessionalidade, csi, nps, interesse_solucao'),
+
+    supabase
+      .from('leads_escola')
+      .select('escola_crm_id, qtd_alunos')
+      .not('escola_crm_id', 'is', null),
+
+    supabase
+      .from('propostas')
+      .select('escola_id, escola_nome'),
   ])
 
   const escolas = (escolasRes.data ?? []) as EscolaResumo[]
@@ -102,6 +138,8 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
     nps: number | null
     interesse_solucao: string | null
   }[]
+  const leadsEscola = (leadsEscolaRes.data ?? []) as { escola_crm_id: string; qtd_alunos: number | null }[]
+  const propostas = (propostasRes.data ?? []) as { escola_id: string | null; escola_nome: string | null }[]
 
   // Vínculo exato por escola_id (dado real importado do banco de leads/pesquisa comercial)
   const perfilPorEscola = new Map<string, PerfilPesquisa>()
@@ -112,6 +150,23 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
       nps: p.nps,
       interesseSolucao: p.interesse_solucao,
     })
+  }
+
+  // Estimativa de porte (leads_escola.qtd_alunos) — usada só quando o cadastro ainda está vazio
+  const alunosEstimadoPorEscola = new Map<string, number>()
+  for (const l of leadsEscola) {
+    if (l.qtd_alunos != null && l.qtd_alunos > 0) {
+      alunosEstimadoPorEscola.set(l.escola_crm_id, l.qtd_alunos)
+    }
+  }
+
+  // Propostas: prioriza vínculo por escola_id (quando a calculadora salvar isso corretamente);
+  // usa nome normalizado como fallback para as propostas antigas sem vínculo.
+  const propostaPorEscolaId = new Set<string>()
+  const propostaPorNome = new Set<string>()
+  for (const p of propostas) {
+    if (p.escola_id) propostaPorEscolaId.add(p.escola_id)
+    else if (p.escola_nome) propostaPorNome.add(normalizarNome(p.escola_nome))
   }
 
   // Índices para acesso rápido
@@ -157,6 +212,13 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
 
     const perfilPesquisa = perfilPorEscola.get(escola.id) ?? null
 
+    const alunosEstimado = escola.total_alunos <= 0 && alunosEstimadoPorEscola.has(escola.id)
+    const alunosEfetivo = escola.total_alunos > 0
+      ? escola.total_alunos
+      : (alunosEstimadoPorEscola.get(escola.id) ?? 0)
+
+    const propostaEnviada = propostaPorEscolaId.has(escola.id) || propostaPorNome.has(normalizarNome(escola.nome))
+
     return {
       ...escola,
       negociacao_stage: negStage,
@@ -165,6 +227,9 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
       acaoUrgente,
       whatsapp_url,
       perfilPesquisa,
+      alunosEfetivo,
+      alunosEstimado,
+      propostaEnviada,
     }
   })
 
@@ -174,14 +239,18 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
 
   const elegiveisETodos = todasEscolasEnriquecidas.filter(e => !clientesAtivosIds.has(e.id))
 
-  // Escolas sem stage ganho/perdido que têm total_alunos > 0
+  // Escolas sem stage ganho/perdido que têm porte conhecido (cadastro ou estimativa)
   const elegiveis = elegiveisETodos
-    .filter(e => e.total_alunos > 0 && e.negociacao_stage !== 'ganho' && e.negociacao_stage !== 'perdido')
-    .sort((a, b) => b.total_alunos - a.total_alunos)
+    .filter(e => e.alunosEfetivo > 0 && e.negociacao_stage !== 'ganho' && e.negociacao_stage !== 'perdido')
+    .sort((a, b) => b.alunosEfetivo - a.alunosEfetivo)
 
   const filaCompletarCadastro = elegiveisETodos
-    .filter(e => e.total_alunos <= 0 && e.negociacao_stage !== 'ganho' && e.negociacao_stage !== 'perdido')
+    .filter(e => e.alunosEfetivo <= 0 && e.negociacao_stage !== 'ganho' && e.negociacao_stage !== 'perdido')
     .sort((a, b) => a.nome.localeCompare(b.nome))
+
+  // Contagem real de cadastro preenchido (independente de estimativa) — para acompanhamento de qualidade de dados
+  const totalComAlunosCadastrados = elegiveisETodos.filter(e => e.total_alunos > 0).length
+  const totalSemAlunosCadastrados = elegiveisETodos.filter(e => e.total_alunos <= 0).length
 
   // Distribuição por estado (apenas elegiveis)
   const estadoMap = new Map<string, number>()
@@ -246,5 +315,7 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
     distribuicaoPorPerfil,
     distribuicaoPorConfessionalidade,
     totalRespostasPesquisa,
+    totalComAlunosCadastrados,
+    totalSemAlunosCadastrados,
   }
 }

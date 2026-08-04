@@ -21,6 +21,7 @@ export async function GET() {
       elegiveis, filaCompletarCadastro, clientesAtivos,
       distribuicaoPorEstado, distribuicaoPorEstagio,
       distribuicaoPorConfessionalidade, totalRespostasPesquisa,
+      totalComAlunosCadastrados, totalSemAlunosCadastrados,
     } = await getFilaPriorizacao()
 
     const wb = XLSX.utils.book_new()
@@ -31,7 +32,9 @@ export async function GET() {
       'Escola': e.nome,
       'Estado': e.estado ?? '',
       'Cidade': e.cidade ?? '',
-      'Total Alunos': e.total_alunos,
+      'Alunos': e.alunosEfetivo,
+      'Origem do Porte': e.alunosEstimado ? 'Estimativa (pesquisa)' : 'Cadastro confirmado',
+      'Proposta Enviada': e.propostaEnviada ? 'Sim' : 'Não',
       'Situação Comercial': e.negociacao_stage ? (STAGE_LABELS[e.negociacao_stage] ?? e.negociacao_stage) : 'Nunca contatada',
       'Ação Urgente': e.acaoUrgente ? 'Sim' : 'Não',
       'Confessionalidade': e.perfilPesquisa?.confessionalidade ?? '',
@@ -41,14 +44,14 @@ export async function GET() {
       'Responsável': e.responsavel_nome ?? '',
       'Telefone': e.telefone ?? '',
       'E-mail': e.email ?? '',
-      'Origem': e.origem_lead ?? '',
+      'Origem do Lead': e.origem_lead ?? '',
     }))
     const wsFilas = XLSX.utils.json_to_sheet(filaRows)
     wsFilas['!cols'] = [
       { wch: 5 }, { wch: 40 }, { wch: 8 }, { wch: 24 },
-      { wch: 14 }, { wch: 18 }, { wch: 14 }, { wch: 22 },
-      { wch: 16 }, { wch: 8 }, { wch: 20 }, { wch: 24 },
-      { wch: 16 }, { wch: 28 }, { wch: 18 },
+      { wch: 10 }, { wch: 20 }, { wch: 16 }, { wch: 18 },
+      { wch: 14 }, { wch: 22 }, { wch: 16 }, { wch: 8 },
+      { wch: 20 }, { wch: 24 }, { wch: 16 }, { wch: 28 }, { wch: 18 },
     ]
     XLSX.utils.book_append_sheet(wb, wsFilas, 'Fila de Abordagem')
 
@@ -83,6 +86,10 @@ export async function GET() {
       { 'Indicador': 'Fila de Abordagem',     'Valor': elegiveis.length },
       { 'Indicador': 'Completar Cadastro',    'Valor': filaCompletarCadastro.length },
       { 'Indicador': 'Parceiras Ativas',       'Valor': clientesAtivos.length },
+      { 'Indicador': '', 'Valor': '' },
+      { 'Indicador': '--- QUALIDADE DO CADASTRO ---', 'Valor': '' },
+      { 'Indicador': 'Escolas com alunos cadastrados', 'Valor': totalComAlunosCadastrados },
+      { 'Indicador': 'Escolas sem alunos cadastrados',  'Valor': totalSemAlunosCadastrados },
       { 'Indicador': '', 'Valor': '' },
       { 'Indicador': '--- TOP ESTADOS ---', 'Valor': '' },
       ...distribuicaoPorEstado.map(d => ({ 'Indicador': d.estado, 'Valor': d.count })),

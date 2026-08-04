@@ -198,10 +198,10 @@ function TabelaEscolas({
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ background: '#0F172A' }}>
-            {['#', 'Escola', 'UF / Cidade', 'Alunos', 'Situação Comercial', 'Ações'].map(col => (
+            {['#', 'Escola', 'UF / Cidade', 'Alunos', 'Proposta', 'Situação Comercial', 'Ações'].map(col => (
               <th key={col} style={{
                 padding: col === '#' ? '.7rem .9rem' : '.7rem 1rem',
-                textAlign: col === '#' || col === 'Alunos' ? 'center' : 'left',
+                textAlign: col === '#' || col === 'Alunos' || col === 'Proposta' ? 'center' : 'left',
                 fontSize: '.62rem', fontWeight: 700,
                 textTransform: 'uppercase', letterSpacing: '.1em',
                 color: 'rgba(255,255,255,.55)',
@@ -215,7 +215,7 @@ function TabelaEscolas({
         <tbody>
           {escolas.length === 0 && (
             <tr>
-              <td colSpan={6} style={{
+              <td colSpan={7} style={{
                 padding: '2.5rem', textAlign: 'center',
                 color: '#94A3B8', fontSize: '.85rem',
                 fontFamily: 'var(--font-inter, sans-serif)',
@@ -308,33 +308,58 @@ function TabelaEscolas({
 
               {/* Alunos */}
               <td style={{ padding: '.65rem 1rem', textAlign: 'center' }}>
-                <div style={{
+                <div title={escola.alunosEstimado ? 'Estimativa da pesquisa comercial — ainda não confirmada no cadastro' : undefined} style={{
                   display: 'inline-flex', alignItems: 'center', gap: '.3rem',
-                  background: escola.total_alunos >= 500
+                  background: escola.alunosEfetivo >= 500
                     ? 'linear-gradient(135deg, #EFF6FF, #DBEAFE)'
-                    : escola.total_alunos >= 200
+                    : escola.alunosEfetivo >= 200
                     ? '#F0FDF4'
                     : '#FAFAFA',
-                  border: escola.total_alunos >= 500
+                  border: escola.alunosEstimado
+                    ? '1px dashed #C4B5FD'
+                    : escola.alunosEfetivo >= 500
                     ? '1px solid #BFDBFE'
-                    : escola.total_alunos >= 200
+                    : escola.alunosEfetivo >= 200
                     ? '1px solid #BBF7D0'
                     : '1px solid #E2E8F0',
                   borderRadius: 8, padding: '3px 8px',
                 }}>
                   <GraduationCap size={11} style={{
-                    color: escola.total_alunos >= 500 ? '#1D4ED8'
-                      : escola.total_alunos >= 200 ? '#15803D' : '#94A3B8',
+                    color: escola.alunosEstimado ? '#7C3AED'
+                      : escola.alunosEfetivo >= 500 ? '#1D4ED8'
+                      : escola.alunosEfetivo >= 200 ? '#15803D' : '#94A3B8',
                   }} />
                   <span style={{
                     fontSize: '.75rem', fontWeight: 700,
-                    color: escola.total_alunos >= 500 ? '#1D4ED8'
-                      : escola.total_alunos >= 200 ? '#15803D' : '#64748B',
+                    color: escola.alunosEstimado ? '#7C3AED'
+                      : escola.alunosEfetivo >= 500 ? '#1D4ED8'
+                      : escola.alunosEfetivo >= 200 ? '#15803D' : '#64748B',
                     fontFamily: 'var(--font-montserrat, sans-serif)',
                   }}>
-                    {escola.total_alunos.toLocaleString('pt-BR')}
+                    {escola.alunosEstimado && '~'}{escola.alunosEfetivo.toLocaleString('pt-BR')}
                   </span>
                 </div>
+              </td>
+
+              {/* Proposta */}
+              <td style={{ padding: '.65rem 1rem', textAlign: 'center' }}>
+                {escola.propostaEnviada ? (
+                  <span title="Já existe proposta gerada para esta escola" style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '.25rem',
+                    fontSize: '.65rem', fontWeight: 700,
+                    background: '#F0FDF4', color: '#15803D',
+                    border: '1px solid #BBF7D0',
+                    padding: '2px 8px', borderRadius: 99,
+                    fontFamily: 'var(--font-montserrat, sans-serif)',
+                  }}>
+                    <CheckCircle2 size={11} /> Enviada
+                  </span>
+                ) : (
+                  <span style={{
+                    fontSize: '.65rem', color: '#CBD5E1',
+                    fontFamily: 'var(--font-inter, sans-serif)',
+                  }}>—</span>
+                )}
               </td>
 
               {/* Estágio */}
@@ -419,6 +444,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
     elegiveis, filaCompletarCadastro, clientesAtivos, acaoUrgente,
     distribuicaoPorEstado, distribuicaoPorEstagio, distribuicaoPorPerfil,
     distribuicaoPorConfessionalidade, totalRespostasPesquisa,
+    totalComAlunosCadastrados, totalSemAlunosCadastrados,
   } = await getFilaPriorizacao()
 
   // Lista de UFs para filtro (sempre a partir da fila completa, sem filtros aplicados)
@@ -526,7 +552,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
         <KpiCard
           label="Completar Cadastro"
           value={filaCompletarCadastro.length}
-          sub="Sem dados de porte (total_alunos = 0)"
+          sub={`Sem porte no cadastro (${totalSemAlunosCadastrados} de ${totalComAlunosCadastrados + totalSemAlunosCadastrados}) — algumas com estimativa da pesquisa`}
           icon={Building2}
           cor="#F59E0B"
         />
