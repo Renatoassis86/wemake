@@ -1,6 +1,8 @@
 import { getFilaPriorizacao, bucketConfessionalidade } from '@/lib/priorizacao'
+import { normalizarNomeEscola } from '@/lib/utils'
 import Link from 'next/link'
 import { PriorizacaoSearch } from './PriorizacaoSearch'
+import { EstagioSelect } from './EstagioSelect'
 import { DeleteEscolaBtn } from '@/components/comercial/DeleteEscolaBtn'
 import {
   AlertTriangle, CheckCircle2, Users, Building2,
@@ -24,58 +26,6 @@ const CONFESS_CORES: Record<string, { bg: string; text: string; border: string }
 }
 
 // ─── Helpers de estilo ────────────────────────────────────────────────────────
-
-const STAGE_CORES: Record<string, { bg: string; text: string; border: string }> = {
-  prospeccao:   { bg: '#EFF6FF', text: '#1D4ED8', border: '#BFDBFE' },
-  qualificacao: { bg: '#F0FDF4', text: '#15803D', border: '#BBF7D0' },
-  apresentacao: { bg: '#FFF7ED', text: '#C2410C', border: '#FED7AA' },
-  proposta:     { bg: '#FDF4FF', text: '#7E22CE', border: '#E9D5FF' },
-  negociacao:   { bg: '#FFFBEB', text: '#B45309', border: '#FDE68A' },
-  fechamento:   { bg: '#FEF2F2', text: '#B91C1C', border: '#FECACA' },
-  ganho:        { bg: '#F0FDF4', text: '#166534', border: '#86EFAC' },
-  perdido:      { bg: '#F8FAFC', text: '#64748B', border: '#CBD5E1' },
-}
-
-const STAGE_LABELS: Record<string, string> = {
-  prospeccao:   'Prospecção',
-  qualificacao: 'Qualificação',
-  apresentacao: 'Apresentação',
-  proposta:     'Proposta',
-  negociacao:   'Negociação',
-  fechamento:   'Fechamento ⚡',
-  ganho:        'Ganho',
-  perdido:      'Perdido',
-}
-
-function StageBadge({ stage }: { stage: string | null }) {
-  if (!stage) return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center',
-      padding: '2px 8px', borderRadius: 99,
-      fontSize: '.65rem', fontWeight: 600,
-      background: '#F8FAFC', color: '#94A3B8',
-      border: '1px solid #E2E8F0',
-      fontFamily: 'var(--font-montserrat, sans-serif)',
-      letterSpacing: '.03em',
-    }}>
-      Nunca contatada
-    </span>
-  )
-  const cor = STAGE_CORES[stage] ?? STAGE_CORES.prospeccao
-  return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center',
-      padding: '2px 8px', borderRadius: 99,
-      fontSize: '.65rem', fontWeight: 700,
-      background: cor.bg, color: cor.text,
-      border: `1px solid ${cor.border}`,
-      fontFamily: 'var(--font-montserrat, sans-serif)',
-      letterSpacing: '.03em',
-    }}>
-      {STAGE_LABELS[stage] ?? stage}
-    </span>
-  )
-}
 
 function KpiCard({
   label, value, sub, icon: Icon, cor, urgente
@@ -326,24 +276,21 @@ function TabelaEscolas({
                 </div>
               </td>
 
-              {/* Perfil */}
-              <td style={{ padding: '.65rem 1rem', maxWidth: 260 }}>
+              {/* Perfil — só a classificação (confessional ou não); satisfação/interesse ficam no cadastro da escola */}
+              <td style={{ padding: '.65rem 1rem' }}>
                 {escola.perfilPesquisa?.confessionalidade ? (() => {
                   const bucket = bucketConfessionalidade(escola.perfilPesquisa.confessionalidade)
                   const cor = CONFESS_CORES[bucket] ?? CONFESS_CORES['Não considera']
-                  const partes = [
-                    escola.perfilPesquisa.csi && `Satisfação atual: ${escola.perfilPesquisa.csi}`,
-                    escola.perfilPesquisa.interesseSolucao && `Interesse: ${escola.perfilPesquisa.interesseSolucao}`,
-                  ].filter(Boolean)
                   return (
-                    <span style={{
-                      fontSize: '.72rem', color: '#475569',
-                      fontFamily: 'var(--font-inter, sans-serif)',
-                      lineHeight: 1.4,
-                    }}>
-                      <strong style={{ color: cor.text, fontFamily: 'var(--font-montserrat, sans-serif)' }}>{bucket}</strong>
-                      {partes.length > 0 && ` | ${partes.join(' | ')}`}
-                    </span>
+                    <span title={escola.perfilPesquisa.confessionalidade} style={{
+                      display: 'inline-flex', alignItems: 'center',
+                      fontSize: '.68rem', fontWeight: 700,
+                      background: cor.bg, color: cor.text,
+                      border: `1px solid ${cor.border}`,
+                      padding: '3px 10px', borderRadius: 99,
+                      fontFamily: 'var(--font-montserrat, sans-serif)',
+                      whiteSpace: 'nowrap',
+                    }}>{bucket}</span>
                   )
                 })() : (
                   <span style={{ fontSize: '.72rem', color: '#CBD5E1', fontFamily: 'var(--font-inter, sans-serif)' }}>—</span>
@@ -373,7 +320,11 @@ function TabelaEscolas({
 
               {/* Estágio */}
               <td style={{ padding: '.65rem 1rem' }}>
-                <StageBadge stage={escola.negociacao_stage} />
+                <EstagioSelect
+                  escolaId={escola.id}
+                  negociacaoId={escola.negociacao_id}
+                  stage={escola.negociacao_stage}
+                />
               </td>
 
               {/* Ações */}
@@ -473,6 +424,29 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
   const totalPages = Math.max(1, Math.ceil(elegiveisFiltrados.length / PER_PAGE))
   const pageAtual = Math.min(page, totalPages)
   const elegiveisPaginados = elegiveisFiltrados.slice((pageAtual - 1) * PER_PAGE, pageAtual * PER_PAGE)
+
+  // Distribuição por cidade — só faz sentido depois de escolher um estado.
+  // Agrupa por nome normalizado (evita "São Paulo" x "Sao Paulo" x "sao paulo" como cidades distintas)
+  // e usa a grafia mais frequente encontrada como rótulo de exibição.
+  const distribuicaoPorCidade = ufAtivo ? (() => {
+    const contagem = new Map<string, number>()
+    const grafias = new Map<string, Map<string, number>>()
+    for (const e of elegiveisFiltrados) {
+      const bruto = (e.cidade ?? '').trim() || 'Cidade não informada'
+      const key = normalizarNomeEscola(bruto) || 'nao_informada'
+      contagem.set(key, (contagem.get(key) ?? 0) + 1)
+      const porGrafia = grafias.get(key) ?? new Map<string, number>()
+      porGrafia.set(bruto, (porGrafia.get(bruto) ?? 0) + 1)
+      grafias.set(key, porGrafia)
+    }
+    return [...contagem.entries()]
+      .map(([key, count]) => {
+        const porGrafia = grafias.get(key)!
+        const label = [...porGrafia.entries()].sort((a, b) => b[1] - a[1])[0][0]
+        return { label, count }
+      })
+      .sort((a, b) => b.count - a.count)
+  })() : []
 
   // Preserva os filtros ativos ao trocar de UF/página/perfil
   const buildHref = (overrides: Record<string, string>) => {
@@ -652,6 +626,17 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
         </div>
       )}
 
+      {/* ── Mapa por Cidade — aparece ao escolher um estado ──────────────── */}
+      {ufAtivo && distribuicaoPorCidade.length > 0 && (
+        <div style={{ marginBottom: '1.75rem' }}>
+          <MiniBarChart
+            title={`Escolas por Cidade — ${ufAtivo} (${distribuicaoPorCidade.length} cidades)`}
+            data={distribuicaoPorCidade}
+            colorHex="#4A7FDB"
+          />
+        </div>
+      )}
+
       {/* ── Tabela Principal ──────────────────────────────────────────────── */}
       <div style={{
         background: 'white',
@@ -767,7 +752,11 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
                         </span>
                       </td>
                       <td style={{ padding: '.6rem 1rem' }}>
-                        <StageBadge stage={escola.negociacao_stage} />
+                        <EstagioSelect
+                          escolaId={escola.id}
+                          negociacaoId={escola.negociacao_id}
+                          stage={escola.negociacao_stage}
+                        />
                       </td>
                       <td style={{ padding: '.6rem 1rem' }}>
                         <div style={{ display: 'flex', gap: '.4rem' }}>

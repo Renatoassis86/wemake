@@ -484,6 +484,49 @@ export async function updateStageNegociacao(
 }
 
 /**
+ * Define o estágio comercial de uma escola direto pela Fila de Priorização —
+ * cria a negociação se a escola ainda não tiver uma, ou atualiza a existente.
+ * Não redireciona. Pensada para o seletor rápido de estágio na tabela do ranking.
+ */
+export async function definirEstagioFila(
+  escolaId: string,
+  negociacaoId: string | null,
+  stage: StageNegociacao
+): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado' }
+
+  if (negociacaoId) {
+    const result = await updateStageNegociacao(negociacaoId, stage)
+    if (!result.success) return result
+    revalidatePath('/comercial/priorizacao')
+    return result
+  }
+
+  const { data, error } = await supabase
+    .from('negociacoes')
+    .insert({
+      escola_id: escolaId,
+      stage,
+      responsavel_id: user.id,
+      probabilidade: 0,
+      ativa: stage !== 'ganho' && stage !== 'perdido',
+      created_by: user.id,
+    })
+    .select('id')
+    .single()
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/comercial/priorizacao')
+  revalidatePath(`/comercial/escolas/${escolaId}`)
+  revalidatePath('/comercial/pipeline')
+
+  return { success: true, id: data.id }
+}
+
+/**
  * Deleta uma negociação (apenas gerente/supervisor ou dono).
  * Retorna ActionResult.
  */

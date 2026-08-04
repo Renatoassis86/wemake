@@ -261,12 +261,12 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
     }))
     .sort((a, b) => b.count - a.count)
 
-  // Distribuição por confessionalidade — resposta real da pesquisa comercial (leads_perfil_escola)
+  // Distribuição por confessionalidade — resposta LITERAL do questionário (sem agrupar),
+  // para bater exatamente com as opções que a escola viu na pesquisa.
   const confessMap = new Map<string, number>()
   for (const p of perfis) {
     if (!p.confessionalidade) continue
-    const bucket = bucketConfessionalidade(p.confessionalidade)
-    confessMap.set(bucket, (confessMap.get(bucket) ?? 0) + 1)
+    confessMap.set(p.confessionalidade, (confessMap.get(p.confessionalidade) ?? 0) + 1)
   }
   const distribuicaoPorConfessionalidade = [...confessMap.entries()]
     .map(([valor, count]) => ({ valor, count }))
