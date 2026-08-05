@@ -74,10 +74,11 @@ const STAGE_LABELS: Record<StageNegociacao, string> = {
 
 export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
   const supabase = await createClient()
-  // leads_escola e leads_perfil_escola não têm policy de SELECT para o role
-  // authenticated (confirmado: também bloqueadas para anon) — usa a service role
-  // para essas duas, mesmo padrão já usado no projeto para tabelas de leads
-  // (ver upsertEscola/enviarFormularioPublico em actions.ts).
+  // negociacoes, contratos, leads_escola e leads_perfil_escola não têm policy de SELECT
+  // para o role authenticated (confirmado direto: bloqueadas também para anon) — usa a
+  // service role para essas quatro, mesmo padrão já usado no projeto para tabelas de leads
+  // (ver upsertEscola/enviarFormularioPublico em actions.ts). escolas_resumo e propostas
+  // continuam no client normal pois já têm policy de leitura liberada.
   const admin = createAdminClient()
 
   // Busca paralela: escolas ativas + todas as negociações (inclusive inativas — o histórico
@@ -90,11 +91,11 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
       .eq('ativa', true)
       .order('total_alunos', { ascending: false }),
 
-    supabase
+    admin
       .from('negociacoes')
       .select('id, escola_id, stage, ativa'),
 
-    supabase
+    admin
       .from('contratos')
       .select('escola_id, contrato_assinado, contrato_enviado'),
 
