@@ -144,8 +144,8 @@ function TabelaEscolas({
   escolas: (Awaited<ReturnType<typeof getFilaPriorizacao>>['elegiveis'][number] & { rank: number })[]
 }) {
   return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+    <div className="mp-prioriz-table-wrap" style={{ overflowX: 'auto' }}>
+      <table className="mp-prioriz-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ background: '#0F172A' }}>
             {['#', 'Escola', 'UF / Cidade', 'Alunos', 'Perfil', 'Proposta', 'Situação Comercial', 'Ações'].map(col => (
@@ -196,7 +196,7 @@ function TabelaEscolas({
               </td>
 
               {/* Escola */}
-              <td style={{ padding: '.65rem 1rem', maxWidth: 280 }}>
+              <td data-label="Escola" style={{ padding: '.65rem 1rem', maxWidth: 280 }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <Link href={`/comercial/escolas/${escola.id}`} style={{
                     fontSize: '.82rem', fontWeight: 700, color: '#0F172A',
@@ -228,7 +228,7 @@ function TabelaEscolas({
               </td>
 
               {/* UF / Cidade */}
-              <td style={{ padding: '.65rem 1rem' }}>
+              <td data-label="UF / Cidade" style={{ padding: '.65rem 1rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '.3rem' }}>
                   <MapPin size={11} style={{ color: '#94A3B8', flexShrink: 0 }} />
                   <span style={{
@@ -242,7 +242,7 @@ function TabelaEscolas({
               </td>
 
               {/* Alunos */}
-              <td style={{ padding: '.65rem 1rem', textAlign: 'center' }}>
+              <td data-label="Alunos" style={{ padding: '.65rem 1rem', textAlign: 'center' }}>
                 <div title={escola.alunosEstimado ? 'Estimativa da pesquisa comercial — ainda não confirmada no cadastro' : undefined} style={{
                   display: 'inline-flex', alignItems: 'center', gap: '.3rem',
                   background: escola.alunosEfetivo >= 500
@@ -277,7 +277,7 @@ function TabelaEscolas({
               </td>
 
               {/* Perfil — só a classificação (confessional ou não); satisfação/interesse ficam no cadastro da escola */}
-              <td style={{ padding: '.65rem 1rem' }}>
+              <td data-label="Perfil" style={{ padding: '.65rem 1rem' }}>
                 {escola.perfilPesquisa?.confessionalidade ? (() => {
                   const bucket = bucketConfessionalidade(escola.perfilPesquisa.confessionalidade)
                   const cor = CONFESS_CORES[bucket] ?? CONFESS_CORES['Não considera']
@@ -298,7 +298,7 @@ function TabelaEscolas({
               </td>
 
               {/* Proposta */}
-              <td style={{ padding: '.65rem 1rem', textAlign: 'center' }}>
+              <td data-label="Proposta" style={{ padding: '.65rem 1rem', textAlign: 'center' }}>
                 {escola.propostaEnviada ? (
                   <span title="Já existe proposta gerada para esta escola" style={{
                     display: 'inline-flex', alignItems: 'center', gap: '.25rem',
@@ -319,7 +319,7 @@ function TabelaEscolas({
               </td>
 
               {/* Estágio */}
-              <td style={{ padding: '.65rem 1rem' }}>
+              <td data-label="Situação Comercial" style={{ padding: '.65rem 1rem' }}>
                 <EstagioSelect
                   escolaId={escola.id}
                   negociacaoId={escola.negociacao_id}
@@ -328,7 +328,7 @@ function TabelaEscolas({
               </td>
 
               {/* Ações */}
-              <td style={{ padding: '.65rem 1rem' }}>
+              <td data-label="Ações" style={{ padding: '.65rem 1rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}>
                   {/* Registrar interação */}
                   <Link
@@ -457,7 +457,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
   }
 
   return (
-    <div style={{ padding: '2rem', maxWidth: 1400, margin: '0 auto' }}>
+    <div className="mp-page-padding-x" style={{ padding: '2rem', maxWidth: 1400, margin: '0 auto', boxSizing: 'border-box' }}>
 
       {/* ── Cabeçalho ─────────────────────────────────────────────────────── */}
       <div style={{
@@ -713,8 +713,8 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
             borderRadius: 14, overflow: 'hidden',
             boxShadow: '0 1px 4px rgba(0,0,0,.04)',
           }}>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div className="mp-prioriz-table-wrap" style={{ overflowX: 'auto' }}>
+              <table className="mp-prioriz-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ background: '#92400E' }}>
                     {['Escola', 'UF / Cidade', 'Situação Comercial', 'Ações'].map(col => (
@@ -734,7 +734,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
                       background: idx % 2 === 0 ? 'white' : '#FFFBEB',
                       borderBottom: '1px solid #FEF3C7',
                     }}>
-                      <td style={{ padding: '.6rem 1rem' }}>
+                      <td data-label="Escola" style={{ padding: '.6rem 1rem' }}>
                         <Link href={`/comercial/escolas/${escola.id}`} style={{
                           fontSize: '.82rem', fontWeight: 600, color: '#0F172A',
                           textDecoration: 'none',
@@ -743,7 +743,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
                           {escola.nome}
                         </Link>
                       </td>
-                      <td style={{ padding: '.6rem 1rem' }}>
+                      <td data-label="UF / Cidade" style={{ padding: '.6rem 1rem' }}>
                         <span style={{
                           fontSize: '.75rem', color: '#64748B',
                           fontFamily: 'var(--font-inter, sans-serif)',
@@ -751,14 +751,14 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
                           {[escola.cidade, escola.estado].filter(Boolean).join(' — ') || '—'}
                         </span>
                       </td>
-                      <td style={{ padding: '.6rem 1rem' }}>
+                      <td data-label="Situação Comercial" style={{ padding: '.6rem 1rem' }}>
                         <EstagioSelect
                           escolaId={escola.id}
                           negociacaoId={escola.negociacao_id}
                           stage={escola.negociacao_stage}
                         />
                       </td>
-                      <td style={{ padding: '.6rem 1rem' }}>
+                      <td data-label="Ações" style={{ padding: '.6rem 1rem' }}>
                         <div style={{ display: 'flex', gap: '.4rem' }}>
                           <Link
                             href={`/comercial/escolas/${escola.id}/editar`}
@@ -811,8 +811,8 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
             borderRadius: 14, overflow: 'hidden',
             boxShadow: '0 1px 4px rgba(0,0,0,.04)',
           }}>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div className="mp-prioriz-table-wrap" style={{ overflowX: 'auto' }}>
+              <table className="mp-prioriz-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ background: '#065F46' }}>
                     {['Escola', 'UF / Cidade', 'Alunos', 'Ações'].map(col => (
@@ -832,7 +832,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
                       background: idx % 2 === 0 ? 'white' : '#F0FDF4',
                       borderBottom: '1px solid #D1FAE5',
                     }}>
-                      <td style={{ padding: '.6rem 1rem' }}>
+                      <td data-label="Escola" style={{ padding: '.6rem 1rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
                           <CheckCircle2 size={14} style={{ color: '#10B981', flexShrink: 0 }} />
                           <Link href={`/comercial/escolas/${escola.id}`} style={{
@@ -844,7 +844,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
                           </Link>
                         </div>
                       </td>
-                      <td style={{ padding: '.6rem 1rem' }}>
+                      <td data-label="UF / Cidade" style={{ padding: '.6rem 1rem' }}>
                         <span style={{
                           fontSize: '.75rem', color: '#64748B',
                           fontFamily: 'var(--font-inter, sans-serif)',
@@ -852,7 +852,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
                           {[escola.cidade, escola.estado].filter(Boolean).join(' — ') || '—'}
                         </span>
                       </td>
-                      <td style={{ padding: '.6rem 1rem' }}>
+                      <td data-label="Alunos" style={{ padding: '.6rem 1rem' }}>
                         <span style={{
                           fontSize: '.75rem', fontWeight: 700, color: '#065F46',
                           fontFamily: 'var(--font-montserrat, sans-serif)',
@@ -860,7 +860,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
                           {escola.total_alunos.toLocaleString('pt-BR')}
                         </span>
                       </td>
-                      <td style={{ padding: '.6rem 1rem' }}>
+                      <td data-label="Ações" style={{ padding: '.6rem 1rem' }}>
                         <Link
                           href={`/comercial/escolas/${escola.id}`}
                           style={{

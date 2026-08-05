@@ -1038,6 +1038,37 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
     border: none !important;
   }
   .mp-escolas-table-wrap { overflow-x: visible !important; }
+
+  /* Tabelas da Gestão de Priorização viram cards, com rótulo por campo */
+  .mp-prioriz-table thead { display: none !important; }
+  .mp-prioriz-table,
+  .mp-prioriz-table tbody,
+  .mp-prioriz-table tr,
+  .mp-prioriz-table td {
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+  }
+  .mp-prioriz-table tr {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+    margin-bottom: .65rem !important;
+    padding: .75rem !important;
+  }
+  .mp-prioriz-table td {
+    padding: .4rem 0 !important;
+    border: none !important;
+  }
+  .mp-prioriz-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-size: .6rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .06em; color: #94a3b8; margin-bottom: .25rem;
+    font-family: var(--font-montserrat, sans-serif);
+  }
+  .mp-prioriz-table-wrap { overflow-x: visible !important; }
 }
 
 /* ── Escola detail: hero + grid ───────────────────────────── */

@@ -54,7 +54,7 @@ export default async function EscolaEditar({ params }: Props) {
   return (
     <div>
       <PageHeader title={`Editar: ${e.nome}`} />
-      <div className="p-6 max-w-4xl">
+      <div className="p-6 mp-page-padding-x" style={{ maxWidth: 1400, margin: '0 auto', boxSizing: 'border-box' }}>
         <div className="breadcrumb mb-4">
           <Link href="/comercial/escolas">Escolas</Link>
           <span className="breadcrumb-sep">/</span>
@@ -69,7 +69,7 @@ export default async function EscolaEditar({ params }: Props) {
           <div className="card mb-4">
             <div className="card-header"><span className="card-title">Identificação</span></div>
             <div className="card-body">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
                 <div>
                   <label className="form-label">Nome da Escola *</label>
                   <input name="nome" className="form-control" defaultValue={e.nome} required />
@@ -92,7 +92,7 @@ export default async function EscolaEditar({ params }: Props) {
           <div className="card mb-4">
             <div className="card-header"><span className="card-title">Endereço</span></div>
             <div className="card-body">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                 <div style={{ gridColumn: 'span 2' }}>
                   <label className="form-label">Rua</label>
                   <input name="rua" className="form-control" defaultValue={e.rua ?? ''} />
@@ -128,7 +128,7 @@ export default async function EscolaEditar({ params }: Props) {
           <div className="card mb-4">
             <div className="card-header"><span className="card-title">Contato</span></div>
             <div className="card-body">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                 <div><label className="form-label">Telefone</label><input name="telefone" className="form-control" defaultValue={e.telefone ?? ''} /></div>
                 <div><label className="form-label">E-mail</label><input name="email" type="email" className="form-control" defaultValue={e.email ?? ''} /></div>
                 <div><label className="form-label">Site</label><input name="site" className="form-control" defaultValue={e.site ?? ''} /></div>
@@ -148,7 +148,7 @@ export default async function EscolaEditar({ params }: Props) {
           <div className="card mb-4">
             <div className="card-header"><span className="card-title">Quantidade de Alunos por Segmento</span></div>
             <div className="card-body">
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
                 
                 {/* Infantil */}
                 <div style={{ background: '#fff7ed', border: '1.5px solid #fed7aa', borderRadius: 12, padding: '1rem' }}>
@@ -243,7 +243,7 @@ export default async function EscolaEditar({ params }: Props) {
           <div className="card mb-6">
             <div className="card-header"><span className="card-title">Gestão Comercial</span></div>
             <div className="card-body">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
                 <div>
                   <label className="form-label">Origem do Lead</label>
                   <select name="origem_lead" className="form-control" defaultValue={e.origem_lead ?? ''}>
