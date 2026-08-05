@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Eye, EyeOff, ArrowRight, ArrowLeft, ClipboardList, Phone, Mail, MessageCircle, FileText } from 'lucide-react'
@@ -16,19 +16,7 @@ export default function LoginPage() {
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading]   = useState(false)
   const [error, setError]       = useState('')
-  const [currentVideo, setCurrentVideo] = useState(0)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
-  const videos = ['hero.mp4', 'hero1.mp4', 'hero2.mp4']
-
-  // Auto-rotate videos com fade suave
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentVideo((prev) => (prev + 1) % videos.length)
-    }, 8000) // Troca a cada 8 segundos, antes do texto aparecer
-
-    return () => clearInterval(timer)
-  }, [])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -176,33 +164,15 @@ export default function LoginPage() {
         overflow: 'hidden',
       }}>
 
-        {/* Vídeos em rotação com fade */}
+        {/* Imagem de fundo do hero */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-          {videos.map((video, idx) => (
-            <video
-              key={idx}
-              autoPlay={idx === currentVideo}
-              muted
-              playsInline
-              style={{
-                position: 'absolute',
-                inset: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                zIndex: 0,
-                opacity: idx === currentVideo ? 1 : 0,
-                transition: 'opacity 1.5s ease-in-out',
-              }}
-              onEnded={() => {
-                if (idx === currentVideo) {
-                  setCurrentVideo((prev) => (prev + 1) % videos.length)
-                }
-              }}
-            >
-              <source src={`/videos/${video}`} type="video/mp4" />
-            </video>
-          ))}
+          <Image
+            src="/images/hero-login.png"
+            alt=""
+            fill
+            priority
+            style={{ objectFit: 'cover' }}
+          />
         </div>
 
         {/* Máscara superior para cortar textos */}
