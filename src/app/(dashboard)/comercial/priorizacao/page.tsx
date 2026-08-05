@@ -89,11 +89,12 @@ function KpiCard({
 // ─── Mini bar chart (sem recharts — SSR seguro) ───────────────────────────────
 
 function MiniBarChart({
-  title, data, colorHex
+  title, data, colorHex, labelWidth = 84
 }: {
   title: string
-  data: { label: string; count: number }[]
+  data: { label: string; count: number; full?: string }[]
   colorHex: string
+  labelWidth?: number
 }) {
   if (data.length === 0) return null
   const max = Math.max(...data.map(d => d.count), 1)
@@ -108,13 +109,13 @@ function MiniBarChart({
         letterSpacing: '.08em', color: '#64748B', marginBottom: '1rem',
         fontFamily: 'var(--font-montserrat, sans-serif)',
       }}>{title}</div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '.55rem' }}>
-        {data.map(({ label, count }) => (
-          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-            <div style={{
-              width: 84, fontSize: '.65rem', fontWeight: 700, color: '#475569',
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '.6rem' }}>
+        {data.map(({ label, count, full }) => (
+          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '.9rem' }}>
+            <div title={full && full !== label ? full : undefined} style={{
+              width: labelWidth, fontSize: '.7rem', fontWeight: 700, color: '#475569',
               fontFamily: 'var(--font-montserrat, sans-serif)', flexShrink: 0, textAlign: 'right',
-              lineHeight: 1.2,
+              lineHeight: 1.35,
             }}>{label}</div>
             <div style={{ flex: 1, height: 8, background: '#F1F5F9', borderRadius: 99, overflow: 'hidden' }}>
               <div style={{
@@ -126,7 +127,7 @@ function MiniBarChart({
               }} />
             </div>
             <div style={{
-              width: 24, fontSize: '.65rem', fontWeight: 700, color: '#475569',
+              width: 28, fontSize: '.68rem', fontWeight: 700, color: '#475569',
               fontFamily: 'var(--font-montserrat, sans-serif)', flexShrink: 0,
             }}>{count}</div>
           </div>
@@ -134,6 +135,15 @@ function MiniBarChart({
       </div>
     </div>
   )
+}
+
+// Encurta as respostas mais longas do questionário de confessionalidade, sem perder o
+// sentido — o texto completo continua acessível pelo tooltip (title) no gráfico.
+const RESUMOS_CONFESSIONALIDADE: Record<string, string> = {
+  'Somos uma escola cristã confessional (já estruturada como confessional)': 'Já estruturada como confessional',
+  'Temos interesse em avaliar essa possibilidade (ainda em estudo)': 'Interesse em avaliar (em estudo)',
+  'Não é uma direção considerada pela escola neste momento': 'Não é uma direção considerada',
+  'Estamos em transição para nos tornarmos uma escola cristã confessional': 'Em transição para confessional',
 }
 
 // ─── Tabela de Escolas ─────────────────────────────────────────────────────────
@@ -148,7 +158,7 @@ function TabelaEscolas({
       <table className="mp-prioriz-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ background: '#0F172A' }}>
-            {['#', 'Escola', 'UF / Cidade', 'Alunos', 'Perfil', 'Proposta', 'Situação Comercial', 'Ações'].map(col => (
+            {['#', 'Escola', 'UF / Cidade', 'Alunos', 'PIB Município', 'Perfil', 'Proposta', 'Situação Comercial', 'Ações'].map(col => (
               <th key={col} style={{
                 padding: col === '#' ? '.7rem .9rem' : '.7rem 1rem',
                 textAlign: col === '#' || col === 'Alunos' || col === 'Proposta' ? 'center' : 'left',
@@ -165,7 +175,7 @@ function TabelaEscolas({
         <tbody>
           {escolas.length === 0 && (
             <tr>
-              <td colSpan={8} style={{
+              <td colSpan={9} style={{
                 padding: '2.5rem', textAlign: 'center',
                 color: '#94A3B8', fontSize: '.85rem',
                 fontFamily: 'var(--font-inter, sans-serif)',
@@ -274,6 +284,31 @@ function TabelaEscolas({
                     {escola.alunosEstimado && '~'}{escola.alunosEfetivo.toLocaleString('pt-BR')}
                   </span>
                 </div>
+              </td>
+
+              {/* PIB Município — renda per capita e peso econômico do município (IBGE) */}
+              <td data-label="PIB Município" style={{ padding: '.65rem 1rem' }}>
+                {escola.pibInfo ? (
+                  <div title={`PIB per capita: R$ ${escola.pibInfo.pibPerCapita.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} — ${escola.pibInfo.pctPibEstado.toLocaleString('pt-BR')}% do PIB de ${escola.pibInfo.uf} — ${escola.pibInfo.posicaoNoEstado}º maior PIB entre as ${escola.pibInfo.totalCidadesNoEstado} cidades mapeadas no estado`} style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <span style={{
+                      fontSize: '.78rem', fontWeight: 800, color: '#0F172A',
+                      fontFamily: 'var(--font-montserrat, sans-serif)',
+                    }}>
+                      R$ {Math.round(escola.pibInfo.pibPerCapita).toLocaleString('pt-BR')}
+                    </span>
+                    <span style={{ fontSize: '.62rem', color: '#94A3B8', fontFamily: 'var(--font-inter, sans-serif)' }}>
+                      por hab./ano
+                    </span>
+                    <span style={{ fontSize: '.64rem', color: '#7C3AED', fontWeight: 600, fontFamily: 'var(--font-inter, sans-serif)' }}>
+                      {escola.pibInfo.pctPibEstado.toLocaleString('pt-BR')}% do PIB do estado
+                    </span>
+                    <span style={{ fontSize: '.62rem', color: '#94A3B8', fontFamily: 'var(--font-inter, sans-serif)' }}>
+                      {escola.pibInfo.posicaoNoEstado}º no estado ({escola.pibInfo.totalCidadesNoEstado} mapeadas)
+                    </span>
+                  </div>
+                ) : (
+                  <span style={{ fontSize: '.72rem', color: '#CBD5E1', fontFamily: 'var(--font-inter, sans-serif)' }}>—</span>
+                )}
               </td>
 
               {/* Perfil — só a classificação (confessional ou não); satisfação/interesse ficam no cadastro da escola */}
@@ -554,7 +589,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           gap: '1rem',
-          marginBottom: '1.75rem',
+          marginBottom: '1rem',
         }}>
           <MiniBarChart
             title="Top 10 Estados — Fila de Abordagem"
@@ -563,24 +598,31 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
           />
           <MiniBarChart
             title="Escolas por Estágio no Funil"
-            data={distribuicaoPorEstagio.map(d => ({ label: d.label, count: d.count }))}
+            data={distribuicaoPorEstagio.map(d => ({ label: d.label, full: d.detalhe, count: d.count }))}
             colorHex="#5FE3D0"
+            labelWidth={104}
           />
-          {distribuicaoPorConfessionalidade.length > 0 && (
-            <div>
-              <MiniBarChart
-                title="Confessionalidade Cristã (Pesquisa Comercial)"
-                data={distribuicaoPorConfessionalidade.map(d => ({ label: d.valor, count: d.count }))}
-                colorHex="#7C3AED"
-              />
-              <div style={{
-                fontSize: '.68rem', color: '#94A3B8', marginTop: '.4rem', textAlign: 'right',
-                fontFamily: 'var(--font-inter, sans-serif)',
-              }}>
-                Resposta real de {totalRespostasPesquisa} escolas — as demais ainda não responderam
-              </div>
-            </div>
-          )}
+        </div>
+      )}
+
+      {distribuicaoPorConfessionalidade.length > 0 && (
+        <div style={{ marginBottom: '1.75rem' }}>
+          <MiniBarChart
+            title="Confessionalidade Cristã (Pesquisa Comercial)"
+            data={distribuicaoPorConfessionalidade.map(d => ({
+              label: RESUMOS_CONFESSIONALIDADE[d.valor] ?? d.valor,
+              full: d.valor,
+              count: d.count,
+            }))}
+            colorHex="#7C3AED"
+            labelWidth={220}
+          />
+          <div style={{
+            fontSize: '.68rem', color: '#94A3B8', marginTop: '.4rem', textAlign: 'right',
+            fontFamily: 'var(--font-inter, sans-serif)',
+          }}>
+            Resposta real de {totalRespostasPesquisa} escolas — as demais ainda não responderam
+          </div>
         </div>
       )}
 

@@ -12,6 +12,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { normalizarNomeEscola } from '@/lib/utils'
+import { buscarPibMunicipio, type PibInfo } from '@/lib/pib-municipios'
 import type { EscolaResumo, Negociacao, Contrato, StageNegociacao } from '@/types/database'
 
 // ─── Tipos exportados ─────────────────────────────────────────────────────────
@@ -33,6 +34,7 @@ export interface EscolaFila extends EscolaResumo {
   alunosEfetivo: number      // total_alunos do cadastro; se 0/vazio, cai para a estimativa de leads_escola
   alunosEstimado: boolean    // true quando alunosEfetivo veio da estimativa (cadastro ainda não preenchido)
   propostaEnviada: boolean   // true quando existe registro em `propostas` para esta escola
+  pibInfo: PibInfo | null    // PIB per capita e peso econômico do município (IBGE), quando mapeado
 }
 
 export interface FilaPriorizacaoResult {
@@ -41,7 +43,7 @@ export interface FilaPriorizacaoResult {
   clientesAtivos: EscolaFila[]      // Parceiras ativas (contrato assinado)
   acaoUrgente: number               // Contagem de ações urgentes
   distribuicaoPorEstado: { estado: string; count: number }[]
-  distribuicaoPorEstagio: { stage: string; label: string; count: number }[]
+  distribuicaoPorEstagio: { stage: string; label: string; detalhe?: string; count: number }[]
   distribuicaoPorConfessionalidade: { valor: string; count: number }[]
   totalRespostasPesquisa: number
   totalComAlunosCadastrados: number  // escolas com total_alunos > 0 confirmado no cadastro
@@ -204,6 +206,8 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
 
     const propostaEnviada = propostaPorEscolaId.has(escola.id) || propostaPorNome.has(normalizarNomeEscola(escola.nome))
 
+    const pibInfo = buscarPibMunicipio(escola.cidade, escola.estado)
+
     return {
       ...escola,
       negociacao_stage: negStage,
@@ -215,6 +219,7 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
       alunosEfetivo,
       alunosEstimado,
       propostaEnviada,
+      pibInfo,
     }
   })
 
@@ -248,16 +253,24 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
     .sort((a, b) => b.count - a.count)
     .slice(0, 10)
 
-  // Distribuição por estágio — inclui as escolas sem negociação ativa (funil completo)
+  // Distribuição por estágio — inclui as escolas sem negociação ativa (funil completo).
+  // Uma escola sem registro de negociação mas com proposta já enviada NÃO entra no mesmo
+  // grupo de quem nunca foi contatado: ela ganha um estágio automático "Proposta enviada"
+  // para refletir o avanço real, mesmo que ninguém tenha registrado a negociação no CRM.
   const stagioMap = new Map<string, number>()
   for (const e of elegiveis) {
-    const key = e.negociacao_stage ?? 'sem_negociacao'
+    const key = e.negociacao_stage ?? (e.propostaEnviada ? 'proposta_enviada_auto' : 'nunca_contatada')
     stagioMap.set(key, (stagioMap.get(key) ?? 0) + 1)
   }
   const distribuicaoPorEstagio = [...stagioMap.entries()]
     .map(([stage, count]) => ({
       stage,
-      label: stage === 'sem_negociacao' ? 'Sem negociação ativa' : (STAGE_LABELS[stage as StageNegociacao] ?? stage),
+      label: stage === 'nunca_contatada' ? 'Nunca contatada'
+        : stage === 'proposta_enviada_auto' ? 'Proposta (sem CRM)'
+        : (STAGE_LABELS[stage as StageNegociacao] ?? stage),
+      detalhe: stage === 'proposta_enviada_auto'
+        ? 'Proposta já enviada, mas ainda sem negociação registrada no CRM'
+        : undefined,
       count,
     }))
     .sort((a, b) => b.count - a.count)

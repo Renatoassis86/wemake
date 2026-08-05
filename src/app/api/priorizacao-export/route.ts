@@ -34,6 +34,9 @@ export async function GET() {
       'Cidade': e.cidade ?? '',
       'Alunos': e.alunosEfetivo,
       'Origem do Porte': e.alunosEstimado ? 'Estimativa (pesquisa)' : 'Cadastro confirmado',
+      'PIB per Capita (R$/hab.)': e.pibInfo?.pibPerCapita ?? '',
+      '% do PIB do Estado': e.pibInfo?.pctPibEstado ?? '',
+      'Posição do Município no Estado': e.pibInfo ? `${e.pibInfo.posicaoNoEstado}º de ${e.pibInfo.totalCidadesNoEstado}` : '',
       'Proposta Enviada': e.propostaEnviada ? 'Sim' : 'Não',
       'Situação Comercial': e.negociacao_stage ? (STAGE_LABELS[e.negociacao_stage] ?? e.negociacao_stage) : 'Nunca contatada',
       'Ação Urgente': e.acaoUrgente ? 'Sim' : 'Não',
@@ -49,7 +52,8 @@ export async function GET() {
     const wsFilas = XLSX.utils.json_to_sheet(filaRows)
     wsFilas['!cols'] = [
       { wch: 5 }, { wch: 40 }, { wch: 8 }, { wch: 24 },
-      { wch: 10 }, { wch: 20 }, { wch: 16 }, { wch: 18 },
+      { wch: 10 }, { wch: 20 }, { wch: 16 }, { wch: 14 }, { wch: 20 },
+      { wch: 16 }, { wch: 18 },
       { wch: 14 }, { wch: 22 }, { wch: 16 }, { wch: 8 },
       { wch: 20 }, { wch: 24 }, { wch: 16 }, { wch: 28 }, { wch: 18 },
     ]
