@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import MobileNav from '@/components/mobile/MobileNav'
 import MobileFooter from '@/components/mobile/MobileFooter'
 
@@ -63,40 +63,12 @@ const MODULES = [
 export default function HubLanding() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [videoFading, setVideoFading] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30)
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
-
-  // Loop suave: nos últimos 0.8s do vídeo aplica fade-out, reinicia, e fade-in
-  useEffect(() => {
-    const v = videoRef.current
-    if (!v) return
-    const FADE_WINDOW = 0.8
-
-    function onTimeUpdate() {
-      if (!v || !v.duration || isNaN(v.duration)) return
-      const remaining = v.duration - v.currentTime
-      if (remaining < FADE_WINDOW && !videoFading) {
-        setVideoFading(true)
-      }
-    }
-    function onLoop() {
-      // dispara quando o vídeo reinicia (loop nativo)
-      setVideoFading(false)
-    }
-
-    v.addEventListener('timeupdate', onTimeUpdate)
-    v.addEventListener('seeked', onLoop)
-    return () => {
-      v.removeEventListener('timeupdate', onTimeUpdate)
-      v.removeEventListener('seeked', onLoop)
-    }
-  }, [videoFading])
 
   function scrollToModulos() {
     document.getElementById('modulos')?.scrollIntoView({ behavior: 'smooth' })
@@ -179,29 +151,17 @@ export default function HubLanding() {
         </div>
       </header>
 
-      {/* ══════════ HERO COM VÍDEOS ══════════ */}
+      {/* ══════════ HERO ══════════ */}
       <section style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
-        {/* Vídeo hero em loop com fade suave na virada */}
+        {/* Imagem de fundo do hero */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            loop
-            playsInline
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              zIndex: 0,
-              opacity: videoFading ? 0 : 1,
-              transition: 'opacity 0.8s ease-in-out',
-            }}
-          >
-            <source src="/videos/hero.mp4" type="video/mp4" />
-          </video>
+          <Image
+            src="/images/hero-login.png"
+            alt=""
+            fill
+            priority
+            style={{ objectFit: 'cover' }}
+          />
         </div>
 
         {/* Máscara superior para cortar textos (fade out antes deles aparecerem) */}
