@@ -78,7 +78,7 @@
 
 /* ── Reset ───────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; scroll-behavior: smooth; }
+html { font-size: 16px; scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
   font-family: var(--font-inter, var(--font-montserrat), system-ui, sans-serif);
@@ -88,6 +88,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "kern" 1, "liga" 1;
+  overflow-x: hidden;
 }
 
 /* Tabular numbers para dados/KPIs */
@@ -933,7 +934,11 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
    DASHBOARD MOBILE — added by mobile-premium workstream B
    ============================================================ */
 
-.dashboard-content { margin-left: var(--sidebar-w, 250px); }
+/* min-width:0 é essencial aqui — sem isso, um filho flex com flex:1 nunca encolhe
+   abaixo da largura mínima do conteúdo mais largo dentro dele, e a página inteira
+   passa a vazar ~256px (a largura do menu) pra fora da tela em telas de notebook,
+   forçando rolagem horizontal na página toda mesmo com grids responsivos por dentro. */
+.dashboard-content { margin-left: var(--sidebar-w, 250px); min-width: 0; }
 
 @media (max-width: 900px) {
   .dashboard-content {
