@@ -940,6 +940,11 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
    forçando rolagem horizontal na página toda mesmo com grids responsivos por dentro. */
 .dashboard-content { margin-left: var(--sidebar-w, 250px); min-width: 0; }
 
+/* Mesmo motivo do min-width:0 acima: .mp-page-padding-x é o container raiz de cada
+   página e também é filho flex de .dashboard-content (que usa flex-direction:column) —
+   sem isso ele herda a mesma trava de não encolher abaixo do conteúdo mais largo. */
+.mp-page-padding-x { min-width: 0; }
+
 @media (max-width: 900px) {
   .dashboard-content {
     margin-left: 0 !important;
