@@ -3,7 +3,6 @@ import { normalizarNomeEscola } from '@/lib/utils'
 import Link from 'next/link'
 import { PriorizacaoSearch } from './PriorizacaoSearch'
 import { EstagioSelect } from './EstagioSelect'
-import { ParceiraToggle } from './ParceiraToggle'
 import { DeleteEscolaBtn } from '@/components/comercial/DeleteEscolaBtn'
 import {
   AlertTriangle, CheckCircle2, Users, Building2,
@@ -290,7 +289,7 @@ function TabelaEscolas({
               {/* PIB Município — renda per capita e peso econômico do município (IBGE) */}
               <td data-label="PIB Município" style={{ padding: '.65rem 1rem' }}>
                 {escola.pibInfo ? (
-                  <div title={`PIB per capita: R$ ${escola.pibInfo.pibPerCapita.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} — ${escola.pibInfo.pctPibEstado.toLocaleString('pt-BR')}% do PIB de ${escola.pibInfo.uf} — ${escola.pibInfo.posicaoNoEstado}º maior PIB entre as ${escola.pibInfo.totalCidadesNoEstado} cidades mapeadas no estado`} style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  <div title={`PIB per capita: R$ ${escola.pibInfo.pibPerCapita.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} — ${escola.pibInfo.pctPibEstado.toLocaleString('pt-BR')}% do PIB de ${escola.pibInfo.uf} — ${escola.pibInfo.posicaoNoEstado}º maior PIB per capita entre as ${escola.pibInfo.totalCidadesNoEstado} cidades mapeadas no estado`} style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     <span style={{
                       fontSize: '.78rem', fontWeight: 800, color: '#0F172A',
                       fontFamily: 'var(--font-montserrat, sans-serif)',
@@ -304,7 +303,7 @@ function TabelaEscolas({
                       {escola.pibInfo.pctPibEstado.toLocaleString('pt-BR')}% do PIB do estado
                     </span>
                     <span style={{ fontSize: '.62rem', color: '#94A3B8', fontFamily: 'var(--font-inter, sans-serif)' }}>
-                      {escola.pibInfo.posicaoNoEstado}º no estado ({escola.pibInfo.totalCidadesNoEstado} mapeadas)
+                      {escola.pibInfo.posicaoNoEstado}º per capita no estado ({escola.pibInfo.totalCidadesNoEstado} mapeadas)
                     </span>
                   </div>
                 ) : (
@@ -356,14 +355,12 @@ function TabelaEscolas({
 
               {/* Estágio */}
               <td data-label="Situação Comercial" style={{ padding: '.65rem 1rem' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '.35rem', alignItems: 'flex-start' }}>
-                  <EstagioSelect
-                    escolaId={escola.id}
-                    negociacaoId={escola.negociacao_id}
-                    stage={escola.negociacao_stage}
-                  />
-                  <ParceiraToggle escolaId={escola.id} parceira={escola.contrato_assinado} />
-                </div>
+                <EstagioSelect
+                  escolaId={escola.id}
+                  negociacaoId={escola.negociacao_id}
+                  stage={escola.negociacao_stage}
+                  parceira={escola.contrato_assinado}
+                />
               </td>
 
               {/* Ações */}
@@ -845,14 +842,12 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
                         </span>
                       </td>
                       <td data-label="Situação Comercial" style={{ padding: '.6rem 1rem' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '.35rem', alignItems: 'flex-start' }}>
-                          <EstagioSelect
-                            escolaId={escola.id}
-                            negociacaoId={escola.negociacao_id}
-                            stage={escola.negociacao_stage}
-                          />
-                          <ParceiraToggle escolaId={escola.id} parceira={escola.contrato_assinado} />
-                        </div>
+                        <EstagioSelect
+                          escolaId={escola.id}
+                          negociacaoId={escola.negociacao_id}
+                          stage={escola.negociacao_stage}
+                          parceira={escola.contrato_assinado}
+                        />
                       </td>
                       <td data-label="Ações" style={{ padding: '.6rem 1rem' }}>
                         <div style={{ display: 'flex', gap: '.4rem' }}>

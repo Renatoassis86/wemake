@@ -82,9 +82,9 @@ const PIB_MUNICIPIOS: Record<string, PibMunicipio> = {
   'vitoria|ES': { cidade: 'Vitória', uf: 'ES', pibPerCapita: 85035.67, pctPibEstado: 16.86 },
 }
 
-// Ranking pré-calculado de cada município dentro do seu estado (posição por % do PIB
-// estadual, do maior para o menor) — como % do PIB do estado é proporcional ao PIB total
-// do município, essa ordenação equivale à posição do município na economia do estado.
+// Ranking pré-calculado de cada município dentro do seu estado pela renda per capita
+// (PIB per capita, do maior para o menor) — não pelo peso total do município na
+// economia do estado, que é uma métrica diferente (% do PIB do estado).
 const POSICAO_NO_ESTADO: Record<string, number> = (() => {
   const porEstado = new Map<string, PibMunicipio[]>()
   for (const m of Object.values(PIB_MUNICIPIOS)) {
@@ -94,7 +94,7 @@ const POSICAO_NO_ESTADO: Record<string, number> = (() => {
   }
   const posicoes: Record<string, number> = {}
   for (const [uf, lista] of porEstado) {
-    const ordenada = [...lista].sort((a, b) => b.pctPibEstado - a.pctPibEstado)
+    const ordenada = [...lista].sort((a, b) => b.pibPerCapita - a.pibPerCapita)
     ordenada.forEach((m, i) => {
       posicoes[`${normalizarNomeEscola(m.cidade)}|${uf}`] = i + 1
     })

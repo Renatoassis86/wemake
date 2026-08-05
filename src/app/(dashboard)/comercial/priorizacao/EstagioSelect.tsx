@@ -2,14 +2,17 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { definirEstagioFila } from '@/lib/actions'
+import { definirEstagioFila, marcarComoParceira } from '@/lib/actions'
 import { STAGE_OPTIONS, type StageNegociacao } from '@/types/database'
 
 interface Props {
   escolaId: string
   negociacaoId: string | null
   stage: StageNegociacao | null
+  parceira: boolean
 }
+
+const PARCEIRA = 'parceira' as const
 
 const CORES: Record<string, { bg: string; text: string; border: string }> = {
   '':            { bg: '#F8FAFC', text: '#94A3B8', border: '#E2E8F0' },
@@ -21,22 +24,38 @@ const CORES: Record<string, { bg: string; text: string; border: string }> = {
   fechamento:    { bg: '#FEF2F2', text: '#B91C1C', border: '#FECACA' },
   ganho:         { bg: '#F0FDF4', text: '#166534', border: '#86EFAC' },
   perdido:       { bg: '#F8FAFC', text: '#64748B', border: '#CBD5E1' },
+  [PARCEIRA]:    { bg: '#ECFDF5', text: '#047857', border: '#6EE7B7' },
 }
 
-export function EstagioSelect({ escolaId, negociacaoId, stage }: Props) {
+export function EstagioSelect({ escolaId, negociacaoId, stage, parceira }: Props) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
-  const [valor, setValor] = useState<string>(stage ?? '')
+  const [valor, setValor] = useState<string>(parceira ? PARCEIRA : (stage ?? ''))
 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    const novoStage = e.target.value as StageNegociacao
-    if (!novoStage || novoStage === valor) return
+    const novo = e.target.value
+    if (!novo || novo === valor) return
     const anterior = valor
-    setValor(novoStage)
+    setValor(novo)
     startTransition(async () => {
-      const result = await definirEstagioFila(escolaId, negociacaoId, novoStage)
+      // Selecionar "Parceira" marca o contrato como assinado; sair da Parceira para
+      // outro estágio desmarca, pra não deixar a escola presa em "Parceira" enquanto
+      // o dropdown já mostra outra coisa.
+      if (anterior === PARCEIRA && novo !== PARCEIRA) {
+        const rDesmarcar = await marcarComoParceira(escolaId, false)
+        if (!rDesmarcar.success) {
+          alert(rDesmarcar.error ?? 'Erro ao atualizar')
+          setValor(anterior)
+          return
+        }
+      }
+
+      const result = novo === PARCEIRA
+        ? await marcarComoParceira(escolaId, true)
+        : await definirEstagioFila(escolaId, negociacaoId, novo as StageNegociacao)
+
       if (!result.success) {
-        alert(result.error ?? 'Erro ao atualizar estágio')
+        alert(result.error ?? 'Erro ao atualizar')
         setValor(anterior)
         return
       }
@@ -51,7 +70,7 @@ export function EstagioSelect({ escolaId, negociacaoId, stage }: Props) {
       value={valor}
       onChange={handleChange}
       disabled={pending}
-      title="Alterar estágio comercial"
+      title="Alterar situação comercial"
       style={{
         padding: '3px 8px', borderRadius: 99,
         fontSize: '.65rem', fontWeight: 700,
@@ -69,6 +88,7 @@ export function EstagioSelect({ escolaId, negociacaoId, stage }: Props) {
       {STAGE_OPTIONS.map(o => (
         <option key={o.value} value={o.value}>{o.label}</option>
       ))}
+      <option value={PARCEIRA}>🤝 Parceira</option>
     </select>
   )
 }

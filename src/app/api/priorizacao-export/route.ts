@@ -36,7 +36,7 @@ export async function GET() {
       'Origem do Porte': e.alunosEstimado ? 'Estimativa (pesquisa)' : 'Cadastro confirmado',
       'PIB per Capita (R$/hab.)': e.pibInfo?.pibPerCapita ?? '',
       '% do PIB do Estado': e.pibInfo?.pctPibEstado ?? '',
-      'Posição do Município no Estado': e.pibInfo ? `${e.pibInfo.posicaoNoEstado}º de ${e.pibInfo.totalCidadesNoEstado}` : '',
+      'Posição do PIB per Capita no Estado': e.pibInfo ? `${e.pibInfo.posicaoNoEstado}º de ${e.pibInfo.totalCidadesNoEstado}` : '',
       'Proposta Enviada': e.propostaEnviada ? 'Sim' : 'Não',
       'Situação Comercial': e.negociacao_stage ? (STAGE_LABELS[e.negociacao_stage] ?? e.negociacao_stage) : 'Nunca contatada',
       'Ação Urgente': e.acaoUrgente ? 'Sim' : 'Não',
