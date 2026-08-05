@@ -7,10 +7,11 @@ import { Search, X } from 'lucide-react'
 interface Props {
   q: string
   uf: string
+  cidade?: string
   perfil?: boolean
 }
 
-export function PriorizacaoSearch({ q, uf, perfil }: Props) {
+export function PriorizacaoSearch({ q, uf, cidade, perfil }: Props) {
   const [focus, setFocus] = useState(false)
   const [val, setVal] = useState(q)
 
@@ -24,6 +25,7 @@ export function PriorizacaoSearch({ q, uf, perfil }: Props) {
       }}
     >
       {uf && <input type="hidden" name="uf" value={uf} />}
+      {cidade && <input type="hidden" name="cidade" value={cidade} />}
       {perfil && <input type="hidden" name="perfil" value="1" />}
 
       <div style={{ position: 'relative', flex: 1, minWidth: 240, maxWidth: 380 }}>
@@ -77,7 +79,7 @@ export function PriorizacaoSearch({ q, uf, perfil }: Props) {
         Buscar
       </button>
 
-      {(q || uf || perfil) && (
+      {(q || uf || cidade || perfil) && (
         <Link href="/comercial/priorizacao" style={{
           fontSize: '.75rem', color: '#94A3B8', textDecoration: 'none',
           fontFamily: 'var(--font-inter, sans-serif)',
