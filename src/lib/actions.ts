@@ -533,6 +533,52 @@ export async function definirEstagioFila(
   return { success: true, id: data.id }
 }
 
+// Marca/desmarca uma escola como parceira (contrato assinado) direto da fila de
+// priorização, sem precisar preencher o restante dos dados financeiros do contrato —
+// esses campos ficam com valor 0 e podem ser completados depois em /comercial/contratos.
+export async function marcarComoParceira(escolaId: string, parceira: boolean): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado' }
+
+  // contratos não tem policy de SELECT para authenticated — usa service role.
+  const admin = createAdminClient()
+  const { data: existing } = await admin
+    .from('contratos')
+    .select('id')
+    .eq('escola_id', escolaId)
+    .maybeSingle()
+
+  const { error } = existing
+    ? await admin.from('contratos').update({ contrato_assinado: parceira }).eq('id', existing.id)
+    : await admin.from('contratos').insert({
+        escola_id: escolaId,
+        contrato_assinado: parceira,
+        formulario_enviado: false, formulario_recebido: false,
+        minuta_enviada: false, retorno_minuta: false, minuta_atualizada: false,
+        contrato_enviado: false, contrato_arquivado: false,
+        infantil2_qtd: 0, infantil2_valor: 0, infantil3_qtd: 0, infantil3_valor: 0,
+        infantil4_qtd: 0, infantil4_valor: 0, infantil5_qtd: 0, infantil5_valor: 0,
+        fund1_ano1_qtd: 0, fund1_ano1_valor: 0, fund1_ano2_qtd: 0, fund1_ano2_valor: 0,
+        fund1_ano3_qtd: 0, fund1_ano3_valor: 0, fund1_ano4_qtd: 0, fund1_ano4_valor: 0,
+        fund1_ano5_qtd: 0, fund1_ano5_valor: 0,
+        fund2_ano6_qtd: 0, fund2_ano6_valor: 0, fund2_ano7_qtd: 0, fund2_ano7_valor: 0,
+        fund2_ano8_qtd: 0, fund2_ano8_valor: 0, fund2_ano9_qtd: 0, fund2_ano9_valor: 0,
+        medio_1s_qtd: 0, medio_1s_valor: 0, medio_2s_qtd: 0, medio_2s_valor: 0,
+        medio_3s_qtd: 0, medio_3s_valor: 0,
+        tempo_contrato: 1,
+        created_by: user.id,
+      })
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/comercial/priorizacao')
+  revalidatePath(`/comercial/escolas/${escolaId}`)
+  revalidatePath('/comercial/contratos')
+
+  return { success: true, id: escolaId }
+}
+
 /**
  * Deleta uma negociação (apenas gerente/supervisor ou dono).
  * Retorna ActionResult.

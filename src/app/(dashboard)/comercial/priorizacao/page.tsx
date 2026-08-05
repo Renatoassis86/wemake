@@ -3,6 +3,7 @@ import { normalizarNomeEscola } from '@/lib/utils'
 import Link from 'next/link'
 import { PriorizacaoSearch } from './PriorizacaoSearch'
 import { EstagioSelect } from './EstagioSelect'
+import { ParceiraToggle } from './ParceiraToggle'
 import { DeleteEscolaBtn } from '@/components/comercial/DeleteEscolaBtn'
 import {
   AlertTriangle, CheckCircle2, Users, Building2,
@@ -355,11 +356,14 @@ function TabelaEscolas({
 
               {/* Estágio */}
               <td data-label="Situação Comercial" style={{ padding: '.65rem 1rem' }}>
-                <EstagioSelect
-                  escolaId={escola.id}
-                  negociacaoId={escola.negociacao_id}
-                  stage={escola.negociacao_stage}
-                />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '.35rem', alignItems: 'flex-start' }}>
+                  <EstagioSelect
+                    escolaId={escola.id}
+                    negociacaoId={escola.negociacao_id}
+                    stage={escola.negociacao_stage}
+                  />
+                  <ParceiraToggle escolaId={escola.id} parceira={escola.contrato_assinado} />
+                </div>
               </td>
 
               {/* Ações */}
@@ -841,11 +845,14 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
                         </span>
                       </td>
                       <td data-label="Situação Comercial" style={{ padding: '.6rem 1rem' }}>
-                        <EstagioSelect
-                          escolaId={escola.id}
-                          negociacaoId={escola.negociacao_id}
-                          stage={escola.negociacao_stage}
-                        />
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '.35rem', alignItems: 'flex-start' }}>
+                          <EstagioSelect
+                            escolaId={escola.id}
+                            negociacaoId={escola.negociacao_id}
+                            stage={escola.negociacao_stage}
+                          />
+                          <ParceiraToggle escolaId={escola.id} parceira={escola.contrato_assinado} />
+                        </div>
                       </td>
                       <td data-label="Ações" style={{ padding: '.6rem 1rem' }}>
                         <div style={{ display: 'flex', gap: '.4rem' }}>
