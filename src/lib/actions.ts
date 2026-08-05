@@ -447,6 +447,10 @@ export async function updateStageNegociacao(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { success: false, error: 'Não autenticado' }
 
+  // negociacoes não tem policy de SELECT para authenticated — lê/grava via service role
+  // depois de confirmar a sessão acima (mesmo padrão de getFilaPriorizacao em priorizacao.ts).
+  const admin = createAdminClient()
+
   const updatePayload: Record<string, unknown> = { stage }
 
   // Se fechando como perdido, registra o motivo
@@ -459,7 +463,7 @@ export async function updateStageNegociacao(
     updatePayload.ativa = false
   }
 
-  const { data: negociacao, error: fetchError } = await supabase
+  const { data: negociacao, error: fetchError } = await admin
     .from('negociacoes')
     .select('id, escola_id')
     .eq('id', id)
@@ -469,7 +473,7 @@ export async function updateStageNegociacao(
     return { success: false, error: 'Negociação não encontrada' }
   }
 
-  const { error } = await supabase
+  const { error } = await admin
     .from('negociacoes')
     .update(updatePayload)
     .eq('id', id)
@@ -504,7 +508,10 @@ export async function definirEstagioFila(
     return result
   }
 
-  const { data, error } = await supabase
+  // negociacoes não tem policy de SELECT para authenticated — o .select() após o insert
+  // (leitura da linha recém-criada) falharia com o client normal. Usa service role.
+  const admin = createAdminClient()
+  const { data, error } = await admin
     .from('negociacoes')
     .insert({
       escola_id: escolaId,
