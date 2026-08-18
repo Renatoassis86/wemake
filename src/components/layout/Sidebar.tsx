@@ -32,7 +32,7 @@ const NAV_CRM: NavItemDef[] = [
   { href: '/comercial/pre-cadastros',  label: 'Dados Proposta Comercial', icon: ClipboardList   },
   { href: '/comercial/escolas',        label: 'Escolas',       icon: School          },
   { href: '/comercial/priorizacao',    label: 'Gestão de Priorização', icon: Crosshair, badge: 'Novo' },
-  { href: '/comercial/funil-contratacao', label: 'Funil de Contratação', icon: Milestone },
+  { href: '/comercial/funil-contratacao', label: 'Funil de Contratação', icon: Milestone, badge: 'Novo' },
   { href: '/comercial/registros',      label: 'Registros',     icon: FileText        },
 ]
 
