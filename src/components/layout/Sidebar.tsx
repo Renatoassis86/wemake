@@ -29,12 +29,12 @@ interface NavItemDef {
 
 const NAV_CRM: NavItemDef[] = [
   { href: '/comercial',                label: 'Dashboard',     icon: LayoutDashboard },
-  { href: '/comercial/pre-cadastros',  label: 'Dados Proposta Comercial', icon: ClipboardList   },
   { href: '/comercial/escolas',        label: 'Escolas',       icon: School          },
+  { href: '/comercial/registros',      label: 'Registros',     icon: FileText        },
   { href: '/comercial/priorizacao',    label: 'Gestão de Priorização', icon: Crosshair, badge: 'Novo' },
   { href: '/comercial/funil-contratacao', label: 'Funil de Contratação', icon: Milestone, badge: 'Novo' },
-  { href: '/comercial/registros',      label: 'Registros',     icon: FileText        },
   { href: '/calculadora',              label: 'Calculadora',   icon: Calculator      },
+  { href: '/comercial/pre-cadastros',  label: 'Dados Proposta Comercial', icon: ClipboardList   },
 ]
 
 const NAV_PROCESS = [
