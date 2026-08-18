@@ -91,6 +91,7 @@ export interface EscolaFunil {
   responsavel_id: string | null
   responsavel_nome: string | null
   alunos_cadastro: number
+  alunos_proposta: number | null
   segmentos_ativos: string[]
 
   negociacao_id: string | null
@@ -178,7 +179,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
     supabase.from('escolas').select('*').eq('ativa', true),
     admin.from('negociacoes').select('id, escola_id, stage, valor_estimado, observacoes, probabilidade'),
     admin.from('registros').select('escola_id, data_contato, resumo'),
-    supabase.from('propostas').select('id, escola_id, escola_nome, valor_aluno_ano, status, validade, created_at')
+    supabase.from('propostas').select('id, escola_id, escola_nome, valor_aluno_ano, num_alunos, status, validade, created_at')
       .is('arquivada_em', null)
       .order('created_at', { ascending: false }),
     admin.from('contratos').select('*'),
@@ -187,7 +188,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
   const escolas = (escolasRes.data ?? []) as Escola[]
   const negociacoes = (negociacoesRes.data ?? []) as Pick<Negociacao, 'id' | 'escola_id' | 'stage' | 'valor_estimado' | 'observacoes' | 'probabilidade'>[]
   const registros = (registrosRes.data ?? []) as { escola_id: string; data_contato: string; resumo: string | null }[]
-  const propostas = (propostasRes.data ?? []) as { id: string; escola_id: string | null; escola_nome: string | null; valor_aluno_ano: number | null; status: string | null; validade: string | null; created_at: string }[]
+  const propostas = (propostasRes.data ?? []) as { id: string; escola_id: string | null; escola_nome: string | null; valor_aluno_ano: number | null; num_alunos: number | null; status: string | null; validade: string | null; created_at: string }[]
   const contratos = (contratosRes.data ?? []) as Contrato[]
 
   // Negociação mais avançada por escola
@@ -269,7 +270,11 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
       contato_nome: escola.contato_nome ?? escola.diretor_nome,
       responsavel_id: escola.responsavel_id,
       responsavel_nome: escola.responsavel_id ? usuarios.get(escola.responsavel_id)?.full_name ?? null : null,
-      alunos_cadastro: escola.total_alunos,
+      // Prioriza o nº de alunos da proposta (Calculadora/planilha), que é o
+      // número que embasou o valor negociado — o cadastro da escola pode ser
+      // editado depois e divergir do que foi realmente proposto.
+      alunos_cadastro: proposta?.num_alunos ?? escola.total_alunos,
+      alunos_proposta: proposta?.num_alunos ?? null,
       segmentos_ativos: segmentosAtivos(escola),
 
       negociacao_id: neg?.id ?? null,
