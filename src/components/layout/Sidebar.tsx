@@ -25,6 +25,7 @@ interface NavItemDef {
   label: string
   icon: React.ComponentType<{ size?: number; className?: string }>
   badge?: number | string
+  external?: boolean
 }
 
 const NAV_CRM: NavItemDef[] = [
@@ -35,6 +36,7 @@ const NAV_CRM: NavItemDef[] = [
   { href: '/comercial/funil-contratacao', label: 'Funil de Contratação', icon: Milestone, badge: 'Novo' },
   { href: '/calculadora',              label: 'Calculadora',   icon: Calculator      },
   { href: '/comercial/pre-cadastros',  label: 'Dados Proposta Comercial', icon: ClipboardList   },
+  { href: '/formulario',               label: 'Formulário Escola', icon: ClipboardList, external: true },
 ]
 
 const NAV_PROCESS = [
@@ -301,8 +303,9 @@ export default function Sidebar({ profile }: SidebarProps) {
             href={item.href}
             label={item.label}
             icon={item.icon}
-            active={isActive(item.href)}
+            active={item.external ? false : isActive(item.href)}
             badge={item.badge}
+            external={item.external}
           />
         ))}
 
@@ -329,15 +332,6 @@ export default function Sidebar({ profile }: SidebarProps) {
             active={isActive(item.href)}
           />
         ))}
-
-        {/* Formulário público */}
-        <NavItem
-          href="/formulario"
-          label="Formulário Escola"
-          icon={ClipboardList}
-          active={false}
-          external
-        />
 
         {/* Gestão de usuários — visível apenas para Renato (admin principal) */}
         {isAdmin && (
