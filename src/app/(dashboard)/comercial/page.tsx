@@ -46,7 +46,7 @@ export default async function ComercialDashboard() {
       .order('data_contato', { ascending: false })
       .limit(8),
     supabase.from('escolas')
-      .select('id, nome, cidade, estado, created_at, responsavel_id, responsavel:profiles(full_name)')
+      .select('id, nome, cidade, estado, created_at, responsavel_id')
       .eq('ativa', true)
       .order('created_at', { ascending: false }),
     supabase.from('registros')
@@ -55,7 +55,22 @@ export default async function ComercialDashboard() {
 
   // Escolas sem nenhum registro de interação (negociação não iniciada)
   const idsComRegistro = new Set(escolasComRegistro?.map(r => r.escola_id) ?? [])
-  const escolasSemNegociacao = (todasEscolas ?? []).filter((e: any) => !idsComRegistro.has(e.id))
+  const escolasSemNegociacaoRaw = (todasEscolas ?? []).filter((e: any) => !idsComRegistro.has(e.id))
+
+  // Nome do responsável vem de `usuarios` (tabela viva) — `profiles` fica
+  // desatualizada desde que a criação de usuário passou a gravar só em
+  // `usuarios` (ver actions.ts).
+  const respIds = [...new Set(escolasSemNegociacaoRaw.map((e: any) => e.responsavel_id).filter(Boolean))]
+  const { data: usuariosResp } = respIds.length > 0
+    ? await supabase.from('usuarios').select('id, nome_completo').in('id', respIds)
+    : { data: [] as { id: string; nome_completo: string }[] }
+  const nomePorId = new Map((usuariosResp ?? []).map(u => [u.id, u.nome_completo]))
+  const escolasSemNegociacao = escolasSemNegociacaoRaw.map((e: any) => ({
+    ...e,
+    responsavel: e.responsavel_id && nomePorId.has(e.responsavel_id)
+      ? { full_name: nomePorId.get(e.responsavel_id)! }
+      : null,
+  }))
 
   const kpis = [
     { label: 'Total de Escolas',   value: totalEscolas ?? 0, sub: 'parceiros ativos',     cor: '#2563eb', bg: '#eff6ff', border: '#93c5fd', href: '/comercial/escolas' },

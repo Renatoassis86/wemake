@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
 
   // Verificar se é gerente
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  const { data: profile } = await supabase.from('usuarios').select('role').eq('id', user.id).single()
   if (profile?.role !== 'gerente') {
     return NextResponse.json({ error: 'Apenas gerentes podem fazer upload de documentos' }, { status: 403 })
   }

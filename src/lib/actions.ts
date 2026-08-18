@@ -430,7 +430,8 @@ export async function upsertNegociacao(formData: FormData) {
   revalidatePath(`/comercial/escolas/${escola_id}`, 'layout')
   revalidatePath('/comercial/pipeline', 'layout')
   revalidatePath('/comercial', 'layout')
-  redirect(`/comercial/escolas/${escola_id}?t=${Date.now()}`)
+  revalidatePath('/comercial/funil-contratacao', 'layout')
+  redirect(`/comercial/funil-contratacao?escola=${escola_id}&t=${Date.now()}`)
 }
 
 /**
@@ -734,7 +735,7 @@ export async function deletarNota(id: string): Promise<ActionResult> {
   // Apenas o criador pode deletar notas
   if (nota.created_by !== user.id) {
     const { data: profile } = await supabase
-      .from('profiles')
+      .from('usuarios')
       .select('role')
       .eq('id', user.id)
       .single()
@@ -808,14 +809,30 @@ export async function upsertContrato(formData: FormData) {
     medio_3s_valor:   toNum('medio_3s_valor'),
     tempo_contrato:   parseInt(formData.get('tempo_contrato') as string) || 1,
     created_by: user.id,
-  }
+  } as Record<string, unknown>
 
-  // UPSERT por escola_id
+  // UPSERT por escola_id — busca também o estado anterior de arquivamento/implantação
+  // para decidir se a fase de implantação deve ser iniciada automaticamente.
   const { data: existing } = await supabase
     .from('contratos')
-    .select('id')
+    .select('id, contrato_arquivado, implantacao_status')
     .eq('escola_id', escola_id)
     .single()
+
+  const contratoArquivadoAgora = payload.contrato_arquivado === true
+  const implantacaoStatusForm = (formData.get('implantacao_status') as string) || null
+
+  if (implantacaoStatusForm) {
+    payload.implantacao_status = implantacaoStatusForm
+    if (implantacaoStatusForm === 'concluida' && existing?.implantacao_status !== 'concluida') {
+      payload.implantacao_concluida_em = new Date().toISOString()
+    }
+  } else if (contratoArquivadoAgora && !existing?.contrato_arquivado) {
+    // Contrato acabou de ser arquivado nesta submissão — inicia a fase de implantação
+    // automaticamente (regra de negócio: arquivar = começar a implantar).
+    payload.implantacao_status = 'em_andamento'
+    payload.implantacao_iniciada_em = new Date().toISOString()
+  }
 
   const { error } = existing
     ? await supabase.from('contratos').update(payload).eq('id', existing.id)
@@ -824,6 +841,7 @@ export async function upsertContrato(formData: FormData) {
   if (error) throw new Error(error.message)
 
   revalidatePath('/comercial/contratos')
+  revalidatePath('/comercial/funil-contratacao', 'layout')
   redirect(`/comercial/contratos?escola=${escola_id}`)
 }
 

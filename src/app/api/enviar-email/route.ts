@@ -16,11 +16,11 @@ export async function POST(request: NextRequest) {
   if (!assunto?.trim())       return NextResponse.json({ error: 'Assunto obrigatório' }, { status: 400 })
   if (!corpo?.trim())         return NextResponse.json({ error: 'Corpo obrigatório' }, { status: 400 })
 
-  // Buscar nome do remetente
+  // Buscar nome do remetente (tabela viva é `usuarios`, não `profiles` — ver actions.ts)
   const { data: profile } = await supabase
-    .from('profiles').select('full_name, email').eq('id', user.id).single()
+    .from('usuarios').select('nome_completo, email').eq('id', user.id).single()
 
-  const nomeRemetente = profile?.full_name ?? 'We Make'
+  const nomeRemetente = profile?.nome_completo ?? 'We Make'
 
   let enviados = 0
   let erros: string[] = []

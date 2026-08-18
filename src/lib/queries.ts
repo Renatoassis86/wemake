@@ -9,6 +9,7 @@
  */
 
 import { createClient } from '@/lib/supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import type {
   Escola,
   EscolaResumo,
@@ -21,6 +22,33 @@ import type {
   ClassificacaoLead,
   StageNegociacao,
 } from '@/types/database'
+
+/**
+ * A tabela viva de usuários é `usuarios` (campos em português), não `profiles`
+ * (tabela antiga, parada desde que a criação/edição de usuário passou a gravar
+ * só em `usuarios` — ver `criarUsuario`/`upsertProfile` em actions.ts). Os helpers
+ * abaixo buscam o responsável em `usuarios` manualmente em vez de usar o embed
+ * PostgREST `profiles!responsavel_id(...)`, que retorna dados desatualizados.
+ */
+export async function buscarUsuariosPorId(
+  supabase: SupabaseClient,
+  ids: (string | null | undefined)[]
+): Promise<Map<string, Pick<Profile, 'id' | 'full_name' | 'role'>>> {
+  const idsUnicos = [...new Set(ids.filter((id): id is string => !!id))]
+  if (idsUnicos.length === 0) return new Map()
+
+  const { data } = await supabase
+    .from('usuarios')
+    .select('id, nome_completo, role')
+    .in('id', idsUnicos)
+
+  return new Map(
+    (data ?? []).map((u: { id: string; nome_completo: string; role: string }) => [
+      u.id,
+      { id: u.id, full_name: u.nome_completo, role: u.role as Profile['role'] },
+    ])
+  )
+}
 
 // ─── Tipos de retorno especializados ──────────────────────────────────────────
 
@@ -174,12 +202,16 @@ export async function getEscolaById(id: string): Promise<QueryResult<Escola & { 
 
   const { data, error } = await supabase
     .from('escolas')
-    .select('*, responsavel:profiles!responsavel_id(*)')
+    .select('*')
     .eq('id', id)
     .single()
 
   if (error) return { data: null, error: { message: error.message, code: error.code } }
-  return { data: data as Escola & { responsavel: Profile | null }, error: null }
+
+  const usuarios = await buscarUsuariosPorId(supabase, [data.responsavel_id])
+  const responsavel = data.responsavel_id ? (usuarios.get(data.responsavel_id) as Profile | undefined) ?? null : null
+
+  return { data: { ...data, responsavel } as Escola & { responsavel: Profile | null }, error: null }
 }
 
 /**
@@ -237,10 +269,7 @@ export async function getRegistros(
 
   let query = supabase
     .from('registros')
-    .select(
-      '*, escola:escolas(id, nome), responsavel:profiles!responsavel_id(id, full_name)',
-      { count: 'exact' }
-    )
+    .select('*, escola:escolas(id, nome)', { count: 'exact' })
     .order('data_contato', { ascending: false })
     .order('created_at',   { ascending: false })
     .range(from, to)
@@ -259,8 +288,11 @@ export async function getRegistros(
     return { data: [], count: 0, page, totalPages: 0 }
   }
 
+  const usuarios = await buscarUsuariosPorId(supabase, (data ?? []).map((r: any) => r.responsavel_id))
+  const registros = (data ?? []).map((r: any) => ({ ...r, responsavel: usuarios.get(r.responsavel_id) ?? null }))
+
   const totalPages = Math.ceil((count ?? 0) / perPage)
-  return { data: (data ?? []) as RegistroComEscola[], count: count ?? 0, page, totalPages }
+  return { data: registros as RegistroComEscola[], count: count ?? 0, page, totalPages }
 }
 
 /**
@@ -271,12 +303,16 @@ export async function getRegistroById(id: string): Promise<QueryResult<RegistroC
 
   const { data, error } = await supabase
     .from('registros')
-    .select('*, escola:escolas(id, nome), responsavel:profiles!responsavel_id(id, full_name)')
+    .select('*, escola:escolas(id, nome)')
     .eq('id', id)
     .single()
 
   if (error) return { data: null, error: { message: error.message, code: error.code } }
-  return { data: data as RegistroComEscola, error: null }
+
+  const usuarios = await buscarUsuariosPorId(supabase, [data.responsavel_id])
+  const responsavel = data.responsavel_id ? usuarios.get(data.responsavel_id) ?? null : null
+
+  return { data: { ...data, responsavel } as RegistroComEscola, error: null }
 }
 
 /**
@@ -290,7 +326,7 @@ export async function getRegistrosByEscola(
 
   const { data, error } = await supabase
     .from('registros')
-    .select('*, escola:escolas(id, nome), responsavel:profiles!responsavel_id(id, full_name)')
+    .select('*, escola:escolas(id, nome)')
     .eq('escola_id', escola_id)
     .order('data_contato', { ascending: false })
     .order('created_at',   { ascending: false })
@@ -300,7 +336,9 @@ export async function getRegistrosByEscola(
     console.error('[getRegistrosByEscola]', error.message)
     return []
   }
-  return (data ?? []) as RegistroComEscola[]
+
+  const usuarios = await buscarUsuariosPorId(supabase, (data ?? []).map((r: any) => r.responsavel_id))
+  return (data ?? []).map((r: any) => ({ ...r, responsavel: usuarios.get(r.responsavel_id) ?? null })) as RegistroComEscola[]
 }
 
 // ─── NEGOCIAÇÕES ──────────────────────────────────────────────────────────────
@@ -313,7 +351,7 @@ export async function getNegociacoesByEscola(escola_id: string): Promise<Negocia
 
   const { data, error } = await supabase
     .from('negociacoes')
-    .select('*, responsavel:profiles!responsavel_id(id, full_name)')
+    .select('*')
     .eq('escola_id', escola_id)
     .eq('ativa', true)
     .order('created_at', { ascending: false })
@@ -322,7 +360,9 @@ export async function getNegociacoesByEscola(escola_id: string): Promise<Negocia
     console.error('[getNegociacoesByEscola]', error.message)
     return []
   }
-  return (data ?? []) as Negociacao[]
+
+  const usuarios = await buscarUsuariosPorId(supabase, (data ?? []).map((n: any) => n.responsavel_id))
+  return (data ?? []).map((n: any) => ({ ...n, responsavel: usuarios.get(n.responsavel_id) ?? null })) as Negociacao[]
 }
 
 /**
@@ -335,12 +375,16 @@ export async function getNegociacaoById(
 
   const { data, error } = await supabase
     .from('negociacoes')
-    .select('*, escola:escolas(*), responsavel:profiles!responsavel_id(*)')
+    .select('*, escola:escolas(*)')
     .eq('id', id)
     .single()
 
   if (error) return { data: null, error: { message: error.message, code: error.code } }
-  return { data: data as Negociacao & { escola: Escola | null }, error: null }
+
+  const usuarios = await buscarUsuariosPorId(supabase, [data.responsavel_id])
+  const responsavel = data.responsavel_id ? (usuarios.get(data.responsavel_id) as Profile | undefined) ?? null : null
+
+  return { data: { ...data, responsavel } as Negociacao & { escola: Escola | null }, error: null }
 }
 
 /**
@@ -354,7 +398,7 @@ export async function getNegociacoesPipeline(): Promise<
 
   const { data, error } = await supabase
     .from('negociacoes')
-    .select('*, escola:escolas(id, nome), responsavel:profiles!responsavel_id(id, full_name)')
+    .select('*, escola:escolas(id, nome)')
     .eq('ativa', true)
     .not('stage', 'in', '("ganho","perdido")')
     .order('updated_at', { ascending: false })
@@ -363,7 +407,9 @@ export async function getNegociacoesPipeline(): Promise<
     console.error('[getNegociacoesPipeline]', error.message)
     return []
   }
-  return (data ?? []) as (Negociacao & { escola: Pick<Escola, 'id' | 'nome'> | null })[]
+
+  const usuarios = await buscarUsuariosPorId(supabase, (data ?? []).map((n: any) => n.responsavel_id))
+  return (data ?? []).map((n: any) => ({ ...n, responsavel: usuarios.get(n.responsavel_id) ?? null })) as (Negociacao & { escola: Pick<Escola, 'id' | 'nome'> | null })[]
 }
 
 // ─── TAREFAS ──────────────────────────────────────────────────────────────────
@@ -503,16 +549,20 @@ export async function getProfilesAtivos(): Promise<Pick<Profile, 'id' | 'full_na
   const supabase = await createClient()
 
   const { data, error } = await supabase
-    .from('profiles')
-    .select('id, full_name, role')
-    .eq('is_active', true)
-    .order('full_name')
+    .from('usuarios')
+    .select('id, nome_completo, role')
+    .eq('ativo', true)
+    .order('nome_completo')
 
   if (error) {
     console.error('[getProfilesAtivos]', error.message)
     return []
   }
-  return (data ?? []) as Pick<Profile, 'id' | 'full_name' | 'role'>[]
+  return (data ?? []).map((u: { id: string; nome_completo: string; role: string }) => ({
+    id: u.id,
+    full_name: u.nome_completo,
+    role: u.role as Profile['role'],
+  }))
 }
 
 /**
@@ -525,13 +575,26 @@ export async function getCurrentProfile(): Promise<QueryResult<Profile>> {
   if (!user) return { data: null, error: { message: 'Não autenticado' } }
 
   const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
+    .from('usuarios')
+    .select('id, email, nome_completo, role, foto_perfil, ativo, created_at, updated_at')
     .eq('id', user.id)
     .single()
 
   if (error) return { data: null, error: { message: error.message, code: error.code } }
-  return { data: data as Profile, error: null }
+
+  const profile: Profile = {
+    id: data.id,
+    email: data.email,
+    full_name: data.nome_completo,
+    role: data.role as Profile['role'],
+    phone: null,
+    region: null,
+    avatar_url: data.foto_perfil ?? null,
+    is_active: data.ativo ?? true,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+  }
+  return { data: profile, error: null }
 }
 
 // ─── DASHBOARD STATS ──────────────────────────────────────────────────────────
@@ -646,7 +709,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     // 13. Registros recentes (últimas 8 interações)
     supabase
       .from('registros')
-      .select('*, escola:escolas(id, nome), responsavel:profiles!responsavel_id(id, full_name)')
+      .select('*, escola:escolas(id, nome)')
       .order('data_contato', { ascending: false })
       .order('created_at',   { ascending: false })
       .limit(8),
@@ -765,6 +828,16 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     valor_estimado_total: stageMap.get(stage)?.valor ?? 0,
   })).filter(s => s.quantidade > 0)
 
+  // ── Anexar responsável (tabela viva `usuarios`) aos registros recentes ────
+  const usuariosRegistros = await buscarUsuariosPorId(
+    supabase,
+    (registrosRecentesRes.data ?? []).map((r: any) => r.responsavel_id)
+  )
+  const registrosRecentes = (registrosRecentesRes.data ?? []).map((r: any) => ({
+    ...r,
+    responsavel: usuariosRegistros.get(r.responsavel_id) ?? null,
+  }))
+
   // ── Montar resultado final ────────────────────────────────────────────────
   return {
     totalEscolas:        totalEscolasRes.count ?? 0,
@@ -779,7 +852,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     distribuicaoClassificacao,
     registrosPorMes,
     pipelinePorStage,
-    registrosRecentes:        (registrosRecentesRes.data ?? []) as RegistroComEscola[],
+    registrosRecentes:        registrosRecentes as RegistroComEscola[],
     tarefasVencidasDetalhes:  (tarefasVencidasDetalheRes.data ?? []) as TarefaComEscola[],
     escolasSemContatoRecente: (escolasSemContatoRes.data ?? []) as EscolaSemContato[],
   }

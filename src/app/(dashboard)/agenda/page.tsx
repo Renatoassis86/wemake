@@ -8,9 +8,9 @@ export default async function AgendaPage() {
 
   const [
     eventosResult,
-    { data: profiles },
+    { data: usuariosAtivos },
     { data: escolas },
-    { data: meProfile },
+    { data: meUsuario },
   ] = await Promise.all([
     supabase
       .from('agenda_eventos')
@@ -25,22 +25,27 @@ export default async function AgendaPage() {
       `)
       .gte('data_fim', new Date(new Date().getFullYear(), 0, 1).toISOString())
       .order('data_inicio'),
+    // Tabela viva de usuários é `usuarios`, não `profiles` (ver actions.ts) —
+    // `profiles` não é mais atualizada desde que a criação de usuário passou a
+    // gravar só em `usuarios`, então ficava com nomes/status desatualizados aqui.
     supabase
-      .from('profiles')
-      .select('id, email, full_name')
-      .eq('is_active', true)
-      .order('full_name'),
+      .from('usuarios')
+      .select('id, email, nome_completo')
+      .eq('ativo', true)
+      .order('nome_completo'),
     supabase
       .from('escolas')
       .select('id, nome')
       .eq('ativa', true)
       .order('nome'),
     supabase
-      .from('profiles')
-      .select('full_name, email')
+      .from('usuarios')
+      .select('nome_completo, email')
       .eq('id', user!.id)
       .single(),
   ])
+
+  const profiles = (usuariosAtivos ?? []).map(u => ({ id: u.id, email: u.email, full_name: u.nome_completo }))
 
   const tabelaNaoExiste = (eventosResult.error as any)?.code === 'PGRST205'
   const eventos = eventosResult.data
@@ -103,7 +108,7 @@ export default async function AgendaPage() {
         profiles={profiles ?? []}
         escolas={escolas ?? []}
         userId={user!.id}
-        userEmail={meProfile?.email ?? user!.email ?? ''}
+        userEmail={meUsuario?.email ?? user!.email ?? ''}
       />
     </div>
   )

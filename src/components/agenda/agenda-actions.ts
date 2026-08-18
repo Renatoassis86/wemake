@@ -57,13 +57,13 @@ export async function criarEvento(formData: FormData): Promise<AgendaResult> {
     status:     'aceito',
   })
 
-  // Buscar nome do organizador
-  const { data: orgProfile } = await supabase
-    .from('profiles')
-    .select('full_name')
+  // Buscar nome do organizador (tabela viva é `usuarios`, não `profiles` — ver actions.ts)
+  const { data: orgUsuario } = await supabase
+    .from('usuarios')
+    .select('nome_completo')
     .eq('id', user.id)
     .single()
-  const organizadorNome = orgProfile?.full_name ?? user.email ?? 'We Make'
+  const organizadorNome = orgUsuario?.nome_completo ?? user.email ?? 'We Make'
 
   // Adicionar demais participantes e enviar convites
   const participantesRaw = formData.get('participantes') as string
@@ -76,20 +76,20 @@ export async function criarEvento(formData: FormData): Promise<AgendaResult> {
   if (participantesRaw) {
     const emails: string[] = JSON.parse(participantesRaw)
     if (emails.length > 0) {
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('id, email, full_name')
+      const { data: usuariosConvidados } = await supabase
+        .from('usuarios')
+        .select('id, email, nome_completo')
         .in('email', emails)
 
-      const profileMap = new Map(profiles?.map(p => [p.email, p]) ?? [])
+      const usuarioMap = new Map(usuariosConvidados?.map(u => [u.email, u]) ?? [])
 
       const inserts = emails
         .filter(e => e !== user.email)
         .map(email => ({
           evento_id:  evento.id,
-          profile_id: profileMap.get(email)?.id ?? null,
+          profile_id: usuarioMap.get(email)?.id ?? null,
           email,
-          nome:       profileMap.get(email)?.full_name ?? null,
+          nome:       usuarioMap.get(email)?.nome_completo ?? null,
           status:     'pendente' as const,
         }))
 

@@ -22,7 +22,7 @@ function formatDateSafe(dateStr: string | null) {
 export default async function ExportsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: profile }  = await supabase.from('profiles').select('role').eq('id', user?.id ?? '').single()
+  const { data: profile }  = await supabase.from('usuarios').select('role').eq('id', user?.id ?? '').single()
   const isGerente = profile?.role === 'gerente'
 
   // Buscar documentos cadastrados no banco

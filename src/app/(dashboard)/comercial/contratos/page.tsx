@@ -7,13 +7,9 @@ import { formatCurrency } from '@/lib/utils'
 import { EscolaSelector } from '@/components/ui/EscolaSelector'
 import { ContratoUpload } from '@/components/comercial/ContratoUpload'
 import { calcValorTotalContrato, calcTotalAlunosContrato } from '@/lib/contratos'
+import { META_ALUNOS, META_RECEITA } from '@/lib/metas'
 
 interface Props { searchParams: Promise<{ escola?: string }> }
-
-// Metas 2027 — alinhadas com o Plano Estratégico We Make
-// 5.000 alunos = 2.000 base + 1.000 Fund.I + 2.000 novas escolas
-const META_ALUNOS  = 5000
-const META_RECEITA = 5000000
 
 /* ── estilos locais ─────────────────────────────────────────────── */
 const card: React.CSSProperties = {
@@ -247,6 +243,35 @@ export default async function ContratosPage({ searchParams }: Props) {
               </div>
             </div>
 
+            {/* Fase de Implantação — só aparece depois de arquivar o contrato */}
+            {!!c?.contrato_arquivado && (
+              <div style={card}>
+                <div style={secHdr('#7c3aed')}>
+                  <div style={{ ...dot('#7c3aed'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  </div>
+                  <div>
+                    <div style={secTitle}>Fase de Implantação</div>
+                    <div style={{ fontSize: '.68rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.1rem' }}>Inicia automaticamente ao arquivar o contrato</div>
+                  </div>
+                </div>
+                <div style={body}>
+                  <label style={lbl}>Status da Implantação</label>
+                  <select name="implantacao_status" defaultValue={c?.implantacao_status ?? 'em_andamento'} style={{ ...inp, cursor: 'pointer' }}>
+                    <option value="nao_iniciada">Não iniciada</option>
+                    <option value="em_andamento">Em andamento</option>
+                    <option value="concluida">Concluída</option>
+                  </select>
+                  {c?.implantacao_iniciada_em && (
+                    <div style={{ fontSize: '.7rem', color: '#7c3aed', marginTop: '.5rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
+                      Iniciada em {new Date(c.implantacao_iniciada_em).toLocaleDateString('pt-BR')}
+                      {c?.implantacao_concluida_em && ` · Concluída em ${new Date(c.implantacao_concluida_em).toLocaleDateString('pt-BR')}`}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Alunos e Valores por segmento */}
             <div style={card}>
               <div style={secHdr('#16a34a')}>
@@ -371,7 +396,7 @@ export default async function ContratosPage({ searchParams }: Props) {
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ background: '#0f172a' }}>
-                    {['Escola','Estado','Encaminhamento','Form.','Minuta','Assinado','Arquivado','Valor Total'].map(col => (
+                    {['Escola','Estado','Encaminhamento','Form.','Minuta','Assinado','Arquivado','Implantação','Valor Total'].map(col => (
                       <th key={col} style={{ padding: '.7rem 1rem', textAlign: 'left', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: 'rgba(255,255,255,.65)', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{col}</th>
                     ))}
                   </tr>
@@ -405,6 +430,22 @@ export default async function ContratosPage({ searchParams }: Props) {
                           </span>
                         </td>
                       ))}
+                      <td style={{ padding: '.85rem 1rem', verticalAlign: 'middle' }}>
+                        {ct.contrato_arquivado ? (
+                          <span style={{
+                            display: 'inline-flex', alignItems: 'center', gap: '.25rem',
+                            background: ct.implantacao_status === 'concluida' ? '#f0fdf4' : '#f5f3ff',
+                            color: ct.implantacao_status === 'concluida' ? '#16a34a' : '#7c3aed',
+                            border: `1px solid ${ct.implantacao_status === 'concluida' ? '#86efac' : '#c4b5fd'}`,
+                            padding: '.2rem .6rem', borderRadius: 99,
+                            fontSize: '.65rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
+                          }}>
+                            {ct.implantacao_status === 'concluida' ? 'Concluída' : ct.implantacao_status === 'em_andamento' ? 'Em andamento' : 'Não iniciada'}
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: '.65rem', color: '#cbd5e1' }}>—</span>
+                        )}
+                      </td>
                       <td style={{ padding: '.85rem 1rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '.95rem', fontWeight: 700, color: '#16a34a', whiteSpace: 'nowrap' }}>
                         {calcValorTotalContrato(ct) > 0 ? formatCurrency(calcValorTotalContrato(ct)) : '—'}
                       </td>

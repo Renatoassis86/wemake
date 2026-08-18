@@ -9,18 +9,33 @@ export default async function TranscricoesPage() {
 
   const [
     escolas,
-    { data: transcricoes },
-    { data: meProfile },
+    { data: transcricoesRaw },
+    { data: meUsuario },
   ] = await Promise.all([
     buscarEscolasUnificadas(supabase),
     supabase.from('transcricoes_reunioes')
-      .select('*, escola:escolas(nome), criador:profiles(full_name)')
+      .select('*, escola:escolas(nome)')
       .order('data_reuniao', { ascending: false }),
-    supabase.from('profiles').select('full_name').eq('id', user!.id).single(),
+    supabase.from('usuarios').select('nome_completo').eq('id', user!.id).single(),
   ])
 
   // Tabela não existe ainda
-  const tabelaInexistente = (transcricoes === null)
+  const tabelaInexistente = (transcricoesRaw === null)
+
+  // Nomes dos criadores vêm de `usuarios` (tabela viva) — `profiles` fica desatualizada
+  // desde que a criação de usuário passou a gravar só em `usuarios` (ver actions.ts).
+  const criadorIds = [...new Set((transcricoesRaw ?? []).map((t: any) => t.created_by).filter(Boolean))]
+  const { data: criadores } = criadorIds.length > 0
+    ? await supabase.from('usuarios').select('id, nome_completo').in('id', criadorIds)
+    : { data: [] as { id: string; nome_completo: string }[] }
+  const criadorPorId = new Map((criadores ?? []).map(c => [c.id, c.nome_completo]))
+
+  const transcricoes = (transcricoesRaw ?? []).map((t: any) => ({
+    ...t,
+    criador: t.created_by && criadorPorId.has(t.created_by)
+      ? { full_name: criadorPorId.get(t.created_by)! }
+      : null,
+  }))
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>

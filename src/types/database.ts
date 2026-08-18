@@ -196,6 +196,9 @@ export interface Contrato {
   contrato_enviado: boolean
   contrato_assinado: boolean
   contrato_arquivado: boolean
+  implantacao_status: 'nao_iniciada' | 'em_andamento' | 'concluida' | null
+  implantacao_iniciada_em: string | null
+  implantacao_concluida_em: string | null
   encaminhamento_final: string | null
   infantil2_qtd: number
   infantil2_valor: number

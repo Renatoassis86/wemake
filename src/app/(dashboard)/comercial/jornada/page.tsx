@@ -268,16 +268,31 @@ export default async function JornadaPage({ searchParams }: Props) {
   if (escolaId) {
     const [r0, r1, r2, r3, r4] = await Promise.all([
       supabase.from('escolas_resumo').select('*').eq('id', escolaId).single(),
-      supabase.from('registros').select('*, responsavel:profiles(full_name)').eq('escola_id', escolaId).order('data_contato'),
+      supabase.from('registros').select('*').eq('escola_id', escolaId).order('data_contato'),
       supabase.from('tarefas').select('*').eq('escola_id', escolaId).eq('status', 'pendente').order('vencimento'),
       supabase.from('negociacoes').select('*').eq('escola_id', escolaId).eq('ativa', true),
       supabase.from('contratos').select('contrato_assinado, contrato_arquivado').eq('escola_id', escolaId).single(),
     ])
     escola      = r0.data
-    registros   = r1.data ?? []
     tarefas     = r2.data ?? []
     negociacoes = r3.data ?? []
     contrato    = r4.data
+
+    // Nome do responsável vem de `usuarios` (tabela viva) — `profiles` fica
+    // desatualizada desde que a criação de usuário passou a gravar só em
+    // `usuarios` (ver actions.ts).
+    const registrosRaw = r1.data ?? []
+    const respIds = [...new Set(registrosRaw.map((reg: any) => reg.responsavel_id).filter(Boolean))]
+    const { data: usuariosResp } = respIds.length > 0
+      ? await supabase.from('usuarios').select('id, nome_completo').in('id', respIds)
+      : { data: [] as { id: string; nome_completo: string }[] }
+    const nomePorId = new Map((usuariosResp ?? []).map(u => [u.id, u.nome_completo]))
+    registros = registrosRaw.map((reg: any) => ({
+      ...reg,
+      responsavel: reg.responsavel_id && nomePorId.has(reg.responsavel_id)
+        ? { full_name: nomePorId.get(reg.responsavel_id)! }
+        : null,
+    }))
   }
 
   const parceiro = contrato?.contrato_arquivado === true

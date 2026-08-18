@@ -1,8 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import PageHeader from '@/components/layout/PageHeader'
+import Link from 'next/link'
 import { formatCurrency } from '@/lib/utils'
 import { ContadorRegressivo } from '@/components/metas/ContadorRegressivo'
 import { calcTotalAlunosContrato } from '@/lib/contratos'
+import { getFunilContratacao } from '@/lib/funil-contratacao'
 
 // ══════════════════════════════════════════════════
 // METAS 2027 — Plano Estratégico We Make
@@ -88,9 +90,10 @@ export default async function MetasPage() {
 
   const [
     { data: escolas },
-    { data: registros },
+    { data: registrosRaw },
     { data: contratosAssinados },
     { data: contratosMinuta },
+    funil,
   ] = await Promise.all([
     supabase.from('escolas')
       .select('id, nome, cidade, estado, total_alunos, qtd_fund1, responsavel_id, created_at')
@@ -98,7 +101,7 @@ export default async function MetasPage() {
       .order('created_at', { ascending: false }),
 
     supabase.from('registros')
-      .select('escola_id, data_contato, classificacao, responsavel:profiles(full_name), escola:escolas(nome)')
+      .select('escola_id, data_contato, classificacao, responsavel_id, escola:escolas(nome)')
       .order('data_contato', { ascending: false }),
 
     // ✅ NOVAS ESCOLAS PARCEIRAS = contrato assinado por ambas as partes
@@ -119,13 +122,35 @@ export default async function MetasPage() {
       .select('escola_id, escola:escolas(nome, cidade, estado, total_alunos)')
       .eq('minuta_enviada', true)
       .eq('contrato_assinado', false),
+
+    // Propostas enviadas + funil de contratação (ver /comercial/funil-contratacao)
+    getFunilContratacao(),
   ])
+
+  // Nome do responsável vem de `usuarios` (tabela viva) — `profiles` fica
+  // desatualizada desde que a criação de usuário passou a gravar só em
+  // `usuarios` (ver actions.ts).
+  const respIds = [...new Set((registrosRaw ?? []).map((r: any) => r.responsavel_id).filter(Boolean))]
+  const { data: usuariosResp } = respIds.length > 0
+    ? await supabase.from('usuarios').select('id, nome_completo').in('id', respIds)
+    : { data: [] as { id: string; nome_completo: string }[] }
+  const nomePorId = new Map((usuariosResp ?? []).map(u => [u.id, u.nome_completo]))
+  const registros = (registrosRaw ?? []).map((r: any) => ({
+    ...r,
+    responsavel: r.responsavel_id && nomePorId.has(r.responsavel_id)
+      ? { full_name: nomePorId.get(r.responsavel_id)! }
+      : null,
+  }))
 
   // ── Cálculos ──────────────────────────────────────────────────
 
   // Reuniões únicas = escolas distintas que tiveram ao menos 1 registro
   const escolasComContato = new Set(registros?.map(r => r.escola_id) ?? [])
   const totalReunioes = escolasComContato.size
+
+  // Propostas enviadas ativas (não arquivadas) — do funil de contratação
+  const propostasEnviadas = funil.linhas.filter(l => l.proposta_id !== null).length
+  const valorPipelinePropostas = funil.kpis.valorPipelineTotal
 
   // ✅ NOVAS ESCOLAS PARCEIRAS = contratos assinados (métrica principal)
   const qtdEscolasNovas = contratosAssinados?.length ?? 0
@@ -203,7 +228,7 @@ export default async function MetasPage() {
         </div>
 
         {/* ── KPIs ────────────────────────────────────────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1.1rem', marginBottom: '2rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1.1rem', marginBottom: '2rem' }}>
 
           <KpiCard
             label="Reuniões com Escolas Únicas"
@@ -215,6 +240,18 @@ export default async function MetasPage() {
             border="#bfdbfe"
             sub="escolas que receberam ao menos 1 contato registrado"
             icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
+          />
+
+          <KpiCard
+            label="Propostas Enviadas"
+            valor={propostasEnviadas}
+            meta={formatCurrency(valorPipelinePropostas) + ' em pipeline'}
+            pct={propostasEnviadas > 0 ? Math.round((qtdEscolasNovas / propostasEnviadas) * 100) : 0}
+            cor="#b45309"
+            bg="#fffbeb"
+            border="#fcd34d"
+            sub="taxa de conversão para contrato assinado"
+            icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>}
           />
 
           <KpiCard
@@ -240,6 +277,12 @@ export default async function MetasPage() {
             sub={`2.000 base + ${alunosFund1Anteriores} Fund.I + ${alunosNovasEscolas} contratos assinados`}
             icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>}
           />
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-1.2rem', marginBottom: '2rem' }}>
+          <Link href="/comercial/funil-contratacao" style={{ fontSize: '.75rem', fontWeight: 700, color: '#4A7FDB', textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+            Ver funil de contratação completo →
+          </Link>
         </div>
 
         {/* ── Detalhamento das metas de alunos ─────────────── */}
