@@ -100,6 +100,8 @@ export interface EscolaFunil {
 
   reunioes_total: number
   ultima_interacao: string | null
+  primeiro_contato: string | null
+  primeiro_contato_resumo: string | null
 
   proposta_id: string | null
   proposta_valor_aluno_ano: number | null
@@ -175,7 +177,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
   const [escolasRes, negociacoesRes, registrosRes, propostasRes, contratosRes] = await Promise.all([
     supabase.from('escolas').select('*').eq('ativa', true),
     admin.from('negociacoes').select('id, escola_id, stage, valor_estimado, observacoes, probabilidade'),
-    admin.from('registros').select('escola_id, data_contato'),
+    admin.from('registros').select('escola_id, data_contato, resumo'),
     supabase.from('propostas').select('id, escola_id, escola_nome, valor_aluno_ano, status, validade, created_at')
       .is('arquivada_em', null)
       .order('created_at', { ascending: false }),
@@ -184,7 +186,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
 
   const escolas = (escolasRes.data ?? []) as Escola[]
   const negociacoes = (negociacoesRes.data ?? []) as Pick<Negociacao, 'id' | 'escola_id' | 'stage' | 'valor_estimado' | 'observacoes' | 'probabilidade'>[]
-  const registros = (registrosRes.data ?? []) as { escola_id: string; data_contato: string }[]
+  const registros = (registrosRes.data ?? []) as { escola_id: string; data_contato: string; resumo: string | null }[]
   const propostas = (propostasRes.data ?? []) as { id: string; escola_id: string | null; escola_nome: string | null; valor_aluno_ano: number | null; status: string | null; validade: string | null; created_at: string }[]
   const contratos = (contratosRes.data ?? []) as Contrato[]
 
@@ -197,12 +199,22 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
     }
   }
 
-  // Reuniões: contagem + última data por escola
-  const reunioesPorEscola = new Map<string, { total: number; ultima: string | null }>()
+  // Reuniões: contagem + primeira/última data por escola (primeiro contato =
+  // resumo de como foi a abertura da negociação, pedido explícito de negócio)
+  const reunioesPorEscola = new Map<string, {
+    total: number
+    ultima: string | null
+    primeira: string | null
+    primeiraResumo: string | null
+  }>()
   for (const r of registros) {
-    const atual = reunioesPorEscola.get(r.escola_id) ?? { total: 0, ultima: null }
+    const atual = reunioesPorEscola.get(r.escola_id) ?? { total: 0, ultima: null, primeira: null, primeiraResumo: null }
     atual.total += 1
     if (!atual.ultima || r.data_contato > atual.ultima) atual.ultima = r.data_contato
+    if (!atual.primeira || r.data_contato < atual.primeira) {
+      atual.primeira = r.data_contato
+      atual.primeiraResumo = r.resumo
+    }
     reunioesPorEscola.set(r.escola_id, atual)
   }
 
@@ -225,7 +237,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
 
   const linhasTodas: EscolaFunil[] = escolas.map(escola => {
     const neg = negPorEscola.get(escola.id) ?? null
-    const reunioes = reunioesPorEscola.get(escola.id) ?? { total: 0, ultima: null }
+    const reunioes = reunioesPorEscola.get(escola.id) ?? { total: 0, ultima: null, primeira: null, primeiraResumo: null }
     const proposta = propostaPorEscolaId.get(escola.id) ?? propostaPorNome.get(normalizarNomeEscola(escola.nome)) ?? null
     const contrato = contratoPorEscola.get(escola.id) ?? null
 
@@ -267,6 +279,8 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
 
       reunioes_total: reunioes.total,
       ultima_interacao: reunioes.ultima,
+      primeiro_contato: reunioes.primeira,
+      primeiro_contato_resumo: reunioes.primeiraResumo,
 
       proposta_id: proposta?.id ?? null,
       proposta_valor_aluno_ano: proposta?.valor_aluno_ano ?? null,

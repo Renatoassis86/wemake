@@ -271,9 +271,14 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
 
         {/* ── Tabela principal ──────────────────────────────── */}
         <div style={card}>
-          <div style={{ ...secHdr('#6366f1'), justifyContent: 'space-between' }}>
-            <div style={secTitle}>Escolas em Processo Comercial</div>
-            <form style={{ display: 'flex', gap: '.5rem' }}>
+          <div style={{ ...secHdr('#6366f1'), justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <div style={secTitle}>Escolas em Processo Comercial</div>
+              <div style={{ fontSize: '.66rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.25rem', maxWidth: 520 }}>
+                Alunos/Cidade vêm do cadastro da escola, Reuniões e 1º Contato vêm dos Registros, Valor vem da Proposta/Negociação e Fase vem do Contrato — clique em "Editar" para atualizar a negociação, ou use os links "Contrato Completo" / "Jornada" para os demais dados.
+              </div>
+            </div>
+            <form style={{ display: 'flex', gap: '.5rem', flexShrink: 0 }}>
               {faseFiltro && <input type="hidden" name="fase" value={faseFiltro} />}
               <input name="q" defaultValue={params.q ?? ''} placeholder="Buscar por escola..." style={{ ...inp, width: 220, padding: '.4rem .7rem', fontSize: '.78rem' }} />
             </form>
@@ -283,7 +288,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ background: '#0f172a' }}>
-                    {['Escola', 'Contato', 'Cidade/UF', 'Responsável', 'Alunos', 'Segmentos', 'Reuniões', 'Valor/Desconto', 'Fase', 'Lead', 'Observação', ''].map(col => (
+                    {['Escola', 'Contato', 'Cidade/UF', 'Responsável', 'Alunos', 'Segmentos', '1º Contato', 'Reuniões', 'Valor/Desconto', 'Fase', 'Lead', 'Observação', ''].map(col => (
                       <th key={col} style={{ padding: '.7rem 1rem', textAlign: 'left', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: 'rgba(255,255,255,.65)', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{col}</th>
                     ))}
                   </tr>
@@ -303,6 +308,23 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                       <td style={{ padding: '.85rem 1rem', fontSize: '.78rem', color: '#475569', whiteSpace: 'nowrap' }}>{l.responsavel_nome ?? '—'}</td>
                       <td style={{ padding: '.85rem 1rem', fontSize: '.82rem', color: '#0f172a', fontWeight: 700, textAlign: 'center' }}>{l.alunos_cadastro || '—'}</td>
                       <td style={{ padding: '.85rem 1rem', fontSize: '.72rem', color: '#64748b', whiteSpace: 'nowrap' }}>{l.segmentos_ativos.join(', ') || '—'}</td>
+                      <td style={{ padding: '.85rem 1rem', fontSize: '.78rem', color: '#334155', maxWidth: 200 }}
+                        title={l.primeiro_contato_resumo ?? ''}>
+                        {l.primeiro_contato ? (
+                          <>
+                            <div>{formatDate(l.primeiro_contato)}</div>
+                            {l.primeiro_contato_resumo && (
+                              <div style={{ fontSize: '.65rem', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {l.primeiro_contato_resumo}
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <Link href={`/comercial/registros/novo?escola=${l.escola_id}`} style={{ fontSize: '.68rem', fontWeight: 700, color: '#b45309', textDecoration: 'none' }}>
+                            + registrar
+                          </Link>
+                        )}
+                      </td>
                       <td style={{ padding: '.85rem 1rem', fontSize: '.78rem', color: '#334155', whiteSpace: 'nowrap' }}>
                         {l.reunioes_total > 0 ? (
                           <>
@@ -335,7 +357,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                       </td>
                       <td style={{ padding: '.85rem 1rem', verticalAlign: 'middle' }}>
                         <Link href={`/comercial/funil-contratacao?escola=${l.escola_id}`} style={{ fontSize: '.72rem', fontWeight: 700, color: '#4A7FDB', textDecoration: 'none', whiteSpace: 'nowrap' }}>
-                          Gerenciar →
+                          Editar →
                         </Link>
                       </td>
                     </tr>
