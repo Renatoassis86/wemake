@@ -34,6 +34,7 @@ const NAV_CRM: NavItemDef[] = [
   { href: '/comercial/priorizacao',    label: 'Gestão de Priorização', icon: Crosshair, badge: 'Novo' },
   { href: '/comercial/funil-contratacao', label: 'Funil de Contratação', icon: Milestone, badge: 'Novo' },
   { href: '/comercial/registros',      label: 'Registros',     icon: FileText        },
+  { href: '/calculadora',              label: 'Calculadora',   icon: Calculator      },
 ]
 
 const NAV_PROCESS = [
@@ -53,7 +54,6 @@ const NAV_TOOLS = [
   { href: '/leads-banco',         label: 'Banco de Leads',   icon: Database        },
   { href: '/importacao',          label: 'Importar Dados',   icon: Upload          },
   { href: '/exports',             label: 'Downloads',        icon: Download        },
-  { href: '/calculadora',         label: 'Calculadora',      icon: Calculator      },
 ]
 
 const NAV_WIP = [
