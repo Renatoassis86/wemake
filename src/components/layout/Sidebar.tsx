@@ -32,13 +32,13 @@ const NAV_CRM: NavItemDef[] = [
   { href: '/comercial/pre-cadastros',  label: 'Dados Proposta Comercial', icon: ClipboardList   },
   { href: '/comercial/escolas',        label: 'Escolas',       icon: School          },
   { href: '/comercial/priorizacao',    label: 'Gestão de Priorização', icon: Crosshair, badge: 'Novo' },
+  { href: '/comercial/funil-contratacao', label: 'Funil de Contratação', icon: Milestone },
   { href: '/comercial/registros',      label: 'Registros',     icon: FileText        },
 ]
 
 const NAV_PROCESS = [
   { href: '/comercial/jornada-visual', label: 'Jornada Visual',    icon: GitBranch   },
   { href: '/comercial/jornada',        label: 'Jornada Relac.',    icon: Activity    },
-  { href: '/comercial/funil-contratacao', label: 'Funil de Contratação', icon: Milestone },
   { href: '/comercial/contratos',      label: 'Jornada Contrat.',  icon: FileSignature },
   { href: '/comercial/propostas',      label: 'Propostas',         icon: FileText      },
   { href: '/comercial/pipeline',         label: 'Pipeline CRM',        icon: Kanban      },
