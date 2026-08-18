@@ -4,7 +4,9 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { criarTarefaEscola, criarNotaEscola, concluirTarefaEscola } from './escola-actions'
 import { formatDate, formatCurrency } from '@/lib/utils'
-import { LABEL } from '@/types/database'
+import { LABEL, ENCAMINHAMENTOS_OPTIONS } from '@/types/database'
+
+const ENCAMINHAMENTO_LABEL = Object.fromEntries(ENCAMINHAMENTOS_OPTIONS.map(o => [o.value, o.label]))
 
 interface Props {
   escolaId: string
@@ -100,6 +102,21 @@ export function EscolaDetailClient({ escolaId, registros, negociacoes, tarefas, 
                         </div>
                       </div>
                       <p style={{ fontSize: '.875rem', color: '#334155', lineHeight: 1.6, background: '#f8fafc', borderRadius: 8, padding: '.6rem .85rem', borderLeft: '3px solid #e2e8f0' }}>{r.resumo}</p>
+                      {Array.isArray(r.encaminhamentos) && r.encaminhamentos.length > 0 && (
+                        <div style={{ marginTop: '.6rem', display: 'flex', flexWrap: 'wrap', gap: '.35rem', alignItems: 'center' }}>
+                          <span style={{ fontSize: '.68rem', fontWeight: 700, color: '#64748b', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Encaminhamento:</span>
+                          {r.encaminhamentos.map((enc: string, i: number) => (
+                            <span key={i} style={{ fontSize: '.68rem', fontWeight: 600, background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe', padding: '.15rem .5rem', borderRadius: 99 }}>
+                              {ENCAMINHAMENTO_LABEL[enc] ?? enc}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {r.proximo_contato && (
+                        <div style={{ marginTop: '.5rem', fontSize: '.72rem', color: '#94a3b8' }}>
+                          Próximo contato: {formatDate(r.proximo_contato)}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )

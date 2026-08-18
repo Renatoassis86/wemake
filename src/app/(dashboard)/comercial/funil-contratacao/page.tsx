@@ -128,7 +128,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
     <div>
       <PageHeader title="Funil de Contratação" subtitle="Da negociação ao contrato assinado — visão consolidada por escola" />
 
-      <div style={{ padding: '2rem 2.5rem' }}>
+      <div className="mp-page-padding-x" style={{ padding: '2rem 2.5rem' }}>
 
         {/* ── KPIs ──────────────────────────────────────────── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
@@ -202,8 +202,11 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
         </div>
 
         {/* ── Seletor de escola + formulário rápido de negociação ── */}
-        <div style={card}>
-          <div style={secHdr()}>
+        {/* overflow: visible (sobrescrevendo o `card` padrão) — o dropdown de
+            busca do EscolaSelector é position:absolute e ficava cortado pelo
+            overflow:hidden do card. */}
+        <div style={{ ...card, overflow: 'visible' }}>
+          <div style={{ ...secHdr(), borderRadius: '16px 16px 0 0' }}>
             <div style={secTitle}>Registrar / Atualizar Negociação</div>
           </div>
           <div style={{ padding: '1.25rem 1.75rem' }}>
@@ -283,41 +286,40 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
               <input name="q" defaultValue={params.q ?? ''} placeholder="Buscar por escola..." style={{ ...inp, width: 220, padding: '.4rem .7rem', fontSize: '.78rem' }} />
             </form>
           </div>
-          <div style={{ overflowX: 'auto' }}>
+          <div className="mp-escolas-table-wrap" style={{ overflowX: 'auto' }}>
             {linhasFiltradas.length > 0 ? (
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ background: '#0f172a' }}>
-                    {['Escola', 'Contato', 'Cidade/UF', 'Responsável', 'Alunos', 'Segmentos', '1º Contato', 'Reuniões', 'Valor/Desconto', 'Fase', 'Lead', 'Observação', ''].map(col => (
-                      <th key={col} style={{ padding: '.7rem 1rem', textAlign: 'left', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: 'rgba(255,255,255,.65)', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{col}</th>
+                    {['Escola', 'Responsável', 'Alunos', 'Atividade', 'Valor/Desconto', 'Fase', 'Lead', ''].map(col => (
+                      <th key={col} style={{ padding: '.6rem .75rem', textAlign: 'left', fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.65)', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{col}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {linhasFiltradas.map((l, idx) => (
                     <tr key={l.escola_id} style={{ borderBottom: '1px solid #f1f5f9', background: idx % 2 === 0 ? '#fff' : '#fafafa' }}>
-                      <td style={{ padding: '.85rem 1rem', verticalAlign: 'middle', maxWidth: 200 }}>
-                        <div style={{ fontWeight: 700, fontSize: '.82rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {l.escola_nome}
+                      <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle', maxWidth: 190 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '.35rem' }}>
+                          <div style={{ fontWeight: 700, fontSize: '.8rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {l.escola_nome}
+                          </div>
+                          {l.negociacao_observacoes && (
+                            <span title={l.negociacao_observacoes} style={{ flexShrink: 0, cursor: 'help', color: '#94a3b8', fontSize: '.75rem' }}>📝</span>
+                          )}
+                        </div>
+                        <div style={{ fontSize: '.68rem', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {l.contato_nome ? `${l.contato_nome} · ` : ''}{l.cidade ?? '—'}{l.estado ? `/${l.estado}` : ''}
                         </div>
                       </td>
-                      <td style={{ padding: '.85rem 1rem', fontSize: '.78rem', color: '#475569' }}>{l.contato_nome ?? '—'}</td>
-                      <td style={{ padding: '.85rem 1rem', fontSize: '.78rem', color: '#64748b', whiteSpace: 'nowrap' }}>
-                        {l.cidade ?? '—'}{l.estado ? `/${l.estado}` : ''}
-                      </td>
-                      <td style={{ padding: '.85rem 1rem', fontSize: '.78rem', color: '#475569', whiteSpace: 'nowrap' }}>{l.responsavel_nome ?? '—'}</td>
-                      <td style={{ padding: '.85rem 1rem', fontSize: '.82rem', color: '#0f172a', fontWeight: 700, textAlign: 'center' }}>{l.alunos_cadastro || '—'}</td>
-                      <td style={{ padding: '.85rem 1rem', fontSize: '.72rem', color: '#64748b', whiteSpace: 'nowrap' }}>{l.segmentos_ativos.join(', ') || '—'}</td>
-                      <td style={{ padding: '.85rem 1rem', fontSize: '.78rem', color: '#334155', maxWidth: 200 }}
+                      <td style={{ padding: '.65rem .75rem', fontSize: '.75rem', color: '#475569', whiteSpace: 'nowrap' }}>{l.responsavel_nome ?? '—'}</td>
+                      <td style={{ padding: '.65rem .75rem', fontSize: '.8rem', color: '#0f172a', fontWeight: 700, textAlign: 'center' }}>{l.alunos_cadastro || '—'}</td>
+                      <td style={{ padding: '.65rem .75rem', fontSize: '.72rem', color: '#334155', maxWidth: 160 }}
                         title={l.primeiro_contato_resumo ?? ''}>
                         {l.primeiro_contato ? (
                           <>
-                            <div>{formatDate(l.primeiro_contato)}</div>
-                            {l.primeiro_contato_resumo && (
-                              <div style={{ fontSize: '.65rem', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {l.primeiro_contato_resumo}
-                              </div>
-                            )}
+                            <div>{l.reunioes_total} reunião{l.reunioes_total > 1 ? 'ões' : ''}{l.ultima_interacao ? ` · últ. ${formatDate(l.ultima_interacao)}` : ''}</div>
+                            <div style={{ fontSize: '.65rem', color: '#94a3b8' }}>1º contato: {formatDate(l.primeiro_contato)}</div>
                           </>
                         ) : (
                           <Link href={`/comercial/registros/novo?escola=${l.escola_id}`} style={{ fontSize: '.68rem', fontWeight: 700, color: '#b45309', textDecoration: 'none' }}>
@@ -325,16 +327,8 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                           </Link>
                         )}
                       </td>
-                      <td style={{ padding: '.85rem 1rem', fontSize: '.78rem', color: '#334155', whiteSpace: 'nowrap' }}>
-                        {l.reunioes_total > 0 ? (
-                          <>
-                            <strong>{l.reunioes_total}</strong>
-                            {l.ultima_interacao && <span style={{ color: '#94a3b8' }}> · {formatDate(l.ultima_interacao)}</span>}
-                          </>
-                        ) : '—'}
-                      </td>
-                      <td style={{ padding: '.85rem 1rem', whiteSpace: 'nowrap' }}>
-                        <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '.9rem', fontWeight: 700, color: '#0f172a' }}>
+                      <td style={{ padding: '.65rem .75rem', whiteSpace: 'nowrap' }}>
+                        <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '.85rem', fontWeight: 700, color: '#0f172a' }}>
                           {l.proposta_valor_aluno_ano
                             ? `${formatCurrency(l.proposta_valor_aluno_ano)}/aluno`
                             : l.negociacao_valor_estimado
@@ -342,21 +336,17 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                               : l.contrato_valor_total > 0 ? formatCurrency(l.contrato_valor_total) : '—'}
                         </div>
                         {l.proposta_desconto_pct != null && l.proposta_desconto_pct > 0 && (
-                          <div style={{ fontSize: '.65rem', color: '#b45309' }}>{l.proposta_desconto_pct}% desconto</div>
+                          <div style={{ fontSize: '.63rem', color: '#b45309' }}>{l.proposta_desconto_pct}% desconto</div>
                         )}
                       </td>
-                      <td style={{ padding: '.85rem 1rem', verticalAlign: 'middle' }}>
+                      <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
                         <FaseBadge fase={l.fase_funil} />
                       </td>
-                      <td style={{ padding: '.85rem 1rem', verticalAlign: 'middle' }}>
+                      <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
                         <TemperaturaBadge temperatura={l.lead_temperatura} score={l.lead_score} />
                       </td>
-                      <td style={{ padding: '.85rem 1rem', fontSize: '.72rem', color: '#64748b', maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-                        title={l.negociacao_observacoes ?? ''}>
-                        {l.negociacao_observacoes ?? '—'}
-                      </td>
-                      <td style={{ padding: '.85rem 1rem', verticalAlign: 'middle' }}>
-                        <Link href={`/comercial/funil-contratacao?escola=${l.escola_id}`} style={{ fontSize: '.72rem', fontWeight: 700, color: '#4A7FDB', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+                      <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
+                        <Link href={`/comercial/escolas/${l.escola_id}`} style={{ fontSize: '.72rem', fontWeight: 700, color: '#4A7FDB', textDecoration: 'none', whiteSpace: 'nowrap' }}>
                           Editar →
                         </Link>
                       </td>
