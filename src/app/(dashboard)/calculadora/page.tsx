@@ -330,6 +330,7 @@ function CalculadoraInner() {
       setSegFund2(!!d.segFund2)
       setSegMedio(!!d.segMedio)
       setSegs(Math.max(1, Math.min(3, [d.segInfantil, d.segFund1, d.segFund2, d.segMedio].filter(Boolean).length)))
+      setAltaCompl(!!d.altaComplexidade)
       setPrefillEscola({ nome: d.escolaNome ?? '', email: d.escolaEmail ?? '' })
       setDadosHerdados(true)
     } finally {

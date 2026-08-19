@@ -845,6 +845,86 @@ export async function upsertContrato(formData: FormData) {
   redirect(`/comercial/contratos?escola=${escola_id}`)
 }
 
+/**
+ * Atualiza só o responsável de uma escola (usado no editor inline da tabela
+ * do Funil de Contratação) — não mexe em mais nenhum campo.
+ */
+export async function atualizarResponsavelEscola(escolaId: string, responsavelId: string): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado' }
+
+  const { error } = await supabase
+    .from('escolas')
+    .update({ responsavel_id: responsavelId || null, updated_by: user.id })
+    .eq('id', escolaId)
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/comercial/funil-contratacao', 'layout')
+  revalidatePath('/comercial/escolas', 'layout')
+  revalidatePath('/comercial', 'layout')
+  return { success: true }
+}
+
+/**
+ * Atualiza só o checklist de progresso do contrato (usado no editor inline
+ * "Fase" da tabela do Funil de Contratação) — versão restrita de
+ * upsertContrato que NÃO toca nos 32 campos de qtd/valor por segmento, para
+ * não zerar preços já salvos quando o popover só envia o checklist.
+ */
+export async function atualizarChecklistContratoInline(formData: FormData): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado' }
+
+  const escola_id = formData.get('escola_id') as string
+  if (!escola_id) return { success: false, error: 'escola_id é obrigatório' }
+
+  const payload: Record<string, unknown> = {
+    formulario_enviado:  formData.get('formulario_enviado') === 'true',
+    formulario_recebido: formData.get('formulario_recebido') === 'true',
+    minuta_enviada:      formData.get('minuta_enviada') === 'true',
+    retorno_minuta:      formData.get('retorno_minuta') === 'true',
+    minuta_atualizada:   formData.get('minuta_atualizada') === 'true',
+    contrato_enviado:    formData.get('contrato_enviado') === 'true',
+    contrato_assinado:   formData.get('contrato_assinado') === 'true',
+    contrato_arquivado:  formData.get('contrato_arquivado') === 'true',
+  }
+
+  const { data: existing } = await supabase
+    .from('contratos')
+    .select('id, contrato_arquivado, implantacao_status')
+    .eq('escola_id', escola_id)
+    .maybeSingle()
+
+  const contratoArquivadoAgora = payload.contrato_arquivado === true
+  const implantacaoStatusForm = (formData.get('implantacao_status') as string) || null
+
+  if (implantacaoStatusForm) {
+    payload.implantacao_status = implantacaoStatusForm
+    if (implantacaoStatusForm === 'concluida' && existing?.implantacao_status !== 'concluida') {
+      payload.implantacao_concluida_em = new Date().toISOString()
+    }
+  } else if (contratoArquivadoAgora && !existing?.contrato_arquivado) {
+    payload.implantacao_status = 'em_andamento'
+    payload.implantacao_iniciada_em = new Date().toISOString()
+  }
+
+  const { error } = existing
+    ? await supabase.from('contratos').update(payload).eq('id', existing.id)
+    : await supabase.from('contratos').insert({ ...payload, escola_id, created_by: user.id })
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/comercial/funil-contratacao', 'layout')
+  revalidatePath('/comercial/contratos', 'layout')
+  revalidatePath(`/comercial/escolas/${escola_id}`, 'layout')
+  revalidatePath('/comercial/metas', 'layout')
+  revalidatePath('/comercial', 'layout')
+  return { success: true }
+}
+
 // ─── Formulário público We Make (sem auth) ────────────────────────────────────
 
 /**

@@ -9,6 +9,8 @@ import Link from 'next/link'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { EscolaSelector } from '@/components/ui/EscolaSelector'
 import { FunilVisual } from '@/components/comercial/FunilVisual'
+import { FasePopover } from '@/components/comercial/FasePopover'
+import { ResponsavelInlineSelect } from '@/components/comercial/ResponsavelInlineSelect'
 import { STAGE_OPTIONS } from '@/types/database'
 
 interface Props { searchParams: Promise<{ escola?: string; fase?: string; q?: string }> }
@@ -70,21 +72,6 @@ function TemperaturaBadge({ temperatura, quadrante, fit, engajamento }: { temper
     }}>
       <span style={{ width: 6, height: 6, borderRadius: '50%', background: cor.dot, display: 'inline-block' }} />
       Fit {fit} · Eng {engajamento}
-    </span>
-  )
-}
-
-function FaseBadge({ fase }: { fase: FaseFunil }) {
-  const cor = FASE_COR[fase]
-  return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: '.25rem',
-      background: cor.bg, color: cor.text, border: `1px solid ${cor.border}`,
-      padding: '.2rem .6rem', borderRadius: 99,
-      fontSize: '.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em',
-      fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
-    }}>
-      {FASE_LABELS[fase]}
     </span>
   )
 }
@@ -312,7 +299,9 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                           {l.contato_nome ? `${l.contato_nome} · ` : ''}{l.cidade ?? '—'}{l.estado ? `/${l.estado}` : ''}
                         </div>
                       </td>
-                      <td style={{ padding: '.65rem .75rem', fontSize: '.75rem', color: '#475569', whiteSpace: 'nowrap' }}>{l.responsavel_nome ?? '—'}</td>
+                      <td style={{ padding: '.65rem .75rem', whiteSpace: 'nowrap' }}>
+                        <ResponsavelInlineSelect escolaId={l.escola_id} responsavelId={l.responsavel_id} usuarios={usuariosAtivos ?? []} />
+                      </td>
                       <td style={{ padding: '.65rem .75rem', fontSize: '.8rem', color: '#0f172a', fontWeight: 700, textAlign: 'center' }}>{l.alunos_cadastro || '—'}</td>
                       <td style={{ padding: '.65rem .75rem', fontSize: '.72rem', color: '#334155', maxWidth: 160 }}
                         title={l.primeiro_contato_resumo ?? ''}>
@@ -340,7 +329,22 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                         )}
                       </td>
                       <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
-                        <FaseBadge fase={l.fase_funil} />
+                        <FasePopover
+                          escolaId={l.escola_id}
+                          faseLabel={FASE_LABELS[l.fase_funil]}
+                          faseCor={FASE_COR[l.fase_funil]}
+                          checklist={{
+                            formulario_enviado: l.formulario_enviado,
+                            formulario_recebido: l.formulario_recebido,
+                            minuta_enviada: l.minuta_enviada,
+                            retorno_minuta: l.retorno_minuta,
+                            minuta_atualizada: l.minuta_atualizada,
+                            contrato_enviado: l.contrato_enviado,
+                            contrato_assinado: l.contrato_assinado,
+                            contrato_arquivado: l.contrato_arquivado,
+                          }}
+                          implantacaoStatus={l.implantacao_status}
+                        />
                       </td>
                       <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
                         <TemperaturaBadge temperatura={l.lead_temperatura} quadrante={l.quadrante} fit={l.fit_score} engajamento={l.engajamento_score} />
