@@ -22,6 +22,17 @@ interface PreCadastro {
   cidade: string | null
   estado: string | null
   email_institucional: string | null
+  site: string | null
+  telefone_institucional: string | null
+  // Endereço de entrega do material didático
+  entrega_mesmo_endereco: boolean | null
+  entrega_rua: string | null
+  entrega_numero: string | null
+  entrega_complemento: string | null
+  entrega_bairro: string | null
+  entrega_cep: string | null
+  entrega_cidade: string | null
+  entrega_estado: string | null
   // Segmentos
   seg_infantil: boolean | null
   seg_fundamental_1: boolean | null
@@ -32,6 +43,21 @@ interface PreCadastro {
   alunos_fundamental_2: number | null
   alunos_ensino_medio: number | null
   maior_sala: number | null
+  // Séries granulares (Anexo II)
+  infantil4_qtd: number | null
+  infantil5_qtd: number | null
+  fund1_ano1_qtd: number | null
+  fund1_ano2_qtd: number | null
+  fund1_ano3_qtd: number | null
+  fund1_ano4_qtd: number | null
+  fund1_ano5_qtd: number | null
+  fund2_ano6_qtd: number | null
+  fund2_ano7_qtd: number | null
+  fund2_ano8_qtd: number | null
+  fund2_ano9_qtd: number | null
+  medio_1s_qtd: number | null
+  medio_2s_qtd: number | null
+  medio_3s_qtd: number | null
   // Ano letivo
   data_inicio_letivo: string | null
   data_fim_letivo: string | null
@@ -125,6 +151,63 @@ function Segmentos({ r }: { r: PreCadastro }) {
   )
 }
 
+const SERIES_GRUPOS: { titulo: string; campos: { label: string; key: keyof PreCadastro }[] }[] = [
+  { titulo: 'Educação Infantil', campos: [
+    { label: 'Infantil 4', key: 'infantil4_qtd' },
+    { label: 'Infantil 5', key: 'infantil5_qtd' },
+  ] },
+  { titulo: 'Fundamental 1', campos: [
+    { label: '1º ano', key: 'fund1_ano1_qtd' },
+    { label: '2º ano', key: 'fund1_ano2_qtd' },
+    { label: '3º ano', key: 'fund1_ano3_qtd' },
+    { label: '4º ano', key: 'fund1_ano4_qtd' },
+    { label: '5º ano', key: 'fund1_ano5_qtd' },
+  ] },
+  { titulo: 'Fundamental 2', campos: [
+    { label: '6º ano', key: 'fund2_ano6_qtd' },
+    { label: '7º ano', key: 'fund2_ano7_qtd' },
+    { label: '8º ano', key: 'fund2_ano8_qtd' },
+    { label: '9º ano', key: 'fund2_ano9_qtd' },
+  ] },
+  { titulo: 'Ensino Médio', campos: [
+    { label: '1ª série', key: 'medio_1s_qtd' },
+    { label: '2ª série', key: 'medio_2s_qtd' },
+    { label: '3ª série', key: 'medio_3s_qtd' },
+  ] },
+]
+
+function temSeriesGranulares(r: PreCadastro) {
+  return SERIES_GRUPOS.some(g => g.campos.some(c => ((r[c.key] as number | null) ?? 0) > 0))
+}
+
+function SeriesGranulares({ r }: { r: PreCadastro }) {
+  return (
+    <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: '.6rem' }}>
+      {SERIES_GRUPOS.map(g => {
+        const preenchidos = g.campos.filter(c => ((r[c.key] as number | null) ?? 0) > 0)
+        if (preenchidos.length === 0) return null
+        return (
+          <div key={g.titulo}>
+            <div style={{ fontSize: '.68rem', fontWeight: 700, color: '#4A7FDB', marginBottom: '.3rem' }}>{g.titulo}</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.4rem' }}>
+              {preenchidos.map(c => (
+                <span key={c.key} style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '.3rem',
+                  padding: '.2rem .55rem', borderRadius: 6,
+                  background: '#eff6ff', color: '#1e3a8a', border: '1px solid #bfdbfe',
+                  fontSize: '.72rem', fontWeight: 600,
+                }}>
+                  {c.label}: <strong>{r[c.key]}</strong>
+                </span>
+              ))}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function RowDetails({ r }: { r: PreCadastro }) {
   const Field = ({ label, value }: { label: string; value: string | number | null | undefined }) => (
     <div>
@@ -153,7 +236,18 @@ function RowDetails({ r }: { r: PreCadastro }) {
         <Field label="Razão social" value={r.razao_social} />
         <Field label="Nome fantasia" value={r.nome_fantasia} />
         <Field label="E-mail institucional" value={r.email_institucional} />
+        <Field label="Site" value={r.site} />
+        <Field label="Telefone institucional" value={r.telefone_institucional} />
         <Field label="Endereço" value={[r.rua, r.numero, r.bairro, r.cidade, r.estado, r.cep].filter(Boolean).join(', ')} />
+
+        <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#4A7FDB', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem', marginTop: '.4rem' }}>
+          Endereço de entrega do material didático
+        </div>
+        {r.entrega_mesmo_endereco === false ? (
+          <Field label="Endereço de entrega" value={[r.entrega_rua, r.entrega_numero, r.entrega_complemento, r.entrega_bairro, r.entrega_cidade, r.entrega_estado, r.entrega_cep].filter(Boolean).join(', ') || '—'} />
+        ) : (
+          <Field label="Endereço de entrega" value="Mesmo endereço da escola" />
+        )}
 
         <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#4A7FDB', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem', marginTop: '.4rem' }}>
           Ano letivo e segmentos
@@ -167,6 +261,15 @@ function RowDetails({ r }: { r: PreCadastro }) {
         <Field label="Fundamental 1" value={r.seg_fundamental_1 ? `${r.alunos_fundamental_1 ?? 0} alunos` : 'Não'} />
         <Field label="Fundamental 2" value={r.seg_fundamental_2 ? `${r.alunos_fundamental_2 ?? 0} alunos` : 'Não'} />
         <Field label="Ensino Médio" value={r.seg_ensino_medio ? `${r.alunos_ensino_medio ?? 0} alunos` : 'Não'} />
+
+        {temSeriesGranulares(r) && (
+          <>
+            <div style={{ gridColumn: '1 / -1', fontSize: '.68rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.06em', marginTop: '.2rem' }}>
+              Detalhamento por série (Anexo II)
+            </div>
+            <SeriesGranulares r={r} />
+          </>
+        )}
 
         <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#4A7FDB', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem', marginTop: '.4rem' }}>
           Representante legal
