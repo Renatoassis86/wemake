@@ -90,11 +90,62 @@ function Field({ label, name, type = 'text', required, options, placeholder }: {
   )
 }
 
+// Grade de séries de um segmento (ex.: Fundamental 1 → 1º ao 5º ano), cada uma
+// com campo numérico de quantidade de alunos — substitui o campo agregado único.
+function SerieGrid({ titulo, series }: { titulo: string; series: { name: string; label: string }[] }) {
+  return (
+    <div style={{ marginBottom: '1rem' }}>
+      <div style={{ fontSize: '.8rem', fontWeight: 700, color: '#4a8fe7', marginBottom: '.5rem' }}>{titulo}</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '.75rem' }}>
+        {series.map(s => (
+          <div key={s.name}>
+            <label style={{ display: 'block', fontSize: '.75rem', fontWeight: 600, color: '#64748b', marginBottom: '.3rem' }}>{s.label}</label>
+            <input name={s.name} type="number" min="0" defaultValue="0" placeholder="0"
+              style={{ width: '100%', padding: '.55rem .75rem', fontSize: '.875rem', border: '1.5px solid #94a3b8', borderRadius: 6, outline: 'none' }} />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const SERIES_INFANTIL = [
+  { name: 'infantil4_qtd', label: 'Infantil 4' },
+  { name: 'infantil5_qtd', label: 'Infantil 5' },
+]
+const SERIES_FUND1 = [
+  { name: 'fund1_ano1_qtd', label: '1º ano' },
+  { name: 'fund1_ano2_qtd', label: '2º ano' },
+  { name: 'fund1_ano3_qtd', label: '3º ano' },
+  { name: 'fund1_ano4_qtd', label: '4º ano' },
+  { name: 'fund1_ano5_qtd', label: '5º ano' },
+]
+const SERIES_FUND2 = [
+  { name: 'fund2_ano6_qtd', label: '6º ano' },
+  { name: 'fund2_ano7_qtd', label: '7º ano' },
+  { name: 'fund2_ano8_qtd', label: '8º ano' },
+  { name: 'fund2_ano9_qtd', label: '9º ano' },
+]
+const SERIES_MEDIO = [
+  { name: 'medio_1s_qtd', label: '1ª série' },
+  { name: 'medio_2s_qtd', label: '2ª série' },
+  { name: 'medio_3s_qtd', label: '3ª série' },
+]
+
 export default function FormularioPublico() {
   const [loading, setLoading] = useState(false)
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const [isFormDirty, setIsFormDirty] = useState(false)
   const feedbackRef = useRef<HTMLDivElement | null>(null)
+
+  // Segmentos controlados — cada um expande sua sub-grade de séries quando marcado
+  const [segInfantil, setSegInfantil] = useState(false)
+  const [segFund1,    setSegFund1]    = useState(false)
+  const [segFund2,    setSegFund2]    = useState(false)
+  const [segMedio,    setSegMedio]    = useState(false)
+
+  // Endereço de entrega do material didático — só pede campos extras se for diferente do endereço da escola
+  const [entregaMesmoEndereco, setEntregaMesmoEndereco] = useState(true)
 
   // Quando o toast aparece, rola para mostrá-lo
   useEffect(() => {
@@ -125,6 +176,15 @@ export default function FormularioPublico() {
             }
           }
         })
+        // Os 4 checkboxes de segmento e o toggle de entrega são controlados por
+        // estado React (para abrir/fechar as sub-grades) — sincroniza aqui,
+        // já que o loop acima só mexe no DOM.
+        if (data.seg_infantil)        setSegInfantil(true)
+        if (data.seg_fundamental_1)   setSegFund1(true)
+        if (data.seg_fundamental_2)   setSegFund2(true)
+        if (data.seg_ensino_medio)    setSegMedio(true)
+        if (data.entrega_mesmo_endereco === 'false') setEntregaMesmoEndereco(false)
+
         console.log('✅ Dados recuperados do rascunho')
       } catch (e) {
         console.error('Erro ao recuperar rascunho:', e)
@@ -404,6 +464,50 @@ export default function FormularioPublico() {
                 <Field label="Cidade" name="cidade" required />
                 <Field label="Estado (UF)" name="estado" options={ESTADOS_BR} required />
               </Row>
+
+              <div style={{ marginBottom: '1.25rem' }}>
+                <div style={{ fontSize: '.85rem', fontWeight: 600, color: '#334155', marginBottom: '.6rem' }}>
+                  O endereço de entrega do Material Didático Impresso é o mesmo endereço da escola acima?
+                </div>
+                <div style={{ display: 'flex', gap: '1.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <input type="radio" name="entrega_mesmo_endereco" id="entrega_sim" value="true"
+                      checked={entregaMesmoEndereco} onChange={() => setEntregaMesmoEndereco(true)}
+                      style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#5FE3D0' }} />
+                    <label htmlFor="entrega_sim" style={{ marginLeft: '.5rem', fontSize: '.85rem', color: '#475569', cursor: 'pointer' }}>Sim</label>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <input type="radio" name="entrega_mesmo_endereco" id="entrega_nao" value="false"
+                      checked={!entregaMesmoEndereco} onChange={() => setEntregaMesmoEndereco(false)}
+                      style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#5FE3D0' }} />
+                    <label htmlFor="entrega_nao" style={{ marginLeft: '.5rem', fontSize: '.85rem', color: '#475569', cursor: 'pointer' }}>Não</label>
+                  </div>
+                </div>
+              </div>
+
+              {!entregaMesmoEndereco && (
+                <div style={{ marginBottom: '1.25rem', padding: '1.1rem 1.25rem', background: '#f8fafc', borderRadius: 10 }}>
+                  <div style={{ fontSize: '.85rem', fontWeight: 600, color: '#334155', marginBottom: '.75rem' }}>Endereço de Entrega do Material Didático</div>
+                  <Row>
+                    <div style={{ gridColumn: 'span 2' }}><Field label="Rua" name="entrega_rua" required /></div>
+                    <Field label="Número" name="entrega_numero" required />
+                  </Row>
+                  <Row>
+                    <Field label="Complemento" name="entrega_complemento" placeholder="Apto, sala, etc" />
+                    <Field label="Bairro" name="entrega_bairro" required />
+                  </Row>
+                  <Row>
+                    <Field label="CEP" name="entrega_cep" required placeholder="00000-000" />
+                    <Field label="Cidade" name="entrega_cidade" required />
+                    <Field label="Estado (UF)" name="entrega_estado" options={ESTADOS_BR} required />
+                  </Row>
+                </div>
+              )}
+
+              <Row>
+                <Field label="Site do Colégio" name="site" placeholder="https://www.suaescola.com.br" />
+                <Field label="Telefone Institucional" name="telefone_institucional" placeholder="(00) 0000-0000" />
+              </Row>
               <Row>
                 <Field label="E-mail Institucional (Comunicação)" name="email_institucional" type="email" required placeholder="contato@escola.org" />
               </Row>
@@ -414,49 +518,33 @@ export default function FormularioPublico() {
                 <div style={{ fontSize: '.85rem', fontWeight: 600, color: '#334155', marginBottom: '.75rem' }}>Quais segmentos adotarão?</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '.8rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <input type="checkbox" name="seg_infantil" id="seg_infantil" style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#5FE3D0' }} />
+                    <input type="checkbox" name="seg_infantil" id="seg_infantil" checked={segInfantil} onChange={e => setSegInfantil(e.target.checked)} style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#5FE3D0' }} />
                     <label htmlFor="seg_infantil" style={{ marginLeft: '.5rem', fontSize: '.85rem', color: '#475569', cursor: 'pointer' }}>Infantil</label>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <input type="checkbox" name="seg_fundamental_1" id="seg_fundamental_1" style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#5FE3D0' }} />
+                    <input type="checkbox" name="seg_fundamental_1" id="seg_fundamental_1" checked={segFund1} onChange={e => setSegFund1(e.target.checked)} style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#5FE3D0' }} />
                     <label htmlFor="seg_fundamental_1" style={{ marginLeft: '.5rem', fontSize: '.85rem', color: '#475569', cursor: 'pointer' }}>Fundamental 1</label>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <input type="checkbox" name="seg_fundamental_2" id="seg_fundamental_2" style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#5FE3D0' }} />
+                    <input type="checkbox" name="seg_fundamental_2" id="seg_fundamental_2" checked={segFund2} onChange={e => setSegFund2(e.target.checked)} style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#5FE3D0' }} />
                     <label htmlFor="seg_fundamental_2" style={{ marginLeft: '.5rem', fontSize: '.85rem', color: '#475569', cursor: 'pointer' }}>Fundamental 2</label>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <input type="checkbox" name="seg_ensino_medio" id="seg_ensino_medio" style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#5FE3D0' }} />
+                    <input type="checkbox" name="seg_ensino_medio" id="seg_ensino_medio" checked={segMedio} onChange={e => setSegMedio(e.target.checked)} style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#5FE3D0' }} />
                     <label htmlFor="seg_ensino_medio" style={{ marginLeft: '.5rem', fontSize: '.85rem', color: '#475569', cursor: 'pointer' }}>Ensino Médio</label>
                   </div>
                 </div>
               </div>
 
-              <div style={{ marginBottom: '1.5rem', padding: '1.25rem', background: '#f8fafc', borderRadius: 10 }}>
-                <div style={{ fontSize: '.85rem', fontWeight: 600, color: '#334155', marginBottom: '.75rem' }}>Quantidade de alunos por segmento</div>
-                <Row>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#64748b', marginBottom: '.3rem' }}>Infantil</label>
-                    <input name="alunos_infantil" type="number" min="0" defaultValue="0" placeholder="0"
-                      style={{ width: '100%', padding: '.55rem .75rem', fontSize: '.875rem', border: '1.5px solid #94a3b8', borderRadius: 6, outline: 'none' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#64748b', marginBottom: '.3rem' }}>Fundamental 1</label>
-                    <input name="alunos_fundamental_1" type="number" min="0" defaultValue="0" placeholder="0"
-                      style={{ width: '100%', padding: '.55rem .75rem', fontSize: '.875rem', border: '1.5px solid #94a3b8', borderRadius: 6, outline: 'none' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#64748b', marginBottom: '.3rem' }}>Fundamental 2</label>
-                    <input name="alunos_fundamental_2" type="number" min="0" defaultValue="0" placeholder="0"
-                      style={{ width: '100%', padding: '.55rem .75rem', fontSize: '.875rem', border: '1.5px solid #94a3b8', borderRadius: 6, outline: 'none' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#64748b', marginBottom: '.3rem' }}>Ensino Médio</label>
-                    <input name="alunos_ensino_medio" type="number" min="0" defaultValue="0" placeholder="0"
-                      style={{ width: '100%', padding: '.55rem .75rem', fontSize: '.875rem', border: '1.5px solid #94a3b8', borderRadius: 6, outline: 'none' }} />
-                  </div>
-                </Row>
-              </div>
+              {(segInfantil || segFund1 || segFund2 || segMedio) && (
+                <div style={{ marginBottom: '1.5rem', padding: '1.25rem', background: '#f8fafc', borderRadius: 10 }}>
+                  <div style={{ fontSize: '.85rem', fontWeight: 600, color: '#334155', marginBottom: '1rem' }}>Quantidade de alunos por série</div>
+                  {segInfantil && <SerieGrid titulo="Educação Infantil" series={SERIES_INFANTIL} />}
+                  {segFund1    && <SerieGrid titulo="Fundamental 1" series={SERIES_FUND1} />}
+                  {segFund2    && <SerieGrid titulo="Fundamental 2" series={SERIES_FUND2} />}
+                  {segMedio    && <SerieGrid titulo="Ensino Médio" series={SERIES_MEDIO} />}
+                </div>
+              )}
 
               {/* Maior turma */}
               <div style={{ marginBottom: '1.5rem', padding: '1.1rem 1.25rem', background: 'linear-gradient(135deg, #eff6ff, #f5f3ff)', border: '2px solid #bfdbfe', borderRadius: 12, display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>

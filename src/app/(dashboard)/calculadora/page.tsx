@@ -4,6 +4,7 @@ import { useState, useMemo, useRef, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import PageHeader from '@/components/layout/PageHeader'
 import { CopyButton } from '@/components/ui/CopyButton'
+import { EscolaSelector } from '@/components/ui/EscolaSelector'
 
 // ── Formatação ────────────────────────────────────────────────────
 const R$ = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -296,6 +297,42 @@ function CalculadoraInner() {
   const [segFund2,    setSegFund2]    = useState(true)
   const [segMedio,    setSegMedio]    = useState(false)
 
+  // ── Herdar dados de uma escola já cadastrada (evita digitar item a item) ──
+  const [escolasParaSelecao, setEscolasParaSelecao] = useState<{ id: string; nome: string; cidade: string | null; estado: string | null }[]>([])
+  const [escolaHerdadaId, setEscolaHerdadaId] = useState('')
+  const [carregandoEscola, setCarregandoEscola] = useState(false)
+  const [fonteDadosEscola, setFonteDadosEscola] = useState<'form_precadastro' | 'proposta' | 'cadastro' | null>(null)
+
+  useEffect(() => {
+    fetch('/api/escolas-select')
+      .then(r => r.json())
+      .then(setEscolasParaSelecao)
+      .catch(() => {})
+  }, [])
+
+  async function handleEscolaHerdada(id: string) {
+    setEscolaHerdadaId(id)
+    setCarregandoEscola(true)
+    try {
+      const res = await fetch(`/api/calculadora/escola/${id}`)
+      if (!res.ok) return
+      const d = await res.json()
+      if (d.alunos)    setAlunos(d.alunos)
+      if (d.ticket)    setTicket(d.ticket)
+      if (d.maiorSala) setMaiorSala(d.maiorSala)
+      if (d.situacao)  setSituacao(d.situacao)
+      setSegInfantil(!!d.segInfantil)
+      setSegFund1(!!d.segFund1)
+      setSegFund2(!!d.segFund2)
+      setSegMedio(!!d.segMedio)
+      setSegs(Math.max(1, Math.min(3, [d.segInfantil, d.segFund1, d.segFund2, d.segMedio].filter(Boolean).length)))
+      setPrefillEscola({ nome: d.escolaNome ?? '', email: d.escolaEmail ?? '' })
+      setFonteDadosEscola(d.fonte ?? null)
+    } finally {
+      setCarregandoEscola(false)
+    }
+  }
+
   function handleToggleSegment(segKey: 'inf' | 'f1' | 'f2' | 'med', checked: boolean) {
     const inf = segKey === 'inf' ? checked : segInfantil
     const f1  = segKey === 'f1'  ? checked : segFund1
@@ -370,7 +407,7 @@ function CalculadoraInner() {
   // Quantidade de parcelas do valor total do contrato (comodato) — a periodicidade
   // (mensal, bimestral etc.) é acertada diretamente com a escola, por isso não
   // assumimos mais 12x fixo; aparece na proposta apenas como texto.
-  const [numParcelasProposta, setNumParcelasProposta] = useState(5)
+  const [numParcelasProposta, setNumParcelasProposta] = useState(4)
   const [modalLoading, setModalLoading] = useState(false)
   const [modalError, setModalError]     = useState<string | null>(null)
   const [propostaResult, setPropostaResult] = useState<{
@@ -390,7 +427,7 @@ function CalculadoraInner() {
     setLogoPreview(null)
     setValorCustom(sis.valorFinal.toFixed(2))
     setValorComodatoCustom(((mensalidadeEscola * 12) / (alunos || 1)).toFixed(2))
-    setNumParcelasProposta(5)
+    setNumParcelasProposta(4)
     setModalLoading(false)
     setModalError(null)
     setPropostaResult(null)
@@ -555,6 +592,23 @@ function CalculadoraInner() {
           >
             <span style={{ fontSize: '1rem', lineHeight: 1 }}>&#10003;</span> Gerar Proposta
           </button>
+        </div>
+
+        {/* Herdar dados de uma escola já cadastrada — evita digitar item a item */}
+        <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '1rem 1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <EscolaSelector
+            escolas={escolasParaSelecao}
+            escolaId={escolaHerdadaId}
+            basePath="/calculadora"
+            placeholder="— Escolher escola já cadastrada para herdar os dados —"
+            onSelect={handleEscolaHerdada}
+          />
+          {carregandoEscola && <span style={{ fontSize: '.78rem', color: '#94a3b8' }}>Carregando dados...</span>}
+          {!carregandoEscola && fonteDadosEscola && (
+            <span style={{ fontSize: '.72rem', fontWeight: 700, padding: '.25rem .65rem', borderRadius: 99, background: '#f0fdf4', color: '#16a34a', border: '1px solid #86efac' }}>
+              Dados herdados de {fonteDadosEscola === 'form_precadastro' ? 'formulário de pré-cadastro' : fonteDadosEscola === 'proposta' ? 'proposta anterior' : 'cadastro da escola'}
+            </span>
+          )}
         </div>
 
         {/* ══════════════════════════════════════════════════════
@@ -1576,7 +1630,7 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                         setLogoFile(null)
                         setLogoPreview(null)
                         setValorComodatoCustom(((mensalidadeEscola * 12) / (alunos || 1)).toFixed(2))
-                        setNumParcelasProposta(5)
+                        setNumParcelasProposta(4)
                         setModalError(null)
                       }}
                       style={{ padding: '.55rem 1.2rem', borderRadius: 8, border: '1.5px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#475569' }}
@@ -1728,7 +1782,7 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                       max={24}
                       value={numParcelasProposta || ''}
                       onChange={e => setNumParcelasProposta(+e.target.value)}
-                      onBlur={() => setNumParcelasProposta(n => Math.min(24, Math.max(1, n || 5)))}
+                      onBlur={() => setNumParcelasProposta(n => Math.min(24, Math.max(1, n || 4)))}
                       style={INP}
                     />
                     <div style={{ marginTop: 4, fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>

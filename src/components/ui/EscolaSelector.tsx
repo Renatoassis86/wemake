@@ -17,9 +17,13 @@ interface EscolaSelectorProps {
   basePath: string
   placeholder?: string
   extraButton?: React.ReactNode
+  // Quando informado, a seleção chama esse callback em vez de navegar via
+  // router.push — usado em páginas client-only (ex: Calculadora) que querem
+  // reagir à escolha sem sair da página.
+  onSelect?: (id: string) => void
 }
 
-export function EscolaSelector({ escolas, escolaId, basePath, placeholder, extraButton }: EscolaSelectorProps) {
+export function EscolaSelector({ escolas, escolaId, basePath, placeholder, extraButton, onSelect }: EscolaSelectorProps) {
   const router = useRouter()
   const [busca, setBusca] = useState('')
   const [dropdownAberto, setDropdownAberto] = useState(false)
@@ -45,7 +49,10 @@ export function EscolaSelector({ escolas, escolaId, basePath, placeholder, extra
   const escolaSelecionada = escolas.find(e => e.id === escolaId)
 
   const handleSelecion = (id: string) => {
-    if (id) router.push(`${basePath}?escola=${encodeURIComponent(id)}`)
+    if (id) {
+      if (onSelect) onSelect(id)
+      else router.push(`${basePath}?escola=${encodeURIComponent(id)}`)
+    }
     setBusca('')
     setDropdownAberto(false)
   }

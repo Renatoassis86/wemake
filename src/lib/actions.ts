@@ -874,6 +874,19 @@ export async function enviarFormularioPublico(formData: FormData): Promise<Actio
     const cidade = formData.get('cidade') as string
     const estado = formData.get('estado') as string
     const email_institucional = formData.get('email_institucional') as string
+    const site = formData.get('site') as string || null
+    const telefone_institucional = formData.get('telefone_institucional') as string || null
+
+    // Endereço de entrega do material didático — só relevante se diferente do
+    // endereço da escola (Anexo III do contrato usa o da escola quando "mesmo").
+    const entrega_mesmo_endereco = formData.get('entrega_mesmo_endereco') !== 'false'
+    const entrega_rua           = entrega_mesmo_endereco ? null : (formData.get('entrega_rua') as string || null)
+    const entrega_numero        = entrega_mesmo_endereco ? null : (formData.get('entrega_numero') as string || null)
+    const entrega_complemento   = entrega_mesmo_endereco ? null : (formData.get('entrega_complemento') as string || null)
+    const entrega_bairro        = entrega_mesmo_endereco ? null : (formData.get('entrega_bairro') as string || null)
+    const entrega_cep           = entrega_mesmo_endereco ? null : (formData.get('entrega_cep') as string || null)
+    const entrega_cidade        = entrega_mesmo_endereco ? null : (formData.get('entrega_cidade') as string || null)
+    const entrega_estado        = entrega_mesmo_endereco ? null : (formData.get('entrega_estado') as string || null)
 
     // Dados da seção 3: Segmentos
     const seg_infantil = formData.get('seg_infantil') === 'on'
@@ -881,11 +894,28 @@ export async function enviarFormularioPublico(formData: FormData): Promise<Actio
     const seg_fundamental_2 = formData.get('seg_fundamental_2') === 'on'
     const seg_ensino_medio = formData.get('seg_ensino_medio') === 'on'
 
-    // Quantidade de alunos
-    const alunos_infantil = toNum('alunos_infantil')
-    const alunos_fundamental_1 = toNum('alunos_fundamental_1')
-    const alunos_fundamental_2 = toNum('alunos_fundamental_2')
-    const alunos_ensino_medio = toNum('alunos_ensino_medio')
+    // Séries granulares (Anexo II — quantidade mínima de alunos por série)
+    const infantil4_qtd  = toNum('infantil4_qtd')
+    const infantil5_qtd  = toNum('infantil5_qtd')
+    const fund1_ano1_qtd = toNum('fund1_ano1_qtd')
+    const fund1_ano2_qtd = toNum('fund1_ano2_qtd')
+    const fund1_ano3_qtd = toNum('fund1_ano3_qtd')
+    const fund1_ano4_qtd = toNum('fund1_ano4_qtd')
+    const fund1_ano5_qtd = toNum('fund1_ano5_qtd')
+    const fund2_ano6_qtd = toNum('fund2_ano6_qtd')
+    const fund2_ano7_qtd = toNum('fund2_ano7_qtd')
+    const fund2_ano8_qtd = toNum('fund2_ano8_qtd')
+    const fund2_ano9_qtd = toNum('fund2_ano9_qtd')
+    const medio_1s_qtd   = toNum('medio_1s_qtd')
+    const medio_2s_qtd   = toNum('medio_2s_qtd')
+    const medio_3s_qtd   = toNum('medio_3s_qtd')
+
+    // Quantidade de alunos — agregados calculados a partir das séries (a
+    // digitação passou a ser por série, não mais um total único por segmento)
+    const alunos_infantil = infantil4_qtd + infantil5_qtd
+    const alunos_fundamental_1 = fund1_ano1_qtd + fund1_ano2_qtd + fund1_ano3_qtd + fund1_ano4_qtd + fund1_ano5_qtd
+    const alunos_fundamental_2 = fund2_ano6_qtd + fund2_ano7_qtd + fund2_ano8_qtd + fund2_ano9_qtd
+    const alunos_ensino_medio = medio_1s_qtd + medio_2s_qtd + medio_3s_qtd
     const maior_sala = toNum('maior_sala')
 
     // Datas e formato
@@ -923,10 +953,34 @@ export async function enviarFormularioPublico(formData: FormData): Promise<Actio
       cidade,
       estado,
       email_institucional,
+      site,
+      telefone_institucional,
+      entrega_mesmo_endereco,
+      entrega_rua,
+      entrega_numero,
+      entrega_complemento,
+      entrega_bairro,
+      entrega_cep,
+      entrega_cidade,
+      entrega_estado,
       seg_infantil,
       seg_fundamental_1,
       seg_fundamental_2,
       seg_ensino_medio,
+      infantil4_qtd,
+      infantil5_qtd,
+      fund1_ano1_qtd,
+      fund1_ano2_qtd,
+      fund1_ano3_qtd,
+      fund1_ano4_qtd,
+      fund1_ano5_qtd,
+      fund2_ano6_qtd,
+      fund2_ano7_qtd,
+      fund2_ano8_qtd,
+      fund2_ano9_qtd,
+      medio_1s_qtd,
+      medio_2s_qtd,
+      medio_3s_qtd,
       alunos_infantil,
       alunos_fundamental_1,
       alunos_fundamental_2,
