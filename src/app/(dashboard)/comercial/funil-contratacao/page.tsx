@@ -13,6 +13,8 @@ import { FasePopover } from '@/components/comercial/FasePopover'
 import { ResponsavelInlineSelect } from '@/components/comercial/ResponsavelInlineSelect'
 import { STAGE_OPTIONS } from '@/types/database'
 
+export const dynamic = 'force-dynamic'
+
 interface Props { searchParams: Promise<{ escola?: string; fase?: string; q?: string }> }
 
 const card: React.CSSProperties = {
