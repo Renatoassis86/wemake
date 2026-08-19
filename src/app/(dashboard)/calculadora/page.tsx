@@ -297,14 +297,17 @@ function CalculadoraInner() {
   const [segFund2,    setSegFund2]    = useState(true)
   const [segMedio,    setSegMedio]    = useState(false)
 
-  // ── Herdar dados de uma escola já cadastrada (evita digitar item a item) ──
+  // ── Herdar dados de uma escola que já enviou o formulário público
+  // (/formulario) — evita digitar item a item. Só lista quem realmente
+  // enviou (não a base inteira de escolas do CRM, que na maioria não tem
+  // nada pra herdar).
   const [escolasParaSelecao, setEscolasParaSelecao] = useState<{ id: string; nome: string; cidade: string | null; estado: string | null }[]>([])
   const [escolaHerdadaId, setEscolaHerdadaId] = useState('')
   const [carregandoEscola, setCarregandoEscola] = useState(false)
-  const [fonteDadosEscola, setFonteDadosEscola] = useState<'form_precadastro' | 'proposta' | 'cadastro' | null>(null)
+  const [dadosHerdados, setDadosHerdados] = useState(false)
 
   useEffect(() => {
-    fetch('/api/escolas-select')
+    fetch('/api/precadastros-select')
       .then(r => r.json())
       .then(setEscolasParaSelecao)
       .catch(() => {})
@@ -313,8 +316,9 @@ function CalculadoraInner() {
   async function handleEscolaHerdada(id: string) {
     setEscolaHerdadaId(id)
     setCarregandoEscola(true)
+    setDadosHerdados(false)
     try {
-      const res = await fetch(`/api/calculadora/escola/${id}`)
+      const res = await fetch(`/api/calculadora/precadastro/${id}`)
       if (!res.ok) return
       const d = await res.json()
       if (d.alunos)    setAlunos(d.alunos)
@@ -327,7 +331,7 @@ function CalculadoraInner() {
       setSegMedio(!!d.segMedio)
       setSegs(Math.max(1, Math.min(3, [d.segInfantil, d.segFund1, d.segFund2, d.segMedio].filter(Boolean).length)))
       setPrefillEscola({ nome: d.escolaNome ?? '', email: d.escolaEmail ?? '' })
-      setFonteDadosEscola(d.fonte ?? null)
+      setDadosHerdados(true)
     } finally {
       setCarregandoEscola(false)
     }
@@ -600,14 +604,17 @@ function CalculadoraInner() {
             escolas={escolasParaSelecao}
             escolaId={escolaHerdadaId}
             basePath="/calculadora"
-            placeholder="— Escolher escola já cadastrada para herdar os dados —"
+            placeholder="— Escolher escola que já enviou o formulário de pré-cadastro —"
             onSelect={handleEscolaHerdada}
           />
           {carregandoEscola && <span style={{ fontSize: '.78rem', color: '#94a3b8' }}>Carregando dados...</span>}
-          {!carregandoEscola && fonteDadosEscola && (
+          {!carregandoEscola && dadosHerdados && (
             <span style={{ fontSize: '.72rem', fontWeight: 700, padding: '.25rem .65rem', borderRadius: 99, background: '#f0fdf4', color: '#16a34a', border: '1px solid #86efac' }}>
-              Dados herdados de {fonteDadosEscola === 'form_precadastro' ? 'formulário de pré-cadastro' : fonteDadosEscola === 'proposta' ? 'proposta anterior' : 'cadastro da escola'}
+              Dados herdados do formulário de pré-cadastro
             </span>
+          )}
+          {escolasParaSelecao.length === 0 && (
+            <span style={{ fontSize: '.72rem', color: '#94a3b8' }}>Nenhuma escola enviou o formulário ainda.</span>
           )}
         </div>
 
