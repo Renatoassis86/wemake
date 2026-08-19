@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { buscarEscolasUnificadas } from '@/lib/escolas-unificadas'
 import { upsertNegociacao } from '@/lib/actions'
-import { getFunilContratacao, FASE_LABELS, FASE_FUNIL_ORDEM, type FaseFunil, type LeadTemperatura } from '@/lib/funil-contratacao'
+import { getFunilContratacao, FASE_LABELS, FASE_FUNIL_ORDEM, QUADRANTE_LABELS, type FaseFunil, type LeadTemperatura, type Quadrante } from '@/lib/funil-contratacao'
 import { META_RECEITA } from '@/lib/metas'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
@@ -59,17 +59,17 @@ const TEMP_COR: Record<LeadTemperatura, { bg: string; text: string; border: stri
   frio:   { bg: '#eff6ff', text: '#2563eb', border: '#93c5fd', dot: '#60a5fa', label: 'Frio' },
 }
 
-function TemperaturaBadge({ temperatura, score }: { temperatura: LeadTemperatura; score: number }) {
+function TemperaturaBadge({ temperatura, quadrante, fit, engajamento }: { temperatura: LeadTemperatura; quadrante: Quadrante; fit: number; engajamento: number }) {
   const cor = TEMP_COR[temperatura]
   return (
-    <span title={`Lead score: ${score}/100`} style={{
+    <span title={`${QUADRANTE_LABELS[quadrante]} · Fit ${fit}/100 · Engajamento ${engajamento}/100`} style={{
       display: 'inline-flex', alignItems: 'center', gap: '.3rem',
       background: cor.bg, color: cor.text, border: `1px solid ${cor.border}`,
       padding: '.2rem .55rem', borderRadius: 99,
       fontSize: '.62rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
     }}>
       <span style={{ width: 6, height: 6, borderRadius: '50%', background: cor.dot, display: 'inline-block' }} />
-      {cor.label} · {score}
+      Fit {fit} · Eng {engajamento}
     </span>
   )
 }
@@ -153,7 +153,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
             <div>
               <div style={secTitle}>Funil de Vendas</div>
               <div style={{ fontSize: '.68rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.1rem' }}>
-                Cada etapa soma as escolas nela ou em qualquer etapa mais avançada. Cor = temperatura do lead (modelo de lead scoring — probabilidade da negociação, engajamento, recência e sinal de compra).
+                Cada etapa soma as escolas nela ou em qualquer etapa mais avançada. Cor = cruzamento Fit (porte, segmentos, perfil pedagógico) × Engajamento (reuniões, recência) — Prioritário (alto/alto) é quente, Baixa Prioridade (baixo/baixo) é frio, os quadrantes mistos ficam mornos.
               </div>
             </div>
           </div>
@@ -343,7 +343,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                         <FaseBadge fase={l.fase_funil} />
                       </td>
                       <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
-                        <TemperaturaBadge temperatura={l.lead_temperatura} score={l.lead_score} />
+                        <TemperaturaBadge temperatura={l.lead_temperatura} quadrante={l.quadrante} fit={l.fit_score} engajamento={l.engajamento_score} />
                       </td>
                       <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
                         <Link href={`/comercial/escolas/${l.escola_id}`} style={{ fontSize: '.72rem', fontWeight: 700, color: '#4A7FDB', textDecoration: 'none', whiteSpace: 'nowrap' }}>

@@ -20,27 +20,69 @@ import type { Escola, Negociacao, Contrato, StageNegociacao } from '@/types/data
 // enviado na proposta. Não é uma coluna de banco.
 const VALOR_TABELA_ALUNO_ANO = 420
 
-// ─── Modelo de Lead Scoring (Hot/Warm/Cold) ────────────────────────────────
-// Padrão de mercado de CRM (mesma taxonomia já usada em registros.classificacao
-// e nos KPIs do dashboard comercial). Score 0-100 combinando só sinais que já
-// existem no CRM — nenhum dado novo precisa ser coletado:
-//   40% probabilidade da negociação (negociacoes.probabilidade)
-//   25% engajamento (nº de reuniões registradas, saturando em 5)
-//   20% recência (dias desde o último contato — decai a 0 depois de 60 dias)
-//   15% sinal de compra (proposta enviada)
+// ─── Modelo Fit × Engajamento ───────────────────────────────────────────────
+// Padrão de mercado para qualificação de conta em CRM B2B (o mesmo usado por
+// HubSpot/Salesforce para MQL/SQL): dois eixos independentes em vez de um
+// score único. Misturar "essa conta é um bom encaixe" com "estão engajados
+// agora" no mesmo número apaga a diferença entre uma escola grande e alinhada
+// mas fria e uma escola pequena mas super engajada — decisões comerciais
+// diferentes para cada caso.
+//
+// A versão anterior (score único) usava negociacoes.probabilidade com peso de
+// 40% — mas esse campo foi gravado com um valor fixo (40) na importação em
+// massa do Excel, então não carrega nenhum sinal real; todo mundo ficava
+// empilhado em "morno". Substituído por um Fit Score calculado só de sinais
+// objetivos que já existem no cadastro (porte, amplitude de segmentos, perfil
+// pedagógico) — nenhum dado novo precisa ser coletado, e não depende de
+// nenhum campo digitado à mão que hoje está com valor fictício.
+//
+// Quando o time começar a registrar negociacoes.probabilidade com julgamento
+// real (não mais o default da importação), dá pra treinar um modelo preditivo
+// de verdade (regressão logística sobre o histórico de ganho/perdido) — hoje
+// isso não é viável: só há um punhado de negociações "perdido" registradas e
+// nenhum "ganho" ainda, amostra pequena demais pra treinar sem overfit.
 export type LeadTemperatura = 'quente' | 'morno' | 'frio'
+export type Quadrante = 'prioritario' | 'cultivar' | 'oportunista' | 'baixa_prioridade'
+
+export const QUADRANTE_LABELS: Record<Quadrante, string> = {
+  prioritario:      'Prioritário',
+  cultivar:         'Cultivar',
+  oportunista:      'Oportunista',
+  baixa_prioridade: 'Baixa Prioridade',
+}
 
 const RECENCIA_JANELA_DIAS = 60
 const ENGAJAMENTO_TETO_REUNIOES = 5
+const PORTE_ALUNOS_TETO = 500 // alunos — a partir daqui, fit de porte máximo
 
-function calcularLeadScore(params: {
-  probabilidade: number | null
+const FIT_PERFIL_PEDAGOGICO: Record<string, number> = {
+  crista_classica: 100, // ICP da We Make (currículo cristão clássico)
+  crista_catolica: 70,
+  por_principio:   70,
+  evangelica:      60,
+  convencional:    30,
+  outro:           20,
+}
+
+// Fit Score (0-100) — "essa conta é um bom encaixe pro nosso ICP?"
+function calcularFit(params: {
+  totalAlunos: number
+  segmentosCount: number
+  perfilPedagogico: string | null
+}): number {
+  const portePct     = Math.min(1, Math.max(0, params.totalAlunos) / PORTE_ALUNOS_TETO) * 100
+  const amplitudePct = (params.segmentosCount / 4) * 100
+  const perfilPct    = FIT_PERFIL_PEDAGOGICO[params.perfilPedagogico ?? ''] ?? 20
+
+  return Math.round(0.40 * portePct + 0.30 * amplitudePct + 0.30 * perfilPct)
+}
+
+// Engajamento Score (0-100) — "estão ativamente engajados agora?" (comportamental)
+function calcularEngajamento(params: {
   reunioesTotal: number
   ultimaInteracao: string | null
   temProposta: boolean
-}): { score: number; temperatura: LeadTemperatura } {
-  const probPct = Math.max(0, Math.min(100, params.probabilidade ?? 0))
-
+}): number {
   const engajamentoPct = Math.min(1, params.reunioesTotal / ENGAJAMENTO_TETO_REUNIOES) * 100
 
   let recenciaPct = 0
@@ -49,15 +91,28 @@ function calcularLeadScore(params: {
     recenciaPct = Math.max(0, 100 - (dias / RECENCIA_JANELA_DIAS) * 100)
   }
 
-  const sinalCompraPct = params.temProposta ? 100 : 0
+  const sinalAvancoPct = params.temProposta ? 100 : 0
 
-  const score = Math.round(
-    0.40 * probPct + 0.25 * engajamentoPct + 0.20 * recenciaPct + 0.15 * sinalCompraPct
-  )
+  return Math.round(0.40 * engajamentoPct + 0.35 * recenciaPct + 0.25 * sinalAvancoPct)
+}
 
-  const temperatura: LeadTemperatura = score >= 66 ? 'quente' : score >= 33 ? 'morno' : 'frio'
+function derivarQuadrante(fit: number, engajamento: number): Quadrante {
+  const altaFit = fit >= 50
+  const altoEngajamento = engajamento >= 50
+  if (altaFit && altoEngajamento) return 'prioritario'
+  if (altaFit && !altoEngajamento) return 'cultivar'
+  if (!altaFit && altoEngajamento) return 'oportunista'
+  return 'baixa_prioridade'
+}
 
-  return { score, temperatura }
+// Mantém a cor quente/morno/frio já usada no funil visual e nos badges,
+// agora derivada do quadrante em vez de um score único — "prioritário" é
+// quente, "baixa prioridade" é frio, os dois quadrantes mistos ficam mornos.
+const TEMPERATURA_POR_QUADRANTE: Record<Quadrante, LeadTemperatura> = {
+  prioritario:      'quente',
+  cultivar:         'morno',
+  oportunista:      'morno',
+  baixa_prioridade: 'frio',
 }
 
 export type FaseFunil =
@@ -124,7 +179,9 @@ export interface EscolaFunil {
   implantacao_iniciada_em: string | null
 
   fase_funil: FaseFunil
-  lead_score: number
+  fit_score: number
+  engajamento_score: number
+  quadrante: Quadrante
   lead_temperatura: LeadTemperatura
 }
 
@@ -255,12 +312,20 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
       proposta_id: proposta?.id ?? null,
     })
 
-    const { score: lead_score, temperatura: lead_temperatura } = calcularLeadScore({
-      probabilidade: neg?.probabilidade ?? null,
+    const segmentosEscola = segmentosAtivos(escola)
+
+    const fit_score = calcularFit({
+      totalAlunos: proposta?.num_alunos ?? escola.total_alunos ?? 0,
+      segmentosCount: segmentosEscola.length,
+      perfilPedagogico: escola.perfil_pedagogico ?? null,
+    })
+    const engajamento_score = calcularEngajamento({
       reunioesTotal: reunioes.total,
       ultimaInteracao: reunioes.ultima,
       temProposta: !!proposta?.id,
     })
+    const quadrante = derivarQuadrante(fit_score, engajamento_score)
+    const lead_temperatura = TEMPERATURA_POR_QUADRANTE[quadrante]
 
     return {
       escola_id: escola.id,
@@ -275,7 +340,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
       // editado depois e divergir do que foi realmente proposto.
       alunos_cadastro: proposta?.num_alunos ?? escola.total_alunos,
       alunos_proposta: proposta?.num_alunos ?? null,
-      segmentos_ativos: segmentosAtivos(escola),
+      segmentos_ativos: segmentosEscola,
 
       negociacao_id: neg?.id ?? null,
       negociacao_stage: neg?.stage ?? null,
@@ -307,7 +372,9 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
       implantacao_iniciada_em: contrato?.implantacao_iniciada_em ?? null,
 
       fase_funil: fase,
-      lead_score,
+      fit_score,
+      engajamento_score,
+      quadrante,
       lead_temperatura,
     }
   })
