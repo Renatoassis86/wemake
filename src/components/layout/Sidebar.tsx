@@ -34,6 +34,7 @@ const NAV_CRM: NavItemDef[] = [
   { href: '/comercial/registros',      label: 'Registros',     icon: FileText        },
   { href: '/comercial/priorizacao',    label: 'Gestão de Priorização', icon: Crosshair, badge: 'Novo' },
   { href: '/comercial/funil-contratacao', label: 'Funil de Contratação', icon: Milestone, badge: 'Novo' },
+  { href: '/comercial/metas',          label: 'Metas',         icon: Target          },
   { href: '/calculadora',              label: 'Calculadora',   icon: Calculator      },
   { href: '/comercial/pre-cadastros',  label: 'Dados Proposta Comercial', icon: ClipboardList   },
   { href: '/formulario',               label: 'Formulário Escola', icon: ClipboardList, external: true },
@@ -47,7 +48,6 @@ const NAV_PROCESS = [
   { href: '/comercial/pipeline',         label: 'Pipeline CRM',        icon: Kanban      },
   { href: '/comercial/pipeline-proposta', label: 'Pipeline Proposta',  icon: Kanban      },
   { href: '/comercial/tabela',         label: 'Tabela Geral',      icon: Table2      },
-  { href: '/comercial/metas',          label: 'Metas 2027',        icon: Target      },
 ]
 
 const NAV_TOOLS = [

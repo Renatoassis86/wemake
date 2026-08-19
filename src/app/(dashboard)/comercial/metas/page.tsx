@@ -7,26 +7,25 @@ import { calcTotalAlunosContrato } from '@/lib/contratos'
 import { getFunilContratacao } from '@/lib/funil-contratacao'
 
 // ══════════════════════════════════════════════════
-// METAS 2027 — Plano Estratégico We Make
+// METAS — sprint até 31/08/2026
 // ══════════════════════════════════════════════════
 const METAS = {
-  // Prospecção
-  reunioes_meta:      80,    // reuniões com escolas únicas até agosto/2027
-  reunioes_prazo:     'agosto/2027',
+  // Prospecção / funil — metas de curto prazo até o fim de agosto/2026
+  reunioes_meta:  40,
+  propostas_meta: 25,
+  minutas_meta:   15,
+  prazo:          '31/08/2026',
 
   // Escolas
   escolas_atuais:     25,    // escolas hoje
   escolas_novas_meta: 26,    // novas parcerias a conquistar
   escolas_total_meta: 51,    // 25 + 26
 
-  // Alunos — detalhamento
+  // Alunos — detalhamento (meta revisada: 4.000)
   alunos_atuais:      2000,  // alunos nas escolas atuais hoje
   alunos_fund1_meta:  1000,  // crescimento Fund I nas escolas atuais (adesão material)
-  alunos_novas_meta:  2000,  // alunos vindos das 26 novas escolas
-  alunos_total_meta:  5000,  // 2000 + 1000 + 2000
-
-  // Data
-  ano: 2027,
+  alunos_novas_meta:  1000,  // alunos vindos das novas escolas
+  alunos_total_meta:  4000,  // 2000 + 1000 + 1000
 }
 
 function BarraMeta({ pct, cor, height = 10 }: { pct: number; cor: string; height?: number }) {
@@ -152,6 +151,10 @@ export default async function MetasPage() {
   const propostasEnviadas = funil.linhas.filter(l => l.proposta_id !== null).length
   const valorPipelinePropostas = funil.kpis.valorPipelineTotal
 
+  // Minutas contratuais enviadas — contagem cumulativa (independente de já ter
+  // avançado pra assinatura), a partir do funil de contratação
+  const minutasEnviadas = funil.linhas.filter(l => l.minuta_enviada).length
+
   // ✅ NOVAS ESCOLAS PARCEIRAS = contratos assinados (métrica principal)
   const qtdEscolasNovas = contratosAssinados?.length ?? 0
 
@@ -183,9 +186,11 @@ export default async function MetasPage() {
   const totalProjetado = BASELINE_ALUNOS + alunosFund1Anteriores + alunosNovasEscolas
 
   // Percentuais
-  const pctReunioes = Math.round((totalReunioes    / METAS.reunioes_meta)      * 100)
-  const pctEscolas  = Math.round((qtdEscolasNovas  / METAS.escolas_novas_meta) * 100)
-  const pctAlunos   = Math.round((totalProjetado   / METAS.alunos_total_meta)  * 100)
+  const pctReunioes  = Math.round((totalReunioes    / METAS.reunioes_meta)      * 100)
+  const pctPropostas = Math.round((propostasEnviadas / METAS.propostas_meta)    * 100)
+  const pctMinutas   = Math.round((minutasEnviadas  / METAS.minutas_meta)       * 100)
+  const pctEscolas   = Math.round((qtdEscolasNovas  / METAS.escolas_novas_meta) * 100)
+  const pctAlunos    = Math.round((totalProjetado   / METAS.alunos_total_meta)  * 100)
 
   // Registros recentes para timeline
   const registrosRecentes = registros?.slice(0, 8) ?? []
@@ -196,8 +201,8 @@ export default async function MetasPage() {
   return (
     <div>
       <PageHeader
-        title="Metas 2027"
-        subtitle="Plano estratégico de crescimento We Make"
+        title="Metas Comerciais"
+        subtitle={`Sprint até ${METAS.prazo} — acompanhamento em tempo real`}
       />
       <div style={{ padding: '2rem 2.5rem' }}>
 
@@ -212,13 +217,13 @@ export default async function MetasPage() {
         }}>
           <div>
             <div style={{ fontSize: '.62rem', fontWeight: 800, letterSpacing: '.12em', textTransform: 'uppercase', color: '#4A7FDB', marginBottom: '.5rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
-              ✦ Planejamento Estratégico
+              ✦ Sprint Comercial
             </div>
             <h2 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.8rem', fontWeight: 700, color: '#fff', lineHeight: 1.1, marginBottom: '.6rem' }}>
-              Crescimento 2027 — Parceria Educacional
+              Metas até {METAS.prazo}
             </h2>
             <p style={{ fontSize: '.85rem', color: 'rgba(255,255,255,.55)', fontFamily: 'var(--font-inter,sans-serif)', maxWidth: 580, lineHeight: 1.6 }}>
-              Acompanhamento em tempo real das metas de prospecção, parcerias e expansão de alunos.
+              Acompanhamento em tempo real das reuniões, propostas, minutas e alunos rumo à meta.
               Os contadores atualizam automaticamente conforme as operações são registradas.
             </p>
           </div>
@@ -227,13 +232,13 @@ export default async function MetasPage() {
           </div>
         </div>
 
-        {/* ── KPIs ────────────────────────────────────────── */}
+        {/* ── KPIs — sprint até 31/08/2026 ──────────────────── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1.1rem', marginBottom: '2rem' }}>
 
           <KpiCard
             label="Reuniões com Escolas Únicas"
             valor={totalReunioes}
-            meta={`${METAS.reunioes_meta} até ${METAS.reunioes_prazo}`}
+            meta={`${METAS.reunioes_meta} até ${METAS.prazo}`}
             pct={pctReunioes}
             cor="#2563eb"
             bg="#eff6ff"
@@ -245,15 +250,42 @@ export default async function MetasPage() {
           <KpiCard
             label="Propostas Enviadas"
             valor={propostasEnviadas}
-            meta={formatCurrency(valorPipelinePropostas) + ' em pipeline'}
-            pct={propostasEnviadas > 0 ? Math.round((qtdEscolasNovas / propostasEnviadas) * 100) : 0}
+            meta={`${METAS.propostas_meta} até ${METAS.prazo}`}
+            pct={pctPropostas}
             cor="#b45309"
             bg="#fffbeb"
             border="#fcd34d"
-            sub="taxa de conversão para contrato assinado"
+            sub={formatCurrency(valorPipelinePropostas) + ' em pipeline'}
             icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>}
           />
 
+          <KpiCard
+            label="Minutas Contratuais Enviadas"
+            valor={minutasEnviadas}
+            meta={`${METAS.minutas_meta} até ${METAS.prazo}`}
+            pct={pctMinutas}
+            cor="#7c3aed"
+            bg="#f5f3ff"
+            border="#c4b5fd"
+            sub={`${qtdEscolasNovas} já assinaram · ${qtdEscolasMinuta} aguardando assinatura`}
+            icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="10" y2="11"/></svg>}
+          />
+
+          <KpiCard
+            label="Total de Alunos (Projetado)"
+            valor={(METAS.alunos_atuais + alunosFund1Anteriores + alunosNovasEscolas).toLocaleString('pt-BR')}
+            meta={`${METAS.alunos_total_meta.toLocaleString('pt-BR')} alunos`}
+            pct={pctAlunos}
+            cor="#16a34a"
+            bg="#f0fdf4"
+            border="#86efac"
+            sub={`2.000 base + ${alunosFund1Anteriores} Fund.I + ${alunosNovasEscolas} contratos assinados`}
+            icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>}
+          />
+        </div>
+
+        {/* ── Novas Escolas Parceiras — meta secundária ─────── */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.1rem', marginBottom: '2rem' }}>
           <KpiCard
             label="Novas Escolas Parceiras"
             valor={qtdEscolasNovas}
@@ -264,18 +296,6 @@ export default async function MetasPage() {
             border="#fde68a"
             sub={`Contratos assinados · ${qtdEscolasMinuta > 0 ? `+${qtdEscolasMinuta} em minuta (pipeline)` : 'nenhuma em minuta ainda'}`}
             icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>}
-          />
-
-          <KpiCard
-            label="Total de Alunos (Projetado)"
-            valor={(METAS.alunos_atuais + alunosFund1Anteriores + alunosNovasEscolas).toLocaleString('pt-BR')}
-            meta={`${METAS.alunos_total_meta.toLocaleString('pt-BR')} alunos`}
-            pct={pctAlunos}
-            cor="#7c3aed"
-            bg="#f5f3ff"
-            border="#ddd6fe"
-            sub={`2.000 base + ${alunosFund1Anteriores} Fund.I + ${alunosNovasEscolas} contratos assinados`}
-            icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>}
           />
         </div>
 
@@ -292,17 +312,17 @@ export default async function MetasPage() {
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
             </div>
             <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a' }}>
-              Composição da Meta de 5.000 Alunos
+              Composição da Meta de 4.000 Alunos
             </div>
           </div>
           <div style={{ padding: '1.5rem 1.75rem' }}>
-            {/* Equação visual 2.000 + 1.000 + 2.000 = 5.000 */}
+            {/* Equação visual 2.000 + 1.000 + 1.000 = 4.000 */}
             <div className="mp-metas-equation-row" style={{ display: 'flex', alignItems: 'center', gap: '.75rem', marginBottom: '1.25rem', padding: '1rem 1.25rem', background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)', borderRadius: 12, border: '1px solid #e2e8f0' }}>
               {[
                 { n: '2.000', label: 'Base atual\n(25 escolas parceiras)', cor: '#64748b', bg: '#f1f5f9' },
                 { n: '+1.000', label: 'Crescimento Fund. I\n(escolas já parceiras)', cor: '#4A7FDB', bg: '#fffbeb' },
-                { n: '+2.000', label: 'Novas parcerias\n(infantil + fundamental)', cor: '#7c3aed', bg: '#f5f3ff' },
-                { n: '= 5.000', label: 'Meta total\nalunos 2027', cor: '#16a34a', bg: '#f0fdf4' },
+                { n: '+1.000', label: 'Novas parcerias\n(infantil + fundamental)', cor: '#7c3aed', bg: '#f5f3ff' },
+                { n: '= 4.000', label: 'Meta total\nalunos', cor: '#16a34a', bg: '#f0fdf4' },
               ].map((item, i) => (
                 <div key={i} style={{ flex: 1, background: item.bg, borderRadius: 10, padding: '.8rem 1rem', textAlign: 'center', border: `1px solid ${item.cor}30` }}>
                   <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: item.cor, lineHeight: 1, marginBottom: '.3rem' }}>{item.n}</div>
@@ -340,9 +360,9 @@ export default async function MetasPage() {
                 {
                   label: 'Novas Parcerias — 26 Escolas',
                   atual: alunosNovasEscolas,      // alunos (infantil + fund) das escolas novas captadas
-                  meta:  METAS.alunos_novas_meta, // meta: +2.000
+                  meta:  METAS.alunos_novas_meta, // meta: +1.000
                   progAtual: alunosNovasEscolas,
-                  desc: `+2.000 alunos das 26 novas escolas — ${alunosNovasEscolas} confirmados via contrato assinado`,
+                  desc: `+1.000 alunos das novas escolas — ${alunosNovasEscolas} confirmados via contrato assinado`,
                   cor: '#7c3aed',
                   bg: '#f5f3ff',
                   nota: `${qtdEscolasNovas} contratos assinados · ${qtdEscolasMinuta} em minuta`,
@@ -386,7 +406,7 @@ export default async function MetasPage() {
             <div style={{ background: 'linear-gradient(135deg, #f0fdf4, #f8fafc)', border: '1px solid #86efac', borderRadius: 12, padding: '1.1rem 1.4rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.65rem' }}>
                 <div>
-                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.75rem', fontWeight: 700, color: '#0f172a' }}>Progresso Rumo à Meta de 5.000 Alunos</div>
+                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.75rem', fontWeight: 700, color: '#0f172a' }}>Progresso Rumo à Meta de 4.000 Alunos</div>
                   <div style={{ fontSize: '.7rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.15rem' }}>
                     Base confirmada: <strong style={{ color: '#16a34a' }}>2.000</strong> +
                     Fund.I crescimento: <strong style={{ color: '#4A7FDB' }}>{alunosFund1Anteriores}</strong> +
@@ -503,7 +523,7 @@ export default async function MetasPage() {
         {/* ── Resumo de progresso geral ────────────────────── */}
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.5rem 1.75rem', boxShadow: '0 1px 4px rgba(15,23,42,.06)' }}>
           <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a', marginBottom: '1.25rem' }}>
-            Painel de Progresso Consolidado — Plano 2027
+            Painel de Progresso Consolidado — Sprint até {METAS.prazo}
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem' }}>
             {[

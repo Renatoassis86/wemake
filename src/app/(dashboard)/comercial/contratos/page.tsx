@@ -143,8 +143,8 @@ export default async function ContratosPage({ searchParams }: Props) {
           <div style={{ padding: '1.25rem 1.75rem' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
               {[
-                { label: 'Meta de Alunos 2027', pct: pct_alunos, atual: total_alunos, meta: META_ALUNOS, unit: '', cor: '#16a34a' },
-                { label: 'Meta de Receita 2027', pct: pct_receita, atual: formatCurrency(total_receita), meta: formatCurrency(META_RECEITA), unit: '', cor: '#7c3aed' },
+                { label: 'Meta de Alunos', pct: pct_alunos, atual: total_alunos, meta: META_ALUNOS, unit: '', cor: '#16a34a' },
+                { label: 'Meta de Receita', pct: pct_receita, atual: formatCurrency(total_receita), meta: formatCurrency(META_RECEITA), unit: '', cor: '#7c3aed' },
               ].map(m => (
                 <div key={m.label}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '.5rem' }}>
