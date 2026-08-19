@@ -329,8 +329,10 @@ function CalculadoraInner() {
       setSegFund1(!!d.segFund1)
       setSegFund2(!!d.segFund2)
       setSegMedio(!!d.segMedio)
-      setSegs(Math.max(1, Math.min(3, [d.segInfantil, d.segFund1, d.segFund2, d.segMedio].filter(Boolean).length)))
-      setAltaCompl(!!d.altaComplexidade)
+      const qtdSegs = [d.segInfantil, d.segFund1, d.segFund2, d.segMedio].filter(Boolean).length
+      setSegs(Math.max(1, Math.min(3, qtdSegs)))
+      // Mesma regra de handleToggleSegment: >1 segmento = alta complexidade.
+      setAltaCompl(qtdSegs > 1)
       setPrefillEscola({ nome: d.escolaNome ?? '', email: d.escolaEmail ?? '' })
       setDadosHerdados(true)
     } finally {
@@ -351,6 +353,10 @@ function CalculadoraInner() {
 
     const activeCount = [inf, f1, f2, med].filter(Boolean).length
     setSegs(Math.max(1, Math.min(3, activeCount)))
+    // Regra de negócio: 1 segmento = não é alta complexidade; mais de 1 = é.
+    // Recalcula sempre que os segmentos mudam (o botão SIM/NÃO abaixo continua
+    // liberado pra ajuste manual pontual depois disso, se precisar).
+    setAltaCompl(activeCount > 1)
   }
 
   // ── Parâmetros de Leasing ──────────────────────────────────────

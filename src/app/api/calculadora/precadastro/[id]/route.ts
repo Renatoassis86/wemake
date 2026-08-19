@@ -62,8 +62,6 @@ export async function GET(_req: Request, { params }: Props) {
     if (contrato?.contrato_assinado) situacao = 'Renovação'
   }
 
-  const segmentosMarcados = [p.seg_infantil, p.seg_fundamental_1, p.seg_fundamental_2, p.seg_ensino_medio].filter(Boolean).length
-
   return NextResponse.json({
     escolaNome: p.nome_fantasia || p.razao_social,
     escolaEmail: p.email_institucional ?? p.resp_email ?? null,
@@ -75,8 +73,8 @@ export async function GET(_req: Request, { params }: Props) {
     segFund1: !!p.seg_fundamental_1,
     segFund2: !!p.seg_fundamental_2,
     segMedio: !!p.seg_ensino_medio,
-    // Mais de 1 segmento atendido = alta complexidade (currículo multi-segmento
-    // exige mais coordenação de implantação) — regra de negócio confirmada pelo usuário.
-    altaComplexidade: segmentosMarcados > 1,
+    // "Alta complexidade" (>1 segmento) é derivada no cliente a partir desses
+    // 4 booleans, sempre que os segmentos mudam — ver handleToggleSegment em
+    // calculadora/page.tsx. Não calculamos aqui pra não duplicar a regra.
   })
 }
