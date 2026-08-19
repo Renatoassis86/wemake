@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { buscarEscolasUnificadas } from '@/lib/escolas-unificadas'
 import { upsertContrato } from '@/lib/actions'
 import PageHeader from '@/components/layout/PageHeader'
@@ -8,6 +9,8 @@ import { EscolaSelector } from '@/components/ui/EscolaSelector'
 import { ContratoUpload } from '@/components/comercial/ContratoUpload'
 import { calcValorTotalContrato, calcTotalAlunosContrato } from '@/lib/contratos'
 import { META_ALUNOS, META_RECEITA } from '@/lib/metas'
+
+export const dynamic = 'force-dynamic'
 
 interface Props { searchParams: Promise<{ escola?: string }> }
 
@@ -73,10 +76,14 @@ export default async function ContratosPage({ searchParams }: Props) {
   const params    = await searchParams
   const escolaId  = params.escola ?? ''
   const supabase  = await createClient()
+  // contratos não tem policy de SELECT liberada pra authenticated (mesmo padrão
+  // já usado em priorizacao.ts/funil-contratacao.ts) — sem isso a leitura sempre
+  // vinha vazia, mesmo com contratos reais gravados no banco.
+  const admin     = createAdminClient()
 
   const [escolas, { data: contratos_geral }] = await Promise.all([
     buscarEscolasUnificadas(supabase),
-    supabase.from('contratos').select('*, escola:escolas(nome, estado, cidade)')
+    admin.from('contratos').select('*, escola:escolas(nome, estado, cidade)')
       .order('updated_at', { ascending: false }),
   ])
 
@@ -86,7 +93,7 @@ export default async function ContratosPage({ searchParams }: Props) {
   if (escolaId) {
     const [{ data: e }, { data: c }, { data: reg }, { data: arqs }] = await Promise.all([
       supabase.from('escolas').select('*').eq('id', escolaId).single(),
-      supabase.from('contratos').select('*').eq('escola_id', escolaId).single(),
+      admin.from('contratos').select('*').eq('escola_id', escolaId).single(),
       supabase.from('registros').select('encaminhamentos, prontidao')
         .eq('escola_id', escolaId).order('data_contato', { ascending: false }).limit(1).single(),
       supabase.from('contratos_arquivos').select('id, nome, path, created_at, tamanho')
@@ -157,8 +164,11 @@ export default async function ContratosPage({ searchParams }: Props) {
         </div>
 
         {/* ── Seletor de Escola ─────────────────────────────── */}
-        <div style={card}>
-          <div style={secHdr()}>
+        {/* overflow: visible (sobrescrevendo o `card` padrão) — o dropdown de
+            busca do EscolaSelector é position:absolute e ficava cortado pelo
+            overflow:hidden do card. */}
+        <div style={{ ...card, overflow: 'visible' }}>
+          <div style={{ ...secHdr(), borderRadius: '16px 16px 0 0' }}>
             <div style={{ ...dot(), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
             </div>
