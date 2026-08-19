@@ -70,18 +70,13 @@ function FunilBarras({ etapas }: { etapas: { label: string; valor: number; cor: 
   )
 }
 
-function KpiCard({ label, valor, meta, pct, cor, bg, border, sub, icon }: {
+function KpiCard({ label, valor, meta, pct, cor, bg, border, sub, icon, href }: {
   label: string; valor: string | number; meta?: string | number
   pct: number; cor: string; bg: string; border: string; sub?: string
-  icon: React.ReactNode
+  icon: React.ReactNode; href?: string
 }) {
-  return (
-    <div style={{
-      background: bg, border: `1.5px solid ${border}`,
-      borderRadius: 16, padding: '1.25rem 1.4rem',
-      borderTop: `3px solid ${cor}`,
-      display: 'flex', flexDirection: 'column', gap: '.65rem',
-    }}>
+  const conteudo = (
+    <>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: cor, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
           {label}
@@ -103,41 +98,38 @@ function KpiCard({ label, valor, meta, pct, cor, bg, border, sub, icon }: {
       </div>
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '.3rem' }}>
-          <span style={{ fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>progresso</span>
+          <span style={{ fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
+            {href ? 'ver detalhes →' : 'progresso'}
+          </span>
           <span style={{ fontSize: '.7rem', fontWeight: 700, color: pct >= 100 ? '#16a34a' : cor, fontFamily: 'var(--font-montserrat,sans-serif)' }}>{Math.min(100, pct)}%</span>
         </div>
         <BarraMeta pct={pct} cor={cor} height={6} />
       </div>
-    </div>
+    </>
   )
+  const style: React.CSSProperties = {
+    background: bg, border: `1.5px solid ${border}`,
+    borderRadius: 16, padding: '1.25rem 1.4rem',
+    borderTop: `3px solid ${cor}`,
+    display: 'flex', flexDirection: 'column', gap: '.65rem',
+    textDecoration: 'none',
+  }
+  return href
+    ? <Link href={href} style={style}>{conteudo}</Link>
+    : <div style={style}>{conteudo}</div>
 }
 
 export default async function MetasPage() {
   const supabase = await createClient()
 
-  const [
-    { data: registrosRaw },
-    { data: contratosAssinados },
-    { data: contratosMinuta },
-    funil,
-  ] = await Promise.all([
+  const [{ data: registrosRaw }, funil] = await Promise.all([
     supabase.from('registros')
       .select('escola_id, data_contato, classificacao, responsavel_id, escola:escolas(nome)')
       .order('data_contato', { ascending: false }),
 
-    // ✅ NOVAS ESCOLAS PARCEIRAS = contrato assinado por ambas as partes
-    // Cresce conforme "Contrato assinado por ambas as partes" = Sim na Jornada Contratual
-    supabase.from('contratos')
-      .select('escola_id, contrato_assinado, escola:escolas(id, nome, cidade, estado, total_alunos, created_at)')
-      .eq('contrato_assinado', true),
-
-    // ℹ️ Escolas que enviaram minuta (estágio avançado, próximas de assinar)
-    supabase.from('contratos')
-      .select('escola_id, escola:escolas(nome, cidade, estado, total_alunos)')
-      .eq('minuta_enviada', true)
-      .eq('contrato_assinado', false),
-
-    // Propostas enviadas + funil de contratação (ver /comercial/funil-contratacao)
+    // Fonte única para reuniões, propostas, minutas e contratos — a mesma
+    // agregação usada em /comercial/funil-contratacao, para as duas páginas
+    // nunca divergirem entre si.
     getFunilContratacao(),
   ])
 
@@ -156,25 +148,27 @@ export default async function MetasPage() {
       : null,
   }))
 
-  // ── Cálculos ──────────────────────────────────────────────────
+  // ── Cálculos — tudo derivado de `funil.linhas` (mesma fonte da página
+  // Funil de Contratação), para as duas páginas nunca mostrarem números
+  // diferentes para a mesma coisa ──────────────────────────────────
 
-  // Reuniões únicas = escolas distintas que tiveram ao menos 1 registro
-  const escolasComContato = new Set(registros?.map(r => r.escola_id) ?? [])
-  const totalReunioes = escolasComContato.size
+  // Reuniões únicas = escolas distintas (ativas) que tiveram ao menos 1 registro
+  const totalReunioes = funil.linhas.filter(l => l.reunioes_total > 0).length
 
-  // Propostas enviadas ativas (não arquivadas) — do funil de contratação
+  // Propostas enviadas ativas (não arquivadas) — 1 por escola (a mais recente)
   const propostasEnviadas = funil.linhas.filter(l => l.proposta_id !== null).length
   const valorPipelinePropostas = funil.kpis.valorPipelineTotal
 
   // Minutas contratuais enviadas — contagem cumulativa (independente de já ter
-  // avançado pra assinatura), a partir do funil de contratação
+  // avançado pra assinatura)
   const minutasEnviadas = funil.linhas.filter(l => l.minuta_enviada).length
 
-  // ✅ NOVAS ESCOLAS PARCEIRAS = contratos assinados (métrica principal)
-  const qtdEscolasNovas = contratosAssinados?.length ?? 0
+  // ✅ NOVAS ESCOLAS PARCEIRAS = contrato assinado por ambas as partes
+  const escolasAssinadas = funil.linhas.filter(l => l.contrato_assinado)
+  const qtdEscolasNovas = escolasAssinadas.length
 
-  // Escolas em minuta (pipeline avançado — próximas de virar parceiras)
-  const qtdEscolasMinuta = contratosMinuta?.length ?? 0
+  // Escolas em minuta, aguardando assinatura (pipeline avançado)
+  const qtdEscolasMinuta = funil.linhas.filter(l => l.minuta_enviada && !l.contrato_assinado).length
 
   // Percentuais
   const pctReunioes  = Math.round((totalReunioes    / METAS.reunioes_meta)      * 100)
@@ -187,7 +181,7 @@ export default async function MetasPage() {
   const registrosRecentes = registros?.slice(0, 8) ?? []
 
   // Escolas novas recentes = as que assinaram contrato mais recentemente
-  const escolasNovasRecentes = (contratosAssinados ?? []).slice(0, 8)
+  const escolasNovasRecentes = escolasAssinadas.slice(0, 8)
 
   return (
     <div>
@@ -282,6 +276,7 @@ export default async function MetasPage() {
             bg="#eff6ff"
             border="#bfdbfe"
             sub="escolas que receberam ao menos 1 contato registrado"
+            href="/comercial/registros"
             icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
           />
 
@@ -294,6 +289,7 @@ export default async function MetasPage() {
             bg="#fffbeb"
             border="#fcd34d"
             sub={formatCurrency(valorPipelinePropostas) + ' em pipeline'}
+            href="/comercial/propostas"
             icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>}
           />
 
@@ -306,6 +302,7 @@ export default async function MetasPage() {
             bg="#f5f3ff"
             border="#c4b5fd"
             sub={`${qtdEscolasNovas} já assinaram · ${qtdEscolasMinuta} aguardando assinatura`}
+            href="/comercial/contratos"
             icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="10" y2="11"/></svg>}
           />
         </div>
@@ -341,6 +338,7 @@ export default async function MetasPage() {
             bg="#fffbeb"
             border="#fde68a"
             sub={`Contratos assinados · ${qtdEscolasMinuta > 0 ? `+${qtdEscolasMinuta} em minuta (pipeline)` : 'nenhuma em minuta ainda'}`}
+            href="/comercial/contratos"
             icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>}
           />
         </div>
@@ -375,9 +373,9 @@ export default async function MetasPage() {
                     background: r.classificacao === 'quente' ? '#ef4444' : r.classificacao === 'morno' ? '#4A7FDB' : '#6366f1',
                   }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '.78rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <Link href={`/comercial/escolas/${r.escola_id}`} style={{ fontSize: '.78rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block', textDecoration: 'none' }}>
                       {(r as any).escola?.nome ?? r.escola_id.slice(0, 8)}
-                    </div>
+                    </Link>
                     <div style={{ fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
                       {r.responsavel?.full_name ?? '—'} · {new Date(r.data_contato + 'T00:00:00').toLocaleDateString('pt-BR')}
                     </div>
@@ -413,22 +411,22 @@ export default async function MetasPage() {
               </span>
             </div>
             <div style={{ padding: '1rem 1.4rem' }}>
-              {escolasNovasRecentes.length > 0 ? escolasNovasRecentes.map((e: any, i) => (
-                <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.55rem 0', borderBottom: i < escolasNovasRecentes.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
+              {escolasNovasRecentes.length > 0 ? escolasNovasRecentes.map((e, i) => (
+                <div key={e.escola_id} style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.55rem 0', borderBottom: i < escolasNovasRecentes.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
                   <div style={{ width: 28, height: 28, borderRadius: 7, background: '#fffbeb', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: 'var(--font-cormorant,serif)', fontSize: '.9rem', fontWeight: 700, color: '#4A7FDB' }}>
                     {i + 1}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '.78rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {e.nome}
+                      {e.escola_nome}
                     </div>
                     <div style={{ fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                      {e.cidade}{e.estado ? `, ${e.estado}` : ''} · {e.total_alunos ?? 0} alunos
+                      {e.cidade}{e.estado ? `, ${e.estado}` : ''} · {e.alunos_cadastro ?? 0} alunos
                     </div>
                   </div>
-                  <span style={{ fontSize: '.65rem', fontWeight: 700, color: '#64748b', fontFamily: 'var(--font-montserrat,sans-serif)', background: '#f1f5f9', padding: '.1rem .4rem', borderRadius: 99 }}>
-                    {new Date(e.created_at).toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' })}
-                  </span>
+                  <Link href={`/comercial/escolas/${e.escola_id}`} style={{ fontSize: '.65rem', fontWeight: 700, color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)', background: '#eff6ff', padding: '.1rem .5rem', borderRadius: 99, textDecoration: 'none' }}>
+                    ver ficha
+                  </Link>
                 </div>
               )) : (
                 <div style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8', fontSize: '.82rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
