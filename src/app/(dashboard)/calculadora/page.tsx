@@ -438,7 +438,7 @@ function CalculadoraInner() {
     setLogoPreview(null)
     setValorCustom(sis.valorFinal.toFixed(2))
     setValorComodatoCustom(((mensalidadeEscola * 12) / (alunos || 1)).toFixed(2))
-    setNumParcelasProposta(4)
+    setNumParcelasProposta(incluiComodato ? 12 : 4)
     setModalLoading(false)
     setModalError(null)
     setPropostaResult(null)
@@ -1644,7 +1644,7 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                         setLogoFile(null)
                         setLogoPreview(null)
                         setValorComodatoCustom(((mensalidadeEscola * 12) / (alunos || 1)).toFixed(2))
-                        setNumParcelasProposta(4)
+                        setNumParcelasProposta(incluiComodato ? 12 : 4)
                         setModalError(null)
                       }}
                       style={{ padding: '.55rem 1.2rem', borderRadius: 8, border: '1.5px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#475569' }}
@@ -1758,7 +1758,11 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                         <button
                           key={opt.val}
                           type="button"
-                          onClick={() => setModalForm(f => ({ ...f, tipo: opt.val }))}
+                          onClick={() => {
+                            setModalForm(f => ({ ...f, tipo: opt.val }))
+                            // Comodato só faz sentido em parcela mensal (12x) — regra de negócio.
+                            setNumParcelasProposta(opt.val === 'curriculo_comodato' ? 12 : 4)
+                          }}
                           style={{
                             flex: 1, padding: '.6rem .5rem', borderRadius: 8, cursor: 'pointer',
                             fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.75rem', fontWeight: 700,
@@ -1784,23 +1788,32 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                     />
                   </div>
 
-                  {/* Quantidade de parcelas da proposta — periodicidade combinada com a escola,
-                      aparece na proposta apenas como texto, não gera valor "por mês".
-                      Vale para os dois tipos de proposta (independe da "Qtd. parcelas
-                      currículo" da calculadora, que é só para uso interno). */}
+                  {/* Quantidade de parcelas da proposta — periodicidade combinada com a
+                      escola. Para "Somente Currículo" é só texto na proposta (não gera
+                      valor "por mês"). Para "Currículo + Comodato" é sempre 12x fixo —
+                      o comodato só faz sentido em parcela mensal — e É usada para
+                      calcular o valor por aluno/mês exibido na proposta. */}
                   <div>
                     <label style={LBL}>Quantidade de parcelas da proposta</label>
-                    <input
-                      type="number"
-                      min={1}
-                      max={24}
-                      value={numParcelasProposta || ''}
-                      onChange={e => setNumParcelasProposta(+e.target.value)}
-                      onBlur={() => setNumParcelasProposta(n => Math.min(24, Math.max(1, n || 4)))}
-                      style={INP}
-                    />
+                    {modalForm.tipo === 'curriculo_comodato' ? (
+                      <div style={{ ...INP, display: 'flex', alignItems: 'center', background: '#f1f5f9', color: '#475569', fontWeight: 700 }}>
+                        12x (fixo — mensal)
+                      </div>
+                    ) : (
+                      <input
+                        type="number"
+                        min={1}
+                        max={24}
+                        value={numParcelasProposta || ''}
+                        onChange={e => setNumParcelasProposta(+e.target.value)}
+                        onBlur={() => setNumParcelasProposta(n => Math.min(24, Math.max(1, n || 4)))}
+                        style={INP}
+                      />
+                    )}
                     <div style={{ marginTop: 4, fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                      A periodicidade (mensal, bimestral etc.) é acertada diretamente com a escola. Na proposta aparece apenas como texto — não é usada para calcular valor por mês.
+                      {modalForm.tipo === 'curriculo_comodato'
+                        ? 'Comodato só faz sentido em parcelamento mensal — por isso a proposta sempre mostra o valor por aluno/mês com base em 12x.'
+                        : 'A periodicidade (mensal, bimestral etc.) é acertada diretamente com a escola. Na proposta aparece apenas como texto — não é usada para calcular valor por mês.'}
                     </div>
                   </div>
 

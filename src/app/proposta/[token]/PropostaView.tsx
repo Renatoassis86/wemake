@@ -1170,14 +1170,20 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     </p>
                     <div style={{ borderRadius: 16, padding: '20px 28px', background: 'rgba(11,31,68,0.45)', border: '1px solid rgba(255,255,255,0.18)' }}>
                     {/* só o valor do comodato aqui — o comparativo com "Somente Currículo" fica na seção de Investimento, mais abaixo */}
-                    <div style={{ marginBottom: 16 }}>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Por aluno / ano — Currículo + Comodato</p>
-                      <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-3xl)', color: C.mint, lineHeight: 1 }}>{R$(valorAlunoAnoComodato)}</p>
+                    <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', marginBottom: 16 }}>
+                      <div>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Por aluno / ano — Currículo + Comodato</p>
+                        <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-3xl)', color: C.mint, lineHeight: 1 }}>{R$(valorAlunoAnoComodato)}</p>
+                      </div>
+                      <div>
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Por aluno / mês</p>
+                        <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-3xl)', color: C.white, lineHeight: 1 }}>{R$(valorAlunoAnoComodato / (p.num_parcelas || 12))}</p>
+                      </div>
                     </div>
                     <div style={{ height: 1, background: 'rgba(255,255,255,0.15)', marginBottom: 16 }} />
                     <div style={{ display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap' }}>
                       <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, flex: '1 1 260px' }}>
-                        Parcelamento em até {p.num_parcelas}x — periodicidade e condições definidas diretamente com a escola.
+                        Parcelamento fixo em {p.num_parcelas}x mensais — o comodato dos equipamentos só faz sentido nessa periodicidade.
                       </p>
                       <div style={{ height: 44, width: 1, background: 'rgba(255,255,255,0.15)' }} />
                       <div>
@@ -1262,8 +1268,12 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                           <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>Por aluno / ano</span>
                           <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-xl)', color: C.mint }}>{R$(valorAlunoAnoComodato)}</span>
                         </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>Por aluno / mês</span>
+                          <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.75)' }}>{R$(valorAlunoAnoComodato / (p.num_parcelas || 12))}</span>
+                        </div>
                         <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.32)', lineHeight: 1.6 }}>
-                          Parcelamento em até {p.num_parcelas}x — periodicidade e condições definidas diretamente com a escola.
+                          Parcelamento fixo em {p.num_parcelas}x mensais — reajuste anual pelo IPCA.
                         </p>
                       </div>
                     </div>
@@ -1374,9 +1384,9 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                         m2: '—',
                       },
                       {
-                        criterio: 'Investimento anual por aluno',
+                        criterio: 'Investimento por aluno',
                         m1: `${R$(p.valor_aluno_ano)} por aluno/ano`,
-                        m2: `${R$(valorAlunoAnoComodato)} por aluno/ano`,
+                        m2: `${R$(valorAlunoAnoComodato)} por aluno/ano · ${R$(valorAlunoAnoComodato / (p.num_parcelas || 12))} por aluno/mês`,
                       },
                       {
                         criterio: 'Vantagem principal',
