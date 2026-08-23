@@ -357,7 +357,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
     <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: C.navy, gap: 20, padding: 40, textAlign: 'center' }}>
       <img src="/proposta/logo-white.png" alt="We Make" style={{ height: 40, marginBottom: 8 }} />
       <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--text-3xl)', color: C.white, fontWeight: 300 }}>Proposta expirada</h1>
-      <p style={{ fontFamily: 'Geist, sans-serif', color: 'rgba(255,255,255,.45)', maxWidth: 380, lineHeight: 1.7 }}>
+      <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', color: 'rgba(255,255,255,.45)', maxWidth: 380, lineHeight: 1.7 }}>
         Esta proposta não está mais disponível. Entre em contato para renovar.
       </p>
       <a href="mailto:contato@wemake.tec.br" className="btn-primary" style={{ marginTop: 8 }}>contato@wemake.tec.br</a>
@@ -539,7 +539,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
             {/* meio: parágrafos espaçados */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(14px,2.2vh,22px)' }}>
               <Reveal delay={100}>
-                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.8 }}>
+                <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.8 }}>
                   {p.texto_personalizado
                     ? p.texto_personalizado
                     : `A We Make é uma editora de soluções tecnológicas para escolas confessionais, criada com o objetivo de pensar, estudar, ensinar e desenvolver tecnologia a partir da Cosmovisão Cristã. Somos referência no compromisso da educação escolar distintamente cristã, que prima pela Verdade, Beleza e Bondade.`
@@ -547,17 +547,17 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                 </p>
               </Reveal>
               <Reveal delay={160}>
-                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.8 }}>
+                <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.8 }}>
                   Atuamos como parceira de escolas que desejam oferecer aos seus estudantes uma formação tecnológica consistente, organizada curricularmente e acompanhada com intencionalidade pedagógica. Nossa proposta não se limita ao fornecimento de aulas ou materiais: trabalhamos com currículo estruturado, formação docente, acompanhamento contínuo, orientação de implantação e apoio à organização do espaço maker, de modo coerente e com fidelidade à Cosmovisão Cristã.
                 </p>
               </Reveal>
               <Reveal delay={220}>
-                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.8 }}>
+                <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.8 }}>
                   É com grande gratidão que agradecemos à <strong style={{ color: C.navy }}>{p.escola_nome}</strong> pela oportunidade de considerar a We Make como uma parceira estratégica para enriquecer o trabalho pedagógico envolvendo a tecnologia e a cultura maker.
                 </p>
               </Reveal>
               <Reveal delay={280}>
-                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.8 }}>
+                <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.8 }}>
                   Valorizamos profundamente o compromisso da sua escola com a inovação educacional e estamos entusiasmados com a possibilidade de colaborar para promover experiências de aprendizagem criativas e significativas, mas sem abrir mão dos princípios e valores cristãos.
                 </p>
               </Reveal>
@@ -622,7 +622,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.white, marginBottom: 8, letterSpacing: '-0.02em', lineHeight: 1.05, textWrap: 'balance' } as React.CSSProperties}>
                       Configuração considerada
                     </h2>
-                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)', maxWidth: 520, lineHeight: 1.6 }}>
+                    <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)', maxWidth: 520, lineHeight: 1.6 }}>
                       Atendimento a <strong style={{ color: C.mint }}>{p.num_alunos.toLocaleString('pt-BR')} alunos</strong> em <strong style={{ color: C.mint }}>{segsCount} {segsCount === 1 ? 'segmento' : 'segmentos'} ({segsLabelText})</strong>, pelo prazo de <strong style={{ color: C.mint }}>{p.duracao_meses} meses</strong>.
                     </p>
                   </Reveal>
@@ -707,10 +707,10 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               <h2 className="text-gradient-cinematic" style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', marginBottom: 8, letterSpacing: '-0.02em', lineHeight: 1.05 }}>
                 O que está incluído
               </h2>
-              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.55)', marginBottom: 6, maxWidth: 560, lineHeight: 1.7 }}>
+              <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.55)', marginBottom: 6, maxWidth: 560, lineHeight: 1.7 }}>
                 Esta proposta contempla, durante toda a vigência contratual, acesso completo ao ecossistema We Make:
               </p>
-              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.38)', marginBottom: 20, maxWidth: 560, lineHeight: 1.65 }}>
+              <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.38)', marginBottom: 20, maxWidth: 560, lineHeight: 1.65 }}>
                 Currículo estruturado · Plataforma digital · Livro Maker do Aluno · Onboarding presencial · Acompanhamento pedagógico recorrente · Assessoria tecnológica e teológica · Reuniões com professores e coordenação · Suporte contínuo · Orientação pedagógica da disciplina · Apoio à implantação do espaço maker · Memorial descritivo arquitetônico.
               </p>
             </Reveal>
@@ -730,7 +730,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                   <div className="surface-glass card-lift" style={{ borderRadius: 14, padding: '15px 16px' }}>
                     <div style={{ color: C.mint, marginBottom: 10 }}>{item.icon}</div>
                     <p style={{ fontFamily: 'Geist, sans-serif', fontWeight: 600, fontSize: 'var(--text-sm)', color: C.white, marginBottom: 4, lineHeight: 1.35 }}>{item.title}</p>
-                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.38)', lineHeight: 1.5 }}>{item.desc}</p>
+                    <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.38)', lineHeight: 1.5 }}>{item.desc}</p>
                   </div>
                 </Reveal>
               ))}
@@ -764,7 +764,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                   <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.white, marginBottom: 10, letterSpacing: '-0.02em', lineHeight: 1.05, textWrap: 'balance' } as React.CSSProperties}>
                     Apoio completo para sua Sala Maker
                   </h2>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.6)', lineHeight: 1.65 }}>
+                  <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.6)', lineHeight: 1.65 }}>
                     A We Make orienta e apoia a escola em todo o processo de planejamento e implantação da Sala Maker.
                   </p>
                 </Reveal>
@@ -840,7 +840,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                         </div>
                       ))}
                       <div style={{ padding: '8px 18px', background: 'rgba(11,31,68,0.5)' }}>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.25)', lineHeight: 1.5 }}>
+                        <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', color: 'rgba(255,255,255,0.25)', lineHeight: 1.5 }}>
                           * Simulação com base no memorial descritivo We Make. Valores referenciais sujeitos a atualização na aquisição.
                         </p>
                       </div>
@@ -865,7 +865,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                           </div>
                         </div>
                       ))}
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)', lineHeight: 1.5 }}>
+                      <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)', lineHeight: 1.5 }}>
                         * Simulação com base no memorial descritivo We Make. Valores referenciais sujeitos a atualização na aquisição.
                       </p>
                     </div>
@@ -900,7 +900,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     Modelos de Implantação do Espaço Maker
                   </h2>
                   <div style={{ width: 60, height: 2, background: C.mint, margin: '0 auto 24px', borderRadius: 1 }} />
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.75, maxWidth: 520, margin: '0 auto' }}>
+                  <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.75, maxWidth: 520, margin: '0 auto' }}>
                     A We Make apresenta duas possibilidades de implantação dos recursos necessários à operação da disciplina maker na sua escola.
                   </p>
                 </Reveal>
@@ -924,7 +924,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     <h2 className="text-gradient-cinematic" style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-4xl)', lineHeight: 1.05, marginBottom: 14, letterSpacing: '-0.025em' }}>
                       Espaço Maker We Make
                     </h2>
-                    <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.95rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, marginBottom: 14 }}>
+                    <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.95rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, marginBottom: 14 }}>
                       Para apoiar a escola na organização de um espaço adequado ao desenvolvimento da Educação Tecnológica e Maker, a We Make apresenta duas possibilidades de implantação dos recursos necessários à operação da disciplina.
                     </p>
                   </Reveal>
@@ -951,7 +951,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                       </div>
                       <div>
                         <h3 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: '1.1rem', color: C.white, marginBottom: 6, lineHeight: 1.25 }}>Investimento Patrimonial da Escola</h3>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.86rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
+                        <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.86rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
                           A própria instituição realiza a aquisição dos recursos reutilizáveis, máquinas, ferramentas, equipamentos e demais itens necessários para a composição do espaço maker. Os bens adquiridos passam a integrar o patrimônio da escola e podem ser utilizados em outras atividades pedagógicas, projetos interdisciplinares, formações docentes e experiências educativas desenvolvidas pela própria instituição.
                         </p>
                       </div>
@@ -971,10 +971,10 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                       </div>
                       <div>
                         <h3 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: '1.1rem', color: C.white, marginBottom: 6, lineHeight: 1.25 }}>Cessão de Uso com Transferência Final</h3>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.86rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
+                        <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.86rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
                           A We Make disponibiliza à escola, durante o período do contrato, os recursos reutilizáveis necessários ao desenvolvimento das aulas previstas na proposta pedagógica. Ao final da vigência contratual, desde que cumpridas integralmente as condições estabelecidas, esses recursos poderão ser transferidos definitivamente à escola, passando a compor seu patrimônio.
                         </p>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.86rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.7, marginTop: 8 }}>
+                        <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.86rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.7, marginTop: 8 }}>
                           Esse modelo permite que a escola reduza o investimento inicial necessário para a implantação do espaço maker, sem abrir mão da possibilidade de, ao final da parceria, consolidar uma estrutura própria para a continuidade da Educação Tecnológica e Maker.
                         </p>
                       </div>
@@ -984,7 +984,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                   {/* nota rodapé */}
                   <Reveal delay={200}>
                     <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 12 }}>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65 }}>
+                      <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65 }}>
                         É importante destacar que os modelos apresentados dizem respeito aos recursos reutilizáveis do espaço maker. Não estão incluídos adequações estruturais do ambiente, reformas, instalações elétricas ou lógicas, climatização, marcenaria, mobiliário planejado, bancadas fixas, armários sob medida, nem os materiais consumíveis utilizados nas aulas.
                       </p>
                     </div>
@@ -1018,10 +1018,10 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                   <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.navy, marginBottom: 8, letterSpacing: '-0.02em', lineHeight: 1.05 }}>
                     Investimento Patrimonial da Escola
                   </h2>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.75, maxWidth: 680, marginBottom: 6 }}>
+                  <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.75, maxWidth: 680, marginBottom: 6 }}>
                     Neste modelo, a escola realiza a aquisição dos recursos necessários para a implantação do espaço maker, conforme memorial descritivo e relação de referência apresentados pela We Make. Os equipamentos, ferramentas, máquinas e demais recursos passam a pertencer à escola, tornando-se parte de sua infraestrutura pedagógica permanente.
                   </p>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.75, maxWidth: 680, marginBottom: 24 }}>
+                  <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.75, maxWidth: 680, marginBottom: 24 }}>
                     Este modelo é indicado para instituições que desejam fortalecer seu patrimônio próprio e utilizar o espaço maker de maneira ampla, tanto nas aulas da We Make quanto em outras iniciativas pedagógicas da escola.
                   </p>
                 </Reveal>
@@ -1056,10 +1056,10 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
 
                     {/* rodapé */}
                     <div style={{ padding: '10px 24px', background: 'rgba(11,31,68,0.03)', borderTop: '1px solid rgba(11,31,68,0.06)' }}>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: '#94a3b8', lineHeight: 1.6 }}>
+                      <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: '#94a3b8', lineHeight: 1.6 }}>
                         * Relação de referência conforme memorial descritivo We Make. Valores finais sujeitos a atualização no momento da aquisição.
                       </p>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: '#94a3b8', lineHeight: 1.65, marginTop: 6 }}>
+                      <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: '#94a3b8', lineHeight: 1.65, marginTop: 6 }}>
                         É importante destacar que os modelos apresentados dizem respeito aos recursos reutilizáveis do espaço maker. Não estão incluídos adequações estruturais do ambiente, reformas, instalações elétricas ou lógicas, climatização, marcenaria, mobiliário planejado, bancadas fixas, armários sob medida, nem os materiais consumíveis utilizados nas aulas.
                       </p>
                     </div>
@@ -1096,13 +1096,13 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                   <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.white, marginBottom: 8, letterSpacing: '-0.02em', lineHeight: 1.05 }}>
                     Implantação com Transferência Patrimonial
                   </h2>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, maxWidth: 660, marginBottom: 6 }}>
+                  <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, maxWidth: 660, marginBottom: 6 }}>
                     Neste modelo, a We Make disponibiliza à escola, durante a vigência contratual, os recursos reutilizáveis necessários à execução da proposta pedagógica contratada, incluindo máquinas digitais, manuais, ferramentas, recursos de robótica e eletrônica, computadores, mídias, itens de organização e segurança.
                   </p>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, maxWidth: 660, marginBottom: 6 }}>
+                  <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, maxWidth: 660, marginBottom: 6 }}>
                     Durante o período contratual, os bens deverão ser utilizados exclusivamente para os fins educacionais previstos na parceria, observadas as orientações de uso, conservação e armazenamento fornecidas pela We Make.
                   </p>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, maxWidth: 660, marginBottom: 24 }}>
+                  <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, maxWidth: 660, marginBottom: 24 }}>
                     Ao final da vigência contratual, desde que cumpridas integralmente as obrigações previstas, os recursos reutilizáveis disponibilizados à escola poderão ser transferidos definitivamente à instituição, passando a integrar seu patrimônio.
                   </p>
                 </Reveal>
@@ -1152,13 +1152,13 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     </div>
                     {/* rodapé */}
                     <div style={{ padding: '10px 24px', background: 'rgba(11,31,68,0.3)', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.35)', lineHeight: 1.6 }}>
+                      <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.35)', lineHeight: 1.6 }}>
                         * Relação de referência conforme memorial descritivo We Make. Recursos disponibilizados em comodato durante a vigência contratual e transferidos ao final do período, cumpridas as condições estabelecidas.
                       </p>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65, marginTop: 6 }}>
+                      <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65, marginTop: 6 }}>
                         É importante destacar que os modelos apresentados dizem respeito aos recursos reutilizáveis do espaço maker. Não estão incluídos adequações estruturais do ambiente, reformas, instalações elétricas ou lógicas, climatização, marcenaria, mobiliário planejado, bancadas fixas, armários sob medida, nem os materiais consumíveis utilizados nas aulas.
                       </p>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65, marginTop: 6 }}>
+                      <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65, marginTop: 6 }}>
                         Em caso de eventual problema nos equipamentos fornecidos em comodato, a We Make é responsável pela substituição, exceto quando o problema decorrer de mau uso.
                       </p>
                     </div>
@@ -1185,7 +1185,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     </div>
                     <div style={{ height: 1, background: 'rgba(255,255,255,0.15)', marginBottom: 16 }} />
                     <div style={{ display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap' }}>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, flex: '1 1 260px' }}>
+                      <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, flex: '1 1 260px' }}>
                         Parcelamento fixo em {p.num_parcelas}x mensais.
                       </p>
                       <div style={{ height: 44, width: 1, background: 'rgba(255,255,255,0.15)' }} />
@@ -1230,7 +1230,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
             {hasComodato ? (
               <>
                 <Reveal delay={60}>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 20, maxWidth: 560 }}>
+                  <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 20, maxWidth: 560 }}>
                     Esta proposta apresenta dois modelos de parceria. Escolha o que melhor se adapta à realidade da sua escola.
                   </p>
                 </Reveal>
@@ -1242,7 +1242,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                         <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: C.royal }}>Modelo 1</span>
                       </div>
                       <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-lg)', color: C.white, marginBottom: 4, lineHeight: 1.2 }}>Somente Currículo</p>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.68rem', color: 'rgba(255,255,255,0.38)', lineHeight: 1.5, marginBottom: 18 }}>
+                      <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.68rem', color: 'rgba(255,255,255,0.38)', lineHeight: 1.5, marginBottom: 18 }}>
                         A escola adquire os equipamentos da Sala Maker com recursos próprios.
                       </p>
                       <div style={{ height: 1, background: 'rgba(255,255,255,0.07)', marginBottom: 16 }} />
@@ -1255,7 +1255,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                           <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>Por aluno / mês</span>
                           <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.75)' }}>{R$(p.valor_aluno_ano / (p.num_parcelas || 12))}</span>
                         </div>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.32)', lineHeight: 1.6 }}>
+                        <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.32)', lineHeight: 1.6 }}>
                           Parcelamento em até {p.num_parcelas}x — periodicidade e condições definidas diretamente com a escola.
                         </p>
                       </div>
@@ -1266,7 +1266,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                         <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: C.mint }}>Modelo 2</span>
                       </div>
                       <p style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-lg)', color: C.white, marginBottom: 4, lineHeight: 1.2 }}>Currículo + Sala Maker Equipada</p>
-                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.68rem', color: 'rgba(255,255,255,0.38)', lineHeight: 1.5, marginBottom: 18 }}>
+                      <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.68rem', color: 'rgba(255,255,255,0.38)', lineHeight: 1.5, marginBottom: 18 }}>
                         Equipamentos disponibilizados pela We Make — investimento diluído no contrato.
                       </p>
                       <div style={{ height: 1, background: 'rgba(118,243,205,0.12)', marginBottom: 16 }} />
@@ -1279,7 +1279,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                           <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>Por aluno / mês</span>
                           <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.75)' }}>{R$(valorAlunoAnoComodato / (p.num_parcelas || 12))}</span>
                         </div>
-                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.32)', lineHeight: 1.6 }}>
+                        <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.32)', lineHeight: 1.6 }}>
                           Parcelamento fixo em {p.num_parcelas}x mensais — reajuste anual pelo IPCA.
                         </p>
                       </div>
@@ -1326,13 +1326,13 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                 </Reveal>
                 <Reveal delay={180}>
                   <div style={{ borderLeft: `2px solid ${C.mint}`, padding: '10px 18px', marginBottom: 20 }}>
-                    <p style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
+                    <p style={{ textAlign: 'justify', fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
                       Esta referência facilita a leitura gerencial. O investimento contempla currículo, formação, acompanhamento e implantação — não se reduz ao custo unitário por aluno.
                     </p>
                   </div>
                 </Reveal>
                 <Reveal delay={240}>
-                  <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.7, marginBottom: 18 }}>
+                  <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.7, marginBottom: 18 }}>
                     Parcelamento em até {p.num_parcelas}x — periodicidade e condições definidas diretamente com a escola.
                   </p>
                 </Reveal>
@@ -1366,7 +1366,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                 <h2 className="text-gradient-cinematic" style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', marginBottom: 12, letterSpacing: '-0.02em', lineHeight: 1.05 }}>
                   Comparativo dos Modelos
                 </h2>
-                <p style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, maxWidth: 820, marginBottom: 8 }}>
+                <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, maxWidth: 820, marginBottom: 8 }}>
                   Em ambos os modelos, a implantação do espaço maker considera recursos que apoiam aulas de engenharia, fabricação digital, programação, robótica educacional, eletrônica, cidadania digital e projetos criativos.
                 </p>
               </Reveal>
@@ -1423,8 +1423,8 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                           {rows.map((row, i) => (
                             <div key={row.criterio} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', padding: '14px 20px', gap: 16, borderBottom: '1px solid rgba(255,255,255,0.05)', background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)', alignItems: 'start' }}>
                               <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', fontWeight: 700, color: 'rgba(255,255,255,0.5)', lineHeight: 1.4 }}>{row.criterio}</span>
-                              <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.55 }}>{row.m1}</span>
-                              <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.8rem', color: C.mint, lineHeight: 1.55 }}>{row.m2}</span>
+                              <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.55, textAlign: 'justify', display: 'block' }}>{row.m1}</span>
+                              <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.8rem', color: C.mint, lineHeight: 1.55, textAlign: 'justify', display: 'block' }}>{row.m2}</span>
                             </div>
                           ))}
                         </div>
@@ -1434,9 +1434,9 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                             <div key={row.criterio} style={{ borderRadius: 12, padding: '12px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
                               <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.68rem', fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>{row.criterio}</p>
                               <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.66rem', fontWeight: 700, color: C.royal, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Modelo 1</p>
-                              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5, marginBottom: 10 }}>{row.m1}</p>
+                              <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5, marginBottom: 10 }}>{row.m1}</p>
                               <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.66rem', fontWeight: 700, color: C.mint, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Modelo 2</p>
-                              <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>{row.m2}</p>
+                              <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>{row.m2}</p>
                             </div>
                           ))}
                         </div>
@@ -1463,7 +1463,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               <h2 style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-5xl)', color: C.white, lineHeight: 1.1, marginBottom: 14, letterSpacing: '-0.025em' }}>
                 Quer conversar conosco?
               </h2>
-              <p style={{ fontFamily: 'Geist, sans-serif', color: 'rgba(255,255,255,0.5)', fontSize: 'var(--text-base)', lineHeight: 1.75, marginBottom: 32 }}>
+              <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', color: 'rgba(255,255,255,0.5)', fontSize: 'var(--text-base)', lineHeight: 1.75, marginBottom: 32 }}>
                 Estamos prontos para transformar a educação de <strong style={{ color: C.white }}>{p.escola_nome}</strong>.
               </p>
             </Reveal>
@@ -1516,7 +1516,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                   </>
                 )}
               </div>
-              <p style={{ marginTop: 20, fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.18)', lineHeight: 1.6 }}>
+              <p style={{ textAlign: 'justify', marginTop: 20, fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.18)', lineHeight: 1.6 }}>
                 © We Make Tecnologia Educacional · Proposta Confidencial
               </p>
             </Reveal>
