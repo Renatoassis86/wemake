@@ -1248,6 +1248,10 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                           <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>Por aluno / ano</span>
                           <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-xl)', color: C.royal }}>{R$(p.valor_aluno_ano)}</span>
                         </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                          <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>Por aluno / mês</span>
+                          <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.75)' }}>{R$(p.valor_aluno_ano / (p.num_parcelas || 12))}</span>
+                        </div>
                         <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.32)', lineHeight: 1.6 }}>
                           Parcelamento em até {p.num_parcelas}x — periodicidade e condições definidas diretamente com a escola.
                         </p>
