@@ -234,6 +234,15 @@ export default function PropostaLayout({ children }: { children: React.ReactNode
 
         .pv-table-mobile { display: none; }
         .pv-hero-mobile-footer { display: none; }
+
+        /* ── Texto centralizado, imagens/fundos seguem nas laterais ──
+           text-align é herdado, então basta declarar em .pv-section pra
+           cobrir todo texto da página. .pv-stack-gap é a coluna de texto
+           ao lado da imagem em cada seção — align-items:center centra o
+           bloco em si (títulos, parágrafos com maxWidth, grids, tabelas),
+           não só o texto dentro dele. */
+        .pv-section { text-align: center; }
+        .pv-stack-gap { align-items: center; }
       `}</style>
       {children}
     </>

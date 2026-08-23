@@ -118,7 +118,7 @@ function Eyebrow({ children, dark = false }: { children: React.ReactNode; dark?:
       fontSize: 'clamp(0.7rem, 0.68rem + 0.1vw, 0.75rem)',
       textTransform: 'uppercase', letterSpacing: '0.22em',
       color: dark ? C.royal : C.mint,
-      marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10,
+      marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
     }}>
       <span style={{ display: 'inline-block', width: 22, height: 1.5, background: dark ? C.royal : C.mint, opacity: 0.7, borderRadius: 1 }} />
       {children}
@@ -701,7 +701,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
           <Aurora color1="rgba(118,243,205,0.08)" color2="rgba(76,138,222,0.1)" style={{ bottom: -200, right: -80 }} />
 
           {/* coluna conteúdo — esquerda */}
-          <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div>
+          <div className="pv-stack-gap" style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div style={{ maxWidth: 700, width: '100%' }}>
             <Reveal>
               <Eyebrow>Escopo da Parceria</Eyebrow>
               <h2 className="text-gradient-cinematic" style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', marginBottom: 8, letterSpacing: '-0.02em', lineHeight: 1.05 }}>
@@ -916,7 +916,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               <Glow color="rgba(76,138,222,0.22)" size={520} style={{ bottom: -140, right: -120 }} />
 
               {/* coluna conteúdo — esquerda, scroll natural */}
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'clamp(36px,5vh,56px) var(--gutter)', position: 'relative', zIndex: 2, overflowY: 'auto' }}>
+              <div className="pv-stack-gap" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'clamp(36px,5vh,56px) var(--gutter)', position: 'relative', zIndex: 2, overflowY: 'auto' }}>
                 <div style={{ maxWidth: 660 }}>
 
                   <Reveal>
@@ -1010,7 +1010,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               <Glow color="rgba(118,243,205,0.04)" size={360} style={{ bottom: -60, left: -80 }} />
 
               {/* coluna conteúdo — esquerda */}
-              <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div style={{ maxWidth: 700, width: '100%' }}>
+              <div className="pv-stack-gap" style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) var(--gutter)', overflowY: 'auto' }}><div style={{ maxWidth: 700, width: '100%' }}>
                 <Reveal>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                     <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.royal, background: 'rgba(76,138,222,0.1)', border: `1px solid ${C.royal}`, borderRadius: 999, padding: '3px 12px' }}>Modelo 1</span>
@@ -1088,7 +1088,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
               </div>
 
               {/* coluna conteúdo — direita */}
-              <div style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) clamp(20px,3vw,48px)', overflowY: 'auto' }}><div style={{ maxWidth: 700, width: '100%' }}>
+              <div className="pv-stack-gap" style={{ flex: 1, position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: 'var(--section-py) clamp(20px,3vw,48px)', overflowY: 'auto' }}><div style={{ maxWidth: 700, width: '100%' }}>
                 <Reveal>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                     <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.mint, background: 'rgba(118,243,205,0.12)', border: '1px solid rgba(118,243,205,0.3)', borderRadius: 999, padding: '3px 12px' }}>Modelo 2</span>
@@ -1157,6 +1157,9 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                       </p>
                       <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65, marginTop: 6 }}>
                         É importante destacar que os modelos apresentados dizem respeito aos recursos reutilizáveis do espaço maker. Não estão incluídos adequações estruturais do ambiente, reformas, instalações elétricas ou lógicas, climatização, marcenaria, mobiliário planejado, bancadas fixas, armários sob medida, nem os materiais consumíveis utilizados nas aulas.
+                      </p>
+                      <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65, marginTop: 6 }}>
+                        Em caso de eventual problema nos equipamentos fornecidos em comodato, a We Make é responsável pela substituição, exceto quando o problema decorrer de mau uso.
                       </p>
                     </div>
                   </div>
