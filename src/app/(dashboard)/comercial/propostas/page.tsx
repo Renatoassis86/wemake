@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
 import { ArquivarPropostaBtn } from '@/components/comercial/ArquivarPropostaBtn'
 import { RenovarValidadeBtn } from '@/components/comercial/RenovarValidadeBtn'
 
@@ -144,7 +144,7 @@ export default async function PropostasPage({ searchParams }: Props) {
                           {p.visualizacoes ?? 0}
                         </td>
                         <td style={{ padding: '.85rem 1rem', verticalAlign: 'middle', fontSize: '.78rem', color: '#94a3b8' }}>
-                          {formatDate(p.created_at)}
+                          {formatDateTime(p.created_at)}
                         </td>
                         <td style={{ padding: '.85rem 1rem', verticalAlign: 'middle' }}>
                           <div style={{ display: 'flex', gap: '.35rem', justifyContent: 'flex-end' }}>

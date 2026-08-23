@@ -37,6 +37,7 @@ const NAV_CRM: NavItemDef[] = [
   { href: '/comercial/metas',          label: 'Metas',         icon: Target          },
   { href: '/calculadora',              label: 'Calculadora',   icon: Calculator      },
   { href: '/comercial/pre-cadastros',  label: 'Dados Proposta Comercial', icon: ClipboardList   },
+  { href: '/comercial/propostas',      label: 'Propostas',         icon: FileText      },
   { href: '/formulario',               label: 'Formulário Escola', icon: ClipboardList, external: true },
 ]
 
@@ -44,7 +45,6 @@ const NAV_PROCESS = [
   { href: '/comercial/jornada-visual', label: 'Jornada Visual',    icon: GitBranch   },
   { href: '/comercial/jornada',        label: 'Jornada Relac.',    icon: Activity    },
   { href: '/comercial/contratos',      label: 'Jornada Contrat.',  icon: FileSignature },
-  { href: '/comercial/propostas',      label: 'Propostas',         icon: FileText      },
   { href: '/comercial/pipeline',         label: 'Pipeline CRM',        icon: Kanban      },
   { href: '/comercial/pipeline-proposta', label: 'Pipeline Proposta',  icon: Kanban      },
   { href: '/comercial/tabela',         label: 'Tabela Geral',      icon: Table2      },

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { criarTarefaEscola, criarNotaEscola, concluirTarefaEscola } from './escola-actions'
-import { formatDate, formatCurrency } from '@/lib/utils'
+import { formatDate, formatDateTime, formatCurrency } from '@/lib/utils'
 import { LABEL, ENCAMINHAMENTOS_OPTIONS } from '@/types/database'
 
 const ENCAMINHAMENTO_LABEL = Object.fromEntries(ENCAMINHAMENTOS_OPTIONS.map(o => [o.value, o.label]))
@@ -137,7 +137,7 @@ export function EscolaDetailClient({ escolaId, registros, negociacoes, tarefas, 
             <div key={n.id} className="card" style={{ marginBottom: '.75rem' }}>
               <div className="card-body">
                 <div style={{ fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>{LABEL.stage?.[n.stage] ?? n.stage}</div>
-                <div style={{ fontSize: '.75rem', color: 'var(--text-s)' }}>{formatDate(n.updated_at)}</div>
+                <div style={{ fontSize: '.75rem', color: 'var(--text-s)' }}>{formatDateTime(n.updated_at)}</div>
                 {n.valor_estimado && <div style={{ fontWeight: 800, color: '#4A7FDB', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem' }}>{formatCurrency(n.valor_estimado)}</div>}
               </div>
             </div>
@@ -207,7 +207,7 @@ export function EscolaDetailClient({ escolaId, registros, negociacoes, tarefas, 
           {notas.length > 0 ? notas.map((n: any) => (
             <div key={n.id} style={{ padding: '.85rem 1rem', marginBottom: '.5rem', background: '#fff', border: '1px solid #e2e8f0', borderLeft: n.fixada ? '4px solid #4A7FDB' : '4px solid #e2e8f0', borderRadius: 10 }}>
               <div style={{ fontSize: '.875rem', lineHeight: 1.6, color: '#334155' }}>{n.texto}</div>
-              <div style={{ fontSize: '.68rem', color: 'var(--text-s)', marginTop: '.4rem' }}>{formatDate(n.created_at)}</div>
+              <div style={{ fontSize: '.68rem', color: 'var(--text-s)', marginTop: '.4rem' }}>{formatDateTime(n.created_at)}</div>
             </div>
           )) : <div className="empty-state"><h3>Nenhuma nota</h3></div>}
         </div>

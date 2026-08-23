@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { buscarEscolasUnificadas } from '@/lib/escolas-unificadas'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
-import { formatDate, formatCurrency } from '@/lib/utils'
+import { formatDate, formatDateTime, formatCurrency } from '@/lib/utils'
 import { LABEL } from '@/types/database'
 import { EscolaSelector } from '@/components/ui/EscolaSelector'
 import { calcValorTotalContrato } from '@/lib/contratos'
@@ -520,7 +520,7 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
                                 color: etapa.cor,
                                 fontFamily: 'var(--font-montserrat,sans-serif)',
                               }}>
-                                {formatDate(escola.created_at)}
+                                {formatDateTime(escola.created_at)}
                               </div>
                             )}
                           </div>

@@ -14,6 +14,14 @@ export function formatDate(date: string | null | undefined) {
   return new Date(date + 'T00:00:00').toLocaleDateString('pt-BR')
 }
 
+// Para campos timestamptz (created_at, visualizado_em, updated_at) — já vêm
+// com hora embutida, então não leva o 'T00:00:00' que formatDate() usa para
+// datas puras (validade). Usar formatDate() aqui produz "Invalid Date".
+export function formatDateTime(date: string | null | undefined) {
+  if (!date) return '—'
+  return new Date(date).toLocaleDateString('pt-BR')
+}
+
 export function getInitials(name: string) {
   return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
 }
