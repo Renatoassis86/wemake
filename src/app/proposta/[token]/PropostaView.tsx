@@ -1183,7 +1183,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                     <div style={{ height: 1, background: 'rgba(255,255,255,0.15)', marginBottom: 16 }} />
                     <div style={{ display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap' }}>
                       <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, flex: '1 1 260px' }}>
-                        Parcelamento fixo em {p.num_parcelas}x mensais — o comodato dos equipamentos só faz sentido nessa periodicidade.
+                        Parcelamento fixo em {p.num_parcelas}x mensais.
                       </p>
                       <div style={{ height: 44, width: 1, background: 'rgba(255,255,255,0.15)' }} />
                       <div>
