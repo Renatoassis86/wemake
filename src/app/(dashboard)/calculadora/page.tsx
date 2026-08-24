@@ -1878,6 +1878,22 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                         <div style={{ marginTop: 6, fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
                           Pra baixar o total e viabilizar o comodato, mude o campo &quot;Valor por aluno / ano — Somente Currículo&quot; acima — o Comodato e o Total recalculam sozinhos.
                         </div>
+
+                        {/* Valor contratual — mesma composição, multiplicada pelos {alunos} alunos */}
+                        <label style={{ ...LBL, marginTop: '1rem' }}>Valor Contratual — {alunos} alunos</label>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '.6rem' }}>
+                          {blocos.map(b => (
+                            <div key={b.label} style={{ background: b.bg, border: `1px solid ${b.cor}30`, borderRadius: 8, padding: '.6rem .7rem' }}>
+                              <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: b.cor, fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.35rem' }}>{b.label}</div>
+                              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>
+                                {R$(b.ano * alunos)}<span style={{ fontSize: '.58rem', color: '#94a3b8', fontWeight: 400, marginLeft: 2 }}>/ano</span>
+                              </div>
+                              <div style={{ fontSize: '.72rem', color: '#475569', marginTop: '.25rem' }}>
+                                {R$(b.mes * alunos)}<span style={{ fontSize: '.58rem', color: '#94a3b8', marginLeft: 2 }}>/mês</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )
                   })()}
