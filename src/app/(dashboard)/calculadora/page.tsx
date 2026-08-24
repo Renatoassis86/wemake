@@ -412,9 +412,6 @@ function CalculadoraInner() {
   const [logoFile, setLogoFile]         = useState<File | null>(null)
   const [logoPreview, setLogoPreview]   = useState<string | null>(null)
   const [valorCustom, setValorCustom]   = useState<string>('')
-  // Valor por aluno/ano do cenário "Currículo + Comodato" — editável separadamente
-  // do valor "Somente Currículo" para que a proposta mostre os dois lado a lado.
-  const [valorComodatoCustom, setValorComodatoCustom] = useState<string>('')
   // Quantidade de parcelas do valor total do contrato (comodato) — a periodicidade
   // (mensal, bimestral etc.) é acertada diretamente com a escola, por isso não
   // assumimos mais 12x fixo; aparece na proposta apenas como texto.
@@ -437,7 +434,6 @@ function CalculadoraInner() {
     setLogoFile(null)
     setLogoPreview(null)
     setValorCustom(sis.valorFinal.toFixed(2))
-    setValorComodatoCustom(((mensalidadeEscola * 12) / (alunos || 1)).toFixed(2))
     setNumParcelasProposta(incluiComodato ? 12 : 4)
     setModalLoading(false)
     setModalError(null)
@@ -523,7 +519,7 @@ function CalculadoraInner() {
         segmentos:            [segInfantil, segFund1, segFund2, segMedio].filter(Boolean).length || segs,
         valor_aluno_ano:      parseFloat(valorCustom.replace(',', '.')) || sis.valorFinal,
         valor_aluno_ano_comodato: modalForm.tipo === 'curriculo_comodato'
-          ? (parseFloat(valorComodatoCustom.replace(',', '.')) || (mensalidadeEscola * 12) / (alunos || 1))
+          ? (parseFloat(valorCustom.replace(',', '.')) || sis.valorFinal) + com.valorPorAlunoMes * 12
           : null,
         num_parcelas:         numParcelasProposta,
         duracao_meses:        lp.duracaoMeses,
@@ -1643,7 +1639,6 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                         setModalForm({ escolaNome: '', escolaEmail: '', tipo: incluiComodato ? 'curriculo_comodato' : 'curriculo', validade: defaultValidade(), texto: '' })
                         setLogoFile(null)
                         setLogoPreview(null)
-                        setValorComodatoCustom(((mensalidadeEscola * 12) / (alunos || 1)).toFixed(2))
                         setNumParcelasProposta(incluiComodato ? 12 : 4)
                         setModalError(null)
                       }}
@@ -1846,27 +1841,46 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                     </div>
                   </div>
 
-                  {/* Valor por aluno/ano — Currículo + Comodato (só aparece nesse tipo de proposta;
-                      a escola compara os dois valores lado a lado na proposta) */}
-                  {modalForm.tipo === 'curriculo_comodato' && (
-                    <div>
-                      <label style={LBL}>Valor por aluno / ano — Currículo + Comodato (R$)</label>
-                      <div style={{ position: 'relative' }}>
-                        <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.82rem', pointerEvents: 'none' }}>R$</span>
-                        <input
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          value={valorComodatoCustom}
-                          onChange={e => setValorComodatoCustom(e.target.value)}
-                          style={{ ...INP, paddingLeft: 36 }}
-                        />
+                  {/* Composição Currículo + Comodato — 100% derivada do valor de
+                      Currículo acima + do custo de comodato (equipamentos, aba
+                      "Leasing de Equipamentos"). Não é mais um campo digitado à
+                      parte: ao subir/descer o valor do Currículo, os três blocos
+                      abaixo recalculam sozinhos, antes mesmo de gerar a proposta. */}
+                  {modalForm.tipo === 'curriculo_comodato' && (() => {
+                    const curriculoAno = parseFloat(valorCustom.replace(',', '.')) || 0
+                    const curriculoMes = curriculoAno / 12
+                    const comodatoAno  = com.valorPorAlunoMes * 12
+                    const comodatoMes  = com.valorPorAlunoMes
+                    const totalAno     = curriculoAno + comodatoAno
+                    const totalMes     = totalAno / 12
+                    const blocos = [
+                      { label: 'Currículo', ano: curriculoAno, mes: curriculoMes, cor: '#0b1f44', bg: '#f8fafc', nota: 'campo acima' },
+                      { label: 'Comodato',  ano: comodatoAno,  mes: comodatoMes,  cor: '#4A7FDB', bg: '#eff6ff', nota: 'equipamentos' },
+                      { label: 'Total',     ano: totalAno,     mes: totalMes,     cor: '#16a34a', bg: '#f0fdf4', nota: 'currículo + comodato' },
+                    ]
+                    return (
+                      <div>
+                        <label style={LBL}>Composição por aluno — Currículo + Comodato</label>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '.6rem' }}>
+                          {blocos.map(b => (
+                            <div key={b.label} style={{ background: b.bg, border: `1px solid ${b.cor}30`, borderRadius: 8, padding: '.6rem .7rem' }}>
+                              <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: b.cor, fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.35rem' }}>{b.label}</div>
+                              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>
+                                {R$(b.ano)}<span style={{ fontSize: '.58rem', color: '#94a3b8', fontWeight: 400, marginLeft: 2 }}>/ano</span>
+                              </div>
+                              <div style={{ fontSize: '.72rem', color: '#475569', marginTop: '.25rem' }}>
+                                {R$(b.mes)}<span style={{ fontSize: '.58rem', color: '#94a3b8', marginLeft: 2 }}>/mês</span>
+                              </div>
+                              <div style={{ fontSize: '.58rem', color: '#94a3b8', marginTop: '.3rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{b.nota}</div>
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{ marginTop: 6, fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
+                          Pra baixar o total e viabilizar o comodato, mude o campo &quot;Valor por aluno / ano — Somente Currículo&quot; acima — o Comodato e o Total recalculam sozinhos.
+                        </div>
                       </div>
-                      <div style={{ marginTop: 4, fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                        Calculadora: <strong style={{ color: '#475569' }}>{((mensalidadeEscola * 12) / (alunos || 1)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong> (currículo + comodato, anualizado)
-                      </div>
-                    </div>
-                  )}
+                    )
+                  })()}
 
                   {/* Texto personalizado */}
                   <div>
