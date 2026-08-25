@@ -249,6 +249,17 @@ function TabelaEscolas({
                     {[escola.cidade, escola.estado].filter(Boolean).join(' — ') || '—'}
                   </span>
                 </div>
+                {!escola.bairro && (
+                  <a href={`/comercial/escolas/${escola.id}/editar`} title="Bairro não cadastrado — clique para completar o endereço"
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '.2rem', marginTop: '.25rem',
+                      fontSize: '.62rem', fontWeight: 700, color: '#92400E', background: '#FFFBEB',
+                      border: '1px solid #FDE68A', borderRadius: 99, padding: '1px 7px',
+                      fontFamily: 'var(--font-montserrat, sans-serif)', textDecoration: 'none',
+                    }}>
+                    + bairro
+                  </a>
+                )}
               </td>
 
               {/* Alunos */}
@@ -840,6 +851,17 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
                         }}>
                           {[escola.cidade, escola.estado].filter(Boolean).join(' — ') || '—'}
                         </span>
+                        {!escola.bairro && (
+                          <a href={`/comercial/escolas/${escola.id}/editar`} title="Bairro não cadastrado — clique para completar o endereço"
+                            style={{
+                              display: 'inline-flex', alignItems: 'center', gap: '.2rem', marginTop: '.25rem', marginLeft: '.4rem',
+                              fontSize: '.62rem', fontWeight: 700, color: '#92400E', background: '#FFFBEB',
+                              border: '1px solid #FDE68A', borderRadius: 99, padding: '1px 7px',
+                              fontFamily: 'var(--font-montserrat, sans-serif)', textDecoration: 'none',
+                            }}>
+                            + bairro
+                          </a>
+                        )}
                       </td>
                       <td data-label="Situação Comercial" style={{ padding: '.6rem 1rem' }}>
                         <EstagioSelect
@@ -942,6 +964,17 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
                         }}>
                           {[escola.cidade, escola.estado].filter(Boolean).join(' — ') || '—'}
                         </span>
+                        {!escola.bairro && (
+                          <a href={`/comercial/escolas/${escola.id}/editar`} title="Bairro não cadastrado — clique para completar o endereço"
+                            style={{
+                              display: 'inline-flex', alignItems: 'center', gap: '.2rem', marginTop: '.25rem', marginLeft: '.4rem',
+                              fontSize: '.62rem', fontWeight: 700, color: '#92400E', background: '#FFFBEB',
+                              border: '1px solid #FDE68A', borderRadius: 99, padding: '1px 7px',
+                              fontFamily: 'var(--font-montserrat, sans-serif)', textDecoration: 'none',
+                            }}>
+                            + bairro
+                          </a>
+                        )}
                       </td>
                       <td data-label="Alunos" style={{ padding: '.6rem 1rem' }}>
                         <span style={{
