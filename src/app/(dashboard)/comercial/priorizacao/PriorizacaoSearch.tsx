@@ -8,10 +8,11 @@ interface Props {
   q: string
   uf: string
   cidade?: string
+  bairro?: string
   perfil?: boolean
 }
 
-export function PriorizacaoSearch({ q, uf, cidade, perfil }: Props) {
+export function PriorizacaoSearch({ q, uf, cidade, bairro, perfil }: Props) {
   const [focus, setFocus] = useState(false)
   const [val, setVal] = useState(q)
 
@@ -26,6 +27,7 @@ export function PriorizacaoSearch({ q, uf, cidade, perfil }: Props) {
     >
       {uf && <input type="hidden" name="uf" value={uf} />}
       {cidade && <input type="hidden" name="cidade" value={cidade} />}
+      {bairro && <input type="hidden" name="bairro" value={bairro} />}
       {perfil && <input type="hidden" name="perfil" value="1" />}
 
       <div style={{ position: 'relative', flex: 1, minWidth: 240, maxWidth: 380 }}>
@@ -79,7 +81,7 @@ export function PriorizacaoSearch({ q, uf, cidade, perfil }: Props) {
         Buscar
       </button>
 
-      {(q || uf || cidade || perfil) && (
+      {(q || uf || cidade || bairro || perfil) && (
         <Link href="/comercial/priorizacao" style={{
           fontSize: '.75rem', color: '#94A3B8', textDecoration: 'none',
           fontFamily: 'var(--font-inter, sans-serif)',

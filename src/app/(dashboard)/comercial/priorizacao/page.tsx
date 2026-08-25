@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic'
 const PER_PAGE = 25
 
 interface Props {
-  searchParams: Promise<{ uf?: string; cidade?: string; q?: string; page?: string; perfil?: string }>
+  searchParams: Promise<{ uf?: string; cidade?: string; bairro?: string; q?: string; page?: string; perfil?: string }>
 }
 
 const CONFESS_CORES: Record<string, { bg: string; text: string; border: string }> = {
@@ -444,6 +444,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
   const params = await searchParams
   const ufAtivo = params.uf ?? ''
   const cidadeAtiva = params.cidade ?? ''
+  const bairroAtivo = params.bairro ?? ''
   const q = (params.q ?? '').trim()
   const page = Math.max(1, parseInt(params.page ?? '1') || 1)
   const somentePerfil = params.perfil === '1'
@@ -466,10 +467,12 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
   const elegiveisPorUf = ufAtivo ? elegiveisComRank.filter(e => e.estado === ufAtivo) : elegiveisComRank
 
   const cidadeAtivaKey = normalizarNomeEscola(cidadeAtiva)
+  const bairroAtivoKey = normalizarNomeEscola(bairroAtivo)
   const qLower = q.toLowerCase()
   const elegiveisFiltrados = elegiveisComRank.filter(e => {
     if (ufAtivo && e.estado !== ufAtivo) return false
     if (cidadeAtivaKey && normalizarNomeEscola(e.cidade) !== cidadeAtivaKey) return false
+    if (bairroAtivoKey && normalizarNomeEscola(e.bairro) !== bairroAtivoKey) return false
     if (somentePerfil && !e.perfilPesquisa?.confessionalidade) return false
     if (qLower && !e.nome.toLowerCase().includes(qLower) && !(e.cidade ?? '').toLowerCase().includes(qLower)) return false
     return true
@@ -503,9 +506,39 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
       .sort((a, b) => b.count - a.count)
   })() : []
 
-  // Preserva os filtros ativos ao trocar de UF/cidade/página/perfil
+  // Só o filtro de UF + cidade — base para o gráfico/pills de bairro, mesma lógica
+  // de elegiveisPorUf mas um nível abaixo (precisa mostrar a distribuição completa
+  // da cidade mesmo que um bairro já esteja escolhido).
+  const elegiveisPorCidade = cidadeAtivaKey
+    ? elegiveisPorUf.filter(e => normalizarNomeEscola(e.cidade) === cidadeAtivaKey)
+    : elegiveisPorUf
+
+  // Distribuição por bairro — só faz sentido depois de escolher uma cidade.
+  // Mesmo padrão de agrupamento por nome normalizado da distribuição por cidade.
+  const distribuicaoPorBairro = cidadeAtivaKey ? (() => {
+    const contagem = new Map<string, number>()
+    const grafias = new Map<string, Map<string, number>>()
+    for (const e of elegiveisPorCidade) {
+      const bruto = (e.bairro ?? '').trim()
+      if (!bruto) continue
+      const key = normalizarNomeEscola(bruto)
+      contagem.set(key, (contagem.get(key) ?? 0) + 1)
+      const porGrafia = grafias.get(key) ?? new Map<string, number>()
+      porGrafia.set(bruto, (porGrafia.get(bruto) ?? 0) + 1)
+      grafias.set(key, porGrafia)
+    }
+    return [...contagem.entries()]
+      .map(([key, count]) => {
+        const porGrafia = grafias.get(key)!
+        const label = [...porGrafia.entries()].sort((a, b) => b[1] - a[1])[0][0]
+        return { key, label, count }
+      })
+      .sort((a, b) => b.count - a.count)
+  })() : []
+
+  // Preserva os filtros ativos ao trocar de UF/cidade/bairro/página/perfil
   const buildHref = (overrides: Record<string, string>) => {
-    const p = new URLSearchParams({ uf: ufAtivo, cidade: cidadeAtiva, q, perfil: somentePerfil ? '1' : '', ...overrides })
+    const p = new URLSearchParams({ uf: ufAtivo, cidade: cidadeAtiva, bairro: bairroAtivo, q, perfil: somentePerfil ? '1' : '', ...overrides })
     ;[...p.keys()].forEach(k => { if (!p.get(k)) p.delete(k) })
     const qs = p.toString()
     return `/comercial/priorizacao${qs ? `?${qs}` : ''}`
@@ -647,7 +680,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
       )}
 
       {/* ── Busca ─────────────────────────────────────────────────────────── */}
-      <PriorizacaoSearch q={q} uf={ufAtivo} cidade={cidadeAtiva} perfil={somentePerfil} />
+      <PriorizacaoSearch q={q} uf={ufAtivo} cidade={cidadeAtiva} bairro={bairroAtivo} perfil={somentePerfil} />
 
       {/* ── Filtro por UF + Perfil de pesquisa ───────────────────────────── */}
       {ufs.length > 0 && (
@@ -660,7 +693,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
             letterSpacing: '.08em', fontFamily: 'var(--font-montserrat, sans-serif)',
             flexShrink: 0,
           }}>Filtrar por UF:</span>
-          <a href={buildHref({ uf: '', cidade: '', page: '' })} style={{
+          <a href={buildHref({ uf: '', cidade: '', bairro: '', page: '' })} style={{
             padding: '4px 12px', borderRadius: 99, fontSize: '.72rem', fontWeight: 700,
             textDecoration: 'none', fontFamily: 'var(--font-montserrat, sans-serif)',
             background: !ufAtivo ? 'linear-gradient(135deg, #4A7FDB, #5FE3D0)' : '#F1F5F9',
@@ -668,7 +701,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
             border: !ufAtivo ? 'none' : '1px solid #E2E8F0',
           }}>Todos</a>
           {ufs.map(uf => (
-            <a key={uf} href={buildHref({ uf, cidade: '', page: '' })} style={{
+            <a key={uf} href={buildHref({ uf, cidade: '', bairro: '', page: '' })} style={{
               padding: '4px 12px', borderRadius: 99, fontSize: '.72rem', fontWeight: 700,
               textDecoration: 'none', fontFamily: 'var(--font-montserrat, sans-serif)',
               background: ufAtivo === uf ? 'linear-gradient(135deg, #4A7FDB, #5FE3D0)' : '#F1F5F9',
@@ -699,7 +732,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
             letterSpacing: '.08em', fontFamily: 'var(--font-montserrat, sans-serif)',
             flexShrink: 0,
           }}>Filtrar por Município ({ufAtivo}):</span>
-          <a href={buildHref({ cidade: '', page: '' })} style={{
+          <a href={buildHref({ cidade: '', bairro: '', page: '' })} style={{
             padding: '4px 12px', borderRadius: 99, fontSize: '.72rem', fontWeight: 700,
             textDecoration: 'none', fontFamily: 'var(--font-montserrat, sans-serif)',
             background: !cidadeAtiva ? 'linear-gradient(135deg, #4A7FDB, #5FE3D0)' : '#F1F5F9',
@@ -707,7 +740,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
             border: !cidadeAtiva ? 'none' : '1px solid #E2E8F0',
           }}>Todos</a>
           {distribuicaoPorCidade.slice(0, 25).map(({ key, label, count }) => (
-            <a key={key} href={buildHref({ cidade: cidadeAtivaKey === key ? '' : label, page: '' })} style={{
+            <a key={key} href={buildHref({ cidade: cidadeAtivaKey === key ? '' : label, bairro: '', page: '' })} style={{
               display: 'inline-flex', alignItems: 'center', gap: '.3rem',
               padding: '4px 12px', borderRadius: 99, fontSize: '.72rem', fontWeight: 700,
               textDecoration: 'none', fontFamily: 'var(--font-montserrat, sans-serif)',
@@ -734,6 +767,56 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
             title={`Escolas por Cidade — ${ufAtivo} (${distribuicaoPorCidade.length} cidades)`}
             data={distribuicaoPorCidade}
             colorHex="#4A7FDB"
+          />
+        </div>
+      )}
+
+      {/* ── Filtro por Bairro — aparece ao escolher uma cidade ────────────── */}
+      {cidadeAtiva && distribuicaoPorBairro.length > 0 && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '.5rem', flexWrap: 'wrap',
+          marginBottom: '1rem',
+        }}>
+          <span style={{
+            fontSize: '.7rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase',
+            letterSpacing: '.08em', fontFamily: 'var(--font-montserrat, sans-serif)',
+            flexShrink: 0,
+          }}>Filtrar por Bairro ({cidadeAtiva}):</span>
+          <a href={buildHref({ bairro: '', page: '' })} style={{
+            padding: '4px 12px', borderRadius: 99, fontSize: '.72rem', fontWeight: 700,
+            textDecoration: 'none', fontFamily: 'var(--font-montserrat, sans-serif)',
+            background: !bairroAtivo ? 'linear-gradient(135deg, #4A7FDB, #5FE3D0)' : '#F1F5F9',
+            color: !bairroAtivo ? 'white' : '#475569',
+            border: !bairroAtivo ? 'none' : '1px solid #E2E8F0',
+          }}>Todos</a>
+          {distribuicaoPorBairro.slice(0, 25).map(({ key, label, count }) => (
+            <a key={key} href={buildHref({ bairro: bairroAtivoKey === key ? '' : label, page: '' })} style={{
+              display: 'inline-flex', alignItems: 'center', gap: '.3rem',
+              padding: '4px 12px', borderRadius: 99, fontSize: '.72rem', fontWeight: 700,
+              textDecoration: 'none', fontFamily: 'var(--font-montserrat, sans-serif)',
+              background: bairroAtivoKey === key ? 'linear-gradient(135deg, #4A7FDB, #5FE3D0)' : '#F1F5F9',
+              color: bairroAtivoKey === key ? 'white' : '#475569',
+              border: bairroAtivoKey === key ? 'none' : '1px solid #E2E8F0',
+            }}>
+              {label}
+              <span style={{ opacity: .7, fontWeight: 600 }}>({count})</span>
+            </a>
+          ))}
+          {distribuicaoPorBairro.length > 25 && (
+            <span style={{ fontSize: '.68rem', color: '#94A3B8', fontFamily: 'var(--font-inter, sans-serif)' }}>
+              +{distribuicaoPorBairro.length - 25} bairros — use a busca para achar direto
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* ── Mapa por Bairro — aparece ao escolher uma cidade ──────────────── */}
+      {cidadeAtiva && distribuicaoPorBairro.length > 0 && (
+        <div style={{ marginBottom: '1.75rem' }}>
+          <MiniBarChart
+            title={`Escolas por Bairro — ${cidadeAtiva} (${distribuicaoPorBairro.length} bairros)`}
+            data={distribuicaoPorBairro}
+            colorHex="#7C3AED"
           />
         </div>
       )}
