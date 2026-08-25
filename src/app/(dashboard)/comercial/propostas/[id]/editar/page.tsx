@@ -206,10 +206,21 @@ Essa foi a proposta oficial que enviamos para a escola.`
                 <input name="valor_aluno_ano_comodato" type="number" step="0.01" min="0" style={inputStyle} defaultValue={p.valor_aluno_ano_comodato ?? ''} />
               </Field>
             </div>
-            <div style={grid2}>
-              <Field label="Quantidade de parcelas da proposta">
+            <div style={{ ...grid2, marginBottom: '1.25rem' }}>
+              <Field
+                label="Parcelas — Comodato (ou proposta, se não houver comodato)"
+                hint="Quando o tipo é Currículo + Comodato, esse número é o parcelamento do lado Comodato (normalmente 12x, mensal)."
+              >
                 <input name="num_parcelas" type="number" min="1" max="24" style={inputStyle} defaultValue={p.num_parcelas} />
               </Field>
+              <Field
+                label="Parcelas — Somente Currículo"
+                hint='Só é usado quando o tipo é "Currículo + Comodato" — parcelamento do modelo Somente Currículo, mostrado lado a lado com o comodato.'
+              >
+                <input name="num_parcelas_curriculo" type="number" min="1" max="24" style={inputStyle} defaultValue={p.num_parcelas_curriculo ?? 5} />
+              </Field>
+            </div>
+            <div style={grid2}>
               <Field label="Duração do contrato (meses)">
                 <input name="duracao_meses" type="number" min="1" style={inputStyle} defaultValue={p.duracao_meses} />
               </Field>

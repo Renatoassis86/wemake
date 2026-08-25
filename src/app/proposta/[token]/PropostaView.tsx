@@ -63,6 +63,7 @@ interface Proposta {
   tipo: 'curriculo' | 'curriculo_comodato'
   validade: string; num_alunos: number; segmentos: number
   valor_aluno_ano: number; num_parcelas: number; duracao_meses: number
+  num_parcelas_curriculo: number | null
   valor_aluno_ano_comodato: number | null
   comodato_pv: number | null; comodato_parcela: number | null
   comodato_retorno_pct: number | null; comodato_notebooks: number | null
@@ -317,6 +318,9 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
   // calculadora quando existir; propostas antigas (sem esse campo) caem no cálculo
   // anualizado a partir da parcela do comodato.
   const valorAlunoAnoComodato = p.valor_aluno_ano_comodato ?? ((totalAnual / 12 + mensalComd) * 12 / (p.num_alunos || 1))
+  // Parcelamento do lado "Somente Currículo" — independente do parcelamento
+  // fixo em 12x do Comodato (p.num_parcelas), que é sempre mensal.
+  const numParcelasCurriculo = p.num_parcelas_curriculo || 5
 
   // Itens reais do comodato vindos do dados_calculo (espelha tabela editável da calculadora)
   type ComItem = { nome: string; qty: number; unit: number; qtyReal?: number; fixedQty?: boolean; total: number; nota?: string }
@@ -1253,10 +1257,10 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                           <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>Por aluno / mês</span>
-                          <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.75)' }}>{R$(p.valor_aluno_ano / (p.num_parcelas || 12))}</span>
+                          <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.75)' }}>{R$(p.valor_aluno_ano / numParcelasCurriculo)}</span>
                         </div>
                         <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.62rem', color: 'rgba(255,255,255,0.32)', lineHeight: 1.6 }}>
-                          Parcelamento em até {p.num_parcelas}x — periodicidade e condições definidas diretamente com a escola.
+                          Parcelamento em até {numParcelasCurriculo}x — periodicidade e condições definidas diretamente com a escola.
                         </p>
                       </div>
                     </div>
@@ -1392,7 +1396,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
                       },
                       {
                         criterio: 'Investimento por aluno',
-                        m1: `${R$(p.valor_aluno_ano)} por aluno/ano`,
+                        m1: `${R$(p.valor_aluno_ano)} por aluno/ano · ${R$(p.valor_aluno_ano / numParcelasCurriculo)} por aluno/mês`,
                         m2: `${R$(valorAlunoAnoComodato)} por aluno/ano · ${R$(valorAlunoAnoComodato / (p.num_parcelas || 12))} por aluno/mês`,
                       },
                       {

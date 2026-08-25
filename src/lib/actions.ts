@@ -1328,6 +1328,7 @@ export async function atualizarProposta(formData: FormData): Promise<ActionResul
     valor_aluno_ano:          toNum('valor_aluno_ano'),
     valor_aluno_ano_comodato: tipo === 'curriculo_comodato' ? toNum('valor_aluno_ano_comodato') : null,
     num_parcelas:             parseInt(formData.get('num_parcelas') as string) || 5,
+    num_parcelas_curriculo:   tipo === 'curriculo_comodato' ? (parseInt(formData.get('num_parcelas_curriculo') as string) || 5) : null,
     duracao_meses:            parseInt(formData.get('duracao_meses') as string) || 48,
     texto_personalizado:      (formData.get('texto_personalizado') as string) || null,
     status:                   formData.get('status') as string,

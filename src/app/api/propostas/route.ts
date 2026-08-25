@@ -50,6 +50,7 @@ export async function POST(request: NextRequest) {
       valor_aluno_ano,
       valor_aluno_ano_comodato,
       num_parcelas,
+      num_parcelas_curriculo,
       duracao_meses,
       comodato_pv,
       comodato_parcela,
@@ -110,6 +111,7 @@ export async function POST(request: NextRequest) {
     if (comodato_tx_rate !== undefined)     insert.comodato_tx_rate     = comodato_tx_rate
     if (comodato_notebooks !== undefined)   insert.comodato_notebooks   = comodato_notebooks
     if (valor_aluno_ano_comodato !== undefined) insert.valor_aluno_ano_comodato = valor_aluno_ano_comodato
+    if (num_parcelas_curriculo !== undefined)   insert.num_parcelas_curriculo   = num_parcelas_curriculo
 
     const { data, error } = await supabase
       .from('propostas')
