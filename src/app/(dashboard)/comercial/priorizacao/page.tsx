@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { PriorizacaoSearch } from './PriorizacaoSearch'
 import { EstagioSelect } from './EstagioSelect'
 import { DeleteEscolaBtn } from '@/components/comercial/DeleteEscolaBtn'
+import { MiniBarChart } from '@/components/comercial/DashboardCharts'
 import {
   AlertTriangle, CheckCircle2, Users, Building2,
   Pencil, MessageCircle, ChevronRight, MapPin, GraduationCap,
@@ -82,57 +83,6 @@ function KpiCard({
           fontFamily: 'var(--font-inter, sans-serif)',
         }}>{sub}</div>
       )}
-    </div>
-  )
-}
-
-// ─── Mini bar chart (sem recharts — SSR seguro) ───────────────────────────────
-
-function MiniBarChart({
-  title, data, colorHex, labelWidth = 84
-}: {
-  title: string
-  data: { label: string; count: number; full?: string }[]
-  colorHex: string
-  labelWidth?: number
-}) {
-  if (data.length === 0) return null
-  const max = Math.max(...data.map(d => d.count), 1)
-  return (
-    <div style={{
-      background: 'white', border: '1.5px solid #E2E8F0',
-      borderRadius: 14, padding: '1.25rem 1.5rem',
-      boxShadow: '0 1px 4px rgba(0,0,0,.04)',
-    }}>
-      <div style={{
-        fontSize: '.72rem', fontWeight: 700, textTransform: 'uppercase',
-        letterSpacing: '.08em', color: '#64748B', marginBottom: '1rem',
-        fontFamily: 'var(--font-montserrat, sans-serif)',
-      }}>{title}</div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '.6rem' }}>
-        {data.map(({ label, count, full }) => (
-          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '.9rem' }}>
-            <div title={full && full !== label ? full : undefined} style={{
-              width: labelWidth, fontSize: '.7rem', fontWeight: 700, color: '#475569',
-              fontFamily: 'var(--font-montserrat, sans-serif)', flexShrink: 0, textAlign: 'right',
-              lineHeight: 1.35,
-            }}>{label}</div>
-            <div style={{ flex: 1, height: 8, background: '#F1F5F9', borderRadius: 99, overflow: 'hidden' }}>
-              <div style={{
-                height: '100%',
-                width: `${Math.round((count / max) * 100)}%`,
-                background: colorHex,
-                borderRadius: 99,
-                transition: 'width .3s',
-              }} />
-            </div>
-            <div style={{
-              width: 28, fontSize: '.68rem', fontWeight: 700, color: '#475569',
-              fontFamily: 'var(--font-montserrat, sans-serif)', flexShrink: 0,
-            }}>{count}</div>
-          </div>
-        ))}
-      </div>
     </div>
   )
 }

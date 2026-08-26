@@ -148,6 +148,9 @@ export interface EscolaFunil {
   alunos_cadastro: number
   alunos_proposta: number | null
   segmentos_ativos: string[]
+  bairro: string | null
+  perfil_pedagogico: string | null
+  origem_lead: string | null
 
   negociacao_id: string | null
   negociacao_stage: StageNegociacao | null
@@ -164,6 +167,8 @@ export interface EscolaFunil {
   proposta_status: string | null
   proposta_validade: string | null
   proposta_desconto_pct: number | null
+  proposta_tipo: string | null
+  proposta_criada_em: string | null
 
   contrato_id: string | null
   formulario_enviado: boolean
@@ -236,7 +241,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
     supabase.from('escolas').select('*').eq('ativa', true),
     admin.from('negociacoes').select('id, escola_id, stage, valor_estimado, observacoes, probabilidade'),
     admin.from('registros').select('escola_id, data_contato, resumo'),
-    supabase.from('propostas').select('id, escola_id, escola_nome, valor_aluno_ano, num_alunos, status, validade, created_at')
+    supabase.from('propostas').select('id, escola_id, escola_nome, valor_aluno_ano, num_alunos, status, validade, tipo, created_at')
       .is('arquivada_em', null)
       .order('created_at', { ascending: false }),
     admin.from('contratos').select('*'),
@@ -245,7 +250,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
   const escolas = (escolasRes.data ?? []) as Escola[]
   const negociacoes = (negociacoesRes.data ?? []) as Pick<Negociacao, 'id' | 'escola_id' | 'stage' | 'valor_estimado' | 'observacoes' | 'probabilidade'>[]
   const registros = (registrosRes.data ?? []) as { escola_id: string; data_contato: string; resumo: string | null }[]
-  const propostas = (propostasRes.data ?? []) as { id: string; escola_id: string | null; escola_nome: string | null; valor_aluno_ano: number | null; num_alunos: number | null; status: string | null; validade: string | null; created_at: string }[]
+  const propostas = (propostasRes.data ?? []) as { id: string; escola_id: string | null; escola_nome: string | null; valor_aluno_ano: number | null; num_alunos: number | null; status: string | null; validade: string | null; tipo: string | null; created_at: string }[]
   const contratos = (contratosRes.data ?? []) as Contrato[]
 
   // Negociação mais avançada por escola
@@ -341,6 +346,9 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
       alunos_cadastro: proposta?.num_alunos ?? escola.total_alunos,
       alunos_proposta: proposta?.num_alunos ?? null,
       segmentos_ativos: segmentosEscola,
+      bairro: escola.bairro,
+      perfil_pedagogico: escola.perfil_pedagogico ?? null,
+      origem_lead: escola.origem_lead ?? null,
 
       negociacao_id: neg?.id ?? null,
       negociacao_stage: neg?.stage ?? null,
@@ -357,6 +365,8 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
       proposta_status: proposta?.status ?? null,
       proposta_validade: proposta?.validade ?? null,
       proposta_desconto_pct: propostaDesconto,
+      proposta_tipo: proposta?.tipo ?? null,
+      proposta_criada_em: proposta?.created_at ?? null,
 
       contrato_id: contrato?.id ?? null,
       formulario_enviado: !!contrato?.formulario_enviado,

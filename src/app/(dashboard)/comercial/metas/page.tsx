@@ -5,6 +5,7 @@ import { formatCurrency } from '@/lib/utils'
 import { ContadorRegressivo } from '@/components/metas/ContadorRegressivo'
 import { getFunilContratacao } from '@/lib/funil-contratacao'
 import { ALUNOS_ATUAIS } from '@/lib/metas'
+import { BarraProgresso, KpiCard } from '@/components/comercial/DashboardCharts'
 
 // ══════════════════════════════════════════════════
 // METAS — sprint até 31/08/2026
@@ -21,20 +22,6 @@ const METAS = {
 
   // Alunos — meta única, sem detalhamento por segmento/turma
   alunos_total_meta: 4000,
-}
-
-function BarraMeta({ pct, cor, height = 10 }: { pct: number; cor: string; height?: number }) {
-  const p = Math.min(100, Math.max(0, pct))
-  return (
-    <div style={{ height, background: '#f1f5f9', borderRadius: height, overflow: 'hidden' }}>
-      <div style={{
-        height: '100%', width: `${p}%`, borderRadius: height,
-        background: p >= 100 ? '#16a34a' : cor,
-        transition: 'width .8s ease',
-        boxShadow: p > 0 ? `0 0 8px ${cor}55` : 'none',
-      }} />
-    </div>
-  )
 }
 
 function FunilBarras({ etapas }: { etapas: { label: string; valor: number; cor: string }[] }) {
@@ -68,55 +55,6 @@ function FunilBarras({ etapas }: { etapas: { label: string; valor: number; cor: 
       })}
     </div>
   )
-}
-
-function KpiCard({ label, valor, meta, pct, cor, bg, border, sub, icon, href }: {
-  label: string; valor: string | number; meta?: string | number
-  pct: number; cor: string; bg: string; border: string; sub?: string
-  icon: React.ReactNode; href?: string
-}) {
-  const conteudo = (
-    <>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: cor, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
-          {label}
-        </div>
-        <div style={{ width: 30, height: 30, borderRadius: 8, background: cor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          {icon}
-        </div>
-      </div>
-      <div>
-        <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '2.2rem', fontWeight: 800, lineHeight: 1, color: '#0f172a' }}>
-          {valor}
-        </div>
-        {meta !== undefined && (
-          <div style={{ fontSize: '.72rem', color: '#64748b', marginTop: '.2rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
-            meta: {meta}
-          </div>
-        )}
-        {sub && <div style={{ fontSize: '.7rem', color: '#94a3b8', marginTop: '.1rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{sub}</div>}
-      </div>
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '.3rem' }}>
-          <span style={{ fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
-            {href ? 'ver detalhes →' : 'progresso'}
-          </span>
-          <span style={{ fontSize: '.7rem', fontWeight: 700, color: pct >= 100 ? '#16a34a' : cor, fontFamily: 'var(--font-montserrat,sans-serif)' }}>{Math.min(100, pct)}%</span>
-        </div>
-        <BarraMeta pct={pct} cor={cor} height={6} />
-      </div>
-    </>
-  )
-  const style: React.CSSProperties = {
-    background: bg, border: `1.5px solid ${border}`,
-    borderRadius: 16, padding: '1.25rem 1.4rem',
-    borderTop: `3px solid ${cor}`,
-    display: 'flex', flexDirection: 'column', gap: '.65rem',
-    textDecoration: 'none',
-  }
-  return href
-    ? <Link href={href} style={style}>{conteudo}</Link>
-    : <div style={style}>{conteudo}</div>
 }
 
 export default async function MetasPage() {
@@ -458,7 +396,7 @@ export default async function MetasPage() {
                     <span style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{m.atual.toLocaleString('pt-BR')}</span>
                     <span style={{ fontSize: '.7rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>/ {m.meta.toLocaleString('pt-BR')}</span>
                   </div>
-                  <BarraMeta pct={p} cor={m.cor} height={5} />
+                  <BarraProgresso pct={p} cor={m.cor} height={5} />
                   <div style={{ fontSize: '.62rem', color: '#475569', marginTop: '.3rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
                     Faltam {falta.toLocaleString('pt-BR')} {m.unidade} · <strong style={{ color: m.cor }}>{p}%</strong>
                     {(m as any).sub && <span style={{ color: '#94a3b8', marginLeft: '.3rem' }}>· {(m as any).sub}</span>}
