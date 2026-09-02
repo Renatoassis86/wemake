@@ -143,6 +143,8 @@ export interface EscolaFunil {
   cidade: string | null
   estado: string | null
   contato_nome: string | null
+  telefone: string | null
+  email: string | null
   responsavel_id: string | null
   responsavel_nome: string | null
   alunos_cadastro: number
@@ -338,6 +340,8 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
       cidade: escola.cidade,
       estado: escola.estado,
       contato_nome: escola.contato_nome ?? escola.diretor_nome,
+      telefone: escola.telefone,
+      email: escola.email,
       responsavel_id: escola.responsavel_id,
       responsavel_nome: escola.responsavel_id ? usuarios.get(escola.responsavel_id)?.full_name ?? null : null,
       // Prioriza o nº de alunos da proposta (Calculadora/planilha), que é o

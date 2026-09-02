@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { buscarEscolasUnificadas } from '@/lib/escolas-unificadas'
 import { upsertNegociacao } from '@/lib/actions'
-import { getFunilContratacao, FASE_LABELS, FASE_FUNIL_ORDEM, QUADRANTE_LABELS, type FaseFunil, type LeadTemperatura, type Quadrante } from '@/lib/funil-contratacao'
+import { getFunilContratacao, FASE_LABELS, FASE_FUNIL_ORDEM, type FaseFunil } from '@/lib/funil-contratacao'
 import { META_RECEITA } from '@/lib/metas'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
@@ -55,27 +55,6 @@ const FASE_COR: Record<FaseFunil, { bg: string; text: string; border: string }> 
   contrato_assinado: { bg: '#f0fdf4', text: '#16a34a', border: '#86efac' },
   implantacao:       { bg: '#f5f3ff', text: '#7c3aed', border: '#c4b5fd' },
   parceiro_ativo:    { bg: '#ecfdf5', text: '#059669', border: '#6ee7b7' },
-}
-
-const TEMP_COR: Record<LeadTemperatura, { bg: string; text: string; border: string; dot: string; label: string }> = {
-  quente: { bg: '#fef2f2', text: '#dc2626', border: '#fca5a5', dot: '#dc2626', label: 'Quente' },
-  morno:  { bg: '#fffbeb', text: '#b45309', border: '#fcd34d', dot: '#f59e0b', label: 'Morno' },
-  frio:   { bg: '#eff6ff', text: '#2563eb', border: '#93c5fd', dot: '#60a5fa', label: 'Frio' },
-}
-
-function TemperaturaBadge({ temperatura, quadrante, fit, engajamento }: { temperatura: LeadTemperatura; quadrante: Quadrante; fit: number; engajamento: number }) {
-  const cor = TEMP_COR[temperatura]
-  return (
-    <span title={`${QUADRANTE_LABELS[quadrante]} · Fit ${fit}/100 · Engajamento ${engajamento}/100`} style={{
-      display: 'inline-flex', alignItems: 'center', gap: '.3rem',
-      background: cor.bg, color: cor.text, border: `1px solid ${cor.border}`,
-      padding: '.2rem .55rem', borderRadius: 99,
-      fontSize: '.62rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
-    }}>
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: cor.dot, display: 'inline-block' }} />
-      Fit {fit} · Eng {engajamento}
-    </span>
-  )
 }
 
 export default async function FunilContratacaoPage({ searchParams }: Props) {
@@ -280,7 +259,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ background: '#0f172a' }}>
-                    {['Escola', 'Responsável', 'Alunos', 'Atividade', 'Valor/Desconto', 'Fase', 'Lead', ''].map(col => (
+                    {['Escola', 'Responsável', 'Alunos', 'Atividade', 'Valor/Desconto', 'Fase', 'Contato', ''].map(col => (
                       <th key={col} style={{ padding: '.6rem .75rem', textAlign: 'left', fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.65)', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{col}</th>
                     ))}
                   </tr>
@@ -348,8 +327,21 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                           implantacaoStatus={l.implantacao_status}
                         />
                       </td>
-                      <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
-                        <TemperaturaBadge temperatura={l.lead_temperatura} quadrante={l.quadrante} fit={l.fit_score} engajamento={l.engajamento_score} />
+                      <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle', maxWidth: 170 }}>
+                        {l.telefone || l.email ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                            {l.telefone && (
+                              <span style={{ fontSize: '.72rem', color: '#334155', whiteSpace: 'nowrap' }}>{l.telefone}</span>
+                            )}
+                            {l.email && (
+                              <span style={{ fontSize: '.66rem', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 170 }} title={l.email}>
+                                {l.email}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <span style={{ fontSize: '.72rem', color: '#cbd5e1' }}>—</span>
+                        )}
                       </td>
                       <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
                         <Link href={`/comercial/escolas/${l.escola_id}`} style={{ fontSize: '.72rem', fontWeight: 700, color: '#4A7FDB', textDecoration: 'none', whiteSpace: 'nowrap' }}>
