@@ -1861,9 +1861,9 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontSize: '.65rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
                       <span style={{ color: '#94a3b8' }}>
                         Calculadora: <strong style={{ color: '#475569' }}>{sis.valorFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
-                        {parseFloat(valorCustom) !== sis.valorFinal && (
-                          <span style={{ marginLeft: 6, color: parseFloat(valorCustom) > sis.valorFinal ? '#16a34a' : '#dc2626', fontWeight: 700 }}>
-                            ({parseFloat(valorCustom) > sis.valorFinal ? '+' : ''}{(((parseFloat(valorCustom) || 0) / sis.valorFinal - 1) * 100).toFixed(1)}%)
+                        {parseFloat(valorCustom) > 0 && (
+                          <span style={{ marginLeft: 6, color: parseFloat(valorCustom) >= 420 ? '#16a34a' : '#dc2626', fontWeight: 700 }}>
+                            ({parseFloat(valorCustom) > 420 ? '+' : ''}{(((parseFloat(valorCustom) || 0) / 420 - 1) * 100).toFixed(1)}% vs. tabela R$420)
                           </span>
                         )}
                       </span>
