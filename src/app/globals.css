@@ -937,13 +937,32 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
 /* min-width:0 é essencial aqui — sem isso, um filho flex com flex:1 nunca encolhe
    abaixo da largura mínima do conteúdo mais largo dentro dele, e a página inteira
    passa a vazar ~256px (a largura do menu) pra fora da tela em telas de notebook,
-   forçando rolagem horizontal na página toda mesmo com grids responsivos por dentro. */
-.dashboard-content { margin-left: var(--sidebar-w, 250px); min-width: 0; }
+   forçando rolagem horizontal na página toda mesmo com grids responsivos por dentro.
+
+   overflow-x:auto é a rede de segurança pra quando, mesmo encolhendo, o conteúdo
+   ainda tem uma largura mínima maior que o espaço disponível (ex: tablets, ~1024px
+   com o menu fixo — faixa que fica ENTRE o layout de notebook/desktop de largura
+   plena e o breakpoint mobile de 900px que colapsa o menu). Sem isso, o
+   overflow-x:hidden do body (abaixo) corta esse excesso de forma invisível, sem
+   nenhuma barra de rolagem nem como arrastar pra ver o resto — confirmado em
+   iPad na tela de Priorização. Aqui o menu fica fixo e só o conteúdo rola. */
+.dashboard-content { margin-left: var(--sidebar-w, 250px); min-width: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
 /* Mesmo motivo do min-width:0 acima: .mp-page-padding-x é o container raiz de cada
    página e também é filho flex de .dashboard-content (que usa flex-direction:column) —
-   sem isso ele herda a mesma trava de não encolher abaixo do conteúdo mais largo. */
-.mp-page-padding-x { min-width: 0; }
+   sem isso ele herda a mesma trava de não encolher abaixo do conteúdo mais largo.
+
+   width:100% é o que faltava pra essa história fechar: sem largura explícita, um
+   filho de flex-column só "stretcha" pra 100% do eixo cruzado quando o pai tem
+   align-items:stretch — sem isso (ou em cascatas de estilo inline como max-width
+   +margin:0 auto sem width junto, o padrão clássico de "coluna centralizada"),
+   o elemento vira shrink-to-fit: assume a largura PREFERIDA do conteúdo mais
+   largo lá dentro (ex: um MiniBarChart com labelWidth grande) em vez de se
+   ajustar ao espaço real disponível. Era isso que vazava a página inteira pra
+   ~1272px em qualquer tela mais estreita que isso — notebook, tablet, o que
+   fosse — cortado de forma invisível pelo overflow-x:hidden do body, sem barra
+   de rolagem nem como arrastar (confirmado em iPad na tela de Priorização). */
+.mp-page-padding-x { min-width: 0; width: 100%; }
 
 @media (max-width: 900px) {
   .dashboard-content {
