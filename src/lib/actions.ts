@@ -868,6 +868,33 @@ export async function atualizarResponsavelEscola(escolaId: string, responsavelId
 }
 
 /**
+ * Atualiza telefone/e-mail de contato da escola direto de um popover inline
+ * (Funil de Contratação) — versão restrita de upsertEscola, sem exigir o
+ * formulário completo. Só grava o que veio preenchido; não apaga o outro
+ * campo se ele já tinha valor e o campo vier vazio no formulário.
+ */
+export async function atualizarContatoEscolaInline(escolaId: string, telefone: string, email: string): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado' }
+  if (!escolaId) return { success: false, error: 'escola_id é obrigatório' }
+
+  const { error } = await supabase
+    .from('escolas')
+    .update({ telefone: telefone || null, email: email || null, updated_by: user.id })
+    .eq('id', escolaId)
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/comercial/funil-contratacao', 'layout')
+  revalidatePath('/comercial/followup', 'layout')
+  revalidatePath('/comercial/tabela', 'layout')
+  revalidatePath('/comercial/escolas', 'layout')
+  revalidatePath('/comercial', 'layout')
+  return { success: true }
+}
+
+/**
  * Atualiza só o checklist de progresso do contrato (usado no editor inline
  * "Fase" da tabela do Funil de Contratação) — versão restrita de
  * upsertContrato que NÃO toca nos 32 campos de qtd/valor por segmento, para

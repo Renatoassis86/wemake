@@ -11,6 +11,7 @@ import { EscolaSelector } from '@/components/ui/EscolaSelector'
 import { FunilVisual } from '@/components/comercial/FunilVisual'
 import { FasePopover } from '@/components/comercial/FasePopover'
 import { ResponsavelInlineSelect } from '@/components/comercial/ResponsavelInlineSelect'
+import { ContatoQuickEdit } from '@/components/comercial/ContatoQuickEdit'
 import { STAGE_OPTIONS } from '@/types/database'
 
 export const dynamic = 'force-dynamic'
@@ -328,20 +329,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                         />
                       </td>
                       <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle', maxWidth: 170 }}>
-                        {l.telefone || l.email ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                            {l.telefone && (
-                              <span style={{ fontSize: '.72rem', color: '#334155', whiteSpace: 'nowrap' }}>{l.telefone}</span>
-                            )}
-                            {l.email && (
-                              <span style={{ fontSize: '.66rem', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 170 }} title={l.email}>
-                                {l.email}
-                              </span>
-                            )}
-                          </div>
-                        ) : (
-                          <span style={{ fontSize: '.72rem', color: '#cbd5e1' }}>—</span>
-                        )}
+                        <ContatoQuickEdit escolaId={l.escola_id} telefone={l.telefone} email={l.email} escolaNome={l.escola_nome} />
                       </td>
                       <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
                         <Link href={`/comercial/escolas/${l.escola_id}`} style={{ fontSize: '.72rem', fontWeight: 700, color: '#4A7FDB', textDecoration: 'none', whiteSpace: 'nowrap' }}>

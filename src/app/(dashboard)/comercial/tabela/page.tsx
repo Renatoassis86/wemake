@@ -120,7 +120,7 @@ export default async function TabelaPage() {
               <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 1200 }}>
                 <thead>
                   <tr style={{ background: '#0f172a' }}>
-                    {['#', 'Lead', 'Escola', 'Localidade', 'Contato', 'Alunos', 'Potencial', 'Classificação', 'Prob.', 'Prontidão', 'Interações', 'Último Contato', 'Último Resumo', 'Ações'].map(col => (
+                    {['#', 'Escola', 'Localidade', 'Contato', 'Alunos', 'Potencial', 'Classificação', 'Prob.', 'Prontidão', 'Interações', 'Último Contato', 'Último Resumo', 'Ações'].map(col => (
                       <th key={col} style={{ padding: '.65rem .9rem', textAlign: col === 'Alunos' || col === 'Potencial' || col === 'Prob.' || col === '#' ? 'center' : 'left', fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: 'rgba(255,255,255,.6)', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                         {col}
                       </th>
@@ -154,20 +154,6 @@ export default async function TabelaPage() {
                           </div>
                         </td>
 
-                        {/* Lead badge */}
-                        <td style={{ padding: '.8rem .9rem', verticalAlign: 'middle' }}>
-                          <span style={{
-                            display: 'inline-flex', alignItems: 'center', gap: '.25rem',
-                            background: cs.bg, color: cs.text, border: `1px solid ${cs.border}`,
-                            padding: '.2rem .6rem', borderRadius: 99,
-                            fontSize: '.62rem', fontWeight: 800, textTransform: 'uppercase',
-                            letterSpacing: '.04em', fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
-                          }}>
-                            <span style={{ width: 5, height: 5, borderRadius: '50%', background: cs.dot, display: 'inline-block' }} />
-                            {r.classifAtual === 'quente' ? 'Quente' : r.classifAtual === 'morno' ? 'Morno' : 'Frio'}
-                          </span>
-                        </td>
-
                         {/* Nome */}
                         <td style={{ padding: '.8rem .9rem', verticalAlign: 'middle' }}>
                           <Link href={`/comercial/escolas/${r.id}`} style={{ fontWeight: 700, fontSize: '.82rem', color: '#0f172a', textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap', display: 'block', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -185,10 +171,13 @@ export default async function TabelaPage() {
 
                         {/* Contato */}
                         <td style={{ padding: '.8rem .9rem', verticalAlign: 'middle' }}>
-                          {r.contato_nome ? (
+                          {r.contato_nome || r.telefone || r.email ? (
                             <div>
-                              <div style={{ fontSize: '.78rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{r.contato_nome}</div>
-                              <div style={{ fontSize: '.68rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)' }}>{r.telefone || r.email || r.contato_cargo || '—'}</div>
+                              {r.contato_nome && (
+                                <div style={{ fontSize: '.78rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap' }}>{r.contato_nome}</div>
+                              )}
+                              <div style={{ fontSize: '.68rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', whiteSpace: 'nowrap' }}>{r.telefone || '—'}</div>
+                              <div style={{ fontSize: '.68rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 170 }}>{r.email || '—'}</div>
                             </div>
                           ) : <span style={{ color: '#cbd5e1', fontSize: '.78rem' }}>—</span>}
                         </td>
