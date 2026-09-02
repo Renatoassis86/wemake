@@ -7,12 +7,14 @@ import { atualizarChecklistContratoInline } from '@/lib/actions'
 const CHECKLIST_ITEMS = [
   ['formulario_enviado', 'Formulário enviado'],
   ['formulario_recebido', 'Formulário recebido'],
+  ['proposta_enviada', 'Proposta enviada'],
   ['minuta_enviada', 'Minuta enviada'],
   ['retorno_minuta', 'Retorno da minuta'],
   ['minuta_atualizada', 'Minuta atualizada'],
   ['contrato_enviado', 'Contrato enviado'],
   ['contrato_assinado', 'Contrato assinado'],
   ['contrato_arquivado', 'Contrato arquivado'],
+  ['declinou', 'Escola declinou'],
 ] as const
 
 interface Props {
@@ -21,6 +23,22 @@ interface Props {
   faseCor: { bg: string; text: string; border: string }
   checklist: Record<string, boolean>
   implantacaoStatus: string | null
+}
+
+function ChipItem({ label, negativo }: { label: string; negativo: boolean }) {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: '.25rem',
+      background: negativo ? '#fef2f2' : '#f0fdf4',
+      color: negativo ? '#dc2626' : '#15803d',
+      border: `1px solid ${negativo ? '#fca5a5' : '#86efac'}`,
+      padding: '.1rem .45rem', borderRadius: 99,
+      fontSize: '.6rem', fontWeight: 700, whiteSpace: 'nowrap',
+      fontFamily: 'var(--font-montserrat,sans-serif)',
+    }}>
+      {negativo ? '✕' : '✓'} {label}
+    </span>
+  )
 }
 
 // Popover "suspenso" pra avançar o checklist de contrato direto na tabela do
@@ -34,7 +52,7 @@ export function FasePopover({ escolaId, faseLabel, faseCor, checklist: checklist
   const [checklist, setChecklist] = useState<Record<string, boolean>>(checklistInicial)
   const [implantacao, setImplantacao] = useState(implantacaoInicial ?? 'em_andamento')
   const [pending, startTransition] = useTransition()
-  const btnRef = useRef<HTMLButtonElement>(null)
+  const btnRef = useRef<HTMLDivElement>(null)
   const painelRef = useRef<HTMLDivElement>(null)
 
   function abrir() {
@@ -77,17 +95,31 @@ export function FasePopover({ escolaId, faseLabel, faseCor, checklist: checklist
     })
   }
 
+  const marcados = CHECKLIST_ITEMS.filter(([key]) => !!checklistInicial[key])
+
   return (
     <>
-      <button ref={btnRef} onClick={abrir} style={{
-        display: 'inline-flex', alignItems: 'center', gap: '.3rem',
-        background: faseCor.bg, color: faseCor.text, border: `1px solid ${faseCor.border}`,
-        padding: '.2rem .6rem', borderRadius: 99, cursor: 'pointer',
-        fontSize: '.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em',
-        fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
-      }} title="Clique para atualizar o checklist do contrato">
-        {faseLabel} <span style={{ fontSize: '.7rem' }}>✎</span>
-      </button>
+      <div ref={btnRef} onClick={abrir} title="Clique para atualizar o checklist do contrato" style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '.25rem',
+        cursor: 'pointer', minWidth: 120, padding: '.15rem', margin: '-.15rem', borderRadius: 8,
+      }}
+        onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc' }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+      >
+        {marcados.length > 0 ? (
+          marcados.map(([key, label]) => <ChipItem key={key} label={label} negativo={key === 'declinou'} />)
+        ) : (
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: '.3rem',
+            background: faseCor.bg, color: faseCor.text, border: `1px solid ${faseCor.border}`,
+            padding: '.2rem .6rem', borderRadius: 99,
+            fontSize: '.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em',
+            fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
+          }}>
+            {faseLabel} <span style={{ fontSize: '.7rem' }}>✎</span>
+          </span>
+        )}
+      </div>
 
       {aberto && pos && (
         <div ref={painelRef} style={{
@@ -99,14 +131,24 @@ export function FasePopover({ escolaId, faseLabel, faseCor, checklist: checklist
             Checklist de Progresso
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem', marginBottom: '.75rem' }}>
-            {CHECKLIST_ITEMS.map(([key, label]) => (
-              <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '.5rem', fontSize: '.78rem', color: '#334155', cursor: 'pointer' }}>
-                <input type="checkbox" checked={!!checklist[key]}
-                  onChange={e => setChecklist(c => ({ ...c, [key]: e.target.checked }))}
-                  style={{ width: 15, height: 15, cursor: 'pointer', accentColor: '#5FE3D0', flexShrink: 0 }} />
-                {label}
-              </label>
-            ))}
+            {CHECKLIST_ITEMS.map(([key, label]) => {
+              const negativo = key === 'declinou'
+              return (
+                <label key={key} style={{
+                  display: 'flex', alignItems: 'center', gap: '.5rem', fontSize: '.78rem', cursor: 'pointer',
+                  color: negativo ? '#dc2626' : '#334155',
+                  fontWeight: negativo ? 700 : 400,
+                  paddingTop: negativo ? '.4rem' : 0,
+                  marginTop: negativo ? '.15rem' : 0,
+                  borderTop: negativo ? '1px dashed #fca5a5' : 'none',
+                }}>
+                  <input type="checkbox" checked={!!checklist[key]}
+                    onChange={e => setChecklist(c => ({ ...c, [key]: e.target.checked }))}
+                    style={{ width: 15, height: 15, cursor: 'pointer', accentColor: negativo ? '#dc2626' : '#5FE3D0', flexShrink: 0 }} />
+                  {label}
+                </label>
+              )
+            })}
           </div>
 
           {checklist.contrato_arquivado && (

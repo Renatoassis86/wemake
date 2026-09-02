@@ -12,6 +12,7 @@ import { FunilVisual } from '@/components/comercial/FunilVisual'
 import { FasePopover } from '@/components/comercial/FasePopover'
 import { ResponsavelInlineSelect } from '@/components/comercial/ResponsavelInlineSelect'
 import { ContatoQuickEdit } from '@/components/comercial/ContatoQuickEdit'
+import { PrioridadeInline } from '@/components/comercial/PrioridadeInline'
 import { STAGE_OPTIONS } from '@/types/database'
 
 export const dynamic = 'force-dynamic'
@@ -57,6 +58,7 @@ const FASE_COR: Record<FaseFunil, { bg: string; text: string; border: string }> 
   implantacao:       { bg: '#f5f3ff', text: '#7c3aed', border: '#c4b5fd' },
   parceiro_ativo:    { bg: '#ecfdf5', text: '#059669', border: '#6ee7b7' },
 }
+const FASE_DECLINADA = { bg: '#fef2f2', text: '#dc2626', border: '#fca5a5' }
 
 export default async function FunilContratacaoPage({ searchParams }: Props) {
   const params   = await searchParams
@@ -260,7 +262,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ background: '#0f172a' }}>
-                    {['Escola', 'Responsável', 'Alunos', 'Atividade', 'Valor/Desconto', 'Fase', 'Contato', ''].map(col => (
+                    {['Prior.', 'Escola', 'Responsável', 'Alunos', 'Atividade', 'Valor/Desconto', 'Fase', 'Contato', ''].map(col => (
                       <th key={col} style={{ padding: '.6rem .75rem', textAlign: 'left', fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.65)', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{col}</th>
                     ))}
                   </tr>
@@ -268,6 +270,9 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                 <tbody>
                   {linhasFiltradas.map((l, idx) => (
                     <tr key={l.escola_id} style={{ borderBottom: '1px solid #f1f5f9', background: idx % 2 === 0 ? '#fff' : '#fafafa' }}>
+                      <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
+                        <PrioridadeInline escolaId={l.escola_id} prioridade={l.prioridade_manual} />
+                      </td>
                       <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle', maxWidth: 190 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '.35rem' }}>
                           <div style={{ fontWeight: 700, fontSize: '.8rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -313,17 +318,19 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                       <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
                         <FasePopover
                           escolaId={l.escola_id}
-                          faseLabel={FASE_LABELS[l.fase_funil]}
-                          faseCor={FASE_COR[l.fase_funil]}
+                          faseLabel={l.declinou ? 'Recusada' : FASE_LABELS[l.fase_funil]}
+                          faseCor={l.declinou ? FASE_DECLINADA : FASE_COR[l.fase_funil]}
                           checklist={{
                             formulario_enviado: l.formulario_enviado,
                             formulario_recebido: l.formulario_recebido,
+                            proposta_enviada: l.proposta_enviada_manual,
                             minuta_enviada: l.minuta_enviada,
                             retorno_minuta: l.retorno_minuta,
                             minuta_atualizada: l.minuta_atualizada,
                             contrato_enviado: l.contrato_enviado,
                             contrato_assinado: l.contrato_assinado,
                             contrato_arquivado: l.contrato_arquivado,
+                            declinou: l.declinou,
                           }}
                           implantacaoStatus={l.implantacao_status}
                         />

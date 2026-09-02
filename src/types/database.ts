@@ -79,6 +79,7 @@ export interface Escola {
   observacoes: string | null
   ativa: boolean
   total_alunos: number
+  prioridade_manual: number | null
   potencial_financeiro: number
   created_by: string | null
   updated_by: string | null
@@ -189,6 +190,7 @@ export interface Contrato {
   escola_id: string
   formulario_enviado: boolean
   formulario_recebido: boolean
+  proposta_enviada: boolean
   minuta_enviada: boolean
   retorno_minuta: boolean
   observacao_minuta: string | null
@@ -196,6 +198,7 @@ export interface Contrato {
   contrato_enviado: boolean
   contrato_assinado: boolean
   contrato_arquivado: boolean
+  declinou: boolean
   implantacao_status: 'nao_iniciada' | 'em_andamento' | 'concluida' | null
   implantacao_iniciada_em: string | null
   implantacao_concluida_em: string | null

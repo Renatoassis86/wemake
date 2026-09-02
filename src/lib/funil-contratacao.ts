@@ -153,6 +153,7 @@ export interface EscolaFunil {
   bairro: string | null
   perfil_pedagogico: string | null
   origem_lead: string | null
+  prioridade_manual: number | null
 
   negociacao_id: string | null
   negociacao_stage: StageNegociacao | null
@@ -175,12 +176,14 @@ export interface EscolaFunil {
   contrato_id: string | null
   formulario_enviado: boolean
   formulario_recebido: boolean
+  proposta_enviada_manual: boolean
   minuta_enviada: boolean
   retorno_minuta: boolean
   minuta_atualizada: boolean
   contrato_enviado: boolean
   contrato_assinado: boolean
   contrato_arquivado: boolean
+  declinou: boolean
   contrato_valor_total: number
   implantacao_status: 'nao_iniciada' | 'em_andamento' | 'concluida' | null
   implantacao_iniciada_em: string | null
@@ -353,6 +356,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
       bairro: escola.bairro,
       perfil_pedagogico: escola.perfil_pedagogico ?? null,
       origem_lead: escola.origem_lead ?? null,
+      prioridade_manual: escola.prioridade_manual ?? null,
 
       negociacao_id: neg?.id ?? null,
       negociacao_stage: neg?.stage ?? null,
@@ -375,12 +379,14 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
       contrato_id: contrato?.id ?? null,
       formulario_enviado: !!contrato?.formulario_enviado,
       formulario_recebido: !!contrato?.formulario_recebido,
+      proposta_enviada_manual: !!contrato?.proposta_enviada,
       minuta_enviada: !!contrato?.minuta_enviada,
       retorno_minuta: !!contrato?.retorno_minuta,
       minuta_atualizada: !!contrato?.minuta_atualizada,
       contrato_enviado: !!contrato?.contrato_enviado,
       contrato_assinado: !!contrato?.contrato_assinado,
       contrato_arquivado: !!contrato?.contrato_arquivado,
+      declinou: !!contrato?.declinou,
       contrato_valor_total: contrato ? calcValorTotalContrato(contrato) : 0,
       implantacao_status: contrato?.implantacao_status ?? null,
       implantacao_iniciada_em: contrato?.implantacao_iniciada_em ?? null,
@@ -401,7 +407,11 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
   const linhas = linhasTodas
     .filter(l => l.negociacao_id || l.proposta_id || l.contrato_id)
     .sort((a, b) =>
-      FASE_ORDER.indexOf(a.fase_funil) - FASE_ORDER.indexOf(b.fase_funil)
+      // Prioridade manual primeiro (menor número = mais prioritário; sem
+      // prioridade definida vai para o fim) — sobrepõe o critério de fase,
+      // é uma decisão explícita do time comercial sobre quem abordar antes.
+      (a.prioridade_manual ?? Infinity) - (b.prioridade_manual ?? Infinity)
+      || FASE_ORDER.indexOf(a.fase_funil) - FASE_ORDER.indexOf(b.fase_funil)
       || b.contrato_valor_total - a.contrato_valor_total
       || (b.negociacao_valor_estimado ?? 0) - (a.negociacao_valor_estimado ?? 0)
     )

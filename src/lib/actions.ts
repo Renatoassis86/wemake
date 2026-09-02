@@ -895,6 +895,29 @@ export async function atualizarContatoEscolaInline(escolaId: string, telefone: s
 }
 
 /**
+ * Atualiza a ordem de prioridade manual da escola (popover inline no Funil de
+ * Contratação) — menor número = mais prioritário; null remove a prioridade.
+ */
+export async function atualizarPrioridadeEscola(escolaId: string, prioridade: number | null): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado' }
+  if (!escolaId) return { success: false, error: 'escola_id é obrigatório' }
+
+  const { error } = await supabase
+    .from('escolas')
+    .update({ prioridade_manual: prioridade, updated_by: user.id })
+    .eq('id', escolaId)
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/comercial/funil-contratacao', 'layout')
+  revalidatePath('/comercial/escolas', 'layout')
+  revalidatePath('/comercial', 'layout')
+  return { success: true }
+}
+
+/**
  * Atualiza só o checklist de progresso do contrato (usado no editor inline
  * "Fase" da tabela do Funil de Contratação) — versão restrita de
  * upsertContrato que NÃO toca nos 32 campos de qtd/valor por segmento, para
@@ -911,12 +934,14 @@ export async function atualizarChecklistContratoInline(formData: FormData): Prom
   const payload: Record<string, unknown> = {
     formulario_enviado:  formData.get('formulario_enviado') === 'true',
     formulario_recebido: formData.get('formulario_recebido') === 'true',
+    proposta_enviada:    formData.get('proposta_enviada') === 'true',
     minuta_enviada:      formData.get('minuta_enviada') === 'true',
     retorno_minuta:      formData.get('retorno_minuta') === 'true',
     minuta_atualizada:   formData.get('minuta_atualizada') === 'true',
     contrato_enviado:    formData.get('contrato_enviado') === 'true',
     contrato_assinado:   formData.get('contrato_assinado') === 'true',
     contrato_arquivado:  formData.get('contrato_arquivado') === 'true',
+    declinou:            formData.get('declinou') === 'true',
   }
 
   const { data: existing } = await supabase
