@@ -868,6 +868,36 @@ export async function atualizarResponsavelEscola(escolaId: string, responsavelId
 }
 
 /**
+ * Adiciona uma anotação rápida de contato comercial direto do Funil de
+ * Contratação — mesma tabela notas_escola já usada na ficha da escola e no
+ * Follow-up, atribuída automaticamente a quem estiver logado ao adicionar
+ * (não precisa de um campo separado pra "quem fez o contato").
+ */
+export async function adicionarNotaContatoFunil(escolaId: string, texto: string): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado' }
+  if (!escolaId) return { success: false, error: 'escola_id é obrigatório' }
+  const textoLimpo = texto.trim()
+  if (!textoLimpo) return { success: false, error: 'Escreva uma anotação' }
+
+  // notas_escola não tem policy de INSERT liberada pro client comum
+  // (confirmado: 42501 row-level security policy) — usa admin, mesmo padrão
+  // já aplicado nas leituras cross-escola desta tabela.
+  const admin = createAdminClient()
+  const { error } = await admin
+    .from('notas_escola')
+    .insert({ escola_id: escolaId, texto: textoLimpo, fixada: false, created_by: user.id })
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/comercial/funil-contratacao', 'layout')
+  revalidatePath('/comercial/followup', 'layout')
+  revalidatePath('/comercial/escolas', 'layout')
+  return { success: true }
+}
+
+/**
  * Atualiza telefone/e-mail de contato da escola direto de um popover inline
  * (Funil de Contratação) — versão restrita de upsertEscola, sem exigir o
  * formulário completo. Só grava o que veio preenchido; não apaga o outro

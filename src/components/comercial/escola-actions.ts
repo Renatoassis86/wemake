@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function criarTarefaEscola(formData: FormData) {
   const supabase = await createClient()
@@ -26,7 +27,10 @@ export async function criarNotaEscola(formData: FormData) {
   if (!user) return
 
   const escola_id = formData.get('escola_id') as string
-  await supabase.from('notas_escola').insert({
+  // notas_escola não tem policy de INSERT liberada pro client comum
+  // (42501 row-level security policy) — usa admin.
+  const admin = createAdminClient()
+  await admin.from('notas_escola').insert({
     escola_id,
     texto:  formData.get('texto') as string,
     fixada: formData.get('fixada') === 'true',

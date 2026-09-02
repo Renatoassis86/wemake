@@ -1,4 +1,3 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { buscarEscolasUnificadas } from '@/lib/escolas-unificadas'
 import { upsertNegociacao } from '@/lib/actions'
@@ -13,6 +12,7 @@ import { FasePopover } from '@/components/comercial/FasePopover'
 import { ResponsavelInlineSelect } from '@/components/comercial/ResponsavelInlineSelect'
 import { ContatoQuickEdit } from '@/components/comercial/ContatoQuickEdit'
 import { PrioridadeInline } from '@/components/comercial/PrioridadeInline'
+import { AnotacaoContatoInline } from '@/components/comercial/AnotacaoContatoInline'
 import { STAGE_OPTIONS } from '@/types/database'
 
 export const dynamic = 'force-dynamic'
@@ -66,21 +66,32 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
   const faseFiltro = (params.fase ?? '') as FaseFunil | ''
   const q = (params.q ?? '').toLowerCase()
 
-  const supabase = await createClient()
   const admin = createAdminClient()
 
-  const [{ linhas, kpis }, escolasSelect, { data: usuariosAtivos }] = await Promise.all([
+  const [{ linhas, kpis }, escolasSelect, { data: usuariosAtivos }, { data: usuariosTodos }, { data: notasRaw }] = await Promise.all([
     getFunilContratacao(),
     buscarEscolasUnificadas(),
     admin.from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo'),
+    admin.from('usuarios').select('id, nome_completo'),
+    admin.from('notas_escola').select('escola_id, texto, created_by, created_at').order('created_at', { ascending: false }),
   ])
+
+  const nomePorUsuario = new Map((usuariosTodos ?? []).map(u => [u.id, u.nome_completo]))
+  const notasPorEscola = new Map<string, { texto: string; autor: string; criadoEm: string }[]>()
+  for (const n of notasRaw ?? []) {
+    const lista = notasPorEscola.get(n.escola_id) ?? []
+    if (lista.length < 5) {
+      lista.push({ texto: n.texto, autor: nomePorUsuario.get(n.created_by) ?? 'Equipe', criadoEm: n.created_at })
+      notasPorEscola.set(n.escola_id, lista)
+    }
+  }
 
   let escolaSelecionada: { id: string; nome: string; cidade: string | null; estado: string | null } | null = null
   let negociacaoAtual: { id: string; stage: string; valor_estimado: number | null; observacoes: string | null; responsavel_id: string | null } | null = null
 
   if (escolaId) {
     const [{ data: e }, { data: n }] = await Promise.all([
-      supabase.from('escolas').select('id, nome, cidade, estado').eq('id', escolaId).single(),
+      admin.from('escolas').select('id, nome, cidade, estado').eq('id', escolaId).single(),
       admin.from('negociacoes').select('id, stage, valor_estimado, observacoes, responsavel_id').eq('escola_id', escolaId).eq('ativa', true).maybeSingle(),
     ])
     escolaSelecionada = e
@@ -334,9 +345,12 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                         <ContatoQuickEdit escolaId={l.escola_id} telefone={l.telefone} email={l.email} escolaNome={l.escola_nome} />
                       </td>
                       <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
-                        <Link href={`/comercial/escolas/${l.escola_id}`} style={{ fontSize: '.72rem', fontWeight: 700, color: '#4A7FDB', textDecoration: 'none', whiteSpace: 'nowrap' }}>
-                          Editar →
-                        </Link>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                          <AnotacaoContatoInline escolaId={l.escola_id} notas={notasPorEscola.get(l.escola_id) ?? []} />
+                          <Link href={`/comercial/escolas/${l.escola_id}`} style={{ fontSize: '.72rem', fontWeight: 700, color: '#4A7FDB', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+                            Editar →
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   ))}
