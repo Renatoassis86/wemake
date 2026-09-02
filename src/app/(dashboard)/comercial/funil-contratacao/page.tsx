@@ -273,14 +273,9 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                       <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
                         <PrioridadeInline escolaId={l.escola_id} prioridade={l.prioridade_manual} />
                       </td>
-                      <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle', maxWidth: 190 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '.35rem' }}>
-                          <div style={{ fontWeight: 700, fontSize: '.8rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {l.escola_nome}
-                          </div>
-                          {l.negociacao_observacoes && (
-                            <span title={l.negociacao_observacoes} style={{ flexShrink: 0, cursor: 'help', color: '#94a3b8', fontSize: '.75rem' }}>📝</span>
-                          )}
+                      <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle', minWidth: 220 }}>
+                        <div style={{ fontWeight: 700, fontSize: '.8rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', lineHeight: 1.3 }}>
+                          {l.escola_nome}
                         </div>
                         <div style={{ fontSize: '.68rem', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {l.contato_nome ? `${l.contato_nome} · ` : ''}{l.cidade ?? '—'}{l.estado ? `/${l.estado}` : ''}
