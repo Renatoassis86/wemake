@@ -11,7 +11,6 @@
  * enriquecimento (estágio do funil, última interação, contrato) quando a
  * escola também aparece lá.
  */
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { normalizarNomeEscola } from '@/lib/utils'
 import { getFunilContratacao, FASE_LABELS } from '@/lib/funil-contratacao'
@@ -42,19 +41,20 @@ export interface FollowupLinha {
 }
 
 export async function getFollowupPropostas(): Promise<FollowupLinha[]> {
-  const supabase = await createClient()
-  // notas_escola tem policy de SELECT restrita por escola no client comum
-  // (confirmado no padrão .eq('escola_id', id) usado em escolas/[id]/page.tsx) —
-  // aqui precisamos do cross-escola completo, então usa admin, mesmo padrão de
+  // notas_escola, escolas e propostas têm policy de SELECT restrita por
+  // responsável/role no client comum (confirmado comparando o mesmo relatório
+  // logado como gerente vs. usuario — os números batiam diferente) — aqui
+  // precisamos do cross-escola completo, sempre igual pra qualquer usuário
+  // que acesse a tela, então usa admin, mesmo padrão de
   // registros/negociacoes/contratos em funil-contratacao.ts.
   const admin = createAdminClient()
 
   const [{ data: propostasRaw }, { data: escolasRaw }, { data: notasRaw }, funil] = await Promise.all([
-    supabase
+    admin
       .from('propostas')
       .select('id, escola_id, escola_nome, valor_aluno_ano, num_alunos, status, created_at, arquivada_em')
       .order('created_at', { ascending: false }),
-    supabase.from('escolas').select('id, nome, telefone, email, contato_nome, cidade, estado'),
+    admin.from('escolas').select('id, nome, telefone, email, contato_nome, cidade, estado'),
     admin.from('notas_escola').select('escola_id, texto, created_at').order('created_at', { ascending: false }),
     getFunilContratacao(),
   ])

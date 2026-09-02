@@ -102,8 +102,8 @@ export async function getDashboardData(filtros: DashboardFiltros): Promise<Dashb
       .select('nome_fantasia, razao_social, cnpj, cidade, estado, created_at')
       .neq('status', 'descartado')
       .order('created_at', { ascending: false }),
-    supabase.from('escolas').select('id, nome, cnpj'),
-    supabase.from('propostas').select('escola_id, escola_nome'),
+    admin.from('escolas').select('id, nome, cnpj'),
+    admin.from('propostas').select('escola_id, escola_nome'),
   ])
 
   const registros = (registrosRes.data ?? []) as { escola_id: string; meio_contato: string; data_contato: string }[]

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
 import { formatDate } from '@/lib/utils'
@@ -58,15 +58,16 @@ export default async function ComercialDashboard({ searchParams }: Props) {
     return `/comercial?${p.toString()}`
   }
 
-  const [dados, supabase] = await Promise.all([
-    getDashboardData({ estado: estadoAtivo || undefined, cidade: cidadeAtiva || undefined, bairro: bairroAtivo || undefined, fase: faseAtiva || undefined, periodo: periodoAtivo }),
-    createClient(),
-  ])
+  // registros e escolas têm policy de SELECT restrita por responsável/role no
+  // client comum (confirmado comparando este mesmo dashboard logado como
+  // gerente vs. usuario) — usa admin, este painel é o mesmo pra todo mundo.
+  const admin = createAdminClient()
+  const dados = await getDashboardData({ estado: estadoAtivo || undefined, cidade: cidadeAtiva || undefined, bairro: bairroAtivo || undefined, fase: faseAtiva || undefined, periodo: periodoAtivo })
 
   const [{ data: registrosRecentes }, { data: todasEscolas }, { data: escolasComRegistro }] = await Promise.all([
-    supabase.from('registros').select('*, escola:escolas(nome,id,cidade,estado)').order('data_contato', { ascending: false }).limit(6),
-    supabase.from('escolas').select('id, nome, cidade, estado, created_at').eq('ativa', true).order('created_at', { ascending: false }),
-    supabase.from('registros').select('escola_id'),
+    admin.from('registros').select('*, escola:escolas(nome,id,cidade,estado)').order('data_contato', { ascending: false }).limit(6),
+    admin.from('escolas').select('id, nome, cidade, estado, created_at').eq('ativa', true).order('created_at', { ascending: false }),
+    admin.from('registros').select('escola_id'),
   ])
   const idsComRegistro = new Set((escolasComRegistro ?? []).map((r: any) => r.escola_id))
   const escolasSemNegociacao = (todasEscolas ?? []).filter((e: any) => !idsComRegistro.has(e.id)).slice(0, 8)

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { buscarEscolasUnificadas } from '@/lib/escolas-unificadas'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
@@ -139,9 +139,9 @@ function IconFlag({ size = 16, cor = '#4A7FDB' }: { size?: number; cor?: string 
 export default async function JornadaVisualPage({ searchParams }: Props) {
   const params = await searchParams
   const escolaId = params.escola ?? ''
-  const supabase = await createClient()
+  const admin = createAdminClient()
 
-  const escolas = await buscarEscolasUnificadas(supabase)
+  const escolas = await buscarEscolasUnificadas()
 
   let escola: any = null
   let registros: any[] = []
@@ -150,10 +150,10 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
 
   if (escolaId) {
     const [{ data: e }, { data: r }, { data: c }, { data: n }] = await Promise.all([
-      supabase.from('escolas_resumo').select('*').eq('id', escolaId).single(),
-      supabase.from('registros').select('*').eq('escola_id', escolaId).order('data_contato'),
-      supabase.from('contratos').select('*').eq('escola_id', escolaId).single(),
-      supabase.from('negociacoes').select('*').eq('escola_id', escolaId).order('created_at'),
+      admin.from('escolas_resumo').select('*').eq('id', escolaId).single(),
+      admin.from('registros').select('*').eq('escola_id', escolaId).order('data_contato'),
+      admin.from('contratos').select('*').eq('escola_id', escolaId).single(),
+      admin.from('negociacoes').select('*').eq('escola_id', escolaId).order('created_at'),
     ])
     escola = e; contrato = c; negociacoes = n ?? []
 
@@ -162,7 +162,7 @@ export default async function JornadaVisualPage({ searchParams }: Props) {
     // `usuarios` (ver actions.ts).
     const respIds = [...new Set((r ?? []).map((reg: any) => reg.responsavel_id).filter(Boolean))]
     const { data: usuariosResp } = respIds.length > 0
-      ? await supabase.from('usuarios').select('id, nome_completo').in('id', respIds)
+      ? await admin.from('usuarios').select('id, nome_completo').in('id', respIds)
       : { data: [] as { id: string; nome_completo: string }[] }
     const nomePorId = new Map((usuariosResp ?? []).map(u => [u.id, u.nome_completo]))
     registros = (r ?? []).map((reg: any) => ({

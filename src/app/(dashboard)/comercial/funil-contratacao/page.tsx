@@ -71,7 +71,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
 
   const [{ linhas, kpis }, escolasSelect, { data: usuariosAtivos }] = await Promise.all([
     getFunilContratacao(),
-    buscarEscolasUnificadas(supabase),
+    buscarEscolasUnificadas(),
     admin.from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo'),
   ])
 

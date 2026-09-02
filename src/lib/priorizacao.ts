@@ -9,7 +9,6 @@
  *  - Ação urgente: stage 'fechamento' ou contrato_enviado sem contrato_assinado
  */
 
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { normalizarNomeEscola } from '@/lib/utils'
 import { buscarPibMunicipio, type PibInfo } from '@/lib/pib-municipios'
@@ -75,19 +74,20 @@ const STAGE_LABELS: Record<StageNegociacao, string> = {
 // ─── Função principal ─────────────────────────────────────────────────────────
 
 export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
-  const supabase = await createClient()
   // negociacoes, contratos, leads_escola e leads_perfil_escola não têm policy de SELECT
   // para o role authenticated (confirmado direto: bloqueadas também para anon) — usa a
   // service role para essas quatro, mesmo padrão já usado no projeto para tabelas de leads
   // (ver upsertEscola/enviarFormularioPublico em actions.ts). escolas_resumo e propostas
-  // continuam no client normal pois já têm policy de leitura liberada.
+  // TAMBÉM têm policy restrita por responsável/role (confirmado comparando esta mesma
+  // fila logada como gerente vs. usuario — vinham totais diferentes), então usa admin
+  // aqui também — esta fila é a mesma pra qualquer usuário que abrir a tela.
   const admin = createAdminClient()
 
   // Busca paralela: escolas ativas + todas as negociações (inclusive inativas — o histórico
   // não pode desaparecer da Situação Comercial só porque foi arquivado) + contratos + perfil
   // da pesquisa comercial + porte estimado (leads_escola) + propostas já geradas na calculadora
   const [escolasRes, negociacoesRes, contratosRes, perfilRes, leadsEscolaRes, propostasRes] = await Promise.all([
-    supabase
+    admin
       .from('escolas_resumo')
       .select('*')
       .eq('ativa', true)
@@ -110,7 +110,7 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
       .select('escola_crm_id, qtd_alunos')
       .not('escola_crm_id', 'is', null),
 
-    supabase
+    admin
       .from('propostas')
       .select('escola_id, escola_nome'),
   ])

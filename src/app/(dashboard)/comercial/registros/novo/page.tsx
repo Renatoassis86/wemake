@@ -4,6 +4,7 @@ import { upsertRegistro } from '@/lib/actions'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
 import { buscarEscolasUnificadas } from '@/lib/escolas-unificadas'
+import { EscolaSelector } from '@/components/ui/EscolaSelector'
 import {
   MEIO_OPTIONS, INTERESSE_OPTIONS, PRONTIDAO_OPTIONS,
   ABERTURA_OPTIONS, ENCAMINHAMENTOS_OPTIONS, CARGO_CONTATO_OPTIONS,
@@ -53,10 +54,10 @@ export default async function RegistroNovo({ searchParams }: Props) {
   const admin = createAdminClient()
 
   const [escolas, { data: profiles }, { data: negociacoes }] = await Promise.all([
-    buscarEscolasUnificadas(supabase),
+    buscarEscolasUnificadas(),
     admin.from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo'),
     escolaId
-      ? supabase.from('negociacoes').select('id, titulo, stage').eq('escola_id', escolaId).eq('ativa', true)
+      ? admin.from('negociacoes').select('id, titulo, stage').eq('escola_id', escolaId).eq('ativa', true)
       : Promise.resolve({ data: [] }),
   ])
 
@@ -90,12 +91,14 @@ export default async function RegistroNovo({ searchParams }: Props) {
               <div style={{ ...g3, marginBottom: '1.25rem' }}>
                 <div style={{ gridColumn: 'span 2' }}>
                   <label style={lbl}>Escola <span style={{ color: '#4A7FDB' }}>*</span></label>
-                  <select name="escola_id" style={inp} required defaultValue={escolaId}>
-                    <option value="">Selecione a escola...</option>
-                    {escolas?.map((e: any) => (
-                      <option key={e.id} value={e.id}>{e.nome}</option>
-                    ))}
-                  </select>
+                  <input type="hidden" name="escola_id" value={escolaId} required />
+                  <EscolaSelector
+                    escolas={escolas}
+                    escolaId={escolaId}
+                    basePath="/comercial/registros/novo"
+                    placeholder="Digite para buscar escola, cidade ou estado..."
+                    hideLabel
+                  />
                 </div>
                 <div>
                   <label style={lbl}>Negociação Vinculada</label>

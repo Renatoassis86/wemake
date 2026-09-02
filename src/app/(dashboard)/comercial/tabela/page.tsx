@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
 import { formatDate, formatCurrency, diasDesdeData } from '@/lib/utils'
@@ -14,11 +14,15 @@ const CLASSIF_STYLE: Record<string, { bg: string; text: string; border: string; 
 }
 
 export default async function TabelaPage() {
-  const supabase = await createClient()
+  // escolas_resumo e registros têm policy de SELECT restrita por
+  // responsável/role no client comum (mesmo problema já corrigido em
+  // priorizacao.ts/funil-contratacao.ts) — usa admin, este ranking é o mesmo
+  // pra qualquer usuário que abrir a tela.
+  const admin = createAdminClient()
 
   const [{ data: escolas }, { data: registros }] = await Promise.all([
-    supabase.from('escolas_resumo').select('*').eq('ativa', true),
-    supabase.from('registros')
+    admin.from('escolas_resumo').select('*').eq('ativa', true),
+    admin.from('registros')
       .select('escola_id, data_contato, meio_contato, prontidao, classificacao, probabilidade, resumo')
       .order('data_contato', { ascending: false }),
   ])

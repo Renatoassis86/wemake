@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { formatCurrency, formatDate } from '@/lib/utils'
@@ -178,7 +178,7 @@ const classifStyles: Record<string, { bg: string; color: string; border: string;
 
 export default async function EscolaDetalhe({ params }: Props) {
   const { id } = await params
-  const supabase = await createClient()
+  const admin = createAdminClient()
 
   const [
     { data: escola },
@@ -188,12 +188,12 @@ export default async function EscolaDetalhe({ params }: Props) {
     { data: notas },
     { data: contrato },
   ] = await Promise.all([
-    supabase.from('escolas_resumo').select('*').eq('id', id).single(),
-    supabase.from('registros').select('*').eq('escola_id', id).order('data_contato', { ascending: false }),
-    supabase.from('negociacoes').select('*').eq('escola_id', id).order('updated_at', { ascending: false }),
-    supabase.from('tarefas').select('*').eq('escola_id', id).eq('status', 'pendente').order('vencimento'),
-    supabase.from('notas_escola').select('*').eq('escola_id', id).order('fixada', { ascending: false }).order('created_at', { ascending: false }),
-    supabase.from('contratos').select('*').eq('escola_id', id).single(),
+    admin.from('escolas_resumo').select('*').eq('id', id).single(),
+    admin.from('registros').select('*').eq('escola_id', id).order('data_contato', { ascending: false }),
+    admin.from('negociacoes').select('*').eq('escola_id', id).order('updated_at', { ascending: false }),
+    admin.from('tarefas').select('*').eq('escola_id', id).eq('status', 'pendente').order('vencimento'),
+    admin.from('notas_escola').select('*').eq('escola_id', id).order('fixada', { ascending: false }).order('created_at', { ascending: false }),
+    admin.from('contratos').select('*').eq('escola_id', id).single(),
   ])
 
   if (!escola) notFound()

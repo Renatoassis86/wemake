@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
 import { formatCurrency, formatDate, diasDesdeData } from '@/lib/utils'
@@ -30,10 +30,14 @@ export default async function EscolasPage({ searchParams }: Props) {
   const from    = (page - 1) * perPage
   const to      = from + perPage - 1
 
-  const supabase = await createClient()
+  // escolas tem policy de SELECT restrita por responsável/role no client
+  // comum (confirmado comparando esta mesma lista logada como gerente vs.
+  // usuario — vinham totais e listas diferentes) — usa admin, esta tela é o
+  // diretório de escolas da empresa, precisa ser igual pra todo mundo.
+  const admin = createAdminClient()
 
   // Query principal — busca diretamente da tabela escolas para garantir dados frescos
-  let query = supabase
+  let query = admin
     .from('escolas')
     .select('*', { count: 'exact' })
     .eq('ativa', true)
@@ -53,10 +57,10 @@ export default async function EscolasPage({ searchParams }: Props) {
     { count: nF },
     { data: estadosRaw },
   ] = await Promise.all([
-    supabase.from('escolas').select('*', { count: 'exact', head: true }).eq('ativa', true).eq('classificacao_atual', 'quente'),
-    supabase.from('escolas').select('*', { count: 'exact', head: true }).eq('ativa', true).eq('classificacao_atual', 'morno'),
-    supabase.from('escolas').select('*', { count: 'exact', head: true }).eq('ativa', true).eq('classificacao_atual', 'frio'),
-    supabase.from('escolas').select('estado').eq('ativa', true).not('estado', 'is', null),
+    admin.from('escolas').select('*', { count: 'exact', head: true }).eq('ativa', true).eq('classificacao_atual', 'quente'),
+    admin.from('escolas').select('*', { count: 'exact', head: true }).eq('ativa', true).eq('classificacao_atual', 'morno'),
+    admin.from('escolas').select('*', { count: 'exact', head: true }).eq('ativa', true).eq('classificacao_atual', 'frio'),
+    admin.from('escolas').select('estado').eq('ativa', true).not('estado', 'is', null),
   ])
 
   const estados   = [...new Set(estadosRaw?.map((e: any) => e.estado).filter(Boolean))].sort() as string[]

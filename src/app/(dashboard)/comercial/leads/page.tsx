@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
 import { formatCurrency, formatDate, diasDesdeData } from '@/lib/utils'
@@ -28,9 +28,11 @@ export default async function LeadsPage({ searchParams }: Props) {
   const classif = params.classif ?? ''
   const estado  = params.estado  ?? ''
 
-  const supabase = await createClient()
+  // escolas_resumo/escolas têm policy de SELECT restrita por responsável/role
+  // no client comum — usa admin, esta lista é a mesma pra todo mundo.
+  const admin = createAdminClient()
 
-  let query = supabase
+  let query = admin
     .from('escolas_resumo')
     .select('*')
     .eq('ativa', true)
@@ -48,10 +50,10 @@ export default async function LeadsPage({ searchParams }: Props) {
     { count: nF },
     { data: estadosRaw },
   ] = await Promise.all([
-    supabase.from('escolas_resumo').select('*', { count: 'exact', head: true }).eq('ativa', true).eq('classificacao_atual', 'quente'),
-    supabase.from('escolas_resumo').select('*', { count: 'exact', head: true }).eq('ativa', true).eq('classificacao_atual', 'morno'),
-    supabase.from('escolas_resumo').select('*', { count: 'exact', head: true }).eq('ativa', true).eq('classificacao_atual', 'frio'),
-    supabase.from('escolas').select('estado').eq('ativa', true).not('estado', 'is', null),
+    admin.from('escolas_resumo').select('*', { count: 'exact', head: true }).eq('ativa', true).eq('classificacao_atual', 'quente'),
+    admin.from('escolas_resumo').select('*', { count: 'exact', head: true }).eq('ativa', true).eq('classificacao_atual', 'morno'),
+    admin.from('escolas_resumo').select('*', { count: 'exact', head: true }).eq('ativa', true).eq('classificacao_atual', 'frio'),
+    admin.from('escolas').select('estado').eq('ativa', true).not('estado', 'is', null),
   ])
 
   const estados = [...new Set(estadosRaw?.map((e: any) => e.estado).filter(Boolean))].sort() as string[]

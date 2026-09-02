@@ -8,7 +8,6 @@
  * SELECT liberada para authenticated). Não estende getFilaPriorizacao —
  * propósito diferente (fila de abordagem vs. funil já iniciado).
  */
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { buscarUsuariosPorId } from '@/lib/queries'
 import { normalizarNomeEscola } from '@/lib/utils'
@@ -239,14 +238,19 @@ function derivarFase(params: {
 }
 
 export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
-  const supabase = await createClient()
+  // escolas e propostas têm policy de SELECT restrita por responsável/role no
+  // client comum (confirmado comparando este mesmo relatório logado como
+  // gerente vs. usuario — os totais batiam diferente, cada um via só uma
+  // fatia da base). Este funil é um KPI de empresa, precisa ser idêntico pra
+  // qualquer usuário que abrir a tela — usa admin nas cinco tabelas, mesmo
+  // padrão já usado aqui para negociacoes/registros/contratos.
   const admin = createAdminClient()
 
   const [escolasRes, negociacoesRes, registrosRes, propostasRes, contratosRes] = await Promise.all([
-    supabase.from('escolas').select('*').eq('ativa', true),
+    admin.from('escolas').select('*').eq('ativa', true),
     admin.from('negociacoes').select('id, escola_id, stage, valor_estimado, observacoes, probabilidade'),
     admin.from('registros').select('escola_id, data_contato, resumo'),
-    supabase.from('propostas').select('id, escola_id, escola_nome, valor_aluno_ano, num_alunos, status, validade, tipo, created_at')
+    admin.from('propostas').select('id, escola_id, escola_nome, valor_aluno_ano, num_alunos, status, validade, tipo, created_at')
       .is('arquivada_em', null)
       .order('created_at', { ascending: false }),
     admin.from('contratos').select('*'),
@@ -301,7 +305,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
   const contratoPorEscola = new Map<string, Contrato>()
   for (const c of contratos) contratoPorEscola.set(c.escola_id, c)
 
-  const usuarios = await buscarUsuariosPorId(supabase, escolas.map(e => e.responsavel_id))
+  const usuarios = await buscarUsuariosPorId(admin, escolas.map(e => e.responsavel_id))
 
   const linhasTodas: EscolaFunil[] = escolas.map(escola => {
     const neg = negPorEscola.get(escola.id) ?? null

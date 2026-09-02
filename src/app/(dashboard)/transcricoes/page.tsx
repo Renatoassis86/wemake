@@ -12,7 +12,7 @@ export default async function TranscricoesPage() {
     { data: transcricoesRaw },
     { data: meUsuario },
   ] = await Promise.all([
-    buscarEscolasUnificadas(supabase),
+    buscarEscolasUnificadas(),
     supabase.from('transcricoes_reunioes')
       .select('*, escola:escolas(nome)')
       .order('data_reuniao', { ascending: false }),

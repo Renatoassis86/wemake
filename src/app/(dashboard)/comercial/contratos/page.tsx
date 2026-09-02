@@ -1,4 +1,3 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { buscarEscolasUnificadas } from '@/lib/escolas-unificadas'
 import { upsertContrato } from '@/lib/actions'
@@ -75,14 +74,15 @@ function StatusCheck({ name, label, checked }: { name: string; label: string; ch
 export default async function ContratosPage({ searchParams }: Props) {
   const params    = await searchParams
   const escolaId  = params.escola ?? ''
-  const supabase  = await createClient()
-  // contratos não tem policy de SELECT liberada pra authenticated (mesmo padrão
-  // já usado em priorizacao.ts/funil-contratacao.ts) — sem isso a leitura sempre
-  // vinha vazia, mesmo com contratos reais gravados no banco.
+  // contratos, escolas e registros não têm policy de SELECT liberada pra
+  // qualquer authenticated (mesmo padrão já usado em
+  // priorizacao.ts/funil-contratacao.ts) — sem isso a leitura vinha vazia ou
+  // parcial (escolas/registros são restritos por responsável/role) mesmo com
+  // dados reais gravados no banco.
   const admin     = createAdminClient()
 
   const [escolas, { data: contratos_geral }] = await Promise.all([
-    buscarEscolasUnificadas(supabase),
+    buscarEscolasUnificadas(),
     admin.from('contratos').select('*, escola:escolas(nome, estado, cidade)')
       .order('updated_at', { ascending: false }),
   ])
@@ -92,11 +92,11 @@ export default async function ContratosPage({ searchParams }: Props) {
 
   if (escolaId) {
     const [{ data: e }, { data: c }, { data: reg }, { data: arqs }] = await Promise.all([
-      supabase.from('escolas').select('*').eq('id', escolaId).single(),
+      admin.from('escolas').select('*').eq('id', escolaId).single(),
       admin.from('contratos').select('*').eq('escola_id', escolaId).single(),
-      supabase.from('registros').select('encaminhamentos, prontidao')
+      admin.from('registros').select('encaminhamentos, prontidao')
         .eq('escola_id', escolaId).order('data_contato', { ascending: false }).limit(1).single(),
-      supabase.from('contratos_arquivos').select('id, nome, path, created_at, tamanho')
+      admin.from('contratos_arquivos').select('id, nome, path, created_at, tamanho')
         .eq('escola_id', escolaId).order('created_at', { ascending: false }),
     ])
     escola = e; contrato = c

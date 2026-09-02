@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { notFound } from 'next/navigation'
 import { atualizarProposta } from '@/lib/actions'
 import PageHeader from '@/components/layout/PageHeader'
@@ -73,9 +73,9 @@ interface Props { params: Promise<{ id: string }> }
 
 export default async function PropostaEditar({ params }: Props) {
   const { id } = await params
-  const supabase = await createClient()
+  const admin = createAdminClient()
 
-  const { data: p } = await supabase.from('propostas').select('*').eq('id', id).single()
+  const { data: p } = await admin.from('propostas').select('*').eq('id', id).single()
   if (!p) notFound()
 
   const arquivada = !!p.arquivada_em

@@ -21,9 +21,13 @@ interface EscolaSelectorProps {
   // router.push — usado em páginas client-only (ex: Calculadora) que querem
   // reagir à escolha sem sair da página.
   onSelect?: (id: string) => void
+  // Esconde o <label>"Selecionar Escola:"</label> embutido — usado quando a
+  // página já tem seu próprio label acima (ex: formulários com padrão
+  // "Campo *" consistente entre todos os campos).
+  hideLabel?: boolean
 }
 
-export function EscolaSelector({ escolas, escolaId, basePath, placeholder, extraButton, onSelect }: EscolaSelectorProps) {
+export function EscolaSelector({ escolas, escolaId, basePath, placeholder, extraButton, onSelect, hideLabel }: EscolaSelectorProps) {
   const router = useRouter()
   const [busca, setBusca] = useState('')
   const [dropdownAberto, setDropdownAberto] = useState(false)
@@ -69,9 +73,11 @@ export function EscolaSelector({ escolas, escolaId, basePath, placeholder, extra
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', flexWrap: 'wrap' }}>
-      <label style={{ fontSize: '.82rem', fontWeight: 700, color: 'var(--text-m)', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
-        Selecionar Escola:
-      </label>
+      {!hideLabel && (
+        <label style={{ fontSize: '.82rem', fontWeight: 700, color: 'var(--text-m)', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+          Selecionar Escola:
+        </label>
+      )}
 
       <div ref={containerRef} style={{ position: 'relative', minWidth: 280, maxWidth: 480 }}>
         {/* Input de busca com autocompletar */}

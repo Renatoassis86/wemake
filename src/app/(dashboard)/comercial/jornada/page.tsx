@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { buscarEscolasUnificadas } from '@/lib/escolas-unificadas'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
@@ -255,9 +255,12 @@ function CurvaEngajamento({ registros }: { registros: any[] }) {
 export default async function JornadaPage({ searchParams }: Props) {
   const params = await searchParams
   const escolaId = params.escola ?? ''
-  const supabase = await createClient()
+  // escolas_resumo/registros/negociacoes/contratos têm policy de SELECT
+  // restrita por responsável/role no client comum — usa admin, a jornada de
+  // uma escola precisa aparecer igual pra qualquer usuário que a selecione.
+  const admin = createAdminClient()
 
-  const escolas = await buscarEscolasUnificadas(supabase)
+  const escolas = await buscarEscolasUnificadas()
 
   let escola: any = null
   let registros: any[] = []
@@ -267,11 +270,11 @@ export default async function JornadaPage({ searchParams }: Props) {
 
   if (escolaId) {
     const [r0, r1, r2, r3, r4] = await Promise.all([
-      supabase.from('escolas_resumo').select('*').eq('id', escolaId).single(),
-      supabase.from('registros').select('*').eq('escola_id', escolaId).order('data_contato'),
-      supabase.from('tarefas').select('*').eq('escola_id', escolaId).eq('status', 'pendente').order('vencimento'),
-      supabase.from('negociacoes').select('*').eq('escola_id', escolaId).eq('ativa', true),
-      supabase.from('contratos').select('contrato_assinado, contrato_arquivado').eq('escola_id', escolaId).single(),
+      admin.from('escolas_resumo').select('*').eq('id', escolaId).single(),
+      admin.from('registros').select('*').eq('escola_id', escolaId).order('data_contato'),
+      admin.from('tarefas').select('*').eq('escola_id', escolaId).eq('status', 'pendente').order('vencimento'),
+      admin.from('negociacoes').select('*').eq('escola_id', escolaId).eq('ativa', true),
+      admin.from('contratos').select('contrato_assinado, contrato_arquivado').eq('escola_id', escolaId).single(),
     ])
     escola      = r0.data
     tarefas     = r2.data ?? []
@@ -284,7 +287,7 @@ export default async function JornadaPage({ searchParams }: Props) {
     const registrosRaw = r1.data ?? []
     const respIds = [...new Set(registrosRaw.map((reg: any) => reg.responsavel_id).filter(Boolean))]
     const { data: usuariosResp } = respIds.length > 0
-      ? await supabase.from('usuarios').select('id, nome_completo').in('id', respIds)
+      ? await admin.from('usuarios').select('id, nome_completo').in('id', respIds)
       : { data: [] as { id: string; nome_completo: string }[] }
     const nomePorId = new Map((usuariosResp ?? []).map(u => [u.id, u.nome_completo]))
     registros = registrosRaw.map((reg: any) => ({

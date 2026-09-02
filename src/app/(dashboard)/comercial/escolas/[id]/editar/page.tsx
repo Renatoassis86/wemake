@@ -1,4 +1,3 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { notFound } from 'next/navigation'
 import { upsertEscola } from '@/lib/actions'
@@ -40,11 +39,10 @@ interface Props { params: Promise<{ id: string }> }
 
 export default async function EscolaEditar({ params }: Props) {
   const { id } = await params
-  const supabase = await createClient()
   const admin = createAdminClient()
 
   const [{ data: escola }, { data: profiles }] = await Promise.all([
-    supabase.from('escolas').select('*').eq('id', id).single(),
+    admin.from('escolas').select('*').eq('id', id).single(),
     admin.from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo'),
   ])
 

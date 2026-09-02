@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
 import { formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
@@ -28,9 +28,11 @@ export default async function PropostasPage({ searchParams }: Props) {
   const q           = params.q ?? ''
   const arquivadas  = params.arquivadas === '1'
 
-  const supabase = await createClient()
+  // propostas tem policy de SELECT restrita por responsável/role no client
+  // comum — usa admin, esta lista é a mesma pra qualquer usuário.
+  const admin = createAdminClient()
 
-  let query = supabase
+  let query = admin
     .from('propostas')
     .select('*')
     .order('created_at', { ascending: false })
