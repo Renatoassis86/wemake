@@ -709,7 +709,7 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
             <Reveal>
               <Eyebrow>Escopo da Parceria</Eyebrow>
               <h2 className="text-gradient-cinematic" style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', marginBottom: 8, letterSpacing: '-0.02em', lineHeight: 1.05 }}>
-                O que está incluído
+                Composição da parceria
               </h2>
               <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(255,255,255,0.55)', marginBottom: 6, maxWidth: 560, lineHeight: 1.7 }}>
                 Esta proposta contempla, durante toda a vigência contratual, acesso completo ao ecossistema We Make:
