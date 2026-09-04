@@ -33,8 +33,8 @@ export function AnotacaoContatoInline({ escolaId, notas: notasIniciais }: { esco
   function abrir() {
     const rect = gatilhoRef.current?.getBoundingClientRect()
     if (rect) {
-      const left = Math.min(rect.left, window.innerWidth - 300)
-      const top = Math.min(rect.bottom + 6, window.innerHeight - 340)
+      const left = Math.min(rect.left, window.innerWidth - 340)
+      const top = Math.min(rect.bottom + 6, window.innerHeight - 380)
       setPos({ top, left })
     }
     setTexto('')
@@ -96,7 +96,7 @@ export function AnotacaoContatoInline({ escolaId, notas: notasIniciais }: { esco
       {aberto && pos && (
         <div ref={painelRef} style={{
           position: 'fixed', top: pos.top, left: pos.left, zIndex: 2000,
-          width: 300, background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 12,
+          width: 340, background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 12,
           boxShadow: '0 12px 32px rgba(15,23,42,.18)', padding: '1rem',
         }}>
           <div style={{ fontSize: '.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#0f172a', marginBottom: '.6rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
@@ -123,9 +123,9 @@ export function AnotacaoContatoInline({ escolaId, notas: notasIniciais }: { esco
             autoFocus
             value={texto}
             onChange={e => setTexto(e.target.value)}
-            placeholder="Como foi o contato? Registre uma anotação rápida..."
-            rows={3}
-            style={{ width: '100%', padding: '.5rem .6rem', fontSize: '.78rem', border: '1.5px solid #e2e8f0', borderRadius: 7, boxSizing: 'border-box', resize: 'vertical', marginBottom: '.6rem', fontFamily: 'var(--font-inter,sans-serif)' }}
+            placeholder="Como foi o contato? Registre uma anotação rápida — sem limite de tamanho..."
+            rows={5}
+            style={{ width: '100%', padding: '.5rem .6rem', fontSize: '.78rem', border: '1.5px solid #e2e8f0', borderRadius: 7, boxSizing: 'border-box', resize: 'vertical', minHeight: '4.5rem', marginBottom: '.6rem', fontFamily: 'var(--font-inter,sans-serif)' }}
           />
           <div style={{ display: 'flex', gap: '.5rem' }}>
             <button onClick={salvar} disabled={pending || !texto.trim()} style={{
