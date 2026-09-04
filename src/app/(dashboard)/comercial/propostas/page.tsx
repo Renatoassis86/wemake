@@ -32,9 +32,13 @@ export default async function PropostasPage({ searchParams }: Props) {
   // comum — usa admin, esta lista é a mesma pra qualquer usuário.
   const admin = createAdminClient()
 
+  // select() explícito (não '*') — propostas carrega escola_logo_url (base64,
+  // até ~100KB/linha) e dados_calculo (JSON grande), nenhum dos dois usado
+  // nesta tabela. Buscar tudo deixava a listagem (e o refresh após
+  // arquivar/restaurar) visivelmente lenta sem necessidade.
   let query = admin
     .from('propostas')
-    .select('*')
+    .select('id, token, escola_nome, tipo, valor_aluno_ano, validade, status, visualizacoes, created_at')
     .order('created_at', { ascending: false })
 
   query = arquivadas ? query.not('arquivada_em', 'is', null) : query.is('arquivada_em', null)
