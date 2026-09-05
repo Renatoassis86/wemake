@@ -18,7 +18,7 @@ export function FollowupTable({ linhas }: { linhas: FollowupLinha[] }) {
       key: 'escolaNome',
       header: 'Escola',
       sortable: true,
-      width: '18%',
+      width: '19%',
       cell: row => (
         <div style={{ minWidth: 0 }}>
           {row.escolaId ? (
@@ -48,7 +48,7 @@ export function FollowupTable({ linhas }: { linhas: FollowupLinha[] }) {
       header: 'Ticket Médio',
       sortable: true,
       align: 'right',
-      width: '10%',
+      width: '9%',
       cell: row => <span style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontWeight: 600 }}>{row.ticketMedio ? formatCurrency(row.ticketMedio) : '—'}</span>,
     },
     {
@@ -56,7 +56,7 @@ export function FollowupTable({ linhas }: { linhas: FollowupLinha[] }) {
       header: 'Valor do Contrato',
       sortable: true,
       align: 'right',
-      width: '12%',
+      width: '13%',
       cell: row => (
         <div>
           <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontWeight: 700, color: row.valorContratoAssinado ? '#16a34a' : '#0f172a' }}>
@@ -69,7 +69,7 @@ export function FollowupTable({ linhas }: { linhas: FollowupLinha[] }) {
     {
       key: 'contatoNome',
       header: 'Contato',
-      width: '16%',
+      width: '19%',
       cell: row => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '.2rem', minWidth: 0 }}>
           <span style={{ fontSize: '.76rem', color: '#334155', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -93,7 +93,7 @@ export function FollowupTable({ linhas }: { linhas: FollowupLinha[] }) {
     {
       key: 'status',
       header: 'Status da Negociação',
-      width: '27%',
+      width: '33%',
       cell: row => {
         if (row.statusAutomatico) {
           const texto = row.statusAutomatico as string

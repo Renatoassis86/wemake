@@ -157,16 +157,22 @@ export default function DataTable<T extends Record<string, unknown>>({
 
       {/* ── Table ───────────────────────────────────────────────── */}
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-sm">
+        {/* table-layout:fixed é essencial aqui — sem ele o navegador ignora os
+            width por coluna (só usa como sugestão) e recalcula cada coluna pelo
+            conteúdo mais largo da própria coluna, o que descasa completamente o
+            cabeçalho das células (e anula o text-overflow:ellipsis que várias
+            colunas já usam, pensado pra funcionar sob largura fixa). */}
+        <table className="w-full border-collapse text-sm" style={{ tableLayout: 'fixed', minWidth: 1120 }}>
           <thead>
             <tr className={clsx(stickyHeader && 'sticky top-0 z-10')}>
-              {columns.map(col => (
+              {columns.map((col, i) => (
                 <th
                   key={col.key}
                   style={{ width: col.width }}
                   className={clsx(
                     th,
                     'text-left bg-slate-900 text-slate-300 text-[0.67rem] font-bold uppercase tracking-[0.07em] whitespace-nowrap border-b border-slate-800',
+                    i < columns.length - 1 && 'border-r border-slate-700/60',
                     col.sortable && 'select-none group',
                     col.align === 'right'  && 'text-right',
                     col.align === 'center' && 'text-center',
@@ -211,12 +217,13 @@ export default function DataTable<T extends Record<string, unknown>>({
                       !clickable && 'hover:bg-slate-50'
                     )}
                   >
-                    {columns.map(col => (
+                    {columns.map((col, i) => (
                       <td
                         key={col.key}
                         className={clsx(
                           td,
-                          'text-slate-700 align-middle',
+                          'text-slate-700 align-middle overflow-hidden',
+                          i < columns.length - 1 && !col.sticky && 'border-r border-slate-100',
                           col.align === 'right'  && 'text-right',
                           col.align === 'center' && 'text-center',
                           col.sticky && 'sticky left-0 bg-white z-10 border-r border-slate-100',
