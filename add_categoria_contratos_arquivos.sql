@@ -31,17 +31,17 @@ ON CONFLICT (id) DO NOTHING;
 DROP POLICY IF EXISTS "documentos-oficiais: authenticated select" ON storage.objects;
 CREATE POLICY "documentos-oficiais: authenticated select"
   ON storage.objects FOR SELECT
-  USING (bucket_id = 'documentos-oficiais' AND auth.role() = 'authenticated');
+  USING (bucket_id = 'documentos-oficiais' AND auth.uid() IS NOT NULL);
 
 DROP POLICY IF EXISTS "documentos-oficiais: authenticated insert" ON storage.objects;
 CREATE POLICY "documentos-oficiais: authenticated insert"
   ON storage.objects FOR INSERT
-  WITH CHECK (bucket_id = 'documentos-oficiais' AND auth.role() = 'authenticated');
+  WITH CHECK (bucket_id = 'documentos-oficiais' AND auth.uid() IS NOT NULL);
 
 DROP POLICY IF EXISTS "documentos-oficiais: authenticated delete" ON storage.objects;
 CREATE POLICY "documentos-oficiais: authenticated delete"
   ON storage.objects FOR DELETE
-  USING (bucket_id = 'documentos-oficiais' AND auth.role() = 'authenticated');
+  USING (bucket_id = 'documentos-oficiais' AND auth.uid() IS NOT NULL);
 
 -- contratos_arquivos também nunca teve policy de INSERT liberada pro client
 -- comum (confirmado: 42501 row-level security policy) — é por isso que a
@@ -50,4 +50,4 @@ CREATE POLICY "documentos-oficiais: authenticated delete"
 DROP POLICY IF EXISTS "contratos_arquivos: authenticated insert" ON contratos_arquivos;
 CREATE POLICY "contratos_arquivos: authenticated insert"
   ON contratos_arquivos FOR INSERT
-  WITH CHECK (auth.role() = 'authenticated');
+  WITH CHECK (auth.uid() IS NOT NULL);
