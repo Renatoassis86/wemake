@@ -296,7 +296,7 @@ const I = {
 // ── countdown hook ────────────────────────────────────────────────────────────
 type Tick = { days: number; hours: number; minutes: number; seconds: number; expired: boolean }
 
-function useCountdown(targetDate: string): Tick | null {
+function useCountdown(targetDate: string, imprimir: boolean): Tick | null {
   const [tick, setTick] = useState<Tick | null>(null)
   useEffect(() => {
     const calcDiff = (): Tick => {
@@ -306,13 +306,17 @@ function useCountdown(targetDate: string): Tick | null {
         hours:   Math.floor((diff % 86_400_000) / 3_600_000),
         minutes: Math.floor((diff % 3_600_000)  / 60_000),
         seconds: Math.floor((diff % 60_000)      / 1_000),
-        expired: diff === 0,
+        // Exportação em PDF é registro interno — mostra sempre como válida,
+        // mesmo que a validade real já tenha passado (mesma regra de isExpired
+        // na página, só que aplicada aqui porque o contador calcula seu
+        // próprio "expirada" direto da data, sem depender daquele prop).
+        expired: !imprimir && diff === 0,
       }
     }
     setTick(calcDiff())
     const id = setInterval(() => setTick(calcDiff()), 1_000)
     return () => clearInterval(id)
-  }, [targetDate])
+  }, [targetDate, imprimir])
   return tick
 }
 
@@ -322,7 +326,7 @@ export default function PropostaView({ proposta: p, isExpired, imprimir }: { pro
   const containerRef = useRef<HTMLDivElement>(null)
   const sectionRefs = useRef<(HTMLElement | null)[]>([])
 
-  const countdown = useCountdown(p.validade)
+  const countdown = useCountdown(p.validade, !!imprimir)
 
   // Exportação em PDF (rota interna /comercial/propostas/[id]/pdf): dispara o
   // diálogo de impressão do navegador sozinho, depois que fontes/imagens

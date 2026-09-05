@@ -244,13 +244,17 @@ export function PropostaEstilos() {
         /* ── Exportação em PDF (window.print, disparado pela rota interna
            /propostas-pdf/[id]) ──────────────────────────────────────────
            A landing é feita de seções de altura travada em 100dvh com
-           scroll-snap (uma "tela" por seção) — isso não existe em papel,
-           então cada .pv-section vira uma página impressa (altura livre,
-           quebra de página depois dela), mantendo o layout lado-a-lado
-           (imagem + texto) já que a página impressa em paisagem tem
-           largura de sobra, diferente do mobile. */
+           scroll-snap (uma "tela" por seção). O tamanho da página impressa
+           PRECISA bater exatamente com o viewport usado pra gerar o PDF
+           (1600×1300, ver src/app/api/propostas/pdf/[id]/route.ts) — com
+           A4 (~1123×794px), 100dvh calculava 1300px de conteúdo mas a
+           página só cabia 794px, sobrando ~500px de cada seção pra uma
+           página seguinte quase vazia. Com o tamanho batendo, 100dvh cabe
+           inteiro numa página só; só seções com mais conteúdo do que cabe
+           mesmo numa tela cheia (ex.: simulação de custo com 9 itens)
+           continuam a fluir pra uma página extra — isso é esperado. */
         @media print {
-          @page { size: A4 landscape; margin: 0; }
+          @page { size: 1600px 1300px; margin: 0; }
 
           html, body {
             background: #0b1f44 !important;

@@ -8,6 +8,11 @@ export const maxDuration = 60
 
 interface Props { params: Promise<{ id: string }> }
 
+// Precisa bater exatamente com @page { size: ... } em PropostaEstilos.tsx —
+// a landing usa 100dvh por seção, e isso só cabe inteiro numa página impressa
+// se a página tiver o mesmo tamanho do viewport usado pra renderizar.
+const PDF_VIEWPORT = { width: 1600, height: 1300 }
+
 // Gera o PDF de verdade no servidor (Puppeteer + Chromium headless) e devolve
 // como anexo — clicar no ícone baixa o arquivo direto, sem diálogo de
 // impressão do navegador. Reaproveita a página /propostas-pdf/[id] já
@@ -34,7 +39,7 @@ export async function GET(request: NextRequest, { params }: Props) {
       const puppeteer = await import('puppeteer-core')
       browser = await puppeteer.launch({
         args: chromium.args,
-        defaultViewport: { width: 1600, height: 1000 },
+        defaultViewport: PDF_VIEWPORT,
         executablePath: await chromium.executablePath(),
         headless: true,
       })
@@ -47,12 +52,13 @@ export async function GET(request: NextRequest, { params }: Props) {
         || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
       browser = await puppeteer.launch({
         executablePath,
-        defaultViewport: { width: 1600, height: 1000 },
+        defaultViewport: PDF_VIEWPORT,
         headless: true,
       })
     }
 
     const page = await browser.newPage()
+    await page.setViewport(PDF_VIEWPORT)
 
     const sessionCookies = request.cookies.getAll()
       .filter(c => c.name.startsWith('sb-'))
