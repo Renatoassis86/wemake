@@ -28,15 +28,18 @@ ON CONFLICT (id) DO NOTHING;
 -- arquivos neste bucket (mesmo padrão de acesso já usado nas tabelas do
 -- funil — controle é por papel dentro do app, não por policy de storage
 -- granular por escola).
-CREATE POLICY IF NOT EXISTS "documentos-oficiais: authenticated select"
+DROP POLICY IF EXISTS "documentos-oficiais: authenticated select" ON storage.objects;
+CREATE POLICY "documentos-oficiais: authenticated select"
   ON storage.objects FOR SELECT
   USING (bucket_id = 'documentos-oficiais' AND auth.role() = 'authenticated');
 
-CREATE POLICY IF NOT EXISTS "documentos-oficiais: authenticated insert"
+DROP POLICY IF EXISTS "documentos-oficiais: authenticated insert" ON storage.objects;
+CREATE POLICY "documentos-oficiais: authenticated insert"
   ON storage.objects FOR INSERT
   WITH CHECK (bucket_id = 'documentos-oficiais' AND auth.role() = 'authenticated');
 
-CREATE POLICY IF NOT EXISTS "documentos-oficiais: authenticated delete"
+DROP POLICY IF EXISTS "documentos-oficiais: authenticated delete" ON storage.objects;
+CREATE POLICY "documentos-oficiais: authenticated delete"
   ON storage.objects FOR DELETE
   USING (bucket_id = 'documentos-oficiais' AND auth.role() = 'authenticated');
 
@@ -44,6 +47,7 @@ CREATE POLICY IF NOT EXISTS "documentos-oficiais: authenticated delete"
 -- comum (confirmado: 42501 row-level security policy) — é por isso que a
 -- tabela está vazia até hoje, apesar do upload em ContratoUpload.tsx já
 -- existir. SELECT já funciona (RLS permite), só faltava o INSERT.
-CREATE POLICY IF NOT EXISTS "contratos_arquivos: authenticated insert"
+DROP POLICY IF EXISTS "contratos_arquivos: authenticated insert" ON contratos_arquivos;
+CREATE POLICY "contratos_arquivos: authenticated insert"
   ON contratos_arquivos FOR INSERT
   WITH CHECK (auth.role() = 'authenticated');
