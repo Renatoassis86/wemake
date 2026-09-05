@@ -168,11 +168,11 @@ export default async function PropostasPage({ searchParams }: Props) {
                             }} title="Editar proposta">
                               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                             </Link>
-                            <a href={`/propostas-pdf/${p.id}`} target="_blank" rel="noopener noreferrer" style={{
+                            <a href={`/api/propostas/pdf/${p.id}`} style={{
                               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                               width: 28, height: 28, borderRadius: 7,
                               background: '#f0fdf4', color: '#16a34a', textDecoration: 'none',
-                            }} title="Exportar proposta em PDF">
+                            }} title="Baixar proposta em PDF">
                               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/></svg>
                             </a>
                             <RenovarValidadeBtn propostaId={p.id} escolaNome={p.escola_nome} variant="row" />
