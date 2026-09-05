@@ -18,9 +18,8 @@ export default async function PropostaPdf({ params }: Props) {
   const { data: proposta } = await admin.from('propostas').select('*').eq('id', id).single()
   if (!proposta) notFound()
 
-  const isExpired =
-    proposta.status === 'expirada' ||
-    (proposta.validade && new Date(proposta.validade) < new Date())
-
-  return <PropostaView proposta={proposta} isExpired={isExpired} imprimir />
+  // Exportação é pro controle interno — precisa do conteúdo completo mesmo
+  // depois da validade vencer, então isExpired é sempre false aqui (só o
+  // link público em /proposta/[token] deve mostrar a tela de "expirada").
+  return <PropostaView proposta={proposta} isExpired={false} imprimir />
 }
