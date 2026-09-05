@@ -13,6 +13,7 @@ import { ResponsavelInlineSelect } from '@/components/comercial/ResponsavelInlin
 import { ContatoQuickEdit } from '@/components/comercial/ContatoQuickEdit'
 import { PrioridadeInline } from '@/components/comercial/PrioridadeInline'
 import { AnotacaoContatoInline } from '@/components/comercial/AnotacaoContatoInline'
+import { AnexarPropostaPdf } from '@/components/comercial/AnexarPropostaPdf'
 import { STAGE_OPTIONS } from '@/types/database'
 
 export const dynamic = 'force-dynamic'
@@ -68,13 +69,25 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
 
   const admin = createAdminClient()
 
-  const [{ linhas, kpis }, escolasSelect, { data: usuariosAtivos }, { data: usuariosTodos }, { data: notasRaw }] = await Promise.all([
+  const [{ linhas, kpis }, escolasSelect, { data: usuariosAtivos }, { data: usuariosTodos }, { data: notasRaw }, { data: anexosPropostaRaw }] = await Promise.all([
     getFunilContratacao(),
     buscarEscolasUnificadas(),
     admin.from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo'),
     admin.from('usuarios').select('id, nome_completo'),
     admin.from('notas_escola').select('escola_id, texto, created_by, created_at').order('created_at', { ascending: false }),
+    admin.from('contratos_arquivos').select('escola_id, path, created_at').eq('categoria', 'proposta').order('created_at', { ascending: false }),
   ])
+
+  // Escolas sem proposta_id (não geradas pela Calculadora) podem ter o PDF da
+  // proposta enviada anexado manualmente — mesma tabela/bucket de
+  // ContratoUpload.tsx, só filtrando categoria:'proposta'. Mantém só o mais
+  // recente por escola.
+  const anexoPropostaPorEscola = new Map<string, string>()
+  for (const a of anexosPropostaRaw ?? []) {
+    if (anexoPropostaPorEscola.has(a.escola_id)) continue
+    const { data } = admin.storage.from('documentos-oficiais').getPublicUrl(a.path)
+    anexoPropostaPorEscola.set(a.escola_id, data.publicUrl)
+  }
 
   const nomePorUsuario = new Map((usuariosTodos ?? []).map(u => [u.id, u.nome_completo]))
   const notasPorEscola = new Map<string, { texto: string; autor: string; criadoEm: string }[]>()
@@ -347,14 +360,24 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                       <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
                           <AnotacaoContatoInline escolaId={l.escola_id} notas={notasPorEscola.get(l.escola_id) ?? []} />
-                          {l.proposta_id && (
+                          {l.proposta_id ? (
                             <a href={`/api/propostas/pdf/${l.proposta_id}`} style={{
                               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                               width: 28, height: 28, borderRadius: 7, flexShrink: 0,
                               background: '#f0fdf4', color: '#16a34a',
                             }} title="Baixar proposta em PDF">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/></svg>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                             </a>
+                          ) : anexoPropostaPorEscola.has(l.escola_id) ? (
+                            <a href={anexoPropostaPorEscola.get(l.escola_id)} target="_blank" rel="noopener noreferrer" style={{
+                              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                              width: 28, height: 28, borderRadius: 7, flexShrink: 0,
+                              background: '#f0fdf4', color: '#16a34a',
+                            }} title="Baixar PDF da proposta (anexado manualmente)">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            </a>
+                          ) : (
+                            <AnexarPropostaPdf escolaId={l.escola_id} escolaNome={l.escola_nome} />
                           )}
                           <Link href={`/comercial/escolas/${l.escola_id}`} style={{ fontSize: '.72rem', fontWeight: 700, color: '#4A7FDB', textDecoration: 'none', whiteSpace: 'nowrap' }}>
                             Editar →
