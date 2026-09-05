@@ -1,6 +1,14 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback, useContext, createContext } from 'react'
+
+// Contexto de "modo impressão" — Reveal/TableRow/Counter usam IntersectionObserver
+// (sem `root` explícito, ou seja, o viewport da janela) pra disparar suas animações
+// de fade-in só quando o elemento entra na tela ao rolar. Na exportação em PDF a
+// página nunca rola antes do window.print() disparar, então tudo abaixo da
+// primeira tela ficava opacity:0 pra sempre — invisível no PDF. Esses componentes
+// checam este contexto pra já nascerem visíveis, sem depender de scroll.
+const PrintModeContext = createContext(false)
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 const R$ = (v: number) =>
@@ -129,9 +137,11 @@ function Eyebrow({ children, dark = false }: { children: React.ReactNode; dark?:
 
 // ── animated counter ──────────────────────────────────────────────────────────
 function Counter({ to, suffix = '', duration = 1400 }: { to: number; suffix?: string; duration?: number }) {
-  const [val, setVal] = useState(0)
+  const imprimir = useContext(PrintModeContext)
+  const [val, setVal] = useState(imprimir ? to : 0)
   const ref = useRef<HTMLSpanElement>(null)
   useEffect(() => {
+    if (imprimir) return
     const el = ref.current; if (!el) return
     const obs = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return; obs.disconnect()
@@ -145,7 +155,7 @@ function Counter({ to, suffix = '', duration = 1400 }: { to: number; suffix?: st
     }, { threshold: 0.3 })
     obs.observe(el)
     return () => obs.disconnect()
-  }, [to, duration])
+  }, [to, duration, imprimir])
   return <span ref={ref}>{val.toLocaleString('pt-BR')}{suffix}</span>
 }
 
@@ -158,16 +168,18 @@ const STATUS_STYLE: Record<string, { bg: string; color: string; dot: string }> =
 }
 
 function TableRow({ row, delay, catColor, pct }: { row: { req: string; spec: string; status: string }; delay: number; catColor: string; pct?: string }) {
+  const imprimir = useContext(PrintModeContext)
   const ref = useRef<HTMLDivElement>(null)
-  const [vis, setVis] = useState(false)
+  const [vis, setVis] = useState(imprimir)
   useEffect(() => {
+    if (imprimir) return
     const el = ref.current; if (!el) return
     const obs = new IntersectionObserver(([e]) => {
       if (e.isIntersecting) { setVis(true); obs.disconnect() }
     }, { threshold: 0.1 })
     obs.observe(el)
     return () => obs.disconnect()
-  }, [])
+  }, [imprimir])
   const st = STATUS_STYLE[row.status] ?? STATUS_STYLE['Opcional']
   // modo "custo" (quando pct está presente): 3 colunas sem badge de status
   if (pct !== undefined) {
@@ -236,16 +248,18 @@ function TableRow({ row, delay, catColor, pct }: { row: { req: string; spec: str
 
 // ── fade-in on scroll (site's Reveal pattern) ─────────────────────────────────
 function Reveal({ children, delay = 0, style }: { children: React.ReactNode; delay?: number; style?: React.CSSProperties }) {
+  const imprimir = useContext(PrintModeContext)
   const ref = useRef<HTMLDivElement>(null)
-  const [vis, setVis] = useState(false)
+  const [vis, setVis] = useState(imprimir)
   useEffect(() => {
+    if (imprimir) return
     const el = ref.current; if (!el) return
     const obs = new IntersectionObserver(([e]) => {
       if (e.isIntersecting) { setVis(true); obs.disconnect() }
     }, { threshold: 0.08 })
     obs.observe(el)
     return () => obs.disconnect()
-  }, [])
+  }, [imprimir])
   return (
     <div ref={ref} style={{
       opacity: vis ? 1 : 0,
@@ -303,12 +317,24 @@ function useCountdown(targetDate: string): Tick | null {
 }
 
 // ── main ──────────────────────────────────────────────────────────────────────
-export default function PropostaView({ proposta: p, isExpired }: { proposta: Proposta; isExpired: boolean }) {
+export default function PropostaView({ proposta: p, isExpired, imprimir }: { proposta: Proposta; isExpired: boolean; imprimir?: boolean }) {
   const [active, setActive] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const sectionRefs = useRef<(HTMLElement | null)[]>([])
 
   const countdown = useCountdown(p.validade)
+
+  // Exportação em PDF (rota interna /comercial/propostas/[id]/pdf): dispara o
+  // diálogo de impressão do navegador sozinho, depois que fontes/imagens
+  // carregaram — o próprio usuário confirma "Salvar como PDF".
+  useEffect(() => {
+    if (!imprimir) return
+    let cancelado = false
+    const disparar = () => { if (!cancelado) setTimeout(() => window.print(), 500) }
+    if (document.fonts?.ready) document.fonts.ready.then(disparar)
+    else disparar()
+    return () => { cancelado = true }
+  }, [imprimir])
 
   const hasComodato = p.tipo === 'curriculo_comodato'
   const totalAnual   = p.valor_aluno_ano * p.num_alunos
@@ -369,10 +395,11 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
   )
 
   return (
-    <div style={{ position: 'relative', height: '100dvh', overflow: 'hidden', background: C.navy }}>
+    <PrintModeContext.Provider value={!!imprimir}>
+    <div className="pv-root" style={{ position: 'relative', height: '100dvh', overflow: 'hidden', background: C.navy }}>
 
       {/* progress bar */}
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 2, zIndex: 200, background: 'rgba(255,255,255,0.06)' }}>
+      <div className="pv-progress" style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 2, zIndex: 200, background: 'rgba(255,255,255,0.06)' }}>
         <div style={{ height: '100%', background: `linear-gradient(90deg,${C.royal},${C.mint})`, width: `${((active + 1) / sections.length) * 100}%`, transition: 'width 0.5s cubic-bezier(0.16,1,0.3,1)' }} />
       </div>
 
@@ -1529,5 +1556,6 @@ export default function PropostaView({ proposta: p, isExpired }: { proposta: Pro
 
       </div>
     </div>
+    </PrintModeContext.Provider>
   )
 }

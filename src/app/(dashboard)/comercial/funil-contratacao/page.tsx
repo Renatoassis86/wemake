@@ -347,6 +347,15 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                       <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
                           <AnotacaoContatoInline escolaId={l.escola_id} notas={notasPorEscola.get(l.escola_id) ?? []} />
+                          {l.proposta_id && (
+                            <a href={`/propostas-pdf/${l.proposta_id}`} target="_blank" rel="noopener noreferrer" style={{
+                              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                              width: 28, height: 28, borderRadius: 7, flexShrink: 0,
+                              background: '#f0fdf4', color: '#16a34a',
+                            }} title="Exportar proposta em PDF">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/></svg>
+                            </a>
+                          )}
                           <Link href={`/comercial/escolas/${l.escola_id}`} style={{ fontSize: '.72rem', fontWeight: 700, color: '#4A7FDB', textDecoration: 'none', whiteSpace: 'nowrap' }}>
                             Editar →
                           </Link>
