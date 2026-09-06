@@ -887,13 +887,39 @@ export async function adicionarNotaContatoFunil(escolaId: string, texto: string)
   const admin = createAdminClient()
   const { error } = await admin
     .from('notas_escola')
-    .insert({ escola_id: escolaId, texto: textoLimpo, fixada: false, created_by: user.id })
+    .insert({ escola_id: escolaId, texto: textoLimpo, fixada: false, created_by: user.id, categoria: 'contato' })
 
   if (error) return { success: false, error: error.message }
 
   revalidatePath('/comercial/funil-contratacao', 'layout')
   revalidatePath('/comercial/followup', 'layout')
   revalidatePath('/comercial/escolas', 'layout')
+  return { success: true }
+}
+
+/**
+ * Comentário sobre o processo de negociação do contrato (painel de
+ * Minuta/Contrato no Funil de Contratação) — mesma tabela notas_escola,
+ * categoria separada da anotação rápida de contato pra não misturar as
+ * duas listas.
+ */
+export async function adicionarNotaContrato(escolaId: string, texto: string): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado' }
+  if (!escolaId) return { success: false, error: 'escola_id é obrigatório' }
+  const textoLimpo = texto.trim()
+  if (!textoLimpo) return { success: false, error: 'Escreva um comentário' }
+
+  const admin = createAdminClient()
+  const { error } = await admin
+    .from('notas_escola')
+    .insert({ escola_id: escolaId, texto: textoLimpo, fixada: false, created_by: user.id, categoria: 'contrato' })
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/comercial/funil-contratacao', 'layout')
+  revalidatePath('/comercial/contratos', 'layout')
   return { success: true }
 }
 

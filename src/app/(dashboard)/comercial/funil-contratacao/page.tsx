@@ -14,6 +14,7 @@ import { ContatoQuickEdit } from '@/components/comercial/ContatoQuickEdit'
 import { PrioridadeInline } from '@/components/comercial/PrioridadeInline'
 import { AnotacaoContatoInline } from '@/components/comercial/AnotacaoContatoInline'
 import { AnexarPropostaPdf } from '@/components/comercial/AnexarPropostaPdf'
+import { ContratoDocumentosPanel } from '@/components/comercial/ContratoDocumentosPanel'
 import { STAGE_OPTIONS } from '@/types/database'
 
 export const dynamic = 'force-dynamic'
@@ -69,13 +70,15 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
 
   const admin = createAdminClient()
 
-  const [{ linhas, kpis }, escolasSelect, { data: usuariosAtivos }, { data: usuariosTodos }, { data: notasRaw }, { data: anexosPropostaRaw }] = await Promise.all([
+  const [{ linhas, kpis }, escolasSelect, { data: usuariosAtivos }, { data: usuariosTodos }, { data: notasContatoRaw }, { data: notasContratoRaw }, { data: anexosPropostaRaw }, { data: anexosContratoRaw }] = await Promise.all([
     getFunilContratacao(),
     buscarEscolasUnificadas(),
     admin.from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo'),
     admin.from('usuarios').select('id, nome_completo'),
-    admin.from('notas_escola').select('escola_id, texto, created_by, created_at').order('created_at', { ascending: false }),
+    admin.from('notas_escola').select('escola_id, texto, created_by, created_at').eq('categoria', 'contato').order('created_at', { ascending: false }),
+    admin.from('notas_escola').select('escola_id, texto, created_by, created_at').eq('categoria', 'contrato').order('created_at', { ascending: false }),
     admin.from('contratos_arquivos').select('escola_id, path, created_at').eq('categoria', 'proposta').order('created_at', { ascending: false }),
+    admin.from('contratos_arquivos').select('id, escola_id, nome, path, categoria, created_at').in('categoria', ['minuta', 'contrato_final', 'contrato_assinado']).order('created_at', { ascending: false }),
   ])
 
   // Escolas sem proposta_id (não geradas pela Calculadora) podem ter o PDF da
@@ -91,12 +94,32 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
 
   const nomePorUsuario = new Map((usuariosTodos ?? []).map(u => [u.id, u.nome_completo]))
   const notasPorEscola = new Map<string, { texto: string; autor: string; criadoEm: string }[]>()
-  for (const n of notasRaw ?? []) {
+  for (const n of notasContatoRaw ?? []) {
     const lista = notasPorEscola.get(n.escola_id) ?? []
     if (lista.length < 5) {
       lista.push({ texto: n.texto, autor: nomePorUsuario.get(n.created_by) ?? 'Equipe', criadoEm: n.created_at })
       notasPorEscola.set(n.escola_id, lista)
     }
+  }
+
+  const notasContratoPorEscola = new Map<string, { texto: string; autor: string; criadoEm: string }[]>()
+  for (const n of notasContratoRaw ?? []) {
+    const lista = notasContratoPorEscola.get(n.escola_id) ?? []
+    if (lista.length < 8) {
+      lista.push({ texto: n.texto, autor: nomePorUsuario.get(n.created_by) ?? 'Equipe', criadoEm: n.created_at })
+      notasContratoPorEscola.set(n.escola_id, lista)
+    }
+  }
+
+  // Minuta/versão final/assinado — cada upload é uma linha nova (nunca
+  // sobrescreve), por isso mantém TODAS as versões por escola, não só a mais
+  // recente.
+  const arquivosContratoPorEscola = new Map<string, { id: string; nome: string; url: string; criadoEm: string; categoria: string }[]>()
+  for (const a of anexosContratoRaw ?? []) {
+    const lista = arquivosContratoPorEscola.get(a.escola_id) ?? []
+    const { data } = admin.storage.from('documentos-oficiais').getPublicUrl(a.path)
+    lista.push({ id: a.id, nome: a.nome, url: data.publicUrl, criadoEm: a.created_at, categoria: a.categoria })
+    arquivosContratoPorEscola.set(a.escola_id, lista)
   }
 
   let escolaSelecionada: { id: string; nome: string; cidade: string | null; estado: string | null } | null = null
@@ -359,6 +382,12 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                       </td>
                       <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                          <ContratoDocumentosPanel
+                            escolaId={l.escola_id}
+                            escolaNome={l.escola_nome}
+                            arquivos={arquivosContratoPorEscola.get(l.escola_id) ?? []}
+                            notas={notasContratoPorEscola.get(l.escola_id) ?? []}
+                          />
                           <AnotacaoContatoInline escolaId={l.escola_id} notas={notasPorEscola.get(l.escola_id) ?? []} />
                           {l.proposta_id ? (
                             <a href={`/api/propostas/pdf/${l.proposta_id}`} style={{
