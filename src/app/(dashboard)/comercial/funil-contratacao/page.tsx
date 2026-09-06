@@ -320,7 +320,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                       <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
                         <PrioridadeInline escolaId={l.escola_id} prioridade={l.prioridade_manual} />
                       </td>
-                      <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle', minWidth: 220 }}>
+                      <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle', width: 150, maxWidth: 150 }}>
                         <div style={{ fontWeight: 700, fontSize: '.8rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', lineHeight: 1.3 }}>
                           {l.escola_nome}
                         </div>
