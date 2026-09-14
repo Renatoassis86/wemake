@@ -51,7 +51,6 @@ export const QUADRANTE_LABELS: Record<Quadrante, string> = {
 }
 
 const RECENCIA_JANELA_DIAS = 60
-const ENGAJAMENTO_TETO_REUNIOES = 5
 const PORTE_ALUNOS_TETO = 500 // alunos — a partir daqui, fit de porte máximo
 
 const FIT_PERFIL_PEDAGOGICO: Record<string, number> = {
@@ -76,23 +75,48 @@ function calcularFit(params: {
   return Math.round(0.40 * portePct + 0.30 * amplitudePct + 0.30 * perfilPct)
 }
 
-// Engajamento Score (0-100) — "estão ativamente engajados agora?" (comportamental)
+// Engajamento Score (0-100) — "esse negócio está quente AGORA?"
+//
+// Versão anterior: 40% contagem de reuniões + 35% recência da última reunião
+// + 25% "tem proposta? sim/não" (binário). Problema real observado no funil
+// visual: uma escola em Contrato Assinado — negócio praticamente ganho —
+// podia aparecer FRIA, porque o único jeito de "fase avançada" pesar no
+// score era esse binário fraco, que não distingue proposta de minuta de
+// contrato enviado de assinado. Reuniões também é um sinal ruidoso: registro
+// é manual e inconsistente, silêncio não quer dizer "esfriou", pode só
+// querer dizer "ninguém lançou o registro".
+//
+// A fase do funil (negociação < proposta < minuta < contrato enviado <
+// assinado/implantação/parceiro ativo) já é o sinal mais objetivo e
+// confiável que existe — é literalmente o estado real da negociação, não uma
+// proxy. Passa a pesar 60% do score. Os 40% restantes ficam com a recência
+// da ÚLTIMA atividade real de qualquer tipo (reunião, criação de proposta ou
+// atualização do contrato — não só reunião), como um modificador: um negócio
+// parado há muito tempo esfria um pouco, mesmo estando avançado, mas sem
+// apagar o peso da fase.
+const FASE_PESO_ENGAJAMENTO: Record<FaseFunil, number> = {
+  negociacao:        15,
+  proposta_enviada:  40,
+  minuta:            65,
+  contrato_enviado:  85,
+  contrato_assinado: 100,
+  implantacao:       100,
+  parceiro_ativo:    100,
+}
+
 function calcularEngajamento(params: {
-  reunioesTotal: number
-  ultimaInteracao: string | null
-  temProposta: boolean
+  faseFunil: FaseFunil
+  ultimaAtividade: string | null
 }): number {
-  const engajamentoPct = Math.min(1, params.reunioesTotal / ENGAJAMENTO_TETO_REUNIOES) * 100
+  const stagePct = FASE_PESO_ENGAJAMENTO[params.faseFunil]
 
   let recenciaPct = 0
-  if (params.ultimaInteracao) {
-    const dias = (Date.now() - new Date(params.ultimaInteracao).getTime()) / 86_400_000
+  if (params.ultimaAtividade) {
+    const dias = (Date.now() - new Date(params.ultimaAtividade).getTime()) / 86_400_000
     recenciaPct = Math.max(0, 100 - (dias / RECENCIA_JANELA_DIAS) * 100)
   }
 
-  const sinalAvancoPct = params.temProposta ? 100 : 0
-
-  return Math.round(0.40 * engajamentoPct + 0.35 * recenciaPct + 0.25 * sinalAvancoPct)
+  return Math.round(0.60 * stagePct + 0.40 * recenciaPct)
 }
 
 function derivarQuadrante(fit: number, engajamento: number): Quadrante {
@@ -345,13 +369,21 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
       segmentosCount: segmentosEscola.length,
       perfilPedagogico: escola.perfil_pedagogico ?? null,
     })
-    const engajamento_score = calcularEngajamento({
-      reunioesTotal: reunioes.total,
-      ultimaInteracao: reunioes.ultima,
-      temProposta: !!proposta?.id,
-    })
-    const quadrante = derivarQuadrante(fit_score, engajamento_score)
-    const lead_temperatura = TEMPERATURA_POR_QUADRANTE[quadrante]
+    // Última atividade REAL de qualquer tipo, não só reunião — proposta
+    // criada e contrato atualizado (minuta/assinatura) também são sinal de
+    // que o negócio está sendo trabalhado agora, e reunião sozinha é um
+    // sinal ruidoso (depende de alguém lembrar de registrar).
+    const ultimaAtividade = [reunioes.ultima, proposta?.created_at ?? null, contrato?.updated_at ?? null]
+      .filter((d): d is string => !!d)
+      .sort()
+      .at(-1) ?? null
+    const engajamento_score = calcularEngajamento({ faseFunil: fase, ultimaAtividade })
+    const declinou = !!contrato?.declinou
+    // Escola que declinou é negócio fechado (perdido) — não faz sentido
+    // continuar classificando como quente/morno, mesmo que a fase ou a
+    // atividade recente sugerisse isso. Sempre fria/baixa prioridade.
+    const quadrante: Quadrante = declinou ? 'baixa_prioridade' : derivarQuadrante(fit_score, engajamento_score)
+    const lead_temperatura = declinou ? 'frio' : TEMPERATURA_POR_QUADRANTE[quadrante]
 
     return {
       escola_id: escola.id,
@@ -404,7 +436,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
       contrato_enviado: !!contrato?.contrato_enviado,
       contrato_assinado: !!contrato?.contrato_assinado,
       contrato_arquivado: !!contrato?.contrato_arquivado,
-      declinou: !!contrato?.declinou,
+      declinou,
       contrato_valor_total: contrato ? calcValorTotalContrato(contrato) : 0,
       implantacao_status: contrato?.implantacao_status ?? null,
       implantacao_iniciada_em: contrato?.implantacao_iniciada_em ?? null,
@@ -446,7 +478,14 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
   let valorContratadoTotal = 0
   let emImplantacao = 0
 
+  // Escola que declinou é negócio fechado (perdido) — fica de fora do
+  // gráfico de Funil de Vendas e dos totais de pipeline/temperatura (que
+  // representam o funil ATIVO), mas continua em `linhas` pra aparecer no
+  // quadro "Declinaram" da tabela.
+  let escolasAtivasEmFunil = 0
   for (const l of linhas) {
+    if (l.declinou) continue
+    escolasAtivasEmFunil++
     porFase[l.fase_funil]++
     porFaseTemperatura[l.fase_funil][l.lead_temperatura]++
     porTemperatura[l.lead_temperatura]++
@@ -461,7 +500,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
   return {
     linhas,
     kpis: {
-      totalEscolasEmFunil: linhas.length,
+      totalEscolasEmFunil: escolasAtivasEmFunil,
       porFase,
       porFaseTemperatura,
       porTemperatura,
