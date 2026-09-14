@@ -251,13 +251,20 @@ function derivarFase(params: {
   contrato_enviado: boolean
   minuta_enviada: boolean
   proposta_id: string | null
+  proposta_enviada_manual: boolean
 }): FaseFunil {
   if (params.contrato_arquivado && params.implantacao_status === 'concluida') return 'parceiro_ativo'
   if (params.contrato_arquivado) return 'implantacao'
   if (params.contrato_assinado) return 'contrato_assinado'
   if (params.contrato_enviado) return 'contrato_enviado'
   if (params.minuta_enviada) return 'minuta'
-  if (params.proposta_id) return 'proposta_enviada'
+  // proposta_id existe só quando a proposta foi gerada pela Calculadora (ou
+  // anexada em PDF); proposta_enviada_manual é o checkbox do checklist,
+  // marcado à mão quando a proposta foi enviada por outro canal (e-mail,
+  // WhatsApp) sem passar pela Calculadora. Os dois contam como "chegou nessa
+  // fase" — sem isso, uma escola com o checkbox marcado mas sem proposta_id
+  // ficava presa no quadro/fase de negociação mesmo já tendo proposta enviada.
+  if (params.proposta_id || params.proposta_enviada_manual) return 'proposta_enviada'
   return 'negociacao'
 }
 
@@ -360,6 +367,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
       contrato_enviado: !!contrato?.contrato_enviado,
       minuta_enviada: !!contrato?.minuta_enviada,
       proposta_id: proposta?.id ?? null,
+      proposta_enviada_manual: !!contrato?.proposta_enviada,
     })
 
     const segmentosEscola = segmentosAtivos(escola)
