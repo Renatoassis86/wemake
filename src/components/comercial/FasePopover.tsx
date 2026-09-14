@@ -25,15 +25,24 @@ interface Props {
   implantacaoStatus: string | null
 }
 
-function ChipItem({ label, negativo }: { label: string; negativo: boolean }) {
+// Minuta e contrato são as etapas mais avançadas do checklist (mais perto do
+// fechamento) — ganham destaque em azul pra se diferenciarem visualmente das
+// etapas iniciais (formulário, proposta), que ficam no verde padrão.
+const KEYS_DESTAQUE = new Set([
+  'minuta_enviada', 'retorno_minuta', 'minuta_atualizada',
+  'contrato_enviado', 'contrato_assinado', 'contrato_arquivado',
+])
+
+function ChipItem({ label, negativo, destaque }: { label: string; negativo: boolean; destaque?: boolean }) {
   return (
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: '.25rem',
-      background: negativo ? '#fef2f2' : '#f0fdf4',
-      color: negativo ? '#dc2626' : '#15803d',
-      border: `1px solid ${negativo ? '#fca5a5' : '#86efac'}`,
-      padding: '.1rem .45rem', borderRadius: 99,
-      fontSize: '.6rem', fontWeight: 700, whiteSpace: 'nowrap',
+      background: negativo ? '#fef2f2' : destaque ? '#eff6ff' : '#f0fdf4',
+      color: negativo ? '#dc2626' : destaque ? '#1d4ed8' : '#15803d',
+      border: `1.5px solid ${negativo ? '#fca5a5' : destaque ? '#93c5fd' : '#86efac'}`,
+      boxShadow: destaque ? '0 0 0 1px rgba(29,78,216,.10)' : 'none',
+      padding: destaque ? '.15rem .55rem' : '.1rem .45rem', borderRadius: 99,
+      fontSize: destaque ? '.64rem' : '.6rem', fontWeight: destaque ? 800 : 700, whiteSpace: 'nowrap',
       fontFamily: 'var(--font-montserrat,sans-serif)',
     }}>
       {negativo ? '✕' : '✓'} {label}
@@ -107,7 +116,7 @@ export function FasePopover({ escolaId, faseLabel, faseCor, checklist: checklist
         onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
       >
         {marcados.length > 0 ? (
-          marcados.map(([key, label]) => <ChipItem key={key} label={label} negativo={key === 'declinou'} />)
+          marcados.map(([key, label]) => <ChipItem key={key} label={label} negativo={key === 'declinou'} destaque={KEYS_DESTAQUE.has(key)} />)
         ) : (
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: '.3rem',

@@ -185,6 +185,22 @@ export interface NotaEscola {
   created_at: string
 }
 
+/**
+ * Log append-only do número de alunos ao longo da negociação. Nunca é
+ * atualizado — cada mudança de número (proposta, revisão manual) vira uma
+ * linha nova, preservando o valor original do pré-cadastro na primeira linha.
+ */
+export interface AlunosHistorico {
+  id: string
+  escola_id: string
+  negociacao_id: string | null
+  valor: number
+  origem: 'cadastro' | 'proposta' | 'manual'
+  observacao: string | null
+  created_by: string | null
+  created_at: string
+}
+
 export interface Contrato {
   id: string
   escola_id: string

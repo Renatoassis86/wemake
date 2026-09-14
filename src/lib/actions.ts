@@ -924,6 +924,45 @@ export async function adicionarNotaContrato(escolaId: string, texto: string): Pr
 }
 
 /**
+ * Registra um novo número de alunos no histórico da escola (append-only —
+ * nunca sobrescreve o valor anterior, só acrescenta uma linha nova). Usado
+ * quando o número muda durante a negociação; o valor original do
+ * pré-cadastro continua preservado na primeira linha (populada pelo
+ * backfill de add_alunos_historico.sql).
+ */
+export async function adicionarAlunosHistorico(
+  escolaId: string,
+  valor: number,
+  opts?: { negociacaoId?: string | null; observacao?: string | null }
+): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado' }
+  if (!escolaId) return { success: false, error: 'escola_id é obrigatório' }
+  if (!Number.isFinite(valor) || valor < 0) return { success: false, error: 'Número de alunos inválido' }
+
+  // Mesmo padrão defensivo de adicionarNotaContatoFunil: usa admin pra não
+  // depender de a policy de INSERT estar 100% alinhada em produção.
+  const admin = createAdminClient()
+  const { error } = await admin
+    .from('alunos_historico')
+    .insert({
+      escola_id: escolaId,
+      negociacao_id: opts?.negociacaoId ?? null,
+      valor: Math.round(valor),
+      origem: 'manual',
+      observacao: opts?.observacao?.trim() || null,
+      created_by: user.id,
+    })
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/comercial/escolas', 'layout')
+  revalidatePath('/comercial/funil-contratacao', 'layout')
+  return { success: true }
+}
+
+/**
  * Atualiza telefone/e-mail de contato da escola direto de um popover inline
  * (Funil de Contratação) — versão restrita de upsertEscola, sem exigir o
  * formulário completo. Só grava o que veio preenchido; não apaga o outro

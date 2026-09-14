@@ -5,6 +5,8 @@ import { formatCurrency, formatDate } from '@/lib/utils'
 import { LABEL } from '@/types/database'
 import { EscolaDetailClient } from '@/components/comercial/EscolaDetailClient'
 import { DeleteEscolaBtn } from '@/components/comercial/DeleteEscolaBtn'
+import { AlunosHistoricoCard } from '@/components/comercial/AlunosHistoricoCard'
+import type { AlunosHistorico } from '@/types/database'
 
 export const dynamic = 'force-dynamic'
 
@@ -186,6 +188,7 @@ export default async function EscolaDetalhe({ params }: Props) {
     { data: negociacoes },
     { data: tarefas },
     { data: notas },
+    { data: alunosHistorico },
     { data: contrato },
   ] = await Promise.all([
     admin.from('escolas_resumo').select('*').eq('id', id).single(),
@@ -193,6 +196,7 @@ export default async function EscolaDetalhe({ params }: Props) {
     admin.from('negociacoes').select('*').eq('escola_id', id).order('updated_at', { ascending: false }),
     admin.from('tarefas').select('*').eq('escola_id', id).eq('status', 'pendente').order('vencimento'),
     admin.from('notas_escola').select('*').eq('escola_id', id).order('fixada', { ascending: false }).order('created_at', { ascending: false }),
+    admin.from('alunos_historico').select('*').eq('escola_id', id).order('created_at', { ascending: false }),
     admin.from('contratos').select('*').eq('escola_id', id).single(),
   ])
 
@@ -698,6 +702,9 @@ export default async function EscolaDetalhe({ params }: Props) {
 
           {/* ── RIGHT COLUMN (sticky) ────────────────────────────────────────── */}
           <div style={{ position: 'sticky', top: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+
+            {/* Card: Alunos (valor atual + histórico) */}
+            <AlunosHistoricoCard escolaId={id} historico={(alunosHistorico ?? []) as AlunosHistorico[]} />
 
             {/* Card: Indicadores */}
             <div style={cardStyle}>

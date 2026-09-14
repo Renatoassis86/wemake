@@ -21,6 +21,7 @@ import type {
   Profile,
   ClassificacaoLead,
   StageNegociacao,
+  AlunosHistorico,
 } from '@/types/database'
 
 /**
@@ -501,6 +502,27 @@ export async function getNotasByEscola(escola_id: string): Promise<NotaEscola[]>
     return []
   }
   return (data ?? []) as NotaEscola[]
+}
+
+/**
+ * Histórico completo do número de alunos de uma escola, do mais recente
+ * pro mais antigo. A última linha (created_at mais antigo) é sempre o
+ * valor original do pré-cadastro — ver add_alunos_historico.sql.
+ */
+export async function getAlunosHistoricoByEscola(escola_id: string): Promise<AlunosHistorico[]> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('alunos_historico')
+    .select('*')
+    .eq('escola_id', escola_id)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('[getAlunosHistoricoByEscola]', error.message)
+    return []
+  }
+  return (data ?? []) as AlunosHistorico[]
 }
 
 // ─── CONTRATOS ────────────────────────────────────────────────────────────────

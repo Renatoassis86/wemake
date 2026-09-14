@@ -246,7 +246,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
   // padrão já usado aqui para negociacoes/registros/contratos.
   const admin = createAdminClient()
 
-  const [escolasRes, negociacoesRes, registrosRes, propostasRes, contratosRes] = await Promise.all([
+  const [escolasRes, negociacoesRes, registrosRes, propostasRes, contratosRes, alunosHistoricoRes] = await Promise.all([
     admin.from('escolas').select('*').eq('ativa', true),
     admin.from('negociacoes').select('id, escola_id, stage, valor_estimado, observacoes, probabilidade'),
     admin.from('registros').select('escola_id, data_contato, resumo'),
@@ -254,6 +254,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
       .is('arquivada_em', null)
       .order('created_at', { ascending: false }),
     admin.from('contratos').select('*'),
+    admin.from('alunos_historico').select('escola_id, valor, created_at').order('created_at', { ascending: false }),
   ])
 
   const escolas = (escolasRes.data ?? []) as Escola[]
@@ -261,6 +262,15 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
   const registros = (registrosRes.data ?? []) as { escola_id: string; data_contato: string; resumo: string | null }[]
   const propostas = (propostasRes.data ?? []) as { id: string; escola_id: string | null; escola_nome: string | null; valor_aluno_ano: number | null; num_alunos: number | null; status: string | null; validade: string | null; tipo: string | null; created_at: string }[]
   const contratos = (contratosRes.data ?? []) as Contrato[]
+  const alunosHistorico = (alunosHistoricoRes.data ?? []) as { escola_id: string; valor: number; created_at: string }[]
+
+  // Último número de alunos registrado manualmente por escola (mais recente
+  // primeiro na query) — representa a atualização mais fresca feita durante
+  // a negociação, então tem prioridade até sobre o número da proposta.
+  const alunosHistoricoPorEscola = new Map<string, number>()
+  for (const h of alunosHistorico) {
+    if (!alunosHistoricoPorEscola.has(h.escola_id)) alunosHistoricoPorEscola.set(h.escola_id, h.valor)
+  }
 
   // Negociação mais avançada por escola
   const negPorEscola = new Map<string, typeof negociacoes[number]>()
@@ -312,6 +322,8 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
     const reunioes = reunioesPorEscola.get(escola.id) ?? { total: 0, ultima: null, primeira: null, primeiraResumo: null }
     const proposta = propostaPorEscolaId.get(escola.id) ?? propostaPorNome.get(normalizarNomeEscola(escola.nome)) ?? null
     const contrato = contratoPorEscola.get(escola.id) ?? null
+    // Prioridade: última atualização manual (alunos_historico) > proposta > cadastro.
+    const alunosAtual = alunosHistoricoPorEscola.get(escola.id) ?? proposta?.num_alunos ?? escola.total_alunos
 
     const propostaDesconto = proposta?.valor_aluno_ano
       ? Math.round((1 - proposta.valor_aluno_ano / VALOR_TABELA_ALUNO_ANO) * 10000) / 100
@@ -329,7 +341,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
     const segmentosEscola = segmentosAtivos(escola)
 
     const fit_score = calcularFit({
-      totalAlunos: proposta?.num_alunos ?? escola.total_alunos ?? 0,
+      totalAlunos: alunosAtual ?? 0,
       segmentosCount: segmentosEscola.length,
       perfilPedagogico: escola.perfil_pedagogico ?? null,
     })
@@ -351,10 +363,12 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
       email: escola.email,
       responsavel_id: escola.responsavel_id,
       responsavel_nome: escola.responsavel_id ? usuarios.get(escola.responsavel_id)?.full_name ?? null : null,
-      // Prioriza o nº de alunos da proposta (Calculadora/planilha), que é o
-      // número que embasou o valor negociado — o cadastro da escola pode ser
-      // editado depois e divergir do que foi realmente proposto.
-      alunos_cadastro: proposta?.num_alunos ?? escola.total_alunos,
+      // Prioriza a última atualização manual em alunos_historico (o número
+      // pode variar durante a negociação — ver adicionarAlunosHistorico),
+      // depois o nº de alunos da proposta (Calculadora/planilha), que é o
+      // número que embasou o valor negociado, e só por último o cadastro da
+      // escola, que pode ser editado depois e divergir do que foi negociado.
+      alunos_cadastro: alunosAtual,
       alunos_proposta: proposta?.num_alunos ?? null,
       segmentos_ativos: segmentosEscola,
       bairro: escola.bairro,
