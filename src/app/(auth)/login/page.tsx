@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { signIn } from './actions'
 import { Eye, EyeOff, ArrowRight, ArrowLeft, ClipboardList, Phone, Mail, MessageCircle, FileText } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -22,16 +21,26 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    // Login roda como Server Action (no servidor da Vercel), não no
-    // navegador — evita depender do navegador do usuário conseguir
-    // resolver o domínio do Supabase via DNS.
-    const result = await signIn(email, password)
-    if (result.error) {
-      setError(result.error)
+    try {
+      // Login passa por /api/login (Edge Runtime, no servidor da Vercel)
+      // em vez do navegador chamar o Supabase direto — evita depender do
+      // navegador do usuário conseguir resolver o domínio do Supabase via DNS.
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+      const result = await res.json()
+      if (result.error) {
+        setError(result.error)
+        setLoading(false)
+        return
+      }
+      window.location.href = '/comercial'
+    } catch {
+      setError('Não foi possível entrar agora (falha de conexão). Tente novamente.')
       setLoading(false)
-      return
     }
-    window.location.href = '/comercial'
   }
 
   return (
