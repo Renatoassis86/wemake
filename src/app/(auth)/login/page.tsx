@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { signIn } from './actions'
 import { Eye, EyeOff, ArrowRight, ArrowLeft, ClipboardList, Phone, Mail, MessageCircle, FileText } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -22,12 +22,12 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    // Aceita usuário simples (ex: "chris") ou e-mail completo
-    const loginEmail = email.includes('@') ? email : `${email}@wemake.tec.br`
-    const supabase = createClient()
-    const { error: err } = await supabase.auth.signInWithPassword({ email: loginEmail, password })
-    if (err) {
-      setError('Usuário ou senha inválidos.')
+    // Login roda como Server Action (no servidor da Vercel), não no
+    // navegador — evita depender do navegador do usuário conseguir
+    // resolver o domínio do Supabase via DNS.
+    const result = await signIn(email, password)
+    if (result.error) {
+      setError(result.error)
       setLoading(false)
       return
     }
