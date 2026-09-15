@@ -361,14 +361,14 @@ export default function PropostaView({ proposta: p, isExpired, imprimir }: { pro
   const sumDisplay = sumEquip
 
   // Preço do 2º ano negociado à parte (casos específicos) — quando presente,
-  // some com o reajuste IPCA e aparece como referência abaixo do valor
-  // principal. Em branco na calculadora, não aparece nada (comportamento
-  // padrão de hoje).
+  // aparece como referência abaixo do valor principal exatamente como
+  // digitado na calculadora, com "+ IPCA" ao lado (não é pré-calculado: o
+  // reajuste real só é aplicado quando o 2º ano efetivamente ocorrer). Em
+  // branco na calculadora, não aparece nada (comportamento padrão de hoje).
   const dadosCalculo = p.dados_calculo as Record<string, unknown>
   const precoSegundoAnoCustom = (dadosCalculo?.precoSegundoAnoCustom as number | null) ?? null
-  const ipca = ((dadosCalculo?.lp as Record<string, unknown> | undefined)?.ipca as number | undefined) ?? 0.055
   const valorAno2 = precoSegundoAnoCustom != null && precoSegundoAnoCustom > 0
-    ? precoSegundoAnoCustom * (1 + ipca)
+    ? precoSegundoAnoCustom
     : null
 
   const sections = [
@@ -1353,7 +1353,7 @@ export default function PropostaView({ proposta: p, isExpired, imprimir }: { pro
                       </p>
                       {valorAno2 != null && (
                         <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)', marginTop: 6, letterSpacing: '0.02em' }}>
-                          2º ano: <strong style={{ color: 'rgba(255,255,255,0.7)' }}>{R$(valorAno2)}</strong> <span style={{ color: 'rgba(255,255,255,0.3)' }}>(reajuste IPCA)</span>
+                          2º ano: <strong style={{ color: 'rgba(255,255,255,0.7)' }}>{R$(valorAno2)}</strong> <span style={{ color: 'rgba(255,255,255,0.3)' }}>+ IPCA</span>
                         </p>
                       )}
                     </div>
