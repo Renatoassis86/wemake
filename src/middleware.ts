@@ -16,7 +16,8 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api') ||
     pathname.startsWith('/images') ||
     pathname.startsWith('/videos') ||
-    pathname === '/favicon.ico'
+    pathname === '/favicon.ico' ||
+    pathname === '/icon.png'
 
   // Rotas públicas (exceto /login, que precisa saber se o usuário já está
   // logado pra redirecionar pro Hub) não dependem do Supabase Auth — evita
@@ -47,7 +48,15 @@ export async function middleware(request: NextRequest) {
     },
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  // supabase.auth.getUser() faz uma chamada de rede pro Supabase Auth — sem
+  // limite de tempo, uma lentidão lá pendura o middleware até a Vercel matar
+  // a execução (504 MIDDLEWARE_INVOCATION_TIMEOUT), derrubando o site
+  // inteiro. Com o timeout, na pior hipótese o middleware trata como
+  // "não autenticado" (nega rota protegida) mas SEMPRE responde rápido.
+  const user = await Promise.race([
+    supabase.auth.getUser().then(({ data }) => data.user).catch(() => null),
+    new Promise<null>(resolve => setTimeout(() => resolve(null), 4000)),
+  ])
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone()
