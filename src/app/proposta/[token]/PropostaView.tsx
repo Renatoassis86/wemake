@@ -360,6 +360,17 @@ export default function PropostaView({ proposta: p, isExpired, imprimir }: { pro
   const sumEquip = comItens.reduce((s, it) => s + it.total, 0)
   const sumDisplay = sumEquip
 
+  // Preço do 2º ano negociado à parte (casos específicos) — quando presente,
+  // some com o reajuste IPCA e aparece como referência abaixo do valor
+  // principal. Em branco na calculadora, não aparece nada (comportamento
+  // padrão de hoje).
+  const dadosCalculo = p.dados_calculo as Record<string, unknown>
+  const precoSegundoAnoCustom = (dadosCalculo?.precoSegundoAnoCustom as number | null) ?? null
+  const ipca = ((dadosCalculo?.lp as Record<string, unknown> | undefined)?.ipca as number | undefined) ?? 0.055
+  const valorAno2 = precoSegundoAnoCustom != null && precoSegundoAnoCustom > 0
+    ? precoSegundoAnoCustom * (1 + ipca)
+    : null
+
   const sections = [
     'capa', 'carta', 'div1', 'config', 'escopo',
     ...(hasComodato ? ['div2', 'maker-intro', 'modelo1', 'modelo2', 'investimento', 'resumo'] : ['maker-assessoria', 'investimento']),
@@ -1340,6 +1351,11 @@ export default function PropostaView({ proposta: p, isExpired, imprimir }: { pro
                       <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginTop: 10, letterSpacing: '0.02em' }}>
                         Valor negociado exclusivo para esta proposta
                       </p>
+                      {valorAno2 != null && (
+                        <p style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)', marginTop: 6, letterSpacing: '0.02em' }}>
+                          2º ano: <strong style={{ color: 'rgba(255,255,255,0.7)' }}>{R$(valorAno2)}</strong> <span style={{ color: 'rgba(255,255,255,0.3)' }}>(reajuste IPCA)</span>
+                        </p>
+                      )}
                     </div>
                     <div style={{ width: 1, alignSelf: 'stretch', background: 'linear-gradient(180deg, transparent, rgba(255,255,255,0.12) 30%, rgba(255,255,255,0.12) 70%, transparent)', margin: '0 clamp(20px,4vw,48px)' }} />
                     <div>
@@ -1362,7 +1378,7 @@ export default function PropostaView({ proposta: p, isExpired, imprimir }: { pro
                 <Reveal delay={180}>
                   <div style={{ borderLeft: `2px solid ${C.mint}`, padding: '10px 18px', marginBottom: 20 }}>
                     <p style={{ textAlign: 'justify', fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-base)', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
-                      Esta referência facilita a leitura gerencial. O investimento contempla currículo, formação, acompanhamento e implantação — não se reduz ao custo unitário por aluno.
+                      Esta referência facilita a leitura gerencial. O investimento contempla currículo, formação, acompanhamento e implantação.
                     </p>
                   </div>
                 </Reveal>
