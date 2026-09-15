@@ -125,7 +125,12 @@ function calcSistema(
 function calcLeasing(
   alunos: number, maiorSala: number,
   equip: EquipItem[], lp: LeasingParams,
-  anualCurriculo: number
+  anualCurriculo: number,
+  // Preço/aluno/ano do currículo negociado à parte para o 2º ano (casos
+  // específicos, ex: renovação com valor já acertado) — quando informado,
+  // substitui o valor do 2º ano projetado automaticamente por IPCA; os
+  // demais anos continuam calculados normalmente a partir do 1º ano.
+  overrideAno2AnualCurriculo?: number | null
 ) {
   const qtdNB  = Math.ceil(maiorSala / 2)
   const N      = lp.duracaoMeses          // total duration = amortization period
@@ -160,12 +165,22 @@ function calcLeasing(
   // Annual projection table with IPCA on curriculum, fixed leasing
   const anosContrato     = Math.ceil(N / 12)
   const mensalCurriculo1 = anualCurriculo / 12
+  const temOverrideAno2 = overrideAno2AnualCurriculo != null && overrideAno2AnualCurriculo > 0
   const tabela = Array.from({ length: anosContrato }, (_, y) => {
-    const fatorIpca   = Math.pow(1 + lp.ipca, y)
-    const parcelaCurr = mensalCurriculo1 * fatorIpca
+    const ano = y + 1
+    let fatorIpca: number
+    let parcelaCurr: number
+    if (ano === 2 && temOverrideAno2) {
+      // Valor negociado à parte para o 2º ano + reajuste IPCA do período.
+      fatorIpca   = 1 + lp.ipca
+      parcelaCurr = (overrideAno2AnualCurriculo! / 12) * fatorIpca
+    } else {
+      fatorIpca   = Math.pow(1 + lp.ipca, y)
+      parcelaCurr = mensalCurriculo1 * fatorIpca
+    }
     const totalEscola = parcelaCurr + parcelaPrice
     return {
-      ano: y + 1, fatorIpca, parcelaCurr,
+      ano, fatorIpca, parcelaCurr,
       parcelaComodato: parcelaPrice, totalEscola,
       recCurr: parcelaCurr * 12, recCom: parcelaPrice * 12,
       recTotal: (parcelaCurr + parcelaPrice) * 12,
@@ -372,14 +387,19 @@ function CalculadoraInner() {
   const updEquip = (idx: number, field: keyof EquipItem, val: any) =>
     setEquip(p => { const e = [...p]; e[idx] = { ...e[idx], [field]: val }; return e })
 
+  // Preço/aluno/ano do currículo negociado à parte para o 2º ano — casos
+  // específicos (ex: renovação já com valor acertado). Vazio = comportamento
+  // padrão de hoje (2º ano projetado por IPCA a partir do 1º ano).
+  const [precoSegundoAno, setPrecoSegundoAno] = useState('')
+
   // ── Cálculos ──────────────────────────────────────────────────
   const sis = useMemo(
     () => calcSistema(alunos, ticket, segs, altaCompl, situacao, desconto, sp),
     [alunos, ticket, segs, altaCompl, situacao, desconto, sp]
   )
   const com = useMemo(
-    () => calcLeasing(alunos, maiorSala, equip, lp, sis.anual),
-    [alunos, maiorSala, equip, lp, sis.anual]
+    () => calcLeasing(alunos, maiorSala, equip, lp, sis.anual, parseFloat(precoSegundoAno.replace(',', '.')) || null),
+    [alunos, maiorSala, equip, lp, sis.anual, precoSegundoAno]
   )
 
   // Com comodato ativo: currículo é sempre 12x (mensal) — regra de negócio
@@ -441,6 +461,7 @@ function CalculadoraInner() {
     setValorCustom(sis.valorFinal.toFixed(2))
     setNumParcelasProposta(incluiComodato ? 12 : 4)
     setNumParcelasCurriculo(5)
+    setPrecoSegundoAno('')
     setModalLoading(false)
     setModalError(null)
     setPropostaResult(null)
@@ -535,7 +556,7 @@ function CalculadoraInner() {
         comodato_retorno_pct: modalForm.tipo === 'curriculo_comodato' ? lp.retornoAlvo : null,
         comodato_tx_rate:     modalForm.tipo === 'curriculo_comodato' ? com.txRate : null,
         comodato_notebooks:   modalForm.tipo === 'curriculo_comodato' ? com.qtdNB : null,
-        dados_calculo:        { sis, com, lp, sp },
+        dados_calculo:        { sis, com, lp, sp, precoSegundoAnoCustom: parseFloat(precoSegundoAno.replace(',', '.')) || null },
         texto_personalizado:  modalForm.texto.trim() || null,
         seg_infantil:         segInfantil,
         seg_fundamental_1:    segFund1,
@@ -1476,6 +1497,11 @@ function CalculadoraInner() {
                         <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#4A7FDB' }}>
                           {R$(row.parcelaCurr)}
                           {row.ano > 1 && <span style={{ fontSize: '.6rem', color: '#94a3b8', marginLeft: '.3rem' }}>×{row.fatorIpca.toFixed(3)}</span>}
+                          {row.ano === 2 && (parseFloat(precoSegundoAno.replace(',', '.')) || 0) > 0 && (
+                            <span style={{ fontSize: '.6rem', color: '#b45309', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 99, padding: '1px 7px', marginLeft: '.4rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                              valor negociado
+                            </span>
+                          )}
                         </td>
                         <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0369a1' }}>{R$(row.parcelaComodato)}</td>
                         <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>{R$(row.totalEscola)}</td>
@@ -1648,6 +1674,7 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                         setLogoPreview(null)
                         setNumParcelasProposta(incluiComodato ? 12 : 4)
                         setNumParcelasCurriculo(5)
+                        setPrecoSegundoAno('')
                         setModalError(null)
                       }}
                       style={{ padding: '.55rem 1.2rem', borderRadius: 8, border: '1.5px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#475569' }}
@@ -1870,6 +1897,29 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                       <span style={{ color: '#94a3b8' }}>
                         Total anual: <strong style={{ color: '#0b1f44' }}>{((parseFloat(valorCustom) || 0) * alunos).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong>
                       </span>
+                    </div>
+                  </div>
+
+                  {/* Preço do 2º ano (opcional) — casos específicos onde o valor do
+                      2º ano já foi negociado à parte. Quando preenchido, substitui
+                      o valor projetado por IPCA no 2º ano da Projeção Anual (aba
+                      Leasing de Equipamentos); os demais anos não mudam. */}
+                  <div>
+                    <label style={LBL}>Preço do 2º ano — Currículo (R$/aluno/ano, opcional)</label>
+                    <div style={{ position: 'relative' }}>
+                      <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.82rem', pointerEvents: 'none' }}>R$</span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="Deixe em branco para usar o reajuste IPCA automático"
+                        value={precoSegundoAno}
+                        onChange={e => setPrecoSegundoAno(e.target.value)}
+                        style={{ ...INP, paddingLeft: 36 }}
+                      />
+                    </div>
+                    <div style={{ marginTop: 4, fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
+                      Só para casos específicos com valor do 2º ano já acertado à parte — o 2º ano da Projeção Anual passa a mostrar esse valor + IPCA, em vez do cálculo automático. Em branco, a proposta segue como hoje.
                     </div>
                   </div>
 
