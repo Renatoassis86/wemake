@@ -8,6 +8,7 @@ export async function middleware(request: NextRequest) {
   const isPublic =
     pathname === '/' ||
     pathname.startsWith('/hub') ||
+    pathname.startsWith('/login') ||
     pathname.startsWith('/formulario') ||
     pathname.startsWith('/proposta') ||
     pathname.startsWith('/acesso-escola') ||
