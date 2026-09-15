@@ -435,7 +435,7 @@ function CalculadoraInner() {
   // Quantidade de parcelas do valor total do contrato (comodato) — a periodicidade
   // (mensal, bimestral etc.) é acertada diretamente com a escola, por isso não
   // assumimos mais 12x fixo; aparece na proposta apenas como texto.
-  const [numParcelasProposta, setNumParcelasProposta] = useState(4)
+  const [numParcelasProposta, setNumParcelasProposta] = useState(5)
   // Quando a proposta é Currículo + Comodato, os dois modelos aparecem lado a
   // lado no mesmo documento — o Comodato usa numParcelasProposta (sempre 12x,
   // fixo), e o lado "Somente Currículo" precisa do próprio parcelamento
@@ -459,7 +459,7 @@ function CalculadoraInner() {
     setLogoFile(null)
     setLogoPreview(null)
     setValorCustom(sis.valorFinal.toFixed(2))
-    setNumParcelasProposta(incluiComodato ? 12 : 4)
+    setNumParcelasProposta(incluiComodato ? 12 : 5)
     setNumParcelasCurriculo(5)
     setPrecoSegundoAno('')
     setModalLoading(false)
@@ -1672,7 +1672,7 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                         setModalForm({ escolaNome: '', escolaEmail: '', tipo: incluiComodato ? 'curriculo_comodato' : 'curriculo', validade: defaultValidade(), texto: '' })
                         setLogoFile(null)
                         setLogoPreview(null)
-                        setNumParcelasProposta(incluiComodato ? 12 : 4)
+                        setNumParcelasProposta(incluiComodato ? 12 : 5)
                         setNumParcelasCurriculo(5)
                         setPrecoSegundoAno('')
                         setModalError(null)
@@ -1789,9 +1789,13 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                           key={opt.val}
                           type="button"
                           onClick={() => {
+                            // Clicar no tipo já selecionado não pode zerar o que a
+                            // pessoa já digitou em "Quantidade de parcelas" — só
+                            // aplica o padrão de parcelas ao trocar de tipo de fato.
+                            if (opt.val === modalForm.tipo) return
                             setModalForm(f => ({ ...f, tipo: opt.val }))
                             // Comodato só faz sentido em parcela mensal (12x) — regra de negócio.
-                            setNumParcelasProposta(opt.val === 'curriculo_comodato' ? 12 : 4)
+                            setNumParcelasProposta(opt.val === 'curriculo_comodato' ? 12 : 5)
                             if (opt.val === 'curriculo_comodato') setNumParcelasCurriculo(5)
                           }}
                           style={{
@@ -1862,7 +1866,7 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                         max={24}
                         value={numParcelasProposta || ''}
                         onChange={e => setNumParcelasProposta(+e.target.value)}
-                        onBlur={() => setNumParcelasProposta(n => Math.min(24, Math.max(1, n || 4)))}
+                        onBlur={() => setNumParcelasProposta(n => Math.min(24, Math.max(1, n || 5)))}
                         style={INP}
                       />
                       <div style={{ marginTop: 4, fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
