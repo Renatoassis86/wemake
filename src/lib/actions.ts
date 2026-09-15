@@ -1482,12 +1482,20 @@ export async function atualizarProposta(formData: FormData): Promise<ActionResul
   }
 
   try {
-    const { error } = await supabase.from('propostas').update(payload).eq('id', id)
+    // Update via admin (service_role): a policy de UPDATE de propostas é
+    // restritiva (ex.: só quem criou), então um edit feito por outra pessoa
+    // da equipe silenciosamente não alterava nenhuma linha — sem erro
+    // nenhum, já que RLS filtra a linha antes do UPDATE rodar. Fica preso
+    // atrás do check de auth acima, então só usuário logado chega aqui.
+    const admin = createAdminClient()
+    const { error, data } = await admin.from('propostas').update(payload).eq('id', id).select('id')
     if (error) return { success: false, error: error.message }
+    if (!data || data.length === 0) return { success: false, error: 'Proposta não encontrada' }
 
     await createAuditLog('UPDATE', 'propostas', id, payload)
     revalidatePath('/comercial/propostas')
     revalidatePath(`/comercial/propostas/${id}/editar`)
+    revalidatePath('/proposta/[token]', 'page')
 
     return { success: true, id }
   } catch (err: any) {
@@ -1502,7 +1510,8 @@ export async function arquivarProposta(id: string): Promise<ActionResult> {
 
   try {
     const arquivada_em = new Date().toISOString()
-    const { error } = await supabase.from('propostas').update({ arquivada_em }).eq('id', id)
+    const admin = createAdminClient()
+    const { error } = await admin.from('propostas').update({ arquivada_em }).eq('id', id)
     if (error) return { success: false, error: error.message }
 
     await createAuditLog('DELETE', 'propostas', id, { arquivada_em })
@@ -1520,7 +1529,8 @@ export async function desarquivarProposta(id: string): Promise<ActionResult> {
   if (!user) return { success: false, error: 'Não autenticado' }
 
   try {
-    const { error } = await supabase.from('propostas').update({ arquivada_em: null }).eq('id', id)
+    const admin = createAdminClient()
+    const { error } = await admin.from('propostas').update({ arquivada_em: null }).eq('id', id)
     if (error) return { success: false, error: error.message }
 
     await createAuditLog('UPDATE', 'propostas', id, { arquivada_em: null })
@@ -1542,12 +1552,14 @@ export async function renovarValidadeProposta(id: string, novaValidade: string):
   }
 
   try {
-    const { error } = await supabase.from('propostas').update({ validade: novaValidade }).eq('id', id)
+    const admin = createAdminClient()
+    const { error } = await admin.from('propostas').update({ validade: novaValidade }).eq('id', id)
     if (error) return { success: false, error: error.message }
 
     await createAuditLog('UPDATE', 'propostas', id, { validade: novaValidade })
     revalidatePath('/comercial/propostas')
     revalidatePath(`/comercial/propostas/${id}/editar`)
+    revalidatePath('/proposta/[token]', 'page')
 
     return { success: true, id }
   } catch (err: any) {
