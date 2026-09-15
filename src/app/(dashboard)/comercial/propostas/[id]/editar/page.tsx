@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { atualizarProposta } from '@/lib/actions'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
@@ -69,10 +69,14 @@ const Icon = {
   lock: <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
 }
 
-interface Props { params: Promise<{ id: string }> }
+interface Props {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ salvo?: string; erro?: string }>
+}
 
-export default async function PropostaEditar({ params }: Props) {
+export default async function PropostaEditar({ params, searchParams }: Props) {
   const { id } = await params
+  const { salvo, erro } = await searchParams
   const admin = createAdminClient()
 
   const { data: p } = await admin.from('propostas').select('*').eq('id', id).single()
@@ -98,6 +102,18 @@ Essa foi a proposta oficial que enviamos para a escola.`
           <span className="breadcrumb-sep">/</span>
           <span className="breadcrumb-current">{p.escola_nome}</span>
         </div>
+
+        {salvo === '1' && (
+          <div style={{ marginBottom: '1.5rem', padding: '.9rem 1.25rem', background: '#f0fdf4', border: '1.5px solid #86efac', borderRadius: 12, fontSize: '.82rem', color: '#15803d', fontFamily: 'var(--font-inter,sans-serif)', fontWeight: 600 }}>
+            ✓ Alterações salvas com sucesso.
+          </div>
+        )}
+
+        {erro && (
+          <div style={{ marginBottom: '1.5rem', padding: '.9rem 1.25rem', background: '#fef2f2', border: '1.5px solid #fca5a5', borderRadius: 12, fontSize: '.82rem', color: '#b91c1c', fontFamily: 'var(--font-inter,sans-serif)', fontWeight: 600 }}>
+            ⚠ Erro ao salvar: {erro}
+          </div>
+        )}
 
         {arquivada && (
           <div style={{ marginBottom: '1.5rem', padding: '.9rem 1.25rem', background: '#fffbeb', border: '1.5px solid #fcd34d', borderRadius: 12, fontSize: '.82rem', color: '#92400e', fontFamily: 'var(--font-inter,sans-serif)' }}>
@@ -156,7 +172,14 @@ Essa foi a proposta oficial que enviamos para a escola.`
         </SectionCard>
 
         {/* ── Formulário editável ────────────────────────────────────── */}
-        <form action={async (formData: FormData) => { 'use server'; await atualizarProposta(formData) }}>
+        <form action={async (formData: FormData) => {
+          'use server'
+          const resultado = await atualizarProposta(formData)
+          if (resultado.success) {
+            redirect(`/comercial/propostas/${id}/editar?salvo=1`)
+          }
+          redirect(`/comercial/propostas/${id}/editar?erro=${encodeURIComponent(resultado.error ?? 'Erro ao salvar')}`)
+        }}>
           <input type="hidden" name="id" value={id} />
 
           <SectionCard title="Escola" icon={Icon.school} accent="#2563eb" bg="#fff">
