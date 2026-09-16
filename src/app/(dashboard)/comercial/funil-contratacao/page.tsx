@@ -184,11 +184,11 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
   // Extraído do corpo da tabela pra ser reaproveitado nos 5 quadros sem
   // duplicar ~100 linhas de JSX por quadro — o conteúdo da linha é
   // exatamente o mesmo de antes da segmentação, só o agrupamento mudou.
-  function renderLinhaFunil(l: typeof linhasFiltradas[number], idx: number) {
+  function renderLinhaFunil(l: typeof linhasFiltradas[number], idx: number, escolaIdsQuadro: string[]) {
     return (
       <tr key={l.escola_id} style={{ borderBottom: '1px solid #f1f5f9', background: idx % 2 === 0 ? '#fff' : '#fafafa' }}>
         <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
-          <PrioridadeInline escolaId={l.escola_id} prioridade={l.prioridade_manual} />
+          <PrioridadeInline escolaId={l.escola_id} prioridade={l.prioridade_manual} escolaIdsQuadro={escolaIdsQuadro} />
         </td>
         <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle', width: 150, maxWidth: 150 }}>
           <div style={{ fontWeight: 700, fontSize: '.8rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', lineHeight: 1.3 }}>
@@ -450,6 +450,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
         {QUADRO_ORDEM.map(quadroId => {
           const def = QUADRO_DEF[quadroId]
           const quadroLinhas = porQuadro[quadroId]
+          const idsDoQuadro = quadroLinhas.map(x => x.escola_id)
           return (
             <div key={quadroId} style={{ ...card, borderTop: `4px solid ${def.cor}` }}>
               <div style={{ ...secHdr(def.cor), background: def.headerBg, justifyContent: 'space-between', alignItems: 'center' }}>
@@ -474,7 +475,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                       </tr>
                     </thead>
                     <tbody>
-                      {quadroLinhas.map((l, idx) => renderLinhaFunil(l, idx))}
+                      {quadroLinhas.map((l, idx) => renderLinhaFunil(l, idx, idsDoQuadro))}
                     </tbody>
                   </table>
                 ) : (

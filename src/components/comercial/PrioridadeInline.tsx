@@ -7,6 +7,10 @@ import { atualizarPrioridadeEscola } from '@/lib/actions'
 interface Props {
   escolaId: string
   prioridade: number | null
+  // Ids de todas as escolas do mesmo quadro (incluindo esta) — permite que o
+  // servidor reordene a lista inteira (empurra quem vem depois, fecha o
+  // buraco de quem saiu) sem precisar reeditar cada escola manualmente.
+  escolaIdsQuadro: string[]
 }
 
 // Mesmo padrão de popover do FasePopover/ContatoQuickEdit: gatilho clicável +
@@ -14,7 +18,7 @@ interface Props {
 // número livre definido manualmente pelo time comercial — menor número =
 // mais prioritário; a ordenação da tabela já reflete isso (ver
 // funil-contratacao.ts, sort por prioridade_manual antes da fase).
-export function PrioridadeInline({ escolaId, prioridade: prioridadeInicial }: Props) {
+export function PrioridadeInline({ escolaId, prioridade: prioridadeInicial, escolaIdsQuadro }: Props) {
   const router = useRouter()
   const [aberto, setAberto] = useState(false)
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null)
@@ -51,7 +55,7 @@ export function PrioridadeInline({ escolaId, prioridade: prioridadeInicial }: Pr
   function salvar(novoValor: string | null) {
     const num = novoValor != null && novoValor !== '' ? parseInt(novoValor, 10) : null
     startTransition(async () => {
-      const res = await atualizarPrioridadeEscola(escolaId, num)
+      const res = await atualizarPrioridadeEscola(escolaId, num, escolaIdsQuadro)
       if (res.success) {
         setAberto(false)
         router.refresh()
@@ -95,8 +99,11 @@ export function PrioridadeInline({ escolaId, prioridade: prioridadeInicial }: Pr
             value={valor}
             onChange={e => setValor(e.target.value)}
             placeholder="Ex: 1"
-            style={{ width: '100%', padding: '.45rem .6rem', fontSize: '.85rem', border: '1.5px solid #e2e8f0', borderRadius: 7, boxSizing: 'border-box', marginBottom: '.6rem' }}
+            style={{ width: '100%', padding: '.45rem .6rem', fontSize: '.85rem', border: '1.5px solid #e2e8f0', borderRadius: 7, boxSizing: 'border-box', marginBottom: '.4rem' }}
           />
+          <div style={{ fontSize: '.63rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '.6rem', lineHeight: 1.4 }}>
+            As demais escolas deste quadro reordenam sozinhas.
+          </div>
           <div style={{ display: 'flex', gap: '.4rem' }}>
             <button onClick={() => salvar(valor)} disabled={pending} style={{
               flex: 1, padding: '.45rem', borderRadius: 8, border: 'none', cursor: pending ? 'wait' : 'pointer',

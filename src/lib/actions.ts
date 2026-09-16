@@ -992,12 +992,46 @@ export async function atualizarContatoEscolaInline(escolaId: string, telefone: s
 /**
  * Atualiza a ordem de prioridade manual da escola (popover inline no Funil de
  * Contratação) — menor número = mais prioritário; null remove a prioridade.
+ *
+ * `escolaIdsQuadro` (opcional): ids de todas as escolas do mesmo quadro
+ * (incluindo a própria). Quando informado, a prioridade passa a se comportar
+ * como reordenar uma lista — inserir/mover pra posição N empurra pra baixo
+ * (+1) quem já estava nela em diante, e fecha o buraco (-1) de quem ficava
+ * depois da posição antiga — ninguém do quadro precisa ser reeditado à mão.
+ * Sem a lista (chamada antiga/externa), só grava o valor puro, sem reordenar.
  */
-export async function atualizarPrioridadeEscola(escolaId: string, prioridade: number | null): Promise<ActionResult> {
+export async function atualizarPrioridadeEscola(
+  escolaId: string,
+  prioridade: number | null,
+  escolaIdsQuadro?: string[],
+): Promise<ActionResult> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { success: false, error: 'Não autenticado' }
   if (!escolaId) return { success: false, error: 'escola_id é obrigatório' }
+
+  const outrosIds = (escolaIdsQuadro ?? []).filter(id => id !== escolaId)
+
+  if (outrosIds.length > 0) {
+    const [{ data: outras, error: erroBusca }, { data: atual, error: erroAtual }] = await Promise.all([
+      supabase.from('escolas').select('id, prioridade_manual').in('id', outrosIds),
+      supabase.from('escolas').select('prioridade_manual').eq('id', escolaId).single(),
+    ])
+    if (erroBusca) return { success: false, error: erroBusca.message }
+    if (erroAtual) return { success: false, error: erroAtual.message }
+
+    const prioridadeAntiga = atual?.prioridade_manual ?? null
+
+    for (const o of outras ?? []) {
+      if (o.prioridade_manual == null) continue
+      let novo = o.prioridade_manual
+      if (prioridadeAntiga != null && novo > prioridadeAntiga) novo -= 1
+      if (prioridade != null && novo >= prioridade) novo += 1
+      if (novo === o.prioridade_manual) continue
+      const { error } = await supabase.from('escolas').update({ prioridade_manual: novo }).eq('id', o.id)
+      if (error) return { success: false, error: error.message }
+    }
+  }
 
   const { error } = await supabase
     .from('escolas')
