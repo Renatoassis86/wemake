@@ -1305,7 +1305,7 @@ export default function PropostaView({ proposta: p, isExpired, imprimir }: { pro
               <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.navy, marginBottom: 16, letterSpacing: '-0.02em', lineHeight: 1.05 }}>
                 Recursos Consumíveis
               </h2>
-              <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.75, marginBottom: 22, maxWidth: 720 }}>
+              <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.75, marginBottom: 22 }}>
                 Os valores abaixo são referentes aos recursos consumíveis de uma sala maker dimensionada para a <strong style={{ color: C.navy }}>{p.escola_nome}</strong> — {p.num_alunos} alunos, com 25 alunos em média por turma, levando-se em conta {faixaSeriesTexto(p)}. Estes recursos duram mais de um ano; será necessário repor apenas os itens faltantes anualmente, o que resultará em um custo bem menor para os anos subsequentes, embora esse valor específico não possa ser previsto com precisão.
               </p>
             </Reveal>

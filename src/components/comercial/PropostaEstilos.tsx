@@ -232,6 +232,90 @@ export function PropostaEstilos() {
         .pv-table-mobile { display: none; }
         .pv-hero-mobile-footer { display: none; }
 
+        /* ── Tablet retrato (~769–1024px de largura): mesma lógica do
+           mobile (empilha colunas, solta a trava de 100dvh+scroll-snap,
+           tabelas viram cartões) — só os tamanhos de imagem/banner ficam
+           um pouco maiores, já que sobra mais largura que no celular. */
+        @media (min-width: 769px) and (max-width: 1024px) {
+          .pv-scroll { scroll-snap-type: none !important; }
+          .pv-navdots { display: none !important; }
+
+          .pv-section {
+            height: auto !important;
+            min-height: auto !important;
+            scroll-snap-align: none !important;
+          }
+
+          .pv-row { flex-direction: column !important; }
+          .pv-flex-reset { flex: none !important; width: 100% !important; }
+
+          .pv-media {
+            width: 100% !important;
+            height: 260px !important;
+            order: -1 !important;
+            flex: none !important;
+          }
+          .pv-media-multi { flex-direction: row !important; height: 200px !important; }
+          .pv-media-auto {
+            width: 100% !important;
+            height: auto !important;
+            order: -1 !important;
+            flex: none !important;
+            padding-top: 28px !important;
+          }
+
+          .pv-divider-v { display: none !important; }
+
+          .pv-grid-2, .pv-grid-3 { grid-template-columns: 1fr !important; }
+
+          .pv-hero-top       { flex-direction: column !important; height: auto !important; flex: none !important; }
+          .pv-hero-royal     { width: 100% !important; }
+          .pv-hero-logo      {
+            flex: none !important; width: 100% !important; height: 160px !important;
+            border-top: 1px solid rgba(15,23,42,.08) !important;
+          }
+          .pv-hero-photo     { flex: none !important; height: 320px !important; min-height: 320px !important; }
+
+          .pv-hero-bottom-bar { justify-content: center !important; }
+          .pv-hero-countdown        { display: none !important; }
+          .pv-hero-disclaimer-desktop { display: none !important; }
+          .pv-hero-mobile-footer    { display: block !important; }
+
+          .pv-stack-gap { gap: 1.75rem !important; }
+
+          .pv-table-desktop { display: none !important; }
+          .pv-table-mobile  { display: flex !important; }
+
+          .pv-comparativo-scroll {
+            max-height: none !important;
+            overflow: visible !important;
+          }
+        }
+
+        /* ── Paisagem curta (celular deitado, tablet deitado com pouca
+           altura): a largura sobra, mas a seção de 100dvh + scroll-snap
+           fica mais alta que a tela e corta conteúdo — solta só a trava
+           de altura/scroll-snap, sem empilhar colunas (largura ainda dá
+           pro layout de 2 colunas). */
+        @media (orientation: landscape) and (max-height: 500px) {
+          .pv-scroll { scroll-snap-type: none !important; }
+          .pv-navdots { display: none !important; }
+
+          .pv-section {
+            height: auto !important;
+            min-height: 100vh !important;
+            scroll-snap-align: none !important;
+          }
+
+          .pv-table-desktop { display: none !important; }
+          .pv-table-mobile  { display: flex !important; }
+
+          .pv-comparativo-scroll {
+            max-height: none !important;
+            overflow: visible !important;
+          }
+        }
+
         /* ── Texto centralizado, imagens/fundos seguem nas laterais ──
            text-align é herdado, então basta declarar em .pv-section pra
            cobrir todo texto da página. .pv-stack-gap é a coluna de texto
