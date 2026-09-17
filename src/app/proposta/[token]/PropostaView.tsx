@@ -17,6 +17,40 @@ const R$ = (v: number) =>
 const fmtDate = (d: string) =>
   new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
 
+// ── Recursos Consumíveis — referência de custo pra implantação de uma sala
+// maker (materiais de consumo das aulas, não os equipamentos reutilizáveis
+// do comodato/patrimônio). Valores de referência fixos (mesmo parâmetro pra
+// todas as propostas); o que varia por escola é o texto, calculado a partir
+// dos segmentos da proposta — ver faixaSeriesTexto().
+const RECURSOS_CONSUMIVEIS = [
+  { nome: 'Fixador',    valor: 164.70 },
+  { nome: 'Adesivos',   valor: 937.11 },
+  { nome: 'Madeira',    valor: 320.05 },
+  { nome: 'Hidráulica', valor: 413.42 },
+  { nome: 'Diverso',    valor: 847.98 },
+  { nome: '3D',         valor: 1109.19 },
+  { nome: 'Ímã',        valor: 116.00 },
+  { nome: 'Papelaria',  valor: 649.56 },
+  { nome: 'Eletrônico', valor: 1200.17 },
+  { nome: 'Segurança',  valor: 113.37 },
+]
+const RECURSOS_CONSUMIVEIS_TOTAL = RECURSOS_CONSUMIVEIS.reduce((s, r) => s + r.valor, 0)
+
+// Descreve a faixa de séries atendidas com base nos segmentos da proposta —
+// é a parte do texto que muda de escola pra escola.
+function faixaSeriesTexto(p: Proposta): string {
+  const partes: string[] = []
+  if (p.seg_infantil) partes.push('da Educação Infantil')
+  if (p.seg_fundamental_1 && p.seg_fundamental_2) partes.push('do 1º ao 9º ano do Ensino Fundamental')
+  else if (p.seg_fundamental_1) partes.push('do 1º ao 5º ano do Ensino Fundamental')
+  else if (p.seg_fundamental_2) partes.push('do 6º ao 9º ano do Ensino Fundamental')
+  if (p.seg_ensino_medio) partes.push('da 1ª à 3ª série do Ensino Médio')
+
+  if (partes.length === 0) return 'turmas atendidas pela parceria'
+  if (partes.length === 1) return `turmas ${partes[0]}`
+  return `turmas ${partes.slice(0, -1).join(', ')} e ${partes[partes.length - 1]}`
+}
+
 const getPropostaSegmentosList = (p: Proposta): string[] => {
   const list: string[] = []
   if (p.seg_infantil) list.push('Infantil')
@@ -374,6 +408,7 @@ export default function PropostaView({ proposta: p, isExpired, imprimir }: { pro
   const sections = [
     'capa', 'carta', 'div1', 'config', 'escopo',
     ...(hasComodato ? ['div2', 'maker-intro', 'modelo1', 'modelo2', 'investimento', 'resumo'] : ['maker-assessoria', 'investimento']),
+    'consumiveis',
     'contato',
   ]
 
@@ -1499,6 +1534,63 @@ export default function PropostaView({ proposta: p, isExpired, imprimir }: { pro
             </div>
           </section>
         )}
+
+        {/* ══════════════════════════════════════════════════════════════
+            RECURSOS CONSUMÍVEIS — tone: ivory
+        ══════════════════════════════════════════════════════════════ */}
+        <section ref={hasComodato ? sec(11) : sec(7)} className="pv-section" style={{ scrollSnapAlign: 'start', height: '100dvh', background: C.ivory, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
+          <Glow color="rgba(76,138,222,0.08)" size={520} style={{ top: -160, left: -100 }} />
+          <Glow color="rgba(118,243,205,0.08)" size={420} style={{ bottom: -140, right: -100 }} />
+
+          <div style={{ width: '100%', position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'var(--section-py) clamp(24px,8vw,120px)', overflowY: 'auto', height: '100%' }}><div style={{ maxWidth: 860, width: '100%', margin: '0 auto' }}>
+
+            <Reveal>
+              <Eyebrow>Implantação</Eyebrow>
+              <h2 style={{ fontFamily: 'Fraunces, serif', fontWeight: 600, fontSize: 'var(--text-4xl)', color: C.navy, marginBottom: 16, letterSpacing: '-0.02em', lineHeight: 1.05 }}>
+                Recursos Consumíveis
+              </h2>
+            </Reveal>
+
+            <Reveal delay={60}>
+              <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: '#475569', lineHeight: 1.75, marginBottom: 24 }}>
+                Os valores abaixo são referentes aos recursos consumíveis de uma sala maker que atenda todas as nossas aulas, com 25 alunos em média por turma, levando-se em conta {faixaSeriesTexto(p)}. Estes recursos, que têm um custo inicial aproximado de {R$(6000)}, duram mais de um ano. Será necessário repor apenas os itens faltantes anualmente, o que resultará em um custo bem menor para os anos subsequentes, embora esse valor específico não possa ser previsto com precisão.
+              </p>
+            </Reveal>
+
+            <Reveal delay={100}>
+              <div className="surface-glass-ivory" style={{ borderRadius: 16, overflow: 'hidden' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', background: C.navy, padding: '12px 24px', gap: 12 }}>
+                  <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,255,255,0.55)' }}>Relação de Custos</span>
+                  <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,255,255,0.55)', textAlign: 'right' }}>Total</span>
+                  <span style={{ fontFamily: 'Geist, sans-serif', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(255,255,255,0.55)', textAlign: 'right' }}>%</span>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', padding: '14px 24px', gap: 12, background: 'rgba(11,31,68,0.06)', borderBottom: '2px solid rgba(11,31,68,0.12)' }}>
+                  <span style={{ fontFamily: 'Geist, sans-serif', fontWeight: 700, fontSize: 'var(--text-base)', color: C.navy }}>TOTAL</span>
+                  <span style={{ fontFamily: 'Fraunces, serif', fontWeight: 700, fontSize: 'var(--text-base)', color: C.royal, textAlign: 'right' }}>{R$(RECURSOS_CONSUMIVEIS_TOTAL)}</span>
+                  <span style={{ fontFamily: 'Geist, sans-serif', fontSize: 'var(--text-sm)', color: C.navy, textAlign: 'right', fontWeight: 600 }}>100%</span>
+                </div>
+
+                {RECURSOS_CONSUMIVEIS.map((item, i) => (
+                  <TableRow
+                    key={item.nome}
+                    row={{ req: item.nome, spec: R$(item.valor), status: '' }}
+                    delay={i * 40}
+                    catColor={C.royal}
+                    pct={`${((item.valor / RECURSOS_CONSUMIVEIS_TOTAL) * 100).toFixed(2)}%`}
+                  />
+                ))}
+
+                <div style={{ padding: '10px 24px', background: 'rgba(11,31,68,0.03)', borderTop: '1px solid rgba(11,31,68,0.06)' }}>
+                  <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', fontSize: '0.72rem', color: '#94a3b8', lineHeight: 1.65 }}>
+                    Estes valores são apenas de referências, consultados em janeiro de 2026, com o objetivo de fornecer um parâmetro para implantação de um espaço maker. A listagem completa com descrição dos recursos necessários será feita após fechamento de contrato.
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+
+          </div></div>
+        </section>
 
         {/* ══════════════════════════════════════════════════════════════
             CONTATO — tone: navy (footer do site)
