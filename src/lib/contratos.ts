@@ -28,3 +28,24 @@ export function calcValorTotalContrato(row: any): number {
 export function calcTotalAlunosContrato(row: any): number {
   return SEGMENTOS_CONTRATO.reduce((acc, [qtdKey]) => acc + (row?.[qtdKey] ?? 0), 0)
 }
+
+// Rótulo curto de cada série + o segmento a que pertence — usado nas colunas
+// da tela "Quantidade de Alunos" (grade editável por escola × série).
+export const SERIES_CONTRATO: Array<{ campo: string; label: string; segmento: string }> = [
+  { campo: 'infantil2_qtd',  label: 'Inf. II',  segmento: 'Infantil' },
+  { campo: 'infantil3_qtd',  label: 'Inf. III', segmento: 'Infantil' },
+  { campo: 'infantil4_qtd',  label: 'Inf. IV',  segmento: 'Infantil' },
+  { campo: 'infantil5_qtd',  label: 'Inf. V',   segmento: 'Infantil' },
+  { campo: 'fund1_ano1_qtd', label: '1º Ano',   segmento: 'Fund. I' },
+  { campo: 'fund1_ano2_qtd', label: '2º Ano',   segmento: 'Fund. I' },
+  { campo: 'fund1_ano3_qtd', label: '3º Ano',   segmento: 'Fund. I' },
+  { campo: 'fund1_ano4_qtd', label: '4º Ano',   segmento: 'Fund. I' },
+  { campo: 'fund1_ano5_qtd', label: '5º Ano',   segmento: 'Fund. I' },
+  { campo: 'fund2_ano6_qtd', label: '6º Ano',   segmento: 'Fund. II' },
+  { campo: 'fund2_ano7_qtd', label: '7º Ano',   segmento: 'Fund. II' },
+  { campo: 'fund2_ano8_qtd', label: '8º Ano',   segmento: 'Fund. II' },
+  { campo: 'fund2_ano9_qtd', label: '9º Ano',   segmento: 'Fund. II' },
+  { campo: 'medio_1s_qtd',   label: '1ª Série', segmento: 'Médio' },
+  { campo: 'medio_2s_qtd',   label: '2ª Série', segmento: 'Médio' },
+  { campo: 'medio_3s_qtd',   label: '3ª Série', segmento: 'Médio' },
+]

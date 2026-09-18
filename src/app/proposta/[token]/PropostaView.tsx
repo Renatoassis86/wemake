@@ -68,6 +68,15 @@ const getPropostaSegmentosList = (p: Proposta): string[] => {
   return list
 }
 
+// Capas reais dos livros We Make (extraídas do plano de negócio em lp_wemake),
+// uma por segmento — mostradas dinamicamente conforme os segmentos da proposta.
+const CAPA_POR_SEGMENTO: Record<string, string> = {
+  'Infantil':      '/proposta/capas-livros/infantil-5.jpg',
+  'Fund. I':       '/proposta/capas-livros/1ano-ef.jpg',
+  'Fund. II':      '/proposta/capas-livros/6ano.jpg',
+  'Ensino Médio':  '/proposta/capas-livros/1ano-em.jpg',
+}
+
 const formatPropostaSegmentosLabel = (list: string[]): string => {
   if (list.length === 0) return 'Nenhum segmento'
   if (list.length === 1) return list[0]
@@ -767,9 +776,36 @@ export default function PropostaView({ proposta: p, isExpired, imprimir }: { pro
             </div>
           </div>
 
-          {/* coluna imagem — direita (livros) */}
+          {/* coluna imagem — direita (capas reais dos livros, por segmento) */}
           <div className="pv-media" style={{ width: 'clamp(260px,35%,460px)', flexShrink: 0, position: 'relative', zIndex: 2, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.25)' }}>
-            <img src="/proposta/livros-wemake.png" alt="Livros We Make" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} style={{ width: '85%', maxHeight: '85%', objectFit: 'contain', objectPosition: 'center', display: 'block', position: 'relative', zIndex: 1, filter: 'drop-shadow(0 24px 48px rgba(0,0,0,0.6))' }} />
+            {(() => {
+              const capas = getPropostaSegmentosList(p).map(l => CAPA_POR_SEGMENTO[l]).filter((src): src is string => !!src)
+              if (capas.length === 0) {
+                return <img src="/proposta/livros-wemake.png" alt="Livros We Make" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} style={{ width: '85%', maxHeight: '85%', objectFit: 'contain', objectPosition: 'center', display: 'block', position: 'relative', zIndex: 1, filter: 'drop-shadow(0 24px 48px rgba(0,0,0,0.6))' }} />
+              }
+              const meio = (capas.length - 1) / 2
+              return (
+                <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '88%', height: '78%' }}>
+                  {capas.map((src, i) => {
+                    const offset = i - meio
+                    return (
+                      <img
+                        key={src} src={src} alt="Capa do Livro We Make"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                        style={{
+                          width: capas.length === 1 ? '62%' : `${Math.max(38, 58 - capas.length * 4)}%`,
+                          borderRadius: 10, objectFit: 'cover', aspectRatio: '3 / 4',
+                          boxShadow: '0 24px 48px rgba(0,0,0,0.55)', border: '1px solid rgba(255,255,255,0.12)',
+                          marginLeft: i === 0 ? 0 : `-${Math.max(6, 14 - capas.length)}%`,
+                          transform: `rotate(${offset * 6}deg) translateY(${Math.abs(offset) * 10}px)`,
+                          position: 'relative', zIndex: 10 - Math.abs(offset),
+                        }}
+                      />
+                    )
+                  })}
+                </div>
+              )
+            })()}
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(11,31,68,0.5) 0%, transparent 60%)' }} />
           </div>
         </section>
