@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { SERIES_CONTRATO } from '@/lib/contratos'
-import { atualizarQtdSerie, atualizarLivroImpresso, adicionarEscolaManual } from './actions'
+import { atualizarQtdSerie, atualizarLivroImpresso, adicionarEscolaManual, criarEscolaVeterana, atualizarEstadoEscola } from './actions'
 
 export interface EscolaLinha {
   escolaId: string
@@ -61,10 +61,45 @@ function CelulaEditavel({ valor, onSalvar }: { valor: number; onSalvar: (novo: n
   )
 }
 
+function EstadoEditavel({ escolaId, uf }: { escolaId: string; uf: string | null }) {
+  const router = useRouter()
+  const [texto, setTexto] = useState(uf ?? '')
+  const [pending, startTransition] = useTransition()
+
+  function commit() {
+    const final = texto.trim().toUpperCase().slice(0, 2)
+    setTexto(final)
+    if (final !== (uf ?? '')) {
+      startTransition(() => {
+        atualizarEstadoEscola(escolaId, final || null).then(res => { if (res.success) router.refresh() })
+      })
+    }
+  }
+
+  return (
+    <input
+      value={texto}
+      onChange={e => setTexto(e.target.value)}
+      onBlur={commit}
+      onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
+      placeholder="UF"
+      maxLength={2}
+      style={{
+        width: 34, marginLeft: 6, padding: '.1rem .2rem', textAlign: 'center', textTransform: 'uppercase',
+        borderRadius: 5, border: '1.5px solid #e2e8f0', fontSize: '.68rem', fontWeight: 600,
+        color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)',
+        background: pending ? '#fef9c3' : 'transparent',
+      }}
+    />
+  )
+}
+
 export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, livroColunaExiste }: Props) {
   const router = useRouter()
   const [buscaAdicionar, setBuscaAdicionar] = useState('')
+  const [novaEstado, setNovaEstado] = useState('')
   const [adicionando, startAdicionando] = useTransition()
+  const [criando, startCriando] = useTransition()
 
   const totaisColuna = useMemo(() => {
     const acc: Record<string, number> = {}
@@ -95,6 +130,15 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
     })
   }
 
+  function criarNova() {
+    const nome = buscaAdicionar.trim()
+    if (nome.length < 2) return
+    startCriando(async () => {
+      const res = await criarEscolaVeterana(nome, novaEstado || null)
+      if (res.success) { setBuscaAdicionar(''); setNovaEstado(''); router.refresh() }
+    })
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <style>{`
@@ -109,14 +153,36 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
           + Adicionar escola parceira à lista
         </div>
         <div style={{ fontSize: '.68rem', color: '#94a3b8', marginBottom: '.5rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
-          Escolas que chegam à fase de minuta entram aqui automaticamente. Para escolas veteranas que já são parceiras fora do funil, adicione manualmente.
+          Escolas que chegam à fase de minuta entram aqui automaticamente. Para escolas veteranas que já são parceiras fora do funil, busque e adicione — se não existir ainda no cadastro, cadastre uma nova direto por aqui.
         </div>
-        <input
-          value={buscaAdicionar}
-          onChange={e => setBuscaAdicionar(e.target.value)}
-          placeholder="Buscar escola pelo nome..."
-          style={{ width: '100%', maxWidth: 360, padding: '.5rem .7rem', borderRadius: 8, border: '1.5px solid #e2e8f0', fontSize: '.8rem', boxSizing: 'border-box' }}
-        />
+        <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
+          <input
+            value={buscaAdicionar}
+            onChange={e => setBuscaAdicionar(e.target.value)}
+            placeholder="Buscar escola pelo nome..."
+            style={{ flex: '1 1 260px', maxWidth: 360, padding: '.5rem .7rem', borderRadius: 8, border: '1.5px solid #e2e8f0', fontSize: '.8rem', boxSizing: 'border-box' }}
+          />
+          {buscaAdicionar.trim().length >= 2 && candidatos.length === 0 && (
+            <>
+              <input
+                value={novaEstado}
+                onChange={e => setNovaEstado(e.target.value.toUpperCase().slice(0, 2))}
+                placeholder="UF"
+                maxLength={2}
+                style={{ width: 56, padding: '.5rem .4rem', textAlign: 'center', textTransform: 'uppercase', borderRadius: 8, border: '1.5px solid #e2e8f0', fontSize: '.8rem', boxSizing: 'border-box' }}
+              />
+              <button
+                onClick={criarNova} disabled={criando}
+                style={{
+                  padding: '.5rem .9rem', borderRadius: 8, border: 'none', cursor: criando ? 'wait' : 'pointer',
+                  background: '#4A7FDB', color: '#fff', fontSize: '.76rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
+                }}
+              >
+                {criando ? 'Cadastrando...' : `+ Cadastrar "${buscaAdicionar.trim()}"`}
+              </button>
+            </>
+          )}
+        </div>
         {candidatos.length > 0 && (
           <div style={{
             position: 'absolute', zIndex: 10, marginTop: '.3rem', width: '100%', maxWidth: 360,
@@ -169,8 +235,10 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
               {linhasIniciais.map(l => (
                 <tr key={l.escolaId}>
                   <td style={{ ...td, textAlign: 'left', fontSize: '.78rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', position: 'sticky', left: 0, background: '#fff', whiteSpace: 'nowrap' }}>
-                    {l.nome}
-                    {l.uf && <span style={{ color: '#94a3b8', fontWeight: 500 }}> · {l.uf}</span>}
+                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                      {l.nome}
+                      <EstadoEditavel escolaId={l.escolaId} uf={l.uf} />
+                    </span>
                   </td>
                   {SERIES_CONTRATO.map(s => (
                     <td key={s.campo} style={tdSerie}>

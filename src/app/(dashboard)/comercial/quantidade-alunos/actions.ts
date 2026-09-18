@@ -68,3 +68,34 @@ export async function adicionarEscolaManual(escolaId: string): Promise<ActionRes
   revalidarTudo(escolaId)
   return { success: true }
 }
+
+/**
+ * Cadastra uma escola nova do zero (não existe em `escolas` ainda) e já
+ * adiciona ela à lista da tela, marcada como parceira assinada.
+ */
+export async function criarEscolaVeterana(nome: string, estado: string | null): Promise<ActionResult & { escolaId?: string }> {
+  const nomeLimpo = nome.trim()
+  if (nomeLimpo.length < 2) return { success: false, error: 'Nome inválido' }
+  const estadoLimpo = estado?.trim().toUpperCase().slice(0, 2) || null
+
+  const admin = createAdminClient()
+  const { data: novaEscola, error: errEscola } = await admin
+    .from('escolas').insert({ nome: nomeLimpo, estado: estadoLimpo, ativa: true }).select('id').single()
+  if (errEscola) return { success: false, error: errEscola.message }
+
+  const { error } = await admin.from('contratos').insert({ escola_id: novaEscola.id, contrato_assinado: true })
+  if (error) return { success: false, error: error.message }
+
+  revalidarTudo(novaEscola.id)
+  return { success: true, escolaId: novaEscola.id }
+}
+
+/** Atualiza o estado (UF) de uma escola — editável direto na grade. */
+export async function atualizarEstadoEscola(escolaId: string, estado: string | null): Promise<ActionResult> {
+  const estadoLimpo = estado?.trim().toUpperCase().slice(0, 2) || null
+  const admin = createAdminClient()
+  const { error } = await admin.from('escolas').update({ estado: estadoLimpo }).eq('id', escolaId)
+  if (error) return { success: false, error: error.message }
+  revalidarTudo(escolaId)
+  return { success: true }
+}
