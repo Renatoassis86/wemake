@@ -17,6 +17,10 @@ export interface EscolaLinha {
   livroImpresso: boolean
   veterana: boolean
   total: number
+  // true quando o Total vem de outro lugar do sistema (alunos_historico ou
+  // cadastro básico) porque ninguém preencheu o detalhamento por série ainda
+  // — mostra um aviso pra não confundir com "as células deviam somar isso".
+  totalSemDetalhe: boolean
   qtds: Record<string, number>
   livroQtds: Record<string, number>
 }
@@ -253,7 +257,12 @@ function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste,
                     <CelulaEditavel valor={l.qtds[s.campo] || 0} onSalvar={v => salvarCampo(l.escolaId, s.campo, v)} />
                   </td>
                 ))}
-                <td style={{ ...td, fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)', color: corAccent }}>{l.total}</td>
+                <td style={{ ...td, fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)', color: corAccent }}>
+                  {l.total}
+                  {l.totalSemDetalhe && l.total > 0 && (
+                    <span title="Total vem do cadastro geral da escola — ninguém preencheu o detalhamento por série ainda" style={{ marginLeft: 3, color: '#f59e0b', cursor: 'help' }}>⚠</span>
+                  )}
+                </td>
                 <td style={td}>
                   <CheckboxLivro escolaId={l.escolaId} checked={l.livroImpresso} disabled={!livroColunaExiste} />
                 </td>
