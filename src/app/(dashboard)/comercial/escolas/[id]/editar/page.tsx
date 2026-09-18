@@ -21,6 +21,34 @@ const inputStyle: React.CSSProperties = {
   boxSizing: 'border-box',
 }
 
+const ICON_PROPS = { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
+
+const SECTION_ICONS: Record<string, React.ReactNode> = {
+  identificacao: <svg {...ICON_PROPS}><path d="M3 21h18" /><path d="M5 21V7l8-4v18" /><path d="M19 21V11l-6-4" /><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01" /></svg>,
+  endereco: <svg {...ICON_PROPS}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>,
+  contato: <svg {...ICON_PROPS}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z" /></svg>,
+  alunos: <svg {...ICON_PROPS}><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>,
+  gestao: <svg {...ICON_PROPS}><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></svg>,
+}
+
+function SectionHeader({ icon, title, hint }: { icon: keyof typeof SECTION_ICONS; title: string; hint?: string }) {
+  return (
+    <div className="card-header" style={{ padding: '1.1rem 1.4rem', gap: '.75rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '.7rem' }}>
+        <div style={{
+          width: 34, height: 34, borderRadius: 9, flexShrink: 0,
+          background: 'linear-gradient(135deg, rgba(74,127,219,.12), rgba(74,127,219,.06))',
+          color: '#4A7FDB', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          {SECTION_ICONS[icon]}
+        </div>
+        <span className="card-title" style={{ fontSize: '1.15rem' }}>{title}</span>
+      </div>
+      {hint && <span style={{ fontSize: '.7rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>{hint}</span>}
+    </div>
+  )
+}
+
 function TurmaField({ name, label, value }: { name: string; label: string; value: number }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '.35rem' }}>
@@ -51,23 +79,23 @@ export default async function EscolaEditar({ params }: Props) {
 
   return (
     <div>
-      <PageHeader title={`Editar: ${e.nome}`} />
-      <div className="p-6 mp-page-padding-x" style={{ maxWidth: 1400, margin: '0 auto', boxSizing: 'border-box' }}>
-        <div className="breadcrumb mb-4">
-          <Link href="/comercial/escolas">Escolas</Link>
-          <span className="breadcrumb-sep">/</span>
-          <Link href={`/comercial/escolas/${id}`}>{e.nome}</Link>
-          <span className="breadcrumb-sep">/</span>
-          <span className="breadcrumb-current">Editar</span>
-        </div>
-
-        <form action={upsertEscola}>
+      <PageHeader
+        title={`Editar: ${e.nome}`}
+        subtitle="Dados cadastrais da escola parceira"
+        breadcrumbs={[
+          { label: 'Escolas', href: '/comercial/escolas' },
+          { label: e.nome, href: `/comercial/escolas/${id}` },
+          { label: 'Editar' },
+        ]}
+      />
+      <div className="p-6 mp-page-padding-x" style={{ maxWidth: 1400, margin: '0 auto', boxSizing: 'border-box', paddingTop: '2rem', paddingBottom: '2rem' }}>
+        <form action={upsertEscola} style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
           <input type="hidden" name="id" value={id} />
 
-          <div className="card mb-4">
-            <div className="card-header"><span className="card-title">Identificação</span></div>
-            <div className="card-body">
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+          <div className="card">
+            <SectionHeader icon="identificacao" title="Identificação" />
+            <div className="card-body" style={{ padding: '1.6rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem' }}>
                 <div>
                   <label className="form-label">Nome da Escola *</label>
                   <input name="nome" className="form-control" defaultValue={e.nome} required />
@@ -87,10 +115,10 @@ export default async function EscolaEditar({ params }: Props) {
             </div>
           </div>
 
-          <div className="card mb-4">
-            <div className="card-header"><span className="card-title">Endereço</span></div>
-            <div className="card-body">
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+          <div className="card">
+            <SectionHeader icon="endereco" title="Endereço" />
+            <div className="card-body" style={{ padding: '1.6rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem' }}>
                 <div style={{ gridColumn: 'span 2' }}>
                   <label className="form-label">Rua</label>
                   <input name="rua" className="form-control" defaultValue={e.rua ?? ''} />
@@ -123,10 +151,10 @@ export default async function EscolaEditar({ params }: Props) {
             </div>
           </div>
 
-          <div className="card mb-4">
-            <div className="card-header"><span className="card-title">Contato</span></div>
-            <div className="card-body">
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+          <div className="card">
+            <SectionHeader icon="contato" title="Contato" />
+            <div className="card-body" style={{ padding: '1.6rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem' }}>
                 <div><label className="form-label">Telefone</label><input name="telefone" className="form-control" defaultValue={e.telefone ?? ''} /></div>
                 <div><label className="form-label">E-mail</label><input name="email" type="email" className="form-control" defaultValue={e.email ?? ''} /></div>
                 <div><label className="form-label">Site</label><input name="site" className="form-control" defaultValue={e.site ?? ''} /></div>
@@ -143,9 +171,9 @@ export default async function EscolaEditar({ params }: Props) {
             </div>
           </div>
 
-          <div className="card mb-4">
-            <div className="card-header"><span className="card-title">Quantidade de Alunos por Segmento</span></div>
-            <div className="card-body">
+          <div className="card">
+            <SectionHeader icon="alunos" title="Quantidade de Alunos por Segmento" hint="Total é opcional — some sozinho se deixado em branco" />
+            <div className="card-body" style={{ padding: '1.6rem' }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
                 
                 {/* Infantil */}
@@ -238,10 +266,10 @@ export default async function EscolaEditar({ params }: Props) {
             </div>
           </div>
 
-          <div className="card mb-6">
-            <div className="card-header"><span className="card-title">Gestão Comercial</span></div>
-            <div className="card-body">
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+          <div className="card">
+            <SectionHeader icon="gestao" title="Gestão Comercial" />
+            <div className="card-body" style={{ padding: '1.6rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem' }}>
                 <div>
                   <label className="form-label">Origem do Lead</label>
                   <select name="origem_lead" className="form-control" defaultValue={e.origem_lead ?? ''}>
@@ -257,16 +285,24 @@ export default async function EscolaEditar({ params }: Props) {
                   </select>
                 </div>
               </div>
-              <div style={{ marginTop: '1rem' }}>
+              <div style={{ marginTop: '1.25rem' }}>
                 <label className="form-label">Observações</label>
                 <textarea name="observacoes" className="form-control" rows={3} defaultValue={e.observacoes ?? ''} />
               </div>
             </div>
           </div>
 
-          <div className="mp-form-actions" style={{ display: 'flex', gap: '.75rem' }}>
-            <button type="submit" className="btn btn-primary">Salvar Alterações</button>
+          <div
+            className="mp-form-actions"
+            style={{
+              display: 'flex', gap: '.75rem', alignItems: 'center', justifyContent: 'flex-end',
+              padding: '1.1rem 1.4rem', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12,
+              boxShadow: '0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04)',
+              position: 'sticky', bottom: '1rem', zIndex: 5,
+            }}
+          >
             <Link href={`/comercial/escolas/${id}`} className="btn btn-ghost">Cancelar</Link>
+            <button type="submit" className="btn btn-primary" style={{ padding: '.65rem 1.5rem' }}>Salvar Alterações</button>
           </div>
         </form>
       </div>

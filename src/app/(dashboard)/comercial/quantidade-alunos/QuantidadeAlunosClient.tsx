@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, useTransition } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { SERIES_CONTRATO } from '@/lib/contratos'
@@ -103,6 +103,37 @@ function NomeEditavel({ escolaId, nome }: { escolaId: string; nome: string }) {
   )
 }
 
+function CheckboxLivro({ escolaId, checked, disabled }: { escolaId: string; checked: boolean; disabled: boolean }) {
+  const router = useRouter()
+  // Estado local otimista — o clique precisa responder na hora, sem esperar
+  // o round-trip do servidor. Some mismatches com a prop `checked` (vinda de
+  // outro refresh em andamento) são resolvidos assim que o refresh chega.
+  const [local, setLocal] = useState(checked)
+  const [pending, startTransition] = useTransition()
+
+  useEffect(() => { if (!pending) setLocal(checked) }, [checked, pending])
+
+  function onChange() {
+    if (disabled || pending) return
+    const novoValor = !local
+    setLocal(novoValor)
+    startTransition(() => {
+      atualizarLivroImpresso(escolaId, novoValor).then(res => {
+        if (res.success) router.refresh()
+        else { setLocal(!novoValor); alert(res.error) }
+      })
+    })
+  }
+
+  return (
+    <input
+      type="checkbox" checked={local} disabled={disabled}
+      onChange={onChange}
+      style={{ width: 16, height: 16, cursor: disabled ? 'not-allowed' : 'pointer', opacity: pending ? .6 : 1 }}
+    />
+  )
+}
+
 function EstadoEditavel({ escolaId, uf }: { escolaId: string; uf: string | null }) {
   const router = useRouter()
   const [texto, setTexto] = useState(uf ?? '')
@@ -194,10 +225,6 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
 
   function salvarCampoLivro(escolaId: string, campo: string, valor: number) {
     atualizarQtdLivroSerie(escolaId, campo, valor).then(res => { if (res.success) router.refresh() })
-  }
-
-  function toggleLivro(escolaId: string, valorAtual: boolean) {
-    atualizarLivroImpresso(escolaId, !valorAtual).then(res => { if (res.success) router.refresh() })
   }
 
   function adicionar(escolaId: string) {
@@ -350,11 +377,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                   ))}
                   <td style={{ ...td, fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#4A7FDB' }}>{l.total}</td>
                   <td style={td}>
-                    <input
-                      type="checkbox" checked={l.livroImpresso} disabled={!livroColunaExiste}
-                      onChange={() => toggleLivro(l.escolaId, l.livroImpresso)}
-                      style={{ width: 16, height: 16, cursor: livroColunaExiste ? 'pointer' : 'not-allowed' }}
-                    />
+                    <CheckboxLivro escolaId={l.escolaId} checked={l.livroImpresso} disabled={!livroColunaExiste} />
                   </td>
                   <td style={td}>
                     {l.veterana && (

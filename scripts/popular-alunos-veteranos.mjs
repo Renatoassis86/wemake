@@ -68,12 +68,21 @@ const CAMPOS_SEGUROS = ['infantil4_qtd', 'infantil5_qtd', 'fund1_ano1_qtd', 'fun
 
 async function upsertContrato(escolaId, vals, temLivro) {
   const { data: existing } = await supabase.from('contratos').select('id').eq('escola_id', escolaId).maybeSingle()
+
+  // IMPORTANTE: se a escola já tem uma linha em `contratos`, essa função NUNCA
+  // mais reescreve vals/livro_impresso/livro_qtds — só isso já bastou pra
+  // apagar marcações manuais feitas na tela (Livro, quantidades) numa reexecução
+  // anterior. Rodar de novo só serve pra garantir marcado_veterana=true; pra
+  // reimportar números da planilha de verdade, apague a linha antes.
+  if (existing) {
+    const { error } = await supabase.from('contratos').update({ marcado_veterana: true }).eq('id', existing.id)
+    return { error, jaExistia: true }
+  }
+
   const payloadBase = { ...vals, contrato_assinado: true, marcado_veterana: true }
 
   async function tentar(payload) {
-    return existing
-      ? await supabase.from('contratos').update(payload).eq('id', existing.id)
-      : await supabase.from('contratos').insert({ escola_id: escolaId, ...payload })
+    return await supabase.from('contratos').insert({ escola_id: escolaId, ...payload })
   }
 
   let r = await tentar({ ...payloadBase, livro_impresso: temLivro })
@@ -87,7 +96,7 @@ async function upsertContrato(escolaId, vals, temLivro) {
   if (r.error && /fund2_ano\d_qtd|medio_\ds_qtd/.test(r.error.message)) {
     // fund2/medio ainda não existem — grava só infantil+fund1 por enquanto
     // (rodar de novo depois de add_fund2_medio_contratos.sql pra completar)
-    const seguro = { contrato_assinado: true }
+    const seguro = { contrato_assinado: true, marcado_veterana: true }
     for (const k of CAMPOS_SEGUROS) seguro[k] = vals[k] ?? 0
     r = await tentar(seguro)
     if (!r.error) r.parcial = true
