@@ -5,6 +5,13 @@ import { QuantidadeAlunosClient, type EscolaLinha } from './QuantidadeAlunosClie
 
 export const dynamic = 'force-dynamic'
 
+const CAMPOS_SERIE = [
+  'infantil2_qtd', 'infantil3_qtd', 'infantil4_qtd', 'infantil5_qtd',
+  'fund1_ano1_qtd', 'fund1_ano2_qtd', 'fund1_ano3_qtd', 'fund1_ano4_qtd', 'fund1_ano5_qtd',
+  'fund2_ano6_qtd', 'fund2_ano7_qtd', 'fund2_ano8_qtd', 'fund2_ano9_qtd',
+  'medio_1s_qtd', 'medio_2s_qtd', 'medio_3s_qtd',
+]
+
 export default async function QuantidadeAlunosPage() {
   const admin = createAdminClient()
 
@@ -40,12 +47,11 @@ export default async function QuantidadeAlunosPage() {
         // da lista se estiver marcada como veterana.
         veterana: !!c.marcado_veterana,
         total: calcTotalAlunosContrato(c),
-        qtds: Object.fromEntries(
-          ['infantil2_qtd', 'infantil3_qtd', 'infantil4_qtd', 'infantil5_qtd',
-            'fund1_ano1_qtd', 'fund1_ano2_qtd', 'fund1_ano3_qtd', 'fund1_ano4_qtd', 'fund1_ano5_qtd',
-            'fund2_ano6_qtd', 'fund2_ano7_qtd', 'fund2_ano8_qtd', 'fund2_ano9_qtd',
-            'medio_1s_qtd', 'medio_2s_qtd', 'medio_3s_qtd'].map(campo => [campo, c[campo] ?? 0]),
-        ),
+        qtds: Object.fromEntries(CAMPOS_SERIE.map(campo => [campo, c[campo] ?? 0])),
+        // Fallback pro valor do contrato quando livro_qtds ainda não tem essa
+        // série salva (ex.: escola marcada com a tag Livro antes dessa
+        // funcionalidade existir) — evita mostrar 0 indevido.
+        livroQtds: Object.fromEntries(CAMPOS_SERIE.map(campo => [campo, c.livro_qtds?.[campo] ?? c[campo] ?? 0])),
       }
     })
     .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
@@ -59,6 +65,7 @@ export default async function QuantidadeAlunosPage() {
 
   const livroColunaExiste = (contratos ?? []).length === 0 || contratos!.some(c => 'livro_impresso' in c)
   const veteranaColunaExiste = (contratos ?? []).length === 0 || contratos!.some(c => 'marcado_veterana' in c)
+  const livroQtdsColunaExiste = (contratos ?? []).length === 0 || contratos!.some(c => 'livro_qtds' in c)
 
   return (
     <div>
@@ -72,6 +79,7 @@ export default async function QuantidadeAlunosPage() {
           escolasDisponiveis={escolasDisponiveis}
           livroColunaExiste={livroColunaExiste}
           veteranaColunaExiste={veteranaColunaExiste}
+          livroQtdsColunaExiste={livroQtdsColunaExiste}
         />
       </div>
     </div>

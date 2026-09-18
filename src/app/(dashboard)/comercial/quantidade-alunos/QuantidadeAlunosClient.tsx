@@ -4,7 +4,10 @@ import { useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { SERIES_CONTRATO } from '@/lib/contratos'
-import { atualizarQtdSerie, atualizarLivroImpresso, adicionarEscolaManual, criarEscolaVeterana, atualizarEstadoEscola, removerEscolaDaLista, atualizarMarcadoVeterana } from './actions'
+import {
+  atualizarQtdSerie, atualizarLivroImpresso, adicionarEscolaManual, criarEscolaVeterana,
+  atualizarEstadoEscola, removerEscolaDaLista, atualizarMarcadoVeterana, atualizarQtdLivroSerie, atualizarNomeEscola,
+} from './actions'
 
 export interface EscolaLinha {
   escolaId: string
@@ -15,6 +18,7 @@ export interface EscolaLinha {
   veterana: boolean
   total: number
   qtds: Record<string, number>
+  livroQtds: Record<string, number>
 }
 
 interface EscolaDisponivel { id: string; nome: string; uf: string | null }
@@ -24,6 +28,7 @@ interface Props {
   escolasDisponiveis: EscolaDisponivel[]
   livroColunaExiste: boolean
   veteranaColunaExiste: boolean
+  livroQtdsColunaExiste: boolean
 }
 
 const th: React.CSSProperties = {
@@ -60,6 +65,40 @@ function CelulaEditavel({ valor, onSalvar }: { valor: number; onSalvar: (novo: n
         border: '1.5px solid #e2e8f0', fontSize: '.78rem', fontFamily: 'var(--font-inter,sans-serif)',
         background: pending ? '#fef9c3' : '#fff', opacity: pending ? .7 : 1,
       }}
+    />
+  )
+}
+
+function NomeEditavel({ escolaId, nome }: { escolaId: string; nome: string }) {
+  const router = useRouter()
+  const [texto, setTexto] = useState(nome)
+  const [pending, startTransition] = useTransition()
+
+  function commit() {
+    const final = texto.trim()
+    if (final.length < 2 || final === nome) { setTexto(nome); return }
+    startTransition(() => {
+      atualizarNomeEscola(escolaId, final).then(res => {
+        if (res.success) router.refresh()
+        else { alert(res.error); setTexto(nome) }
+      })
+    })
+  }
+
+  return (
+    <input
+      value={texto}
+      onChange={e => setTexto(e.target.value)}
+      onBlur={commit}
+      onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
+      title="Corrigir nome da escola"
+      style={{
+        minWidth: 140, width: `${Math.max(texto.length, 10)}ch`, padding: '.15rem .3rem', borderRadius: 5,
+        border: '1.5px solid transparent', fontSize: '.78rem', fontWeight: 700, color: '#0f172a',
+        fontFamily: 'var(--font-inter,sans-serif)', background: pending ? '#fef9c3' : 'transparent',
+      }}
+      onFocus={e => { e.currentTarget.style.border = '1.5px solid #e2e8f0'; e.currentTarget.style.background = '#fff' }}
+      onMouseLeave={e => { if (document.activeElement !== e.currentTarget) { e.currentTarget.style.border = '1.5px solid transparent'; e.currentTarget.style.background = pending ? '#fef9c3' : 'transparent' } }}
     />
   )
 }
@@ -126,7 +165,7 @@ function TagVeterana({ escolaId, veterana, editavel }: { escolaId: string; veter
   )
 }
 
-export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, livroColunaExiste, veteranaColunaExiste }: Props) {
+export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, livroColunaExiste, veteranaColunaExiste, livroQtdsColunaExiste }: Props) {
   const router = useRouter()
   const [buscaAdicionar, setBuscaAdicionar] = useState('')
   const [novaEstado, setNovaEstado] = useState('')
@@ -151,6 +190,10 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
 
   function salvarCampo(escolaId: string, campo: string, valor: number) {
     atualizarQtdSerie(escolaId, campo, valor).then(res => { if (res.success) router.refresh() })
+  }
+
+  function salvarCampoLivro(escolaId: string, campo: string, valor: number) {
+    atualizarQtdLivroSerie(escolaId, campo, valor).then(res => { if (res.success) router.refresh() })
   }
 
   function toggleLivro(escolaId: string, valorAtual: boolean) {
@@ -270,6 +313,11 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
             A tag Veterana/Nova ainda não é editável — rode a migração <code>add_contrato_marcado_veterana.sql</code> no Supabase pra habilitá-la.
           </div>
         )}
+        {!livroQtdsColunaExiste && (
+          <div style={{ padding: '.6rem 1.25rem', background: '#fffbeb', borderBottom: '1px solid #fde68a', fontSize: '.72rem', color: '#92400e', fontFamily: 'var(--font-inter,sans-serif)' }}>
+            A tabela da gráfica ainda não é editável de forma independente — rode a migração <code>add_contrato_livro_qtds.sql</code> no Supabase pra habilitá-la.
+          </div>
+        )}
 
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 1100 }}>
@@ -287,8 +335,9 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                 <tr key={l.escolaId}>
                   <td style={{ ...td, textAlign: 'left', fontSize: '.78rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', position: 'sticky', left: 0, background: '#fff', whiteSpace: 'nowrap' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                      <Link href={`/comercial/escolas/${l.escolaId}/editar`} style={{ color: '#0f172a', textDecoration: 'none' }} title="Editar dados cadastrais da escola">
-                        {l.nome}
+                      <NomeEditavel escolaId={l.escolaId} nome={l.nome} />
+                      <Link href={`/comercial/escolas/${l.escolaId}/editar`} title="Abrir cadastro completo da escola" style={{ color: '#94a3b8', display: 'inline-flex', flexShrink: 0 }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
                       </Link>
                       <EstadoEditavel escolaId={l.escolaId} uf={l.uf} />
                       <TagVeterana escolaId={l.escolaId} veterana={l.veterana} editavel={veteranaColunaExiste} />
@@ -352,7 +401,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
             Pedido pra gráfica — distribuição de livros por série
           </div>
           <div style={{ fontSize: '.68rem', color: '#94a3b8', marginTop: '.2rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
-            Somente escolas marcadas com a tag "Livro" acima.
+            Somente escolas marcadas com a tag "Livro" acima. Ajustes aqui são independentes do contrato — editar a tabela de cima sempre atualiza esses números, mas editar aqui não mexe no contrato.
           </div>
         </div>
         <div style={{ overflowX: 'auto' }}>
@@ -373,9 +422,15 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                     </Link>
                   </td>
                   {SERIES_CONTRATO.map(s => (
-                    <td key={s.campo} style={{ ...tdSerie, fontSize: '.78rem', color: '#334155' }}>{l.qtds[s.campo] || 0}</td>
+                    <td key={s.campo} style={tdSerie}>
+                      {livroQtdsColunaExiste
+                        ? <CelulaEditavel valor={l.livroQtds[s.campo] || 0} onSalvar={v => salvarCampoLivro(l.escolaId, s.campo, v)} />
+                        : (l.livroQtds[s.campo] || 0)}
+                    </td>
                   ))}
-                  <td style={{ ...td, fontWeight: 800, color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{l.total}</td>
+                  <td style={{ ...td, fontWeight: 800, color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                    {SERIES_CONTRATO.reduce((soma, s) => soma + (l.livroQtds[s.campo] || 0), 0)}
+                  </td>
                 </tr>
               ))}
               {escolasLivro.length === 0 && (
@@ -388,11 +443,11 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                   <td style={{ ...td, textAlign: 'left', fontWeight: 800, fontSize: '.72rem', color: '#64748b', position: 'sticky', left: 0, background: '#f8fafc' }}>Total por série</td>
                   {SERIES_CONTRATO.map(s => (
                     <td key={s.campo} style={{ ...tdSerie, fontWeight: 800, fontSize: '.78rem', color: '#0f172a', background: '#f8fafc' }}>
-                      {escolasLivro.reduce((soma, l) => soma + (l.qtds[s.campo] || 0), 0)}
+                      {escolasLivro.reduce((soma, l) => soma + (l.livroQtds[s.campo] || 0), 0)}
                     </td>
                   ))}
                   <td style={{ ...td, fontWeight: 800, color: '#4A7FDB', background: '#f8fafc' }}>
-                    {escolasLivro.reduce((soma, l) => soma + l.total, 0)}
+                    {escolasLivro.reduce((soma, l) => soma + SERIES_CONTRATO.reduce((s2, s) => s2 + (l.livroQtds[s.campo] || 0), 0), 0)}
                   </td>
                 </tr>
               </tfoot>
