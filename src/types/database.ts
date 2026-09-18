@@ -254,6 +254,9 @@ export interface Contrato {
   tempo_contrato: number
   valor_total: number
   valor_total_calculado: number
+  livro_impresso?: boolean
+  livro_qtds?: Record<string, number>
+  marcado_veterana?: boolean
   created_at: string
   updated_at: string
   escola?: Escola

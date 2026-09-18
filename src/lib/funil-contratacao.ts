@@ -217,6 +217,7 @@ export interface EscolaFunil {
   contrato_assinado: boolean
   contrato_arquivado: boolean
   declinou: boolean
+  marcado_veterana: boolean
   contrato_valor_total: number
   implantacao_status: 'nao_iniciada' | 'em_andamento' | 'concluida' | null
   implantacao_iniciada_em: string | null
@@ -470,6 +471,7 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
       contrato_assinado: !!contrato?.contrato_assinado,
       contrato_arquivado: !!contrato?.contrato_arquivado,
       declinou,
+      marcado_veterana: !!contrato?.marcado_veterana,
       contrato_valor_total: contrato ? calcValorTotalContrato(contrato) : 0,
       implantacao_status: contrato?.implantacao_status ?? null,
       implantacao_iniciada_em: contrato?.implantacao_iniciada_em ?? null,
@@ -483,18 +485,18 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
   })
 
   // Só entram no funil escolas com algum sinal comercial real: negociação,
-  // proposta, ou algum checklist do contrato preenchido. Ter uma linha em
-  // `contratos` sozinho NÃO conta — a tela "Quantidade de Alunos" cria essas
-  // linhas só pra guardar headcount de escolas veteranas (marcado_veterana),
-  // sem nenhum negócio em andamento; sem essa checagem elas vazavam pro
-  // funil de vendas como se fossem negócios reais (ex.: Legatum aparecendo
-  // "Contrato assinado" sem nunca ter sido marcado por ninguém).
+  // proposta, algum checklist do contrato preenchido, ou marcada como
+  // veterana (essas aparecem no quadro "Escolas Atendidas" — ver
+  // classificarQuadro em funil-contratacao/page.tsx — não como negócio ativo
+  // nos outros quadros). Ter uma linha em `contratos` sozinha sem nenhum
+  // desses sinais NÃO conta — a tela "Quantidade de Alunos" pode criar essas
+  // linhas só pra guardar headcount, sem nenhum negócio em andamento.
   const FASE_ORDER: FaseFunil[] = [
     'parceiro_ativo', 'implantacao', 'contrato_assinado', 'contrato_enviado',
     'minuta', 'proposta_enviada', 'negociacao',
   ]
   const linhas = linhasTodas
-    .filter(l => l.negociacao_id || l.proposta_id || (l.contrato_id && (
+    .filter(l => l.negociacao_id || l.proposta_id || l.marcado_veterana || (l.contrato_id && (
       l.formulario_enviado || l.formulario_recebido || l.proposta_enviada_manual ||
       l.minuta_enviada || l.retorno_minuta || l.minuta_atualizada ||
       l.contrato_enviado || l.contrato_assinado || l.contrato_arquivado
