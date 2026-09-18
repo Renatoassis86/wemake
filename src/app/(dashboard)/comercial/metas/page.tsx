@@ -6,6 +6,8 @@ import { ContadorRegressivo } from '@/components/metas/ContadorRegressivo'
 import { getFunilContratacao } from '@/lib/funil-contratacao'
 import { BarraProgresso, KpiCard } from '@/components/comercial/DashboardCharts'
 
+export const dynamic = 'force-dynamic'
+
 // ══════════════════════════════════════════════════
 // METAS — sprint até 31/08/2026
 // ══════════════════════════════════════════════════

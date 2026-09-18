@@ -3,6 +3,8 @@ import PageHeader from '@/components/layout/PageHeader'
 import { calcTotalAlunosContrato } from '@/lib/contratos'
 import { QuantidadeAlunosClient, type EscolaLinha } from './QuantidadeAlunosClient'
 
+export const dynamic = 'force-dynamic'
+
 export default async function QuantidadeAlunosPage() {
   const admin = createAdminClient()
 
