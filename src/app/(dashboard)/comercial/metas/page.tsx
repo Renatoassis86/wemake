@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { formatCurrency } from '@/lib/utils'
 import { ContadorRegressivo } from '@/components/metas/ContadorRegressivo'
 import { getFunilContratacao } from '@/lib/funil-contratacao'
-import { ALUNOS_ATUAIS } from '@/lib/metas'
 import { BarraProgresso, KpiCard } from '@/components/comercial/DashboardCharts'
 
 // ══════════════════════════════════════════════════
@@ -90,11 +89,16 @@ export default async function MetasPage() {
   // Funil de Contratação), para as duas páginas nunca mostrarem números
   // diferentes para a mesma coisa ──────────────────────────────────
 
-  // Reuniões únicas = escolas distintas (ativas) que tiveram ao menos 1 registro
-  const totalReunioes = funil.linhas.filter(l => l.reunioes_total > 0).length
+  // Reuniões = TODOS os registros de contato, sem deduplicar por escola — a
+  // mesma escola pode ter várias reuniões e cada uma conta.
+  const totalReunioes = registros.length
 
-  // Propostas enviadas ativas (não arquivadas) — 1 por escola (a mais recente)
-  const propostasEnviadas = funil.linhas.filter(l => l.proposta_id !== null).length
+  // Propostas enviadas — qualquer escola com proposta gerada pela Calculadora
+  // (proposta_id) OU marcada manualmente no checklist do contrato (envio por
+  // PDF/e-mail fora da Calculadora, ex.: leva antiga registrada só na planilha
+  // externa) — mesmo critério que promove a fase pra "Proposta Enviada" no
+  // Funil de Contratação.
+  const propostasEnviadas = funil.linhas.filter(l => l.proposta_id !== null || l.proposta_enviada_manual).length
   const valorPipelinePropostas = funil.kpis.valorPipelineTotal
 
   // Minutas contratuais enviadas — contagem cumulativa (independente de já ter
@@ -108,12 +112,24 @@ export default async function MetasPage() {
   // Escolas em minuta, aguardando assinatura (pipeline avançado)
   const qtdEscolasMinuta = funil.linhas.filter(l => l.minuta_enviada && !l.contrato_assinado).length
 
+  // Alunos rumo à meta — soma o porte de toda escola que já recebeu minuta OU
+  // contrato (assinado ou não): a partir da minuta o negócio está avançado o
+  // suficiente pra contar como comprometido rumo à meta de 4.000 alunos.
+  const alunosMeta = funil.linhas
+    .filter(l => l.minuta_enviada || l.contrato_enviado || l.contrato_assinado)
+    .reduce((soma, l) => soma + (l.alunos_cadastro || 0), 0)
+
+  // Alunos ativos hoje — soma só das escolas com contrato JÁ ASSINADO (parceiras
+  // de verdade, veteranas ou recém-assinadas) — cresce sozinho a cada novo
+  // contrato assinado, sem precisar de número manual.
+  const alunosAtivosHoje = escolasAssinadas.reduce((soma, l) => soma + (l.alunos_cadastro || 0), 0)
+
   // Percentuais
   const pctReunioes  = Math.round((totalReunioes    / METAS.reunioes_meta)      * 100)
   const pctPropostas = Math.round((propostasEnviadas / METAS.propostas_meta)    * 100)
   const pctMinutas   = Math.round((minutasEnviadas  / METAS.minutas_meta)       * 100)
   const pctEscolas   = Math.round((qtdEscolasNovas  / METAS.escolas_novas_meta) * 100)
-  const pctAlunos    = Math.round((ALUNOS_ATUAIS    / METAS.alunos_total_meta)  * 100)
+  const pctAlunos    = Math.round((alunosMeta       / METAS.alunos_total_meta)  * 100)
 
   // Registros recentes para timeline
   const registrosRecentes = registros?.slice(0, 8) ?? []
@@ -168,14 +184,14 @@ export default async function MetasPage() {
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '.8rem', flexWrap: 'wrap' }}>
                 <span style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '3.2rem', fontWeight: 800, color: '#fff', lineHeight: 1 }}>
-                  {ALUNOS_ATUAIS.toLocaleString('pt-BR')}
+                  {alunosMeta.toLocaleString('pt-BR')}
                 </span>
                 <span style={{ fontSize: '1rem', color: 'rgba(255,255,255,.55)', fontFamily: 'var(--font-inter,sans-serif)' }}>
                   / {METAS.alunos_total_meta.toLocaleString('pt-BR')} alunos
                 </span>
               </div>
               <div style={{ fontSize: '.72rem', color: 'rgba(255,255,255,.45)', marginTop: '.4rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                Número atualizado manualmente pelo time comercial
+                Soma automática das escolas com minuta ou contrato enviado — atualiza sozinho conforme o funil avança
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -195,7 +211,7 @@ export default async function MetasPage() {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '.5rem' }}>
               <span style={{ fontSize: '.68rem', color: 'rgba(255,255,255,.5)', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                Faltam <strong style={{ color: '#86efac' }}>{Math.max(0, METAS.alunos_total_meta - ALUNOS_ATUAIS).toLocaleString('pt-BR')}</strong> alunos para atingir a meta
+                Faltam <strong style={{ color: '#86efac' }}>{Math.max(0, METAS.alunos_total_meta - alunosMeta).toLocaleString('pt-BR')}</strong> alunos para atingir a meta
               </span>
               <span style={{ fontSize: '.68rem', color: 'rgba(255,255,255,.5)', fontFamily: 'var(--font-inter,sans-serif)' }}>Prazo: {METAS.prazo}</span>
             </div>
@@ -203,17 +219,17 @@ export default async function MetasPage() {
         </div>
 
         {/* ── KPIs — sprint até 31/08/2026 ──────────────────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1.1rem', marginBottom: '2rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1.1rem', marginBottom: '2rem' }}>
 
           <KpiCard
-            label="Reuniões com Escolas Únicas"
+            label="Reuniões Registradas"
             valor={totalReunioes}
             meta={`${METAS.reunioes_meta} até ${METAS.prazo}`}
             pct={pctReunioes}
             cor="#2563eb"
             bg="#eff6ff"
             border="#bfdbfe"
-            sub="escolas que receberam ao menos 1 contato registrado"
+            sub="todos os contatos registrados — a mesma escola pode contar mais de uma vez"
             href="/comercial/registros"
             icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
           />
@@ -243,6 +259,19 @@ export default async function MetasPage() {
             href="/comercial/contratos"
             icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="10" y2="11"/></svg>}
           />
+
+          <KpiCard
+            label="Contratos Assinados"
+            valor={qtdEscolasNovas}
+            meta={`${METAS.escolas_novas_meta} até ${METAS.prazo}`}
+            pct={pctEscolas}
+            cor="#16a34a"
+            bg="#f0fdf4"
+            border="#86efac"
+            sub={`${alunosAtivosHoje.toLocaleString('pt-BR')} alunos nessas escolas`}
+            href="/comercial/contratos"
+            icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"/></svg>}
+          />
         </div>
 
         {/* ── Funil de conversão do sprint ──────────────────── */}
@@ -257,7 +286,7 @@ export default async function MetasPage() {
           </div>
           <div style={{ padding: '1.5rem 1.75rem' }}>
             <FunilBarras etapas={[
-              { label: 'Reuniões com escolas únicas', valor: totalReunioes, cor: '#2563eb' },
+              { label: 'Reuniões registradas',        valor: totalReunioes, cor: '#2563eb' },
               { label: 'Propostas enviadas',          valor: propostasEnviadas, cor: '#b45309' },
               { label: 'Minutas contratuais enviadas', valor: minutasEnviadas, cor: '#7c3aed' },
               { label: 'Contratos assinados',          valor: qtdEscolasNovas, cor: '#16a34a' },
@@ -265,8 +294,8 @@ export default async function MetasPage() {
           </div>
         </div>
 
-        {/* ── Novas Escolas Parceiras — meta secundária ─────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.1rem', marginBottom: '2rem' }}>
+        {/* ── Novas Escolas Parceiras + Alunos Ativos — meta secundária ─────── */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.1rem', marginBottom: '2rem' }}>
           <KpiCard
             label="Novas Escolas Parceiras"
             valor={qtdEscolasNovas}
@@ -278,6 +307,16 @@ export default async function MetasPage() {
             sub={`Contratos assinados · ${qtdEscolasMinuta > 0 ? `+${qtdEscolasMinuta} em minuta (pipeline)` : 'nenhuma em minuta ainda'}`}
             href="/comercial/contratos"
             icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>}
+          />
+          <KpiCard
+            label="Alunos Ativos Hoje"
+            valor={alunosAtivosHoje}
+            cor="#16a34a"
+            bg="#f0fdf4"
+            border="#86efac"
+            sub="soma de todas as escolas com contrato assinado — veteranas + novas, cresce sozinho a cada contrato assinado"
+            href="/comercial/contratos"
+            icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
           />
         </div>
 
