@@ -47,58 +47,67 @@ const MATCHES_DIRETOS = [
   { planilha: 'Legatum Internation School (1/4)', escolaId: 'a76bfd16-43d0-4475-88ed-1a5264e0bbdd' },
 ]
 
-// escolas que não existem no banco ainda — criar novo cadastro mínimo
+// escolas criadas numa tentativa anterior (que falhou na gravação do
+// contrato porque fund2_ano6_qtd/medio_*_qtd ainda não existiam) — reusa os
+// ids em vez de criar duplicata. Ver scripts/match-planilha-alunos.mjs.
 const CRIAR_NOVAS = [
-  { planilha: 'Colégio Graciosa (ano 1/4)', nome: 'Colégio Graciosa' },
-  { planilha: 'Colégio Journey (ano 3/5)', nome: 'Colégio Journey' },
-  { planilha: 'Escola Cristã do Reino (2/4)', nome: 'Escola Cristã do Reino' },
-  { planilha: 'Escola Aprender e Viver (2/4)', nome: 'Escola Aprender e Viver' },
-  { planilha: 'Educar Londrina (2/4)', nome: 'Educar Londrina' },
-  { planilha: 'CESE (2/4)', nome: 'CESE' },
-  { planilha: 'CEA (2/4)', nome: 'CEA' },
-  { planilha: 'Sagrados corações (2/4)', nome: 'Sagrados Corações' },
-  { planilha: 'Colégio da Comunidade - Curuçá (1/4)', nome: 'Colégio da Comunidade - Curuçá' },
-  { planilha: 'Colégio da Comunidade - Carrão (1/4)', nome: 'Colégio da Comunidade - Carrão' },
+  { planilha: 'Colégio Graciosa (ano 1/4)', nome: 'Colégio Graciosa', escolaId: '3516fb61-ba62-41a6-9ee8-47b15ee1cd5c' },
+  { planilha: 'Colégio Journey (ano 3/5)', nome: 'Colégio Journey', escolaId: 'a677e7ba-52d1-41b0-b276-79b7042bd05a' },
+  { planilha: 'Escola Cristã do Reino (2/4)', nome: 'Escola Cristã do Reino', escolaId: 'bdf7fe81-c373-4be9-9de3-4e048fa80e80' },
+  { planilha: 'Escola Aprender e Viver (2/4)', nome: 'Escola Aprender e Viver', escolaId: 'd0c20506-e7ec-4fc7-8921-bc9e522996e1' },
+  { planilha: 'Educar Londrina (2/4)', nome: 'Educar Londrina', escolaId: '5c70228b-0226-4bbb-8bc6-9facf2202d75' },
+  { planilha: 'CESE (2/4)', nome: 'CESE', escolaId: '60e2c3bf-60a9-4a38-ae3c-c519dcdd3c4d' },
+  { planilha: 'CEA (2/4)', nome: 'CEA', escolaId: '2bc24e2d-4efc-4128-974f-fb514207c627' },
+  { planilha: 'Sagrados corações (2/4)', nome: 'Sagrados Corações', escolaId: 'd39e287f-b450-4846-a766-89b2641bf5e9' },
+  { planilha: 'Colégio da Comunidade - Curuçá (1/4)', nome: 'Colégio da Comunidade - Curuçá', escolaId: 'f635f06e-0783-450b-9e54-b71d8f4e5e08' },
+  { planilha: 'Colégio da Comunidade - Carrão (1/4)', nome: 'Colégio da Comunidade - Carrão', escolaId: 'bba3e0db-379d-47c8-a151-838732c976b9' },
 ]
+
+// Colunas que já existem hoje no banco — sempre graváveis.
+const CAMPOS_SEGUROS = ['infantil4_qtd', 'infantil5_qtd', 'fund1_ano1_qtd', 'fund1_ano2_qtd', 'fund1_ano3_qtd', 'fund1_ano4_qtd', 'fund1_ano5_qtd']
 
 async function upsertContrato(escolaId, vals, temLivro) {
   const { data: existing } = await supabase.from('contratos').select('id').eq('escola_id', escolaId).maybeSingle()
   const payloadBase = { ...vals, contrato_assinado: true }
 
-  let error
-  {
-    const r = existing
-      ? await supabase.from('contratos').update({ ...payloadBase, livro_impresso: temLivro }).eq('id', existing.id)
-      : await supabase.from('contratos').insert({ escola_id: escolaId, ...payloadBase, livro_impresso: temLivro })
-    error = r.error
+  async function tentar(payload) {
+    return existing
+      ? await supabase.from('contratos').update(payload).eq('id', existing.id)
+      : await supabase.from('contratos').insert({ escola_id: escolaId, ...payload })
   }
-  if (error && /livro_impresso/.test(error.message)) {
-    // coluna ainda não existe — grava sem ela
-    const r2 = existing
-      ? await supabase.from('contratos').update(payloadBase).eq('id', existing.id)
-      : await supabase.from('contratos').insert({ escola_id: escolaId, ...payloadBase })
-    error = r2.error
+
+  let r = await tentar({ ...payloadBase, livro_impresso: temLivro })
+  if (r.error && /livro_impresso/.test(r.error.message)) {
+    r = await tentar(payloadBase) // coluna livro_impresso ainda não existe — grava sem ela
   }
-  return error
+  if (r.error && /fund2_ano\d_qtd|medio_\ds_qtd/.test(r.error.message)) {
+    // fund2/medio ainda não existem — grava só infantil+fund1 por enquanto
+    // (rodar de novo depois de add_fund2_medio_contratos.sql pra completar)
+    const seguro = { contrato_assinado: true }
+    for (const k of CAMPOS_SEGUROS) seguro[k] = vals[k] ?? 0
+    r = await tentar(seguro)
+    if (!r.error) r.parcial = true
+  }
+  return r
 }
 
-let ok = 0, falhas = []
+let ok = 0, parciais = 0, falhas = []
 
 for (const m of MATCHES_DIRETOS) {
   const { vals, temLivro } = linhaPara(m.planilha)
-  const error = await upsertContrato(m.escolaId, vals, temLivro)
-  if (error) falhas.push(`${m.planilha}: ${error.message}`)
+  const r = await upsertContrato(m.escolaId, vals, temLivro)
+  if (r.error) falhas.push(`${m.planilha}: ${r.error.message}`)
+  else if (r.parcial) { parciais++; console.log(`PARCIAL (falta Fund2/Médio — existente) ${m.planilha}`) }
   else { ok++; console.log(`OK  (existente) ${m.planilha}`) }
 }
 
 for (const c of CRIAR_NOVAS) {
   const { vals, temLivro } = linhaPara(c.planilha)
-  const { data: novaEscola, error: errEscola } = await supabase.from('escolas').insert({ nome: c.nome, ativa: true }).select('id').single()
-  if (errEscola) { falhas.push(`${c.planilha}: erro ao criar escola — ${errEscola.message}`); continue }
-  const error = await upsertContrato(novaEscola.id, vals, temLivro)
-  if (error) falhas.push(`${c.planilha}: erro ao gravar contrato — ${error.message}`)
-  else { ok++; console.log(`OK  (nova escola ${novaEscola.id}) ${c.planilha}`) }
+  const r = await upsertContrato(c.escolaId, vals, temLivro)
+  if (r.error) falhas.push(`${c.planilha}: erro ao gravar contrato — ${r.error.message}`)
+  else if (r.parcial) { parciais++; console.log(`PARCIAL (falta Fund2/Médio — escola ${c.escolaId}) ${c.planilha}`) }
+  else { ok++; console.log(`OK  (escola ${c.escolaId}) ${c.planilha}`) }
 }
 
-console.log(`\n${ok} escolas populadas. ${falhas.length} falhas.`)
+console.log(`\n${ok} escolas completas. ${parciais} parciais (rodar de novo após add_fund2_medio_contratos.sql). ${falhas.length} falhas.`)
 falhas.forEach(f => console.log('  FALHA:', f))

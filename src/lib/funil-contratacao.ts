@@ -11,7 +11,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { buscarUsuariosPorId } from '@/lib/queries'
 import { normalizarNomeEscola } from '@/lib/utils'
-import { calcValorTotalContrato } from '@/lib/contratos'
+import { calcValorTotalContrato, calcTotalAlunosContrato } from '@/lib/contratos'
 import type { Escola, Negociacao, Contrato, StageNegociacao } from '@/types/database'
 
 // Preço de tabela por aluno/ano (teto padrão da Calculadora) — usado só para
@@ -368,8 +368,14 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
     const reunioes = reunioesPorEscola.get(escola.id) ?? { total: 0, ultima: null, primeira: null, primeiraResumo: null }
     const proposta = propostaPorEscolaId.get(escola.id) ?? propostaPorNome.get(normalizarNomeEscola(escola.nome)) ?? null
     const contrato = contratoPorEscola.get(escola.id) ?? null
-    // Prioridade: última atualização manual (alunos_historico) > proposta > cadastro.
-    const alunosAtual = alunosHistoricoPorEscola.get(escola.id) ?? proposta?.num_alunos ?? escola.total_alunos
+    // Prioridade: total granular por série do contrato (tela "Quantidade de
+    // Alunos", editável em tempo real — a fonte mais detalhada e mais viva,
+    // cobre tanto escolas novas do funil quanto veteranas cadastradas
+    // manualmente) > última atualização manual (alunos_historico) > proposta > cadastro.
+    const alunosContratoGranular = contrato ? calcTotalAlunosContrato(contrato) : 0
+    const alunosAtual = alunosContratoGranular > 0
+      ? alunosContratoGranular
+      : (alunosHistoricoPorEscola.get(escola.id) ?? proposta?.num_alunos ?? escola.total_alunos)
 
     const propostaDesconto = proposta?.valor_aluno_ano
       ? Math.round((1 - proposta.valor_aluno_ano / VALOR_TABELA_ALUNO_ANO) * 10000) / 100
