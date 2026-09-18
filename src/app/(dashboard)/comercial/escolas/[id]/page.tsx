@@ -176,6 +176,65 @@ const classifStyles: Record<string, { bg: string; color: string; border: string;
   frio:   { bg: '#eff6ff', color: '#2563eb', border: '#93c5fd', label: 'Frio'   },
 }
 
+// ─── Alunos: melhor fonte disponível ───────────────────────────────────────────
+// O card "Alunos & Potencial" precisa refletir o número de alunos de onde quer
+// que ele tenha sido registrado pela última vez, não só do cadastro estático da
+// escola. Prioridade: dados granulares por série do CONTRATO (quando já existe
+// minuta ou contrato enviado — nesse ponto é a fonte mais confiável) > dados
+// granulares por série do CADASTRO da escola > último valor agregado conhecido
+// em alunos_historico (proposta ou atualização manual) > 0. O total exibido é
+// sempre a soma do detalhamento mostrado, pra nunca ficar descolado dele (era
+// o bug: grade toda zerada com total de 601 vindo de outro lugar).
+interface AlunosGranular {
+  qtd_infantil2: number; qtd_infantil3: number; qtd_infantil4: number; qtd_infantil5: number; qtd_infantil: number
+  qtd_fund1_ano1: number; qtd_fund1_ano2: number; qtd_fund1_ano3: number; qtd_fund1_ano4: number; qtd_fund1_ano5: number; qtd_fund1: number
+  qtd_fund2: number; qtd_medio: number; total: number
+}
+
+function somarGranularContrato(c: any): AlunosGranular {
+  const qtd_infantil2 = c.infantil2_qtd ?? 0
+  const qtd_infantil3 = c.infantil3_qtd ?? 0
+  const qtd_infantil4 = c.infantil4_qtd ?? 0
+  const qtd_infantil5 = c.infantil5_qtd ?? 0
+  const qtd_fund1_ano1 = c.fund1_ano1_qtd ?? 0
+  const qtd_fund1_ano2 = c.fund1_ano2_qtd ?? 0
+  const qtd_fund1_ano3 = c.fund1_ano3_qtd ?? 0
+  const qtd_fund1_ano4 = c.fund1_ano4_qtd ?? 0
+  const qtd_fund1_ano5 = c.fund1_ano5_qtd ?? 0
+  const qtd_fund2 = (c.fund2_ano6_qtd ?? 0) + (c.fund2_ano7_qtd ?? 0) + (c.fund2_ano8_qtd ?? 0) + (c.fund2_ano9_qtd ?? 0)
+  const qtd_medio = (c.medio_1s_qtd ?? 0) + (c.medio_2s_qtd ?? 0) + (c.medio_3s_qtd ?? 0)
+  const qtd_infantil = qtd_infantil2 + qtd_infantil3 + qtd_infantil4 + qtd_infantil5
+  const qtd_fund1 = qtd_fund1_ano1 + qtd_fund1_ano2 + qtd_fund1_ano3 + qtd_fund1_ano4 + qtd_fund1_ano5
+  return {
+    qtd_infantil2, qtd_infantil3, qtd_infantil4, qtd_infantil5, qtd_infantil,
+    qtd_fund1_ano1, qtd_fund1_ano2, qtd_fund1_ano3, qtd_fund1_ano4, qtd_fund1_ano5, qtd_fund1,
+    qtd_fund2, qtd_medio, total: qtd_infantil + qtd_fund1 + qtd_fund2 + qtd_medio,
+  }
+}
+
+function somarGranularEscola(e: any): AlunosGranular {
+  const qtd_infantil2 = e.qtd_infantil2 ?? 0
+  const qtd_infantil3 = e.qtd_infantil3 ?? 0
+  const qtd_infantil4 = e.qtd_infantil4 ?? 0
+  const qtd_infantil5 = e.qtd_infantil5 ?? 0
+  const qtd_fund1_ano1 = e.qtd_fund1_ano1 ?? 0
+  const qtd_fund1_ano2 = e.qtd_fund1_ano2 ?? 0
+  const qtd_fund1_ano3 = e.qtd_fund1_ano3 ?? 0
+  const qtd_fund1_ano4 = e.qtd_fund1_ano4 ?? 0
+  const qtd_fund1_ano5 = e.qtd_fund1_ano5 ?? 0
+  const qtd_fund2 = e.qtd_fund2 ?? 0
+  const qtd_medio = e.qtd_medio ?? 0
+  const somaInfantil = qtd_infantil2 + qtd_infantil3 + qtd_infantil4 + qtd_infantil5
+  const somaFund1 = qtd_fund1_ano1 + qtd_fund1_ano2 + qtd_fund1_ano3 + qtd_fund1_ano4 + qtd_fund1_ano5
+  const qtd_infantil = somaInfantil > 0 ? somaInfantil : (e.qtd_infantil ?? 0)
+  const qtd_fund1 = somaFund1 > 0 ? somaFund1 : (e.qtd_fund1 ?? 0)
+  return {
+    qtd_infantil2, qtd_infantil3, qtd_infantil4, qtd_infantil5, qtd_infantil,
+    qtd_fund1_ano1, qtd_fund1_ano2, qtd_fund1_ano3, qtd_fund1_ano4, qtd_fund1_ano5, qtd_fund1,
+    qtd_fund2, qtd_medio, total: qtd_infantil + qtd_fund1 + qtd_fund2 + qtd_medio,
+  }
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function EscolaDetalhe({ params }: Props) {
@@ -204,7 +263,18 @@ export default async function EscolaDetalhe({ params }: Props) {
 
   const e = escola as any
   const pot = e.potencial_financeiro ?? 0
-  const totalAlunos = e.total_alunos ?? 0
+
+  // Melhor fonte disponível pros alunos — ver comentário da função no topo do arquivo.
+  const contratoTemDocumento = !!contrato && (contrato.minuta_enviada || contrato.contrato_enviado || contrato.contrato_assinado)
+  const granularContrato = contratoTemDocumento ? somarGranularContrato(contrato) : null
+  const granularEscola = somarGranularEscola(e)
+  const alunosGranular: AlunosGranular =
+    granularContrato && granularContrato.total > 0 ? granularContrato : granularEscola
+  const alunosFonte: 'contrato' | 'cadastro' | 'historico' =
+    granularContrato && granularContrato.total > 0 ? 'contrato' : granularEscola.total > 0 ? 'cadastro' : 'historico'
+  const historicoMaisRecente = (alunosHistorico ?? [])[0]?.valor ?? null
+  const totalAlunos = alunosGranular.total > 0 ? alunosGranular.total : (historicoMaisRecente ?? e.total_alunos ?? 0)
+
   const porte = pot < 100_000 ? 'Pequena' : pot < 300_000 ? 'Média' : 'Grande'
   const classif = e.classificacao_atual as string | null
   const classifStyle = classif ? classifStyles[classif] : null
@@ -566,6 +636,9 @@ export default async function EscolaDetalhe({ params }: Props) {
             <div style={cardStyle}>
               <div style={cardHeaderStyle}>
                 <span style={cardTitleStyle}>Alunos & Potencial</span>
+                <span style={{ fontSize: '.62rem', fontWeight: 700, color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
+                  Fonte: {alunosFonte === 'contrato' ? 'dados do contrato' : alunosFonte === 'cadastro' ? 'cadastro da escola' : 'histórico de alunos'}
+                </span>
               </div>
               <div style={cardBodyStyle}>
 
@@ -577,10 +650,10 @@ export default async function EscolaDetalhe({ params }: Props) {
                     <div style={{ ...labelStyle, color: '#ea580c', fontSize: '.65rem' }}>Ed. Infantil</div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.4rem', marginTop: '.4rem' }}>
                       {[
-                        { l: 'Inf 2', v: e.qtd_infantil2 },
-                        { l: 'Inf 3', v: e.qtd_infantil3 },
-                        { l: 'Inf 4', v: e.qtd_infantil4 },
-                        { l: 'Inf 5', v: e.qtd_infantil5 },
+                        { l: 'Inf 2', v: alunosGranular.qtd_infantil2 },
+                        { l: 'Inf 3', v: alunosGranular.qtd_infantil3 },
+                        { l: 'Inf 4', v: alunosGranular.qtd_infantil4 },
+                        { l: 'Inf 5', v: alunosGranular.qtd_infantil5 },
                       ].map(s => (
                         <div key={s.l} style={{ textAlign: 'center', background: 'rgba(255,255,255,.6)', borderRadius: 6, padding: '.3rem' }}>
                           <div style={{ fontSize: '.6rem', color: '#9a3412', fontWeight: 700 }}>{s.l}</div>
@@ -589,7 +662,7 @@ export default async function EscolaDetalhe({ params }: Props) {
                       ))}
                     </div>
                     <div style={{ marginTop: '.75rem', textAlign: 'center', borderTop: '1px dashed #fed7aa', paddingTop: '.5rem' }}>
-                      <span style={{ fontSize: '.65rem', fontWeight: 700, color: '#9a3412' }}>Total: {e.qtd_infantil ?? 0}</span>
+                      <span style={{ fontSize: '.65rem', fontWeight: 700, color: '#9a3412' }}>Total: {alunosGranular.qtd_infantil}</span>
                     </div>
                   </div>
 
@@ -598,11 +671,11 @@ export default async function EscolaDetalhe({ params }: Props) {
                     <div style={{ ...labelStyle, color: '#2563eb', fontSize: '.65rem' }}>Fund. I (1º-5º)</div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '.4rem', marginTop: '.4rem' }}>
                       {[
-                        { l: '1º A', v: e.qtd_fund1_ano1 },
-                        { l: '2º A', v: e.qtd_fund1_ano2 },
-                        { l: '3º A', v: e.qtd_fund1_ano3 },
-                        { l: '4º A', v: e.qtd_fund1_ano4 },
-                        { l: '5º A', v: e.qtd_fund1_ano5 },
+                        { l: '1º A', v: alunosGranular.qtd_fund1_ano1 },
+                        { l: '2º A', v: alunosGranular.qtd_fund1_ano2 },
+                        { l: '3º A', v: alunosGranular.qtd_fund1_ano3 },
+                        { l: '4º A', v: alunosGranular.qtd_fund1_ano4 },
+                        { l: '5º A', v: alunosGranular.qtd_fund1_ano5 },
                       ].map(s => (
                         <div key={s.l} style={{ textAlign: 'center', background: 'rgba(255,255,255,.6)', borderRadius: 6, padding: '.3rem' }}>
                           <div style={{ fontSize: '.6rem', color: '#1e40af', fontWeight: 700 }}>{s.l}</div>
@@ -611,7 +684,7 @@ export default async function EscolaDetalhe({ params }: Props) {
                       ))}
                     </div>
                     <div style={{ marginTop: '.75rem', textAlign: 'center', borderTop: '1px dashed #bfdbfe', paddingTop: '.5rem' }}>
-                      <span style={{ fontSize: '.65rem', fontWeight: 700, color: '#1e40af' }}>Total: {e.qtd_fund1 ?? 0}</span>
+                      <span style={{ fontSize: '.65rem', fontWeight: 700, color: '#1e40af' }}>Total: {alunosGranular.qtd_fund1}</span>
                     </div>
                   </div>
 
@@ -620,13 +693,13 @@ export default async function EscolaDetalhe({ params }: Props) {
                     <div style={{ background: '#f5f3ff', border: '1.5px solid #ddd6fe', borderRadius: 12, padding: '.85rem', flex: 1 }}>
                       <div style={{ ...labelStyle, color: '#7c3aed', fontSize: '.6rem', marginBottom: '.25rem' }}>Fund. II (6º-9º)</div>
                       <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#7c3aed', fontFamily: 'var(--font-cormorant,serif)', textAlign: 'center' }}>
-                        {e.qtd_fund2 ?? 0}
+                        {alunosGranular.qtd_fund2}
                       </div>
                     </div>
                     <div style={{ background: '#fef2f2', border: '1.5px solid #fca5a5', borderRadius: 12, padding: '.85rem', flex: 1 }}>
                       <div style={{ ...labelStyle, color: '#dc2626', fontSize: '.6rem', marginBottom: '.25rem' }}>Ens. Médio (1-3)</div>
                       <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#dc2626', fontFamily: 'var(--font-cormorant,serif)', textAlign: 'center' }}>
-                        {e.qtd_medio ?? 0}
+                        {alunosGranular.qtd_medio}
                       </div>
                     </div>
                   </div>
