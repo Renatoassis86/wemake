@@ -5,6 +5,19 @@ import { QuantidadeAlunosClient, type EscolaLinha } from './QuantidadeAlunosClie
 
 export const dynamic = 'force-dynamic'
 
+// Sinal de que a escola tem negócio 2027 real em andamento — mesma checagem
+// usada em classificarQuadro (funil-contratacao/page.tsx). Quando isso é
+// verdade, a escola é "Nova" mesmo que marcado_veterana ainda esteja true
+// (marcação antiga que não foi atualizada) — sem essa checagem, escolas como
+// a Escola Supremo (proposta enviada de verdade) ficavam presas na seção
+// de veteranas mesmo tendo negócio ativo, e o contador de "veteranas"
+// divergia do quadro "Escolas Atendidas" do Funil de Contratação.
+function temSinalFunilReal(c: any): boolean {
+  return !!(c.formulario_enviado || c.formulario_recebido || c.proposta_enviada ||
+    c.minuta_enviada || c.retorno_minuta || c.minuta_atualizada ||
+    c.contrato_enviado || c.contrato_assinado || c.contrato_arquivado)
+}
+
 const CAMPOS_SERIE = [
   'infantil2_qtd', 'infantil3_qtd', 'infantil4_qtd', 'infantil5_qtd',
   'fund1_ano1_qtd', 'fund1_ano2_qtd', 'fund1_ano3_qtd', 'fund1_ano4_qtd', 'fund1_ano5_qtd',
@@ -50,12 +63,11 @@ export default async function QuantidadeAlunosPage() {
         cidade: e.cidade ?? null,
         uf: e.estado ?? null,
         livroImpresso: !!c.livro_impresso,
-        // Veterana = marcada manualmente (planilha do Dênis / adicionada nesta
-        // tela); Nova = chegou à lista progredindo de verdade pelo funil 2027.
-        // Fonte de verdade é o campo marcado_veterana (editável na UI), não
-        // uma inferência a partir de minuta/contrato — só pode ser removida
-        // da lista se estiver marcada como veterana.
-        veterana: !!c.marcado_veterana,
+        // Veterana = marcada manualmente E sem nenhum sinal real de negócio
+        // 2027 em andamento; Nova = chegou à lista progredindo de verdade
+        // pelo funil 2027 — um sinal real sempre tem prioridade sobre a
+        // marcação manual (que pode estar desatualizada).
+        veterana: !!c.marcado_veterana && !temSinalFunilReal(c),
         // Prioridade: soma granular do contrato (a mais confiável, é o que
         // essa própria grade edita) > último valor em alunos_historico >
         // cadastro básico da escola. Sem isso, escolas que têm o total real
