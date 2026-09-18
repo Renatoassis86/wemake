@@ -12,6 +12,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { normalizarNomeEscola } from '@/lib/utils'
 import { buscarPibMunicipio, type PibInfo } from '@/lib/pib-municipios'
+import { derivarFase, FASE_LABELS, type FaseFunil } from '@/lib/funil-contratacao'
 import type { EscolaResumo, Negociacao, Contrato, StageNegociacao } from '@/types/database'
 
 // ─── Tipos exportados ─────────────────────────────────────────────────────────
@@ -34,6 +35,8 @@ export interface EscolaFila extends EscolaResumo {
   alunosEstimado: boolean    // true quando alunosEfetivo veio da estimativa (cadastro ainda não preenchido)
   propostaEnviada: boolean   // true quando existe registro em `propostas` para esta escola
   pibInfo: PibInfo | null    // PIB per capita e peso econômico do município (IBGE), quando mapeado
+  faseFunil: FaseFunil | null // momento no Funil de Contratação — null quando a escola ainda não tem nenhuma interação (sem negociação, proposta ou contrato)
+  declinouFunil: boolean      // escola recusou a proposta (checklist do Funil de Contratação)
 }
 
 export interface FilaPriorizacaoResult {
@@ -99,7 +102,7 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
 
     admin
       .from('contratos')
-      .select('escola_id, contrato_assinado, contrato_enviado'),
+      .select('escola_id, contrato_assinado, contrato_enviado, minuta_enviada, contrato_arquivado, implantacao_status, proposta_enviada, declinou'),
 
     admin
       .from('leads_perfil_escola')
@@ -112,12 +115,12 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
 
     admin
       .from('propostas')
-      .select('escola_id, escola_nome'),
+      .select('id, escola_id, escola_nome'),
   ])
 
   const escolas = (escolasRes.data ?? []) as EscolaResumo[]
   const negociacoes = (negociacoesRes.data ?? []) as Pick<Negociacao, 'id' | 'escola_id' | 'stage' | 'ativa'>[]
-  const contratos = (contratosRes.data ?? []) as Pick<Contrato, 'escola_id' | 'contrato_assinado' | 'contrato_enviado'>[]
+  const contratos = (contratosRes.data ?? []) as Pick<Contrato, 'escola_id' | 'contrato_assinado' | 'contrato_enviado' | 'minuta_enviada' | 'contrato_arquivado' | 'implantacao_status' | 'proposta_enviada' | 'declinou'>[]
   const perfis = (perfilRes.data ?? []) as {
     escola_id: string
     confessionalidade: string | null
@@ -126,7 +129,7 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
     interesse_solucao: string | null
   }[]
   const leadsEscola = (leadsEscolaRes.data ?? []) as { escola_crm_id: string; qtd_alunos: number | null }[]
-  const propostas = (propostasRes.data ?? []) as { escola_id: string | null; escola_nome: string | null }[]
+  const propostas = (propostasRes.data ?? []) as { id: string; escola_id: string | null; escola_nome: string | null }[]
 
   // Vínculo exato por escola_id (dado real importado do banco de leads/pesquisa comercial)
   const perfilPorEscola = new Map<string, PerfilPesquisa>()
@@ -171,7 +174,7 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
     }
   }
 
-  const contratoPorEscola = new Map<string, Pick<Contrato, 'escola_id' | 'contrato_assinado' | 'contrato_enviado'>>()
+  const contratoPorEscola = new Map<string, typeof contratos[number]>()
   for (const c of contratos) {
     contratoPorEscola.set(c.escola_id, c)
   }
@@ -208,6 +211,24 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
 
     const pibInfo = buscarPibMunicipio(escola.cidade, escola.estado)
 
+    // Momento no Funil de Contratação — mesma lógica de derivarFase() usada na
+    // tela do Funil, pra tag bater exatamente com o que aparece lá. Só calcula
+    // quando a escola já tem alguma interação real (negociação, proposta ou
+    // registro de contrato) — sem isso ela nunca "entrou" no funil.
+    const declinouFunil = !!contrato?.declinou
+    const estaNoFunil = !!negId || propostaEnviada || !!contrato
+    const faseFunil = estaNoFunil
+      ? derivarFase({
+          contrato_arquivado: !!contrato?.contrato_arquivado,
+          implantacao_status: contrato?.implantacao_status ?? null,
+          contrato_assinado: contratoAssinado,
+          contrato_enviado: contratoEnviado,
+          minuta_enviada: !!contrato?.minuta_enviada,
+          proposta_id: propostaPorEscolaId.has(escola.id) ? escola.id : null,
+          proposta_enviada_manual: !!contrato?.proposta_enviada,
+        })
+      : null
+
     return {
       ...escola,
       negociacao_stage: negStage,
@@ -220,6 +241,8 @@ export async function getFilaPriorizacao(): Promise<FilaPriorizacaoResult> {
       alunosEstimado,
       propostaEnviada,
       pibInfo,
+      faseFunil,
+      declinouFunil,
     }
   })
 

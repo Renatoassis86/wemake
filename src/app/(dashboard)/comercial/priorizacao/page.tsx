@@ -1,4 +1,5 @@
 import { getFilaPriorizacao, bucketConfessionalidade } from '@/lib/priorizacao'
+import { FASE_LABELS, type FaseFunil } from '@/lib/funil-contratacao'
 import { normalizarNomeEscola } from '@/lib/utils'
 import Link from 'next/link'
 import { PriorizacaoSearch } from './PriorizacaoSearch'
@@ -25,6 +26,19 @@ const CONFESS_CORES: Record<string, { bg: string; text: string; border: string }
   'Em estudo':      { bg: '#EFF6FF', text: '#1D4ED8', border: '#BFDBFE' },
   'Não considera':  { bg: '#F8FAFC', text: '#64748B', border: '#E2E8F0' },
 }
+
+// Mesma paleta da tag de fase no Funil de Contratação — pra bater visualmente
+// com o que aparece lá quando a escola já está em negociação/proposta/contrato.
+const FASE_CORES: Record<FaseFunil, { bg: string; text: string; border: string }> = {
+  negociacao:        { bg: '#eff6ff', text: '#2563eb', border: '#93c5fd' },
+  proposta_enviada:  { bg: '#fffbeb', text: '#b45309', border: '#fcd34d' },
+  minuta:            { bg: '#fdf4ff', text: '#a21caf', border: '#e9d5ff' },
+  contrato_enviado:  { bg: '#f5f3ff', text: '#6d28d9', border: '#c4b5fd' },
+  contrato_assinado: { bg: '#f0fdf4', text: '#16a34a', border: '#86efac' },
+  implantacao:       { bg: '#f5f3ff', text: '#7c3aed', border: '#c4b5fd' },
+  parceiro_ativo:    { bg: '#ecfdf5', text: '#059669', border: '#6ee7b7' },
+}
+const FASE_DECLINADA_COR = { bg: '#fef2f2', text: '#dc2626', border: '#fca5a5' }
 
 // ─── Helpers de estilo ────────────────────────────────────────────────────────
 
@@ -272,25 +286,44 @@ function TabelaEscolas({
                 )}
               </td>
 
-              {/* Perfil — só a classificação (confessional ou não); satisfação/interesse ficam no cadastro da escola */}
+              {/* Perfil — classificação (confessional ou não) + tag do momento no
+                  Funil de Contratação, quando a escola já tiver alguma interação
+                  registrada (negociação, proposta ou contrato). */}
               <td data-label="Perfil" style={{ padding: '.65rem 1rem' }}>
-                {escola.perfilPesquisa?.confessionalidade ? (() => {
-                  const bucket = bucketConfessionalidade(escola.perfilPesquisa.confessionalidade)
-                  const cor = CONFESS_CORES[bucket] ?? CONFESS_CORES['Não considera']
-                  return (
-                    <span title={escola.perfilPesquisa.confessionalidade} style={{
-                      display: 'inline-flex', alignItems: 'center',
-                      fontSize: '.68rem', fontWeight: 700,
-                      background: cor.bg, color: cor.text,
-                      border: `1px solid ${cor.border}`,
-                      padding: '3px 10px', borderRadius: 99,
-                      fontFamily: 'var(--font-montserrat, sans-serif)',
-                      whiteSpace: 'nowrap',
-                    }}>{bucket}</span>
-                  )
-                })() : (
-                  <span style={{ fontSize: '.72rem', color: '#CBD5E1', fontFamily: 'var(--font-inter, sans-serif)' }}>—</span>
-                )}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '.3rem' }}>
+                  {escola.perfilPesquisa?.confessionalidade ? (() => {
+                    const bucket = bucketConfessionalidade(escola.perfilPesquisa.confessionalidade)
+                    const cor = CONFESS_CORES[bucket] ?? CONFESS_CORES['Não considera']
+                    return (
+                      <span title={escola.perfilPesquisa.confessionalidade} style={{
+                        display: 'inline-flex', alignItems: 'center',
+                        fontSize: '.68rem', fontWeight: 700,
+                        background: cor.bg, color: cor.text,
+                        border: `1px solid ${cor.border}`,
+                        padding: '3px 10px', borderRadius: 99,
+                        fontFamily: 'var(--font-montserrat, sans-serif)',
+                        whiteSpace: 'nowrap',
+                      }}>{bucket}</span>
+                    )
+                  })() : (
+                    <span style={{ fontSize: '.72rem', color: '#CBD5E1', fontFamily: 'var(--font-inter, sans-serif)' }}>—</span>
+                  )}
+                  {(escola.faseFunil || escola.declinouFunil) && (() => {
+                    const cor = escola.declinouFunil ? FASE_DECLINADA_COR : FASE_CORES[escola.faseFunil!]
+                    const label = escola.declinouFunil ? 'Recusada' : FASE_LABELS[escola.faseFunil!]
+                    return (
+                      <span title="Momento no Funil de Contratação" style={{
+                        display: 'inline-flex', alignItems: 'center',
+                        fontSize: '.62rem', fontWeight: 700,
+                        background: cor.bg, color: cor.text,
+                        border: `1px solid ${cor.border}`,
+                        padding: '2px 9px', borderRadius: 99,
+                        fontFamily: 'var(--font-montserrat, sans-serif)',
+                        whiteSpace: 'nowrap',
+                      }}>{label}</span>
+                    )
+                  })()}
+                </div>
               </td>
 
               {/* Proposta */}

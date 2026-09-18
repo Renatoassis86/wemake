@@ -244,7 +244,7 @@ function segmentosAtivos(e: Pick<Escola, 'qtd_infantil' | 'qtd_fund1' | 'qtd_fun
   return segs
 }
 
-function derivarFase(params: {
+export function derivarFase(params: {
   contrato_arquivado: boolean
   implantacao_status: string | null
   contrato_assinado: boolean
