@@ -196,6 +196,107 @@ function TagVeterana({ escolaId, veterana, editavel }: { escolaId: string; veter
   )
 }
 
+function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste, veteranaColunaExiste, salvarCampo, remover, removendo, removendoId }: {
+  titulo: string; subtitulo: string; corAccent: string; linhas: EscolaLinha[]
+  livroColunaExiste: boolean; veteranaColunaExiste: boolean
+  salvarCampo: (escolaId: string, campo: string, valor: number) => void
+  remover: (escolaId: string, nome: string) => void
+  removendo: boolean; removendoId: string | null
+}) {
+  const totaisColuna = useMemo(() => {
+    const acc: Record<string, number> = {}
+    for (const s of SERIES_CONTRATO) acc[s.campo] = linhas.reduce((soma, l) => soma + (l.qtds[s.campo] || 0), 0)
+    return acc
+  }, [linhas])
+  const totalGeral = linhas.reduce((soma, l) => soma + l.total, 0)
+
+  return (
+    <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, overflow: 'hidden', borderTop: `4px solid ${corAccent}` }}>
+      <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '.5rem' }}>
+        <div>
+          <div style={{ fontSize: '.85rem', fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+            {titulo} — {linhas.length} escola{linhas.length !== 1 ? 's' : ''}
+          </div>
+          <div style={{ fontSize: '.68rem', color: '#94a3b8', marginTop: '.15rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{subtitulo}</div>
+        </div>
+        <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: corAccent }}>
+          {totalGeral.toLocaleString('pt-BR')} alunos
+        </div>
+      </div>
+
+      <div style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 1100 }}>
+          <thead>
+            <tr>
+              <th style={{ ...th, textAlign: 'left', position: 'sticky', left: 0, background: '#f8fafc', zIndex: 1 }}>Escola</th>
+              {SERIES_CONTRATO.map(s => <th key={s.campo} style={thSerie} title={s.segmento}>{s.label}</th>)}
+              <th style={th}>Total</th>
+              <th style={th}>Livro</th>
+              <th style={th}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {linhas.map(l => (
+              <tr key={l.escolaId}>
+                <td style={{ ...td, textAlign: 'left', fontSize: '.78rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', position: 'sticky', left: 0, background: '#fff', whiteSpace: 'nowrap' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <NomeEditavel escolaId={l.escolaId} nome={l.nome} />
+                    <Link href={`/comercial/escolas/${l.escolaId}/editar`} title="Abrir cadastro completo da escola" style={{ color: '#94a3b8', display: 'inline-flex', flexShrink: 0 }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
+                    </Link>
+                    <EstadoEditavel escolaId={l.escolaId} uf={l.uf} />
+                    <TagVeterana escolaId={l.escolaId} veterana={l.veterana} editavel={veteranaColunaExiste} />
+                  </span>
+                </td>
+                {SERIES_CONTRATO.map(s => (
+                  <td key={s.campo} style={tdSerie}>
+                    <CelulaEditavel valor={l.qtds[s.campo] || 0} onSalvar={v => salvarCampo(l.escolaId, s.campo, v)} />
+                  </td>
+                ))}
+                <td style={{ ...td, fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)', color: corAccent }}>{l.total}</td>
+                <td style={td}>
+                  <CheckboxLivro escolaId={l.escolaId} checked={l.livroImpresso} disabled={!livroColunaExiste} />
+                </td>
+                <td style={td}>
+                  {l.veterana && (
+                    <button
+                      onClick={() => remover(l.escolaId, l.nome)}
+                      disabled={removendo && removendoId === l.escolaId}
+                      title="Remover escola da lista"
+                      style={{
+                        width: 22, height: 22, borderRadius: 6, border: '1.5px solid #fca5a5', background: '#fff',
+                        color: '#dc2626', cursor: 'pointer', fontSize: '.7rem', fontWeight: 800, lineHeight: 1,
+                      }}
+                    >
+                      ×
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+            {linhas.length === 0 && (
+              <tr><td colSpan={20} style={{ ...td, padding: '2rem', color: '#94a3b8', fontSize: '.8rem' }}>Nenhuma escola aqui ainda.</td></tr>
+            )}
+          </tbody>
+          {linhas.length > 0 && (
+            <tfoot>
+              <tr>
+                <td style={{ ...td, textAlign: 'left', fontWeight: 800, fontSize: '.72rem', color: '#64748b', position: 'sticky', left: 0, background: '#f8fafc' }}>Total por série</td>
+                {SERIES_CONTRATO.map(s => (
+                  <td key={s.campo} style={{ ...tdSerie, fontWeight: 800, fontSize: '.78rem', color: '#0f172a', background: '#f8fafc' }}>{totaisColuna[s.campo]}</td>
+                ))}
+                <td style={{ ...td, fontWeight: 800, color: corAccent, background: '#f8fafc' }}>{totalGeral}</td>
+                <td style={{ ...td, background: '#f8fafc' }} />
+                <td style={{ ...td, background: '#f8fafc' }} />
+              </tr>
+            </tfoot>
+          )}
+        </table>
+      </div>
+    </div>
+  )
+}
+
 export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, livroColunaExiste, veteranaColunaExiste, livroQtdsColunaExiste }: Props) {
   const router = useRouter()
   const [buscaAdicionar, setBuscaAdicionar] = useState('')
@@ -205,11 +306,11 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
   const [removendo, startRemovendo] = useTransition()
   const [removendoId, setRemovendoId] = useState<string | null>(null)
 
-  const totaisColuna = useMemo(() => {
-    const acc: Record<string, number> = {}
-    for (const s of SERIES_CONTRATO) acc[s.campo] = linhasIniciais.reduce((soma, l) => soma + (l.qtds[s.campo] || 0), 0)
-    return acc
-  }, [linhasIniciais])
+  // Dois quadros visíveis: parcerias já fechadas (veteranas) e negociação em
+  // andamento pro ano que vem (chegaram pela minuta) — antes era uma tabela
+  // só com uma tag no meio, o que misturava visualmente as duas situações.
+  const linhasFechadas = linhasIniciais.filter(l => l.veterana)
+  const linhasNegociacao = linhasIniciais.filter(l => !l.veterana)
 
   const totalGeral = linhasIniciais.reduce((soma, l) => soma + l.total, 0)
 
@@ -319,103 +420,51 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
         )}
       </div>
 
-      {/* ── Grade principal ──────────────────────────────────────────── */}
-      <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, overflow: 'hidden' }}>
-        <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '.5rem' }}>
-          <div style={{ fontSize: '.85rem', fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
-            Alunos por série — {linhasIniciais.length} escola{linhasIniciais.length !== 1 ? 's' : ''}
-          </div>
-          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: '#4A7FDB' }}>
-            {totalGeral.toLocaleString('pt-BR')} alunos
-          </div>
+      {(!livroColunaExiste || !veteranaColunaExiste || !livroQtdsColunaExiste) && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
+          {!livroColunaExiste && (
+            <div style={{ padding: '.6rem 1.25rem', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8, fontSize: '.72rem', color: '#92400e', fontFamily: 'var(--font-inter,sans-serif)' }}>
+              A tag "Livro" ainda não está ativa — rode a migração <code>add_livro_impresso.sql</code> no Supabase pra habilitá-la.
+            </div>
+          )}
+          {!veteranaColunaExiste && (
+            <div style={{ padding: '.6rem 1.25rem', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8, fontSize: '.72rem', color: '#92400e', fontFamily: 'var(--font-inter,sans-serif)' }}>
+              A tag Veterana/Nova ainda não é editável — rode a migração <code>add_contrato_marcado_veterana.sql</code> no Supabase pra habilitá-la.
+            </div>
+          )}
+          {!livroQtdsColunaExiste && (
+            <div style={{ padding: '.6rem 1.25rem', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8, fontSize: '.72rem', color: '#92400e', fontFamily: 'var(--font-inter,sans-serif)' }}>
+              A tabela da gráfica ainda não é editável de forma independente — rode a migração <code>add_contrato_livro_qtds.sql</code> no Supabase pra habilitá-la.
+            </div>
+          )}
         </div>
+      )}
 
-        {!livroColunaExiste && (
-          <div style={{ padding: '.6rem 1.25rem', background: '#fffbeb', borderBottom: '1px solid #fde68a', fontSize: '.72rem', color: '#92400e', fontFamily: 'var(--font-inter,sans-serif)' }}>
-            A tag "Livro" ainda não está ativa — rode a migração <code>add_livro_impresso.sql</code> no Supabase pra habilitá-la.
-          </div>
-        )}
-        {!veteranaColunaExiste && (
-          <div style={{ padding: '.6rem 1.25rem', background: '#fffbeb', borderBottom: '1px solid #fde68a', fontSize: '.72rem', color: '#92400e', fontFamily: 'var(--font-inter,sans-serif)' }}>
-            A tag Veterana/Nova ainda não é editável — rode a migração <code>add_contrato_marcado_veterana.sql</code> no Supabase pra habilitá-la.
-          </div>
-        )}
-        {!livroQtdsColunaExiste && (
-          <div style={{ padding: '.6rem 1.25rem', background: '#fffbeb', borderBottom: '1px solid #fde68a', fontSize: '.72rem', color: '#92400e', fontFamily: 'var(--font-inter,sans-serif)' }}>
-            A tabela da gráfica ainda não é editável de forma independente — rode a migração <code>add_contrato_livro_qtds.sql</code> no Supabase pra habilitá-la.
-          </div>
-        )}
+      <TabelaAlunos
+        titulo="Parcerias Fechadas — Ano Corrente"
+        subtitulo="Escolas veteranas — parceria já efetivada, sem negócio novo em andamento pro ano que vem"
+        corAccent="#0f766e"
+        linhas={linhasFechadas}
+        livroColunaExiste={livroColunaExiste}
+        veteranaColunaExiste={veteranaColunaExiste}
+        salvarCampo={salvarCampo}
+        remover={remover}
+        removendo={removendo}
+        removendoId={removendoId}
+      />
 
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 1100 }}>
-            <thead>
-              <tr>
-                <th style={{ ...th, textAlign: 'left', position: 'sticky', left: 0, background: '#f8fafc', zIndex: 1 }}>Escola</th>
-                {SERIES_CONTRATO.map(s => <th key={s.campo} style={thSerie} title={s.segmento}>{s.label}</th>)}
-                <th style={th}>Total</th>
-                <th style={th}>Livro</th>
-                <th style={th}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {linhasIniciais.map(l => (
-                <tr key={l.escolaId}>
-                  <td style={{ ...td, textAlign: 'left', fontSize: '.78rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', position: 'sticky', left: 0, background: '#fff', whiteSpace: 'nowrap' }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                      <NomeEditavel escolaId={l.escolaId} nome={l.nome} />
-                      <Link href={`/comercial/escolas/${l.escolaId}/editar`} title="Abrir cadastro completo da escola" style={{ color: '#94a3b8', display: 'inline-flex', flexShrink: 0 }}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
-                      </Link>
-                      <EstadoEditavel escolaId={l.escolaId} uf={l.uf} />
-                      <TagVeterana escolaId={l.escolaId} veterana={l.veterana} editavel={veteranaColunaExiste} />
-                    </span>
-                  </td>
-                  {SERIES_CONTRATO.map(s => (
-                    <td key={s.campo} style={tdSerie}>
-                      <CelulaEditavel valor={l.qtds[s.campo] || 0} onSalvar={v => salvarCampo(l.escolaId, s.campo, v)} />
-                    </td>
-                  ))}
-                  <td style={{ ...td, fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#4A7FDB' }}>{l.total}</td>
-                  <td style={td}>
-                    <CheckboxLivro escolaId={l.escolaId} checked={l.livroImpresso} disabled={!livroColunaExiste} />
-                  </td>
-                  <td style={td}>
-                    {l.veterana && (
-                      <button
-                        onClick={() => remover(l.escolaId, l.nome)}
-                        disabled={removendo && removendoId === l.escolaId}
-                        title="Remover escola da lista"
-                        style={{
-                          width: 22, height: 22, borderRadius: 6, border: '1.5px solid #fca5a5', background: '#fff',
-                          color: '#dc2626', cursor: 'pointer', fontSize: '.7rem', fontWeight: 800, lineHeight: 1,
-                        }}
-                      >
-                        ×
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-              {linhasIniciais.length === 0 && (
-                <tr><td colSpan={20} style={{ ...td, padding: '2rem', color: '#94a3b8', fontSize: '.8rem' }}>Nenhuma escola na lista ainda.</td></tr>
-              )}
-            </tbody>
-            {linhasIniciais.length > 0 && (
-              <tfoot>
-                <tr>
-                  <td style={{ ...td, textAlign: 'left', fontWeight: 800, fontSize: '.72rem', color: '#64748b', position: 'sticky', left: 0, background: '#f8fafc' }}>Total por série</td>
-                  {SERIES_CONTRATO.map(s => (
-                    <td key={s.campo} style={{ ...tdSerie, fontWeight: 800, fontSize: '.78rem', color: '#0f172a', background: '#f8fafc' }}>{totaisColuna[s.campo]}</td>
-                  ))}
-                  <td style={{ ...td, fontWeight: 800, color: '#4A7FDB', background: '#f8fafc' }}>{totalGeral}</td>
-                  <td style={{ ...td, background: '#f8fafc' }} />
-                  <td style={{ ...td, background: '#f8fafc' }} />
-                </tr>
-              </tfoot>
-            )}
-          </table>
-        </div>
-      </div>
+      <TabelaAlunos
+        titulo="Em Negociação — Ano 2027"
+        subtitulo="Escolas com minuta enviada — venda pro ano que vem em andamento"
+        corAccent="#4A7FDB"
+        linhas={linhasNegociacao}
+        livroColunaExiste={livroColunaExiste}
+        veteranaColunaExiste={veteranaColunaExiste}
+        salvarCampo={salvarCampo}
+        remover={remover}
+        removendo={removendo}
+        removendoId={removendoId}
+      />
 
       {/* ── Distribuição pra gráfica (só escolas marcadas com Livro) ───── */}
       <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, overflow: 'hidden' }}>
