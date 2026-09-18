@@ -4,7 +4,7 @@ import { useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { SERIES_CONTRATO } from '@/lib/contratos'
-import { atualizarQtdSerie, atualizarLivroImpresso, adicionarEscolaManual, criarEscolaVeterana, atualizarEstadoEscola, removerEscolaDaLista } from './actions'
+import { atualizarQtdSerie, atualizarLivroImpresso, adicionarEscolaManual, criarEscolaVeterana, atualizarEstadoEscola, removerEscolaDaLista, atualizarMarcadoVeterana } from './actions'
 
 export interface EscolaLinha {
   escolaId: string
@@ -12,7 +12,7 @@ export interface EscolaLinha {
   cidade: string | null
   uf: string | null
   livroImpresso: boolean
-  removivel: boolean
+  veterana: boolean
   total: number
   qtds: Record<string, number>
 }
@@ -23,6 +23,7 @@ interface Props {
   linhasIniciais: EscolaLinha[]
   escolasDisponiveis: EscolaDisponivel[]
   livroColunaExiste: boolean
+  veteranaColunaExiste: boolean
 }
 
 const th: React.CSSProperties = {
@@ -96,7 +97,36 @@ function EstadoEditavel({ escolaId, uf }: { escolaId: string; uf: string | null 
   )
 }
 
-export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, livroColunaExiste }: Props) {
+function TagVeterana({ escolaId, veterana, editavel }: { escolaId: string; veterana: boolean; editavel: boolean }) {
+  const router = useRouter()
+  const [pending, startTransition] = useTransition()
+
+  function toggle() {
+    if (!editavel || pending) return
+    startTransition(() => {
+      atualizarMarcadoVeterana(escolaId, !veterana).then(res => {
+        if (res.success) router.refresh()
+        else alert(res.error)
+      })
+    })
+  }
+
+  return (
+    <button
+      onClick={toggle} disabled={!editavel || pending}
+      title={editavel ? 'Clique pra trocar entre Veterana e Nova' : 'Rode a migração add_contrato_marcado_veterana.sql pra poder editar'}
+      style={{
+        fontSize: '.6rem', fontWeight: 700, padding: '.08rem .4rem', borderRadius: 5, whiteSpace: 'nowrap',
+        border: 'none', cursor: editavel ? 'pointer' : 'not-allowed', opacity: pending ? .6 : 1,
+        background: veterana ? '#f1f5f9' : '#ecfdf5', color: veterana ? '#64748b' : '#059669',
+      }}
+    >
+      {veterana ? 'Veterana' : 'Nova'}
+    </button>
+  )
+}
+
+export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, livroColunaExiste, veteranaColunaExiste }: Props) {
   const router = useRouter()
   const [buscaAdicionar, setBuscaAdicionar] = useState('')
   const [novaEstado, setNovaEstado] = useState('')
@@ -235,6 +265,11 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
             A tag "Livro" ainda não está ativa — rode a migração <code>add_livro_impresso.sql</code> no Supabase pra habilitá-la.
           </div>
         )}
+        {!veteranaColunaExiste && (
+          <div style={{ padding: '.6rem 1.25rem', background: '#fffbeb', borderBottom: '1px solid #fde68a', fontSize: '.72rem', color: '#92400e', fontFamily: 'var(--font-inter,sans-serif)' }}>
+            A tag Veterana/Nova ainda não é editável — rode a migração <code>add_contrato_marcado_veterana.sql</code> no Supabase pra habilitá-la.
+          </div>
+        )}
 
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 1100 }}>
@@ -256,12 +291,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                         {l.nome}
                       </Link>
                       <EstadoEditavel escolaId={l.escolaId} uf={l.uf} />
-                      <span style={{
-                        fontSize: '.6rem', fontWeight: 700, padding: '.08rem .4rem', borderRadius: 5, whiteSpace: 'nowrap',
-                        background: l.removivel ? '#f1f5f9' : '#ecfdf5', color: l.removivel ? '#64748b' : '#059669',
-                      }}>
-                        {l.removivel ? 'Veterana' : 'Nova'}
-                      </span>
+                      <TagVeterana escolaId={l.escolaId} veterana={l.veterana} editavel={veteranaColunaExiste} />
                     </span>
                   </td>
                   {SERIES_CONTRATO.map(s => (
@@ -278,7 +308,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                     />
                   </td>
                   <td style={td}>
-                    {l.removivel && (
+                    {l.veterana && (
                       <button
                         onClick={() => remover(l.escolaId, l.nome)}
                         disabled={removendo && removendoId === l.escolaId}

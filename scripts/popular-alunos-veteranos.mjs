@@ -68,7 +68,7 @@ const CAMPOS_SEGUROS = ['infantil4_qtd', 'infantil5_qtd', 'fund1_ano1_qtd', 'fun
 
 async function upsertContrato(escolaId, vals, temLivro) {
   const { data: existing } = await supabase.from('contratos').select('id').eq('escola_id', escolaId).maybeSingle()
-  const payloadBase = { ...vals, contrato_assinado: true }
+  const payloadBase = { ...vals, contrato_assinado: true, marcado_veterana: true }
 
   async function tentar(payload) {
     return existing
@@ -79,6 +79,10 @@ async function upsertContrato(escolaId, vals, temLivro) {
   let r = await tentar({ ...payloadBase, livro_impresso: temLivro })
   if (r.error && /livro_impresso/.test(r.error.message)) {
     r = await tentar(payloadBase) // coluna livro_impresso ainda não existe — grava sem ela
+  }
+  if (r.error && /marcado_veterana/.test(r.error.message)) {
+    const { marcado_veterana, ...semVeterana } = payloadBase
+    r = await tentar(semVeterana) // coluna marcado_veterana ainda não existe — grava sem ela
   }
   if (r.error && /fund2_ano\d_qtd|medio_\ds_qtd/.test(r.error.message)) {
     // fund2/medio ainda não existem — grava só infantil+fund1 por enquanto

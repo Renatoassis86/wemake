@@ -33,10 +33,12 @@ export default async function QuantidadeAlunosPage() {
         cidade: e.cidade ?? null,
         uf: e.estado ?? null,
         livroImpresso: !!c.livro_impresso,
-        // Só pode ser removida da lista se estiver aqui puramente pela marcação
-        // manual (contrato_assinado) — escola com minuta/contrato real em
-        // andamento reflete o funil de verdade, não sai por aqui.
-        removivel: !c.minuta_enviada && !c.contrato_enviado,
+        // Veterana = marcada manualmente (planilha do Dênis / adicionada nesta
+        // tela); Nova = chegou à lista progredindo de verdade pelo funil 2027.
+        // Fonte de verdade é o campo marcado_veterana (editável na UI), não
+        // uma inferência a partir de minuta/contrato — só pode ser removida
+        // da lista se estiver marcada como veterana.
+        veterana: !!c.marcado_veterana,
         total: calcTotalAlunosContrato(c),
         qtds: Object.fromEntries(
           ['infantil2_qtd', 'infantil3_qtd', 'infantil4_qtd', 'infantil5_qtd',
@@ -56,6 +58,7 @@ export default async function QuantidadeAlunosPage() {
     .map(e => ({ id: e.id, nome: e.nome, uf: e.estado ?? null }))
 
   const livroColunaExiste = (contratos ?? []).length === 0 || contratos!.some(c => 'livro_impresso' in c)
+  const veteranaColunaExiste = (contratos ?? []).length === 0 || contratos!.some(c => 'marcado_veterana' in c)
 
   return (
     <div>
@@ -68,6 +71,7 @@ export default async function QuantidadeAlunosPage() {
           linhasIniciais={linhas}
           escolasDisponiveis={escolasDisponiveis}
           livroColunaExiste={livroColunaExiste}
+          veteranaColunaExiste={veteranaColunaExiste}
         />
       </div>
     </div>
