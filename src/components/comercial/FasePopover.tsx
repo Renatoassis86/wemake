@@ -25,24 +25,34 @@ interface Props {
   implantacaoStatus: string | null
 }
 
-// Minuta e contrato são as etapas mais avançadas do checklist (mais perto do
-// fechamento) — ganham destaque em azul pra se diferenciarem visualmente das
-// etapas iniciais (formulário, proposta), que ficam no verde padrão.
-const KEYS_DESTAQUE = new Set([
-  'minuta_enviada', 'retorno_minuta', 'minuta_atualizada',
-  'contrato_enviado', 'contrato_assinado', 'contrato_arquivado',
-])
+// Cada etapa do checklist tem sua própria cor (mesma paleta dos quadros do
+// Funil de Contratação, pra ficar consistente): formulário/proposta ficam
+// nos tons "iniciais" (verde/âmbar), minuta em roxo, contrato enviado em
+// violeta — e as duas etapas mais decisivas, contrato assinado e contrato
+// arquivado, ganham destaque forte (badge preenchido, não só contornado),
+// já que são o "negócio fechado" de verdade, diferente de só ter avançado
+// um passo no meio do caminho.
+const KEY_ESTILO: Record<string, { bg: string; text: string; border: string; forte?: boolean }> = {
+  formulario_enviado:  { bg: '#f0fdf4', text: '#15803d', border: '#86efac' },
+  formulario_recebido: { bg: '#f0fdf4', text: '#15803d', border: '#86efac' },
+  proposta_enviada:    { bg: '#fffbeb', text: '#b45309', border: '#fcd34d' },
+  minuta_enviada:      { bg: '#fdf4ff', text: '#a21caf', border: '#e9d5ff' },
+  retorno_minuta:      { bg: '#fdf4ff', text: '#a21caf', border: '#e9d5ff' },
+  minuta_atualizada:   { bg: '#fdf4ff', text: '#a21caf', border: '#e9d5ff' },
+  contrato_enviado:    { bg: '#f5f3ff', text: '#6d28d9', border: '#c4b5fd' },
+  contrato_assinado:   { bg: '#16a34a', text: '#fff',    border: '#16a34a', forte: true },
+  contrato_arquivado:  { bg: '#0f766e', text: '#fff',    border: '#0f766e', forte: true },
+}
+const ESTILO_DECLINOU = { bg: '#fef2f2', text: '#dc2626', border: '#fca5a5' }
 
-function ChipItem({ label, negativo, destaque }: { label: string; negativo: boolean; destaque?: boolean }) {
+function ChipItem({ label, negativo, estilo }: { label: string; negativo: boolean; estilo: { bg: string; text: string; border: string; forte?: boolean } }) {
   return (
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: '.25rem',
-      background: negativo ? '#fef2f2' : destaque ? '#eff6ff' : '#f0fdf4',
-      color: negativo ? '#dc2626' : destaque ? '#1d4ed8' : '#15803d',
-      border: `1.5px solid ${negativo ? '#fca5a5' : destaque ? '#93c5fd' : '#86efac'}`,
-      boxShadow: destaque ? '0 0 0 1px rgba(29,78,216,.10)' : 'none',
-      padding: destaque ? '.15rem .55rem' : '.1rem .45rem', borderRadius: 99,
-      fontSize: destaque ? '.64rem' : '.6rem', fontWeight: destaque ? 800 : 700, whiteSpace: 'nowrap',
+      background: estilo.bg, color: estilo.text, border: `1.5px solid ${estilo.border}`,
+      boxShadow: estilo.forte ? '0 1px 4px rgba(15,23,42,.25)' : 'none',
+      padding: estilo.forte ? '.2rem .65rem' : '.1rem .45rem', borderRadius: 99,
+      fontSize: estilo.forte ? '.66rem' : '.6rem', fontWeight: estilo.forte ? 800 : 700, whiteSpace: 'nowrap',
       fontFamily: 'var(--font-montserrat,sans-serif)',
     }}>
       {negativo ? '✕' : '✓'} {label}
@@ -116,7 +126,9 @@ export function FasePopover({ escolaId, faseLabel, faseCor, checklist: checklist
         onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
       >
         {marcados.length > 0 ? (
-          marcados.map(([key, label]) => <ChipItem key={key} label={label} negativo={key === 'declinou'} destaque={KEYS_DESTAQUE.has(key)} />)
+          marcados.map(([key, label]) => (
+            <ChipItem key={key} label={label} negativo={key === 'declinou'} estilo={key === 'declinou' ? ESTILO_DECLINOU : KEY_ESTILO[key]} />
+          ))
         ) : (
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: '.3rem',
