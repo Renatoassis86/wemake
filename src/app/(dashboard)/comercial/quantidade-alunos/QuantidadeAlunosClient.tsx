@@ -31,6 +31,8 @@ const th: React.CSSProperties = {
 const td: React.CSSProperties = {
   padding: '.35rem', borderBottom: '1px solid #f1f5f9', textAlign: 'center', verticalAlign: 'middle',
 }
+const tdSerie: React.CSSProperties = { ...td, minWidth: 60 }
+const thSerie: React.CSSProperties = { ...th, minWidth: 60 }
 
 function CelulaEditavel({ valor, onSalvar }: { valor: number; onSalvar: (novo: number) => void }) {
   const [texto, setTexto] = useState(String(valor || ''))
@@ -49,8 +51,9 @@ function CelulaEditavel({ valor, onSalvar }: { valor: number; onSalvar: (novo: n
       onChange={e => setTexto(e.target.value)}
       onBlur={commit}
       onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
+      className="qa-input-no-spinner"
       style={{
-        width: 44, padding: '.3rem', textAlign: 'center', borderRadius: 6,
+        width: '100%', minWidth: 40, maxWidth: 56, boxSizing: 'border-box', padding: '.3rem .15rem', textAlign: 'center', borderRadius: 6,
         border: '1.5px solid #e2e8f0', fontSize: '.78rem', fontFamily: 'var(--font-inter,sans-serif)',
         background: pending ? '#fef9c3' : '#fff', opacity: pending ? .7 : 1,
       }}
@@ -94,6 +97,11 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <style>{`
+        .qa-input-no-spinner::-webkit-outer-spin-button,
+        .qa-input-no-spinner::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .qa-input-no-spinner { -moz-appearance: textfield; }
+      `}</style>
 
       {/* ── Adicionar escola veterana manualmente ─────────────────────── */}
       <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '1rem 1.25rem', position: 'relative' }}>
@@ -152,7 +160,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
             <thead>
               <tr>
                 <th style={{ ...th, textAlign: 'left', position: 'sticky', left: 0, background: '#f8fafc', zIndex: 1 }}>Escola</th>
-                {SERIES_CONTRATO.map(s => <th key={s.campo} style={th} title={s.segmento}>{s.label}</th>)}
+                {SERIES_CONTRATO.map(s => <th key={s.campo} style={thSerie} title={s.segmento}>{s.label}</th>)}
                 <th style={th}>Total</th>
                 <th style={th}>Livro</th>
               </tr>
@@ -165,7 +173,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                     {l.uf && <span style={{ color: '#94a3b8', fontWeight: 500 }}> · {l.uf}</span>}
                   </td>
                   {SERIES_CONTRATO.map(s => (
-                    <td key={s.campo} style={td}>
+                    <td key={s.campo} style={tdSerie}>
                       <CelulaEditavel valor={l.qtds[s.campo] || 0} onSalvar={v => salvarCampo(l.escolaId, s.campo, v)} />
                     </td>
                   ))}
@@ -188,7 +196,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                 <tr>
                   <td style={{ ...td, textAlign: 'left', fontWeight: 800, fontSize: '.72rem', color: '#64748b', position: 'sticky', left: 0, background: '#f8fafc' }}>Total por série</td>
                   {SERIES_CONTRATO.map(s => (
-                    <td key={s.campo} style={{ ...td, fontWeight: 800, fontSize: '.78rem', color: '#0f172a', background: '#f8fafc' }}>{totaisColuna[s.campo]}</td>
+                    <td key={s.campo} style={{ ...tdSerie, fontWeight: 800, fontSize: '.78rem', color: '#0f172a', background: '#f8fafc' }}>{totaisColuna[s.campo]}</td>
                   ))}
                   <td style={{ ...td, fontWeight: 800, color: '#4A7FDB', background: '#f8fafc' }}>{totalGeral}</td>
                   <td style={{ ...td, background: '#f8fafc' }} />
@@ -214,7 +222,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
             <thead>
               <tr>
                 <th style={{ ...th, textAlign: 'left', position: 'sticky', left: 0, background: '#f8fafc', zIndex: 1 }}>Escola</th>
-                {SERIES_CONTRATO.map(s => <th key={s.campo} style={th}>{s.label}</th>)}
+                {SERIES_CONTRATO.map(s => <th key={s.campo} style={thSerie}>{s.label}</th>)}
                 <th style={th}>Total</th>
               </tr>
             </thead>
@@ -225,7 +233,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                     {l.nome}
                   </td>
                   {SERIES_CONTRATO.map(s => (
-                    <td key={s.campo} style={{ ...td, fontSize: '.78rem', color: '#334155' }}>{l.qtds[s.campo] || 0}</td>
+                    <td key={s.campo} style={{ ...tdSerie, fontSize: '.78rem', color: '#334155' }}>{l.qtds[s.campo] || 0}</td>
                   ))}
                   <td style={{ ...td, fontWeight: 800, color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{l.total}</td>
                 </tr>
@@ -239,7 +247,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                 <tr>
                   <td style={{ ...td, textAlign: 'left', fontWeight: 800, fontSize: '.72rem', color: '#64748b', position: 'sticky', left: 0, background: '#f8fafc' }}>Total por série</td>
                   {SERIES_CONTRATO.map(s => (
-                    <td key={s.campo} style={{ ...td, fontWeight: 800, fontSize: '.78rem', color: '#0f172a', background: '#f8fafc' }}>
+                    <td key={s.campo} style={{ ...tdSerie, fontWeight: 800, fontSize: '.78rem', color: '#0f172a', background: '#f8fafc' }}>
                       {escolasLivro.reduce((soma, l) => soma + (l.qtds[s.campo] || 0), 0)}
                     </td>
                   ))}
