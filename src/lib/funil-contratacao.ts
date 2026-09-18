@@ -482,13 +482,23 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
     }
   })
 
-  // Só entram no funil escolas com algum sinal comercial: negociação, proposta ou contrato.
+  // Só entram no funil escolas com algum sinal comercial real: negociação,
+  // proposta, ou algum checklist do contrato preenchido. Ter uma linha em
+  // `contratos` sozinho NÃO conta — a tela "Quantidade de Alunos" cria essas
+  // linhas só pra guardar headcount de escolas veteranas (marcado_veterana),
+  // sem nenhum negócio em andamento; sem essa checagem elas vazavam pro
+  // funil de vendas como se fossem negócios reais (ex.: Legatum aparecendo
+  // "Contrato assinado" sem nunca ter sido marcado por ninguém).
   const FASE_ORDER: FaseFunil[] = [
     'parceiro_ativo', 'implantacao', 'contrato_assinado', 'contrato_enviado',
     'minuta', 'proposta_enviada', 'negociacao',
   ]
   const linhas = linhasTodas
-    .filter(l => l.negociacao_id || l.proposta_id || l.contrato_id)
+    .filter(l => l.negociacao_id || l.proposta_id || (l.contrato_id && (
+      l.formulario_enviado || l.formulario_recebido || l.proposta_enviada_manual ||
+      l.minuta_enviada || l.retorno_minuta || l.minuta_atualizada ||
+      l.contrato_enviado || l.contrato_assinado || l.contrato_arquivado
+    )))
     .sort((a, b) =>
       // Prioridade manual primeiro (menor número = mais prioritário; sem
       // prioridade definida vai para o fim) — sobrepõe o critério de fase,

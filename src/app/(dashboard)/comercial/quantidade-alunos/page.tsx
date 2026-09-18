@@ -25,12 +25,14 @@ export default async function QuantidadeAlunosPage() {
 
   const contratosPorEscola = new Map((contratos ?? []).map(c => [c.escola_id, c]))
 
-  // Base automática: qualquer escola que já entrou no funil de contratação
-  // (minuta em diante) — mesma regra usada em metas/page.tsx (alunosMeta).
+  // Base automática: só escolas com minuta enviada de verdade (sinal de que
+  // a venda pro ano que vem está em andamento) — não contrato_enviado nem
+  // contrato_assinado, que aqui misturavam headcount de veteranas com o
+  // funil de vendas real. Veteranas entram só pela marcação manual.
   const linhas: EscolaLinha[] = (escolas ?? [])
     .filter(e => {
       const c = contratosPorEscola.get(e.id)
-      return !!c && (c.minuta_enviada || c.contrato_enviado || c.contrato_assinado)
+      return !!c && (c.minuta_enviada || c.marcado_veterana)
     })
     .map(e => {
       const c = contratosPorEscola.get(e.id)!

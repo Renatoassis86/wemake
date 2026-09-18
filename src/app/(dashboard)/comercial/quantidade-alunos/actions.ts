@@ -39,12 +39,12 @@ export async function atualizarQtdSerie(escolaId: string, campo: string, valor: 
 
   let r = existing
     ? await admin.from('contratos').update(payload).eq('id', existing.id)
-    : await admin.from('contratos').insert({ escola_id: escolaId, contrato_assinado: true, ...payload })
+    : await admin.from('contratos').insert({ escola_id: escolaId, ...payload })
   if (r.error && /livro_qtds/.test(r.error.message)) {
     const { livro_qtds, ...semLivroQtds } = payload
     r = existing
       ? await admin.from('contratos').update(semLivroQtds).eq('id', existing.id)
-      : await admin.from('contratos').insert({ escola_id: escolaId, contrato_assinado: true, ...semLivroQtds })
+      : await admin.from('contratos').insert({ escola_id: escolaId, ...semLivroQtds })
   }
 
   if (r.error) return { success: false, error: r.error.message }
@@ -72,12 +72,12 @@ export async function atualizarLivroImpresso(escolaId: string, valor: boolean): 
 
   let r = existing
     ? await admin.from('contratos').update(payload).eq('id', existing.id)
-    : await admin.from('contratos').insert({ escola_id: escolaId, contrato_assinado: true, ...payload })
+    : await admin.from('contratos').insert({ escola_id: escolaId, ...payload })
   if (r.error && /livro_qtds/.test(r.error.message)) {
     const { livro_qtds, ...semLivroQtds } = payload
     r = existing
       ? await admin.from('contratos').update(semLivroQtds).eq('id', existing.id)
-      : await admin.from('contratos').insert({ escola_id: escolaId, contrato_assinado: true, ...semLivroQtds })
+      : await admin.from('contratos').insert({ escola_id: escolaId, ...semLivroQtds })
   }
 
   if (r.error) return { success: false, error: r.error.message }
@@ -108,33 +108,33 @@ export async function atualizarQtdLivroSerie(escolaId: string, campo: string, va
 
 /**
  * Adiciona uma escola parceira "veterana" à lista manualmente (escola que já
- * é parceira mas nunca passou pelo funil de minuta/contrato neste sistema).
- * Cria a linha em `contratos` marcada como assinada + veterana, com tudo
- * zerado — o time comercial preenche as quantidades por série em seguida.
+ * é parceira mas nunca passou pelo funil de venda 2027 neste sistema). Cria
+ * a linha em `contratos` marcada só como veterana, com tudo zerado — o time
+ * comercial preenche as quantidades por série em seguida.
+ *
+ * IMPORTANTE: nunca marca contrato_assinado (nem nenhum outro checklist do
+ * funil) aqui — esse campo é o que faz a escola aparecer no Funil de
+ * Contratação como negócio fechado. Marcar isso pra uma escola veterana
+ * mistura headcount histórico com o funil de vendas real (bug já visto:
+ * Legatum aparecendo como "Contrato assinado" sem nunca ter sido marcado).
  */
 export async function adicionarEscolaManual(escolaId: string): Promise<ActionResult> {
   const admin = createAdminClient()
-  const { data: existing } = await admin.from('contratos').select('id, contrato_assinado').eq('escola_id', escolaId).maybeSingle()
-  const payload = { contrato_assinado: true, marcado_veterana: true }
+  const { data: existing } = await admin.from('contratos').select('id').eq('escola_id', escolaId).maybeSingle()
 
-  let r = existing
-    ? await admin.from('contratos').update(payload).eq('id', existing.id)
-    : await admin.from('contratos').insert({ escola_id: escolaId, ...payload })
-  if (r.error && /marcado_veterana/.test(r.error.message)) {
-    // migração add_contrato_marcado_veterana.sql ainda não rodou — grava sem a flag
-    r = existing
-      ? await admin.from('contratos').update({ contrato_assinado: true }).eq('id', existing.id)
-      : await admin.from('contratos').insert({ escola_id: escolaId, contrato_assinado: true })
-  }
+  const { error } = existing
+    ? await admin.from('contratos').update({ marcado_veterana: true }).eq('id', existing.id)
+    : await admin.from('contratos').insert({ escola_id: escolaId, marcado_veterana: true })
 
-  if (r.error) return { success: false, error: r.error.message }
+  if (error) return { success: false, error: error.message }
   revalidarTudo(escolaId)
   return { success: true }
 }
 
 /**
  * Cadastra uma escola nova do zero (não existe em `escolas` ainda) e já
- * adiciona ela à lista da tela, marcada como parceira assinada + veterana.
+ * adiciona ela à lista da tela, marcada como veterana. Ver nota em
+ * adicionarEscolaManual sobre nunca marcar contrato_assinado aqui.
  */
 export async function criarEscolaVeterana(nome: string, estado: string | null): Promise<ActionResult & { escolaId?: string }> {
   const nomeLimpo = nome.trim()
@@ -146,11 +146,8 @@ export async function criarEscolaVeterana(nome: string, estado: string | null): 
     .from('escolas').insert({ nome: nomeLimpo, estado: estadoLimpo, ativa: true }).select('id').single()
   if (errEscola) return { success: false, error: errEscola.message }
 
-  let r = await admin.from('contratos').insert({ escola_id: novaEscola.id, contrato_assinado: true, marcado_veterana: true })
-  if (r.error && /marcado_veterana/.test(r.error.message)) {
-    r = await admin.from('contratos').insert({ escola_id: novaEscola.id, contrato_assinado: true })
-  }
-  if (r.error) return { success: false, error: r.error.message }
+  const { error } = await admin.from('contratos').insert({ escola_id: novaEscola.id, marcado_veterana: true })
+  if (error) return { success: false, error: error.message }
 
   revalidarTudo(novaEscola.id)
   return { success: true, escolaId: novaEscola.id }
@@ -158,9 +155,9 @@ export async function criarEscolaVeterana(nome: string, estado: string | null): 
 
 /**
  * Remove uma escola da lista (não apaga o cadastro dela, só desmarca
- * contrato_assinado). Recusa se a escola não estiver marcada como veterana
- * — nesse caso ela reflete o funil de verdade, não uma marcação manual, e
- * não deve sair por aqui.
+ * marcado_veterana). Recusa se a escola não estiver marcada como veterana —
+ * nesse caso ela está na lista por ter minuta enviada de verdade, e não deve
+ * sair por aqui.
  */
 export async function removerEscolaDaLista(escolaId: string): Promise<ActionResult> {
   const admin = createAdminClient()
@@ -172,7 +169,7 @@ export async function removerEscolaDaLista(escolaId: string): Promise<ActionResu
     return { success: false, error: 'Essa escola está marcada como Nova (funil de verdade) — não pode ser removida por aqui.' }
   }
 
-  const { error } = await admin.from('contratos').update({ contrato_assinado: false }).eq('id', contrato.id)
+  const { error } = await admin.from('contratos').update({ marcado_veterana: false }).eq('id', contrato.id)
   if (error) return { success: false, error: error.message }
   revalidarTudo(escolaId)
   return { success: true }
@@ -180,8 +177,9 @@ export async function removerEscolaDaLista(escolaId: string): Promise<ActionResu
 
 /**
  * Alterna manualmente a tag Veterana/Nova de uma escola — a classificação é
- * derivada automaticamente (planilha/adição manual = Veterana, chegou pelo
- * funil = Nova), mas o time comercial pode corrigir a mão quando precisar.
+ * derivada automaticamente (planilha/adição manual = Veterana, minuta
+ * enviada de verdade = Nova), mas o time comercial pode corrigir a mão.
+ * Nunca mexe em contrato_assinado nem em nenhum outro checklist do funil.
  */
 export async function atualizarMarcadoVeterana(escolaId: string, valor: boolean): Promise<ActionResult> {
   const admin = createAdminClient()
@@ -189,7 +187,7 @@ export async function atualizarMarcadoVeterana(escolaId: string, valor: boolean)
 
   const { error } = existing
     ? await admin.from('contratos').update({ marcado_veterana: valor }).eq('id', existing.id)
-    : await admin.from('contratos').insert({ escola_id: escolaId, contrato_assinado: true, marcado_veterana: valor })
+    : await admin.from('contratos').insert({ escola_id: escolaId, marcado_veterana: valor })
 
   if (error) {
     if (/marcado_veterana/.test(error.message)) {

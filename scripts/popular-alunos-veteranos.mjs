@@ -79,7 +79,11 @@ async function upsertContrato(escolaId, vals, temLivro) {
     return { error, jaExistia: true }
   }
 
-  const payloadBase = { ...vals, contrato_assinado: true, marcado_veterana: true }
+  // NUNCA marca contrato_assinado aqui — esse campo é o sinal de negócio
+  // fechado no Funil de Contratação. Marcar isso pra uma veterana faz ela
+  // aparecer como contrato assinado no funil de vendas, misturando headcount
+  // histórico com o pipeline de vendas real (bug visto com a Legatum).
+  const payloadBase = { ...vals, marcado_veterana: true }
 
   async function tentar(payload) {
     return await supabase.from('contratos').insert({ escola_id: escolaId, ...payload })
@@ -96,7 +100,7 @@ async function upsertContrato(escolaId, vals, temLivro) {
   if (r.error && /fund2_ano\d_qtd|medio_\ds_qtd/.test(r.error.message)) {
     // fund2/medio ainda não existem — grava só infantil+fund1 por enquanto
     // (rodar de novo depois de add_fund2_medio_contratos.sql pra completar)
-    const seguro = { contrato_assinado: true, marcado_veterana: true }
+    const seguro = { marcado_veterana: true }
     for (const k of CAMPOS_SEGUROS) seguro[k] = vals[k] ?? 0
     r = await tentar(seguro)
     if (!r.error) r.parcial = true
