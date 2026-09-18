@@ -2,8 +2,9 @@
 
 import { useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { SERIES_CONTRATO } from '@/lib/contratos'
-import { atualizarQtdSerie, atualizarLivroImpresso, adicionarEscolaManual, criarEscolaVeterana, atualizarEstadoEscola } from './actions'
+import { atualizarQtdSerie, atualizarLivroImpresso, adicionarEscolaManual, criarEscolaVeterana, atualizarEstadoEscola, removerEscolaDaLista } from './actions'
 
 export interface EscolaLinha {
   escolaId: string
@@ -11,6 +12,7 @@ export interface EscolaLinha {
   cidade: string | null
   uf: string | null
   livroImpresso: boolean
+  removivel: boolean
   total: number
   qtds: Record<string, number>
 }
@@ -100,6 +102,8 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
   const [novaEstado, setNovaEstado] = useState('')
   const [adicionando, startAdicionando] = useTransition()
   const [criando, startCriando] = useTransition()
+  const [removendo, startRemovendo] = useTransition()
+  const [removendoId, setRemovendoId] = useState<string | null>(null)
 
   const totaisColuna = useMemo(() => {
     const acc: Record<string, number> = {}
@@ -136,6 +140,17 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
     startCriando(async () => {
       const res = await criarEscolaVeterana(nome, novaEstado || null)
       if (res.success) { setBuscaAdicionar(''); setNovaEstado(''); router.refresh() }
+    })
+  }
+
+  function remover(escolaId: string, nome: string) {
+    if (!window.confirm(`Remover "${nome}" da lista de Quantidade de Alunos? O cadastro da escola não é apagado — só sai dessa lista.`)) return
+    setRemovendoId(escolaId)
+    startRemovendo(async () => {
+      const res = await removerEscolaDaLista(escolaId)
+      setRemovendoId(null)
+      if (res.success) router.refresh()
+      else alert(res.error)
     })
   }
 
@@ -229,15 +244,24 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                 {SERIES_CONTRATO.map(s => <th key={s.campo} style={thSerie} title={s.segmento}>{s.label}</th>)}
                 <th style={th}>Total</th>
                 <th style={th}>Livro</th>
+                <th style={th}></th>
               </tr>
             </thead>
             <tbody>
               {linhasIniciais.map(l => (
                 <tr key={l.escolaId}>
                   <td style={{ ...td, textAlign: 'left', fontSize: '.78rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', position: 'sticky', left: 0, background: '#fff', whiteSpace: 'nowrap' }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                      {l.nome}
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <Link href={`/comercial/escolas/${l.escolaId}/editar`} style={{ color: '#0f172a', textDecoration: 'none' }} title="Editar dados cadastrais da escola">
+                        {l.nome}
+                      </Link>
                       <EstadoEditavel escolaId={l.escolaId} uf={l.uf} />
+                      <span style={{
+                        fontSize: '.6rem', fontWeight: 700, padding: '.08rem .4rem', borderRadius: 5, whiteSpace: 'nowrap',
+                        background: l.removivel ? '#f1f5f9' : '#ecfdf5', color: l.removivel ? '#64748b' : '#059669',
+                      }}>
+                        {l.removivel ? 'Veterana' : 'Nova'}
+                      </span>
                     </span>
                   </td>
                   {SERIES_CONTRATO.map(s => (
@@ -253,10 +277,25 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                       style={{ width: 16, height: 16, cursor: livroColunaExiste ? 'pointer' : 'not-allowed' }}
                     />
                   </td>
+                  <td style={td}>
+                    {l.removivel && (
+                      <button
+                        onClick={() => remover(l.escolaId, l.nome)}
+                        disabled={removendo && removendoId === l.escolaId}
+                        title="Remover escola da lista"
+                        style={{
+                          width: 22, height: 22, borderRadius: 6, border: '1.5px solid #fca5a5', background: '#fff',
+                          color: '#dc2626', cursor: 'pointer', fontSize: '.7rem', fontWeight: 800, lineHeight: 1,
+                        }}
+                      >
+                        ×
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
               {linhasIniciais.length === 0 && (
-                <tr><td colSpan={19} style={{ ...td, padding: '2rem', color: '#94a3b8', fontSize: '.8rem' }}>Nenhuma escola na lista ainda.</td></tr>
+                <tr><td colSpan={20} style={{ ...td, padding: '2rem', color: '#94a3b8', fontSize: '.8rem' }}>Nenhuma escola na lista ainda.</td></tr>
               )}
             </tbody>
             {linhasIniciais.length > 0 && (
@@ -267,6 +306,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                     <td key={s.campo} style={{ ...tdSerie, fontWeight: 800, fontSize: '.78rem', color: '#0f172a', background: '#f8fafc' }}>{totaisColuna[s.campo]}</td>
                   ))}
                   <td style={{ ...td, fontWeight: 800, color: '#4A7FDB', background: '#f8fafc' }}>{totalGeral}</td>
+                  <td style={{ ...td, background: '#f8fafc' }} />
                   <td style={{ ...td, background: '#f8fafc' }} />
                 </tr>
               </tfoot>
@@ -297,8 +337,10 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
             <tbody>
               {escolasLivro.map(l => (
                 <tr key={l.escolaId}>
-                  <td style={{ ...td, textAlign: 'left', fontSize: '.78rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', position: 'sticky', left: 0, background: '#fff', whiteSpace: 'nowrap' }}>
-                    {l.nome}
+                  <td style={{ ...td, textAlign: 'left', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-inter,sans-serif)', position: 'sticky', left: 0, background: '#fff', whiteSpace: 'nowrap' }}>
+                    <Link href={`/comercial/escolas/${l.escolaId}/editar`} style={{ color: '#0f172a', textDecoration: 'none' }} title="Editar dados cadastrais da escola">
+                      {l.nome}
+                    </Link>
                   </td>
                   {SERIES_CONTRATO.map(s => (
                     <td key={s.campo} style={{ ...tdSerie, fontSize: '.78rem', color: '#334155' }}>{l.qtds[s.campo] || 0}</td>

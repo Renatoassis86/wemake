@@ -90,6 +90,28 @@ export async function criarEscolaVeterana(nome: string, estado: string | null): 
   return { success: true, escolaId: novaEscola.id }
 }
 
+/**
+ * Remove uma escola da lista (não apaga o cadastro dela, só desmarca
+ * contrato_assinado). Recusa se a escola tiver minuta/contrato real em
+ * andamento — nesse caso ela reflete o funil de verdade, não uma marcação
+ * manual, e não deve sair por aqui.
+ */
+export async function removerEscolaDaLista(escolaId: string): Promise<ActionResult> {
+  const admin = createAdminClient()
+  const { data: contrato, error: errFetch } = await admin
+    .from('contratos').select('id, minuta_enviada, contrato_enviado').eq('escola_id', escolaId).maybeSingle()
+  if (errFetch) return { success: false, error: errFetch.message }
+  if (!contrato) return { success: true }
+  if (contrato.minuta_enviada || contrato.contrato_enviado) {
+    return { success: false, error: 'Essa escola tem minuta ou contrato em andamento no funil — não pode ser removida por aqui.' }
+  }
+
+  const { error } = await admin.from('contratos').update({ contrato_assinado: false }).eq('id', contrato.id)
+  if (error) return { success: false, error: error.message }
+  revalidarTudo(escolaId)
+  return { success: true }
+}
+
 /** Atualiza o estado (UF) de uma escola — editável direto na grade. */
 export async function atualizarEstadoEscola(escolaId: string, estado: string | null): Promise<ActionResult> {
   const estadoLimpo = estado?.trim().toUpperCase().slice(0, 2) || null

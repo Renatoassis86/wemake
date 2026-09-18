@@ -33,6 +33,10 @@ export default async function QuantidadeAlunosPage() {
         cidade: e.cidade ?? null,
         uf: e.estado ?? null,
         livroImpresso: !!c.livro_impresso,
+        // Só pode ser removida da lista se estiver aqui puramente pela marcação
+        // manual (contrato_assinado) — escola com minuta/contrato real em
+        // andamento reflete o funil de verdade, não sai por aqui.
+        removivel: !c.minuta_enviada && !c.contrato_enviado,
         total: calcTotalAlunosContrato(c),
         qtds: Object.fromEntries(
           ['infantil2_qtd', 'infantil3_qtd', 'infantil4_qtd', 'infantil5_qtd',
