@@ -1,7 +1,8 @@
 import type { FaseFunil, LeadTemperatura } from '@/lib/funil-contratacao'
 
 export interface FunilVisualEstagio {
-  fase: FaseFunil
+  // 'base' = topo do funil (Base de Leads), não corresponde a uma FaseFunil real
+  fase: FaseFunil | 'base'
   label: string
   total: number       // cumulativo: nesta etapa ou em qualquer etapa mais avançada
   quente: number

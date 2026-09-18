@@ -128,16 +128,6 @@ function derivarQuadrante(fit: number, engajamento: number): Quadrante {
   return 'baixa_prioridade'
 }
 
-// Mantém a cor quente/morno/frio já usada no funil visual e nos badges,
-// agora derivada do quadrante em vez de um score único — "prioritário" é
-// quente, "baixa prioridade" é frio, os dois quadrantes mistos ficam mornos.
-const TEMPERATURA_POR_QUADRANTE: Record<Quadrante, LeadTemperatura> = {
-  prioritario:      'quente',
-  cultivar:         'morno',
-  oportunista:      'morno',
-  baixa_prioridade: 'frio',
-}
-
 export type FaseFunil =
   | 'negociacao' | 'proposta_enviada' | 'minuta'
   | 'contrato_enviado' | 'contrato_assinado' | 'implantacao' | 'parceiro_ativo'
@@ -158,6 +148,26 @@ export const FASE_LABELS: Record<FaseFunil, string> = {
   contrato_assinado: 'Contrato Assinado',
   implantacao:       'Implantação',
   parceiro_ativo:    'Parceiro Ativo',
+}
+
+// Classificação do Funil de Vendas (quente/morno/frio) — regra direta sobre o
+// estado real da negociação, substituindo o cruzamento Fit×Engajamento (que
+// continua existindo à parte, só para a Matriz Fit×Engajamento do dashboard —
+// ver calcularFit/calcularEngajamento/Quadrante acima):
+//   quente = já chegou em Minuta ou fase mais avançada
+//   morno  = já recebeu o formulário preenchido E já teve proposta enviada
+//            (Calculadora ou manual), mas ainda não chegou em Minuta
+//   frio   = qualquer outro caso — inclusive quem só teve reunião, sem
+//            formulário e sem proposta (é o "default" de tudo que não é
+//            quente nem morno, não precisa de nenhuma interação registrada)
+function derivarTemperaturaFunil(params: {
+  faseFunil: FaseFunil
+  formularioRecebido: boolean
+  temProposta: boolean
+}): LeadTemperatura {
+  if (FASE_FUNIL_ORDEM.indexOf(params.faseFunil) >= FASE_FUNIL_ORDEM.indexOf('minuta')) return 'quente'
+  if (params.formularioRecebido && params.temProposta) return 'morno'
+  return 'frio'
 }
 
 export interface EscolaFunil {
@@ -222,6 +232,11 @@ export interface FunilContratacaoResult {
   linhas: EscolaFunil[]
   kpis: {
     totalEscolasEmFunil: number
+    // Topo do funil — inclui quem ainda não tem nenhuma negociação/proposta/
+    // contrato registrado, além de quem já está em algum estágio do funil.
+    baseDeLeads: { total: number; quente: number; morno: number; frio: number }
+    leadsSemInteracao: number
+    totalReunioes: number
     porFase: Record<FaseFunil, number>
     porFaseTemperatura: Record<FaseFunil, Record<LeadTemperatura, number>>
     porTemperatura: Record<LeadTemperatura, number>
@@ -391,7 +406,11 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
     // continuar classificando como quente/morno, mesmo que a fase ou a
     // atividade recente sugerisse isso. Sempre fria/baixa prioridade.
     const quadrante: Quadrante = declinou ? 'baixa_prioridade' : derivarQuadrante(fit_score, engajamento_score)
-    const lead_temperatura = declinou ? 'frio' : TEMPERATURA_POR_QUADRANTE[quadrante]
+    const lead_temperatura = declinou ? 'frio' : derivarTemperaturaFunil({
+      faseFunil: fase,
+      formularioRecebido: !!contrato?.formulario_recebido,
+      temProposta: !!proposta || !!contrato?.proposta_enviada,
+    })
 
     return {
       escola_id: escola.id,
@@ -505,10 +524,33 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
     }
   }
 
+  // Base de Leads — topo do funil: TODA escola ativa e não recusada, esteja
+  // ela já em alguma negociação/proposta/contrato OU sem nenhuma interação
+  // ainda (essas últimas somem da tabela normal do funil, que só lista quem
+  // já tem negociacao_id/proposta_id/contrato_id — mas continuam existindo
+  // no nosso banco). Cumulativo por definição: é o universo inteiro, "nesta
+  // etapa (sem interação) ou em qualquer etapa mais avançada".
+  const baseDeLeads = { total: 0, quente: 0, morno: 0, frio: 0 }
+  for (const l of linhasTodas) {
+    if (l.declinou) continue
+    baseDeLeads.total++
+    baseDeLeads[l.lead_temperatura]++
+  }
+  const leadsSemInteracao = linhasTodas.filter(l => !l.declinou && !l.negociacao_id && !l.proposta_id && !l.contrato_id).length
+
+  // Total de reuniões/contatos registrados — soma de TODAS as escolas ativas
+  // (não só as que já entraram em negociação), sem deduplicar por escola. Vem
+  // daqui (admin) em vez de uma query própria da página porque `registros`
+  // tem RLS restritiva pro client autenticado comum.
+  const totalReunioes = linhasTodas.reduce((soma, l) => soma + l.reunioes_total, 0)
+
   return {
     linhas,
     kpis: {
       totalEscolasEmFunil: escolasAtivasEmFunil,
+      baseDeLeads,
+      leadsSemInteracao,
+      totalReunioes,
       porFase,
       porFaseTemperatura,
       porTemperatura,

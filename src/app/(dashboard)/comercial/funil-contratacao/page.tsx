@@ -316,22 +316,25 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
             <div>
               <div style={secTitle}>Funil de Vendas</div>
               <div style={{ fontSize: '.68rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.1rem' }}>
-                Cada etapa soma as escolas nela ou em qualquer etapa mais avançada. Cor = cruzamento Fit (porte, segmentos, perfil pedagógico) × Engajamento (fase do funil, com peso maior, + recência da última atividade — reunião, proposta ou contrato) — Prioritário (alto/alto) é quente, Baixa Prioridade (baixo/baixo) é frio, os quadrantes mistos ficam mornos. Escola que declinou não entra nessa conta.
+                Cada etapa soma as escolas nela ou em qualquer etapa mais avançada. Cor = <strong>Quente</strong> (já chegou em Minuta ou fase mais avançada), <strong>Morno</strong> (formulário preenchido + proposta já enviada, mas ainda sem minuta) ou <strong>Frio</strong> (todo o resto — inclusive quem só teve reunião, ou nenhuma interação ainda). &quot;Base de Leads&quot; é o topo do funil: toda escola do nosso banco, mesmo sem nenhuma interação registrada. Escola que declinou não entra nessa conta.
               </div>
             </div>
           </div>
           <div style={{ padding: '1.5rem 1.75rem' }}>
             <FunilVisual
-              estagios={FASE_FUNIL_ORDEM.map((fase, idx) => {
-                const faseComOuMaisAvancadas = FASE_FUNIL_ORDEM.slice(idx)
-                const acumulado = faseComOuMaisAvancadas.reduce((acc, f) => ({
-                  total:  acc.total  + kpis.porFase[f],
-                  quente: acc.quente + kpis.porFaseTemperatura[f].quente,
-                  morno:  acc.morno  + kpis.porFaseTemperatura[f].morno,
-                  frio:   acc.frio   + kpis.porFaseTemperatura[f].frio,
-                }), { total: 0, quente: 0, morno: 0, frio: 0 })
-                return { fase, label: FASE_LABELS[fase], ...acumulado }
-              })}
+              estagios={[
+                { fase: 'base' as const, label: 'Base de Leads', ...kpis.baseDeLeads },
+                ...FASE_FUNIL_ORDEM.map((fase, idx) => {
+                  const faseComOuMaisAvancadas = FASE_FUNIL_ORDEM.slice(idx)
+                  const acumulado = faseComOuMaisAvancadas.reduce((acc, f) => ({
+                    total:  acc.total  + kpis.porFase[f],
+                    quente: acc.quente + kpis.porFaseTemperatura[f].quente,
+                    morno:  acc.morno  + kpis.porFaseTemperatura[f].morno,
+                    frio:   acc.frio   + kpis.porFaseTemperatura[f].frio,
+                  }), { total: 0, quente: 0, morno: 0, frio: 0 })
+                  return { fase, label: FASE_LABELS[fase], ...acumulado }
+                }),
+              ]}
             />
           </div>
         </div>

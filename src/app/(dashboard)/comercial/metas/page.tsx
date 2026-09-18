@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import PageHeader from '@/components/layout/PageHeader'
 import Link from 'next/link'
 import { formatCurrency } from '@/lib/utils'
@@ -57,10 +57,13 @@ function FunilBarras({ etapas }: { etapas: { label: string; valor: number; cor: 
 }
 
 export default async function MetasPage() {
-  const supabase = await createClient()
+  // admin: `registros` tem policy de SELECT restrita pro client autenticado
+  // comum (mesma razão de escolas_resumo/propostas em priorizacao.ts) — sem
+  // isso a lista e a contagem de reuniões vinham vazias/zeradas.
+  const admin = createAdminClient()
 
   const [{ data: registrosRaw }, funil] = await Promise.all([
-    supabase.from('registros')
+    admin.from('registros')
       .select('escola_id, data_contato, classificacao, responsavel_id, escola:escolas(nome)')
       .order('data_contato', { ascending: false }),
 
@@ -75,7 +78,7 @@ export default async function MetasPage() {
   // `usuarios` (ver actions.ts).
   const respIds = [...new Set((registrosRaw ?? []).map((r: any) => r.responsavel_id).filter(Boolean))]
   const { data: usuariosResp } = respIds.length > 0
-    ? await supabase.from('usuarios').select('id, nome_completo').in('id', respIds)
+    ? await admin.from('usuarios').select('id, nome_completo').in('id', respIds)
     : { data: [] as { id: string; nome_completo: string }[] }
   const nomePorId = new Map((usuariosResp ?? []).map(u => [u.id, u.nome_completo]))
   const registros = (registrosRaw ?? []).map((r: any) => ({
@@ -85,13 +88,15 @@ export default async function MetasPage() {
       : null,
   }))
 
-  // ── Cálculos — tudo derivado de `funil.linhas` (mesma fonte da página
-  // Funil de Contratação), para as duas páginas nunca mostrarem números
-  // diferentes para a mesma coisa ──────────────────────────────────
+  // ── Cálculos — tudo derivado de `funil.linhas`/`funil.kpis` (mesma fonte
+  // da página Funil de Contratação), para as duas páginas nunca mostrarem
+  // números diferentes para a mesma coisa ──────────────────────────────
 
   // Reuniões = TODOS os registros de contato, sem deduplicar por escola — a
-  // mesma escola pode ter várias reuniões e cada uma conta.
-  const totalReunioes = registros.length
+  // mesma escola pode ter várias reuniões e cada uma conta. Vem de
+  // funil.kpis (já somado com o client admin) em vez de registros.length
+  // aqui, pra não depender da mesma query afetada por RLS.
+  const totalReunioes = funil.kpis.totalReunioes
 
   // Propostas enviadas — qualquer escola com proposta gerada pela Calculadora
   // (proposta_id) OU marcada manualmente no checklist do contrato (envio por
