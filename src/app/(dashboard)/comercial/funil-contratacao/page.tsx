@@ -198,7 +198,14 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
     return (
       <tr key={l.escola_id} style={{ borderBottom: '1px solid #f1f5f9', background: idx % 2 === 0 ? '#fff' : '#fafafa' }}>
         <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle' }}>
-          <PrioridadeInline escolaId={l.escola_id} prioridade={l.prioridade_manual} escolaIdsQuadro={escolaIdsQuadro} />
+          {/* Mostra a posição calculada (idx+1) dentro do quadro, não o valor
+              bruto salvo — assim o número exibido nunca repete nem pula,
+              mesmo quando uma escola muda de quadro sozinha (ex.: declinou
+              agora) e carrega um prioridade_manual antigo que colide com
+              outra já existente no quadro de chegada. quadroLinhas já vem
+              ordenado com prioridade_manual nulo sempre por último, então
+              idx+1 bate exatamente com a posição entre as rankeadas. */}
+          <PrioridadeInline escolaId={l.escola_id} prioridade={l.prioridade_manual != null ? idx + 1 : null} escolaIdsQuadro={escolaIdsQuadro} />
         </td>
         <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle', width: 150, maxWidth: 150 }}>
           <div style={{ fontWeight: 700, fontSize: '.8rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', lineHeight: 1.3 }}>
