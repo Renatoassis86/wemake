@@ -135,6 +135,40 @@ export default function DiagnosticoForm({
     if (res.ok) { setStatus('enviado'); window.scrollTo({ top: 0, behavior: 'smooth' }) } else setErroFinal(res.erro ?? 'Não foi possível enviar.')
   }
 
+  /** Lista de arquivos + botão de anexar, para uma evidência (evi-XX) ou para uma medida (med-XX). */
+  const anexos = (key: string, comObs: boolean) => {
+    const meus = arquivos.filter(a => a.evidencia_key === key)
+    const n = enviando[key] ?? 0
+    return (
+      <>
+        {meus.length ? (
+          <ul className="dg-arqs">
+            {meus.map(a => (
+              <li key={a.id}>
+                <span>{a.nome}<small>{tamanhoLegivel(a.tamanho)}</small></span>
+                {!travado ? <button type="button" onClick={() => apagar(a.id)} aria-label={`Remover ${a.nome}`}>Remover</button> : null}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        <div className="dg-evid-a">
+          <label className="dg-botao">
+            {n ? `Enviando ${n}…` : meus.length ? 'Enviar mais arquivos' : 'Anexar arquivos'}
+            <input
+              type="file" multiple hidden disabled={travado || n > 0}
+              accept="image/*,video/mp4,video/quicktime,video/webm,application/pdf,.heic,.heif"
+              onChange={e => { enviarArquivos(key, e.target.files); e.target.value = '' }}
+            />
+          </label>
+          {comObs ? (
+            <input className="dg-obs" aria-label={`Observação: ${key}`} placeholder="Observação (opcional)" value={r[key + '.o'] ?? ''} onChange={e => set(key + '.o', e.target.value)} />
+          ) : null}
+        </div>
+        {erroUpload[key] ? <p role="alert" className="dg-erro">{erroUpload[key]}</p> : null}
+      </>
+    )
+  }
+
   return (
     <div className="dg-wrap">
       <aside className="dg-side" aria-label="Seções do formulário">
@@ -205,7 +239,7 @@ export default function DiagnosticoForm({
           {/* ───────────── 2. Medidas ───────────── */}
           <section id="medidas" className="dg-sec">
             <header><span className="ac-num">2</span><div><div className="ac-kicker">Checklist de medidas e briefing</div><h2>Medidas da sala</h2></div></header>
-            <p className="dg-dica">Use trena. Não é preciso desenho técnico nem escala: identifique as paredes como Parede 1, 2, 3 e anote as medidas em metros ou centímetros. Se preferir, descreva ou cole um link.</p>
+            <p className="dg-dica">Use trena. Não é preciso desenho técnico nem escala: identifique as paredes como Parede 1, 2, 3 e anote as medidas em metros ou centímetros. Em cada linha você pode colar um link ou anexar uma foto ou arquivo.</p>
             {SCHEMA.medidas.map((m, i) => {
               const nova = i === 0 || SCHEMA.medidas[i - 1].categoria !== m.categoria
               return (
@@ -215,6 +249,7 @@ export default function DiagnosticoForm({
                     <label htmlFor={m.key}>{m.info}</label>
                     <textarea id={m.key} rows={2} value={r[m.key] ?? ''} onChange={e => set(m.key, e.target.value)} placeholder="Resposta ou medida" />
                     <input aria-label={`Anexo ou link: ${m.info}`} placeholder="Link ou nome do arquivo, se houver" value={r[m.key + '.l'] ?? ''} onChange={e => set(m.key + '.l', e.target.value)} />
+                    <div className="dg-anexo-med">{anexos(m.key, false)}</div>
                   </div>
                 </div>
               )
@@ -226,36 +261,14 @@ export default function DiagnosticoForm({
             <header><span className="ac-num">3</span><div><div className="ac-kicker">Evidências obrigatórias</div><h2>Fotos, vídeo e planta</h2></div></header>
             <p className="dg-dica">Fotos (JPG, PNG, HEIC), vídeo (MP4, MOV) e PDF, até 200 MB cada. No celular, o botão abre a câmera ou a galeria.</p>
             {SCHEMA.evidencias.map(ev => {
-              const meus = arquivos.filter(a => a.evidencia_key === ev.key)
-              const n = enviando[ev.key] ?? 0
+              const total = arquivos.filter(x => x.evidencia_key === ev.key).length
               return (
                 <div key={ev.key} className="dg-evid">
                   <div className="dg-evid-h">
                     <b>{ev.nome}</b>
-                    <span className={meus.length ? 'dg-chip is-ok' : 'dg-chip'}>{meus.length ? `${meus.length} ${meus.length === 1 ? 'arquivo' : 'arquivos'}` : 'Falta enviar'}</span>
+                    <span className={total ? 'dg-chip is-ok' : 'dg-chip'}>{total ? `${total} ${total === 1 ? 'arquivo' : 'arquivos'}` : 'Falta enviar'}</span>
                   </div>
-                  {meus.length ? (
-                    <ul className="dg-arqs">
-                      {meus.map(a => (
-                        <li key={a.id}>
-                          <span>{a.nome}<small>{tamanhoLegivel(a.tamanho)}</small></span>
-                          {!travado ? <button type="button" onClick={() => apagar(a.id)} aria-label={`Remover ${a.nome}`}>Remover</button> : null}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                  <div className="dg-evid-a">
-                    <label className="dg-botao">
-                      {n ? `Enviando ${n}…` : 'Escolher arquivos'}
-                      <input
-                        type="file" multiple hidden disabled={travado || n > 0}
-                        accept="image/*,video/mp4,video/quicktime,video/webm,application/pdf,.heic,.heif"
-                        onChange={e => { enviarArquivos(ev.key, e.target.files); e.target.value = '' }}
-                      />
-                    </label>
-                    <input className="dg-obs" aria-label={`Observação: ${ev.nome}`} placeholder="Observação (opcional)" value={r[ev.key + '.o'] ?? ''} onChange={e => set(ev.key + '.o', e.target.value)} />
-                  </div>
-                  {erroUpload[ev.key] ? <p role="alert" className="dg-erro">{erroUpload[ev.key]}</p> : null}
+                  {anexos(ev.key, true)}
                 </div>
               )
             })}

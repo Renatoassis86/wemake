@@ -90,10 +90,11 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
         <h3 className="ac-h3">2. Medidas <small>respostas da escola</small></h3>
         <div className="ac-table-wrap" tabIndex={0} role="region" aria-label="Medidas">
           <table className="ac-table">
-            <thead><tr><th scope="col">Categoria</th><th scope="col">Informação</th><th scope="col">Resposta / medida</th><th scope="col">Anexo ou link</th></tr></thead>
+            <thead><tr><th scope="col">Categoria</th><th scope="col">Informação</th><th scope="col">Resposta / medida</th><th scope="col">Anexo ou link</th><th scope="col">Arquivos enviados</th></tr></thead>
             <tbody>
               {SCHEMA.medidas.map(m => (
-                <tr key={m.key}><td>{m.categoria}</td><td>{m.info}</td><td>{resp[m.key] || <em className="an-vazio">—</em>}</td><td>{resp[m.key + '.l'] || ''}</td></tr>
+                <tr key={m.key}><td>{m.categoria}</td><td>{m.info}</td><td>{resp[m.key] || <em className="an-vazio">—</em>}</td><td>{resp[m.key + '.l'] || ''}</td>
+                  <td>{porEvidencia(m.key).map(a => <div key={a.id}>{a.url ? <a className="ac-link" href={a.url} target="_blank" rel="noopener noreferrer">{a.nome}</a> : a.nome}</div>)}</td></tr>
               ))}
             </tbody>
           </table>

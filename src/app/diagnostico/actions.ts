@@ -7,14 +7,17 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import {
   COOKIE_DIAGNOSTICO, SESSAO_HORAS, criarSessao, hashIp, hashPin, lerSessao, normalizarPin,
 } from '@/lib/diagnostico-auth'
-import { BUCKET, CHAVES_ESCOLA, SCHEMA, limparPatch, type Respostas, type StatusDiagnostico } from '@/lib/diagnostico'
+import {
+  BUCKET, CHAVES_ANEXO, CHAVES_ESCOLA, limparPatch, mapaDeRespostas, patchParaLinhasEscola,
+  type Respostas, type RespostaBanco, type StatusDiagnostico,
+} from '@/lib/diagnostico'
 
 /* Ações públicas do formulário externo. Toda ação (menos entrar) exige o cookie de sessão
    assinado, que só nasce depois de um PIN válido, e só enxerga o diagnóstico daquele PIN. */
 
 const MAX_TAMANHO = 200 * 1024 * 1024
 const MAX_POR_EVIDENCIA = 12
-const MAX_TOTAL = 90
+const MAX_TOTAL = 160
 
 const TIPOS: Record<string, string> = {
   'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/heic': 'heic', 'image/heif': 'heif',
@@ -33,13 +36,18 @@ export async function sessaoDiagnostico(): Promise<SessaoDiagnostico | null> {
   const jar = await cookies()
   const id = lerSessao(jar.get(COOKIE_DIAGNOSTICO)?.value)
   if (!id) return null
-  const { data } = await createAdminClient()
+  const db = createAdminClient()
+  const { data } = await db
     .from('academia_diagnosticos')
-    .select('id, escola_nome, status, respostas, expira_em')
+    .select('id, escola_nome, status, expira_em')
     .eq('id', id)
     .maybeSingle()
   if (!data || new Date(data.expira_em) < new Date()) return null
-  return data as SessaoDiagnostico
+  const { data: linhas } = await db
+    .from('academia_diag_respostas')
+    .select('item_key, resposta, detalhe, anexo_link, observacao, possui, qtd_existente, marca_obs')
+    .eq('diagnostico_id', id)
+  return { ...(data as Omit<SessaoDiagnostico, 'respostas'>), respostas: mapaDeRespostas((linhas ?? []) as RespostaBanco[]) }
 }
 
 async function ipDoVisitante() {
@@ -94,7 +102,7 @@ export async function salvarRespostas(patch: Record<string, unknown>): Promise<{
   if (s.status === 'em_analise' || s.status === 'concluido') return { ok: false, erro: 'Este diagnóstico já está em análise pela We Make.' }
   const limpo = limparPatch(patch, CHAVES_ESCOLA)
   if (!Object.keys(limpo).length) return { ok: true }
-  const { data, error } = await createAdminClient().rpc('academia_merge_respostas', { p_id: s.id, p_patch: limpo })
+  const { data, error } = await createAdminClient().rpc('academia_salvar_respostas', { p_id: s.id, p_rows: patchParaLinhasEscola(limpo) })
   if (error || !data) return { ok: false, erro: 'Não foi possível salvar agora. Tentaremos de novo.' }
   return { ok: true }
 }
@@ -126,7 +134,7 @@ export async function pedirUpload(input: { evidencia: string; mime: string; tama
   const s = await sessaoDiagnostico()
   if (!s) return { ok: false as const, erro: 'Sessão encerrada. Entre de novo com o PIN.' }
   if (s.status === 'em_analise' || s.status === 'concluido') return { ok: false as const, erro: 'Este diagnóstico já está em análise pela We Make.' }
-  if (!SCHEMA.evidencias.some(e => e.key === input.evidencia)) return { ok: false as const, erro: 'Evidência inválida.' }
+  if (!CHAVES_ANEXO.has(input.evidencia)) return { ok: false as const, erro: 'Item inválido para anexo.' }
   const ext = TIPOS[input.mime]
   if (!ext) return { ok: false as const, erro: 'Tipo de arquivo não aceito. Envie foto (JPG, PNG, HEIC), vídeo (MP4, MOV) ou PDF.' }
   if (!(input.tamanho > 0) || input.tamanho > MAX_TAMANHO) return { ok: false as const, erro: 'O arquivo passa de 200 MB.' }
@@ -147,7 +155,7 @@ export async function pedirUpload(input: { evidencia: string; mime: string; tama
 export async function confirmarUpload(input: { path: string; evidencia: string; nome: string; mime: string }) {
   const s = await sessaoDiagnostico()
   if (!s) return { ok: false as const, erro: 'Sessão encerrada. Entre de novo com o PIN.' }
-  if (!input.path.startsWith(`${s.id}/${input.evidencia}/`)) return { ok: false as const, erro: 'Arquivo inválido.' }
+  if (!CHAVES_ANEXO.has(input.evidencia) || !input.path.startsWith(`${s.id}/${input.evidencia}/`)) return { ok: false as const, erro: 'Arquivo inválido.' }
 
   const db = createAdminClient()
   const pasta = input.path.split('/').slice(0, 2).join('/')

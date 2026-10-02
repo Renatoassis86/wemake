@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { emailsAutorizados, gerarPin, hashPin } from '@/lib/diagnostico-auth'
-import { CHAVES_PARECER, STATUS_DIAGNOSTICO, limparPatch, type StatusDiagnostico } from '@/lib/diagnostico'
+import { CHAVES_PARECER, STATUS_DIAGNOSTICO, limparPatch, patchParaLinhasParecer, type StatusDiagnostico } from '@/lib/diagnostico'
 
 /** Só quem está na lista (Renato e Dênis, a princípio) mexe nos diagnósticos e vê as respostas. */
 async function autorizado() {
@@ -68,11 +68,9 @@ export async function salvarParecer(id: string, patch: Record<string, unknown>):
   if (!user) return SEM_PERMISSAO
   const limpo = limparPatch(patch, CHAVES_PARECER)
   if (!Object.keys(limpo).length) return { ok: true }
-  const db = createAdminClient()
-  const { data, error: e1 } = await db.from('academia_diagnosticos').select('parecer').eq('id', id).single()
-  if (e1 || !data) return { ok: false, erro: 'Diagnóstico não encontrado.' }
-  const { error } = await db.from('academia_diagnosticos').update({ parecer: { ...(data.parecer as object), ...limpo } }).eq('id', id)
-  return error ? { ok: false, erro: error.message } : { ok: true }
+  const { data, error } = await createAdminClient().rpc('academia_salvar_pareceres', { p_id: id, p_rows: patchParaLinhasParecer(limpo) })
+  if (error) return { ok: false, erro: error.message }
+  return data ? { ok: true } : { ok: false, erro: 'Diagnóstico não encontrado.' }
 }
 
 export async function definirStatus(id: string, status: string): Promise<{ ok: boolean; erro?: string }> {

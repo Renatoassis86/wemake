@@ -114,3 +114,7 @@
 .dg-enviar { padding: 1.05rem 1.8rem; border: 0; border-radius: 10px; background: var(--ac-ink); color: #fff; font: 700 1rem/1 var(--ac-sans); cursor: pointer; }
 .dg-enviar:hover:not(:disabled) { background: var(--ac-ink-2); }
 .dg-enviar:disabled { opacity: .5; cursor: default; }
+
+.dg-anexo-med { margin-top: .6rem; padding-left: .9rem; border-left: 2px solid var(--ac-line); }
+.dg-anexo-med .dg-botao { padding: .55rem .9rem; font-size: .78rem; background: var(--ac-ivory); color: var(--ac-ink); border: 1px solid var(--ac-line-2); }
+.dg-anexo-med .dg-botao:hover { border-color: var(--ac-ink); background: var(--ac-ivory-2); }

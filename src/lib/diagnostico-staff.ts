@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { emailsAutorizados } from '@/lib/diagnostico-auth'
-import { BUCKET, type Respostas, type StatusDiagnostico } from '@/lib/diagnostico'
+import { BUCKET, mapaDePareceres, mapaDeRespostas, type ParecerBanco, type Respostas, type RespostaBanco, type StatusDiagnostico } from '@/lib/diagnostico'
 
 /** O usuário logado pode ver os diagnósticos? (lista em ACADEMIA_DIAGNOSTICO_EMAILS) */
 export async function podeVerDiagnosticos() {
@@ -36,23 +36,42 @@ const FALTA_TABELA = (e: { code?: string; message?: string } | null) =>
   !!e && (e.code === 'PGRST205' || e.code === '42P01' || /does not exist|schema cache|Could not find the table/i.test(e.message ?? ''))
 
 export async function listarDiagnosticos(): Promise<{ setup: boolean; erro?: string; itens: DiagnosticoLinha[] }> {
-  const { data, error } = await createAdminClient()
+  const db = createAdminClient()
+  const { data, error } = await db
     .from('academia_diagnosticos')
-    .select('id, implantacao_id, escola_nome, status, respostas, parecer, ultima_atividade, enviado_em, expira_em, created_at')
+    .select('id, implantacao_id, escola_nome, status, ultima_atividade, enviado_em, expira_em, created_at')
     .order('created_at', { ascending: false })
   if (FALTA_TABELA(error)) return { setup: true, itens: [] }
   if (error) return { setup: false, erro: error.message, itens: [] }
-  return { setup: false, itens: (data ?? []) as DiagnosticoLinha[] }
+
+  // só o essencial para contar o que foi respondido
+  const { data: linhas, error: e2 } = await db.from('academia_diag_respostas').select('diagnostico_id, item_key, resposta, possui')
+  if (FALTA_TABELA(e2)) return { setup: true, itens: [] }
+  const porDiag = new Map<string, Respostas>()
+  for (const l of (linhas ?? []) as { diagnostico_id: string; item_key: string; resposta: string | null; possui: string | null }[]) {
+    const m = porDiag.get(l.diagnostico_id) ?? {}
+    if (l.resposta) m[l.item_key] = l.resposta
+    if (l.possui) m[l.item_key + '.p'] = l.possui
+    porDiag.set(l.diagnostico_id, m)
+  }
+  return {
+    setup: false,
+    itens: (data ?? []).map(d => ({ ...d, respostas: porDiag.get(d.id) ?? {}, parecer: {} })) as DiagnosticoLinha[],
+  }
 }
 
 export async function carregarDiagnostico(id: string) {
   const db = createAdminClient()
   const { data, error } = await db
     .from('academia_diagnosticos')
-    .select('id, implantacao_id, escola_nome, status, respostas, parecer, ultima_atividade, enviado_em, expira_em, created_at')
+    .select('id, implantacao_id, escola_nome, status, ultima_atividade, enviado_em, expira_em, created_at')
     .eq('id', id)
     .maybeSingle()
   if (error || !data) return null
+  const [{ data: resp }, { data: par }] = await Promise.all([
+    db.from('academia_diag_respostas').select('item_key, resposta, detalhe, anexo_link, observacao, possui, qtd_existente, marca_obs').eq('diagnostico_id', id),
+    db.from('academia_diag_pareceres').select('item_key, status_parecer, observacao, qtd_aproveitavel, acao, texto').eq('diagnostico_id', id),
+  ])
 
   const { data: arqs } = await db
     .from('academia_diagnostico_arquivos')
@@ -65,5 +84,8 @@ export async function carregarDiagnostico(id: string) {
   const arquivos: ArquivoStaff[] = lista.map(a => ({
     id: a.id, evidencia_key: a.evidencia_key, nome: a.nome, mime: a.mime, tamanho: a.tamanho, url: porPath.get(a.path) ?? null,
   }))
-  return { diagnostico: data as DiagnosticoLinha, arquivos }
+  return {
+    diagnostico: { ...data, respostas: mapaDeRespostas((resp ?? []) as RespostaBanco[]), parecer: mapaDePareceres((par ?? []) as ParecerBanco[]) } as DiagnosticoLinha,
+    arquivos,
+  }
 }

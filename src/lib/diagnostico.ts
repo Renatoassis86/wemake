@@ -54,6 +54,9 @@ export const CHAVES_PARECER: Set<string> = (() => {
   return k
 })()
 
+/** Itens que aceitam anexo: as evidências obrigatórias e cada linha do checklist de medidas ("Anexo ou link"). */
+export const CHAVES_ANEXO: Set<string> = new Set([...SCHEMA.evidencias.map(e => e.key), ...SCHEMA.medidas.map(m => m.key)])
+
 export const MAX_TEXTO = 600
 
 export function limparPatch(patch: Record<string, unknown>, permitidas: Set<string>): Respostas {
@@ -109,4 +112,70 @@ export function resumoParecer(parecer: Respostas) {
   const reu = calc(SCHEMA.reutilizaveis)
   const con = calc(SCHEMA.consumiveis)
   return { reu, con, total: reu.custo + con.custo }
+}
+
+/* ═══════════════ Ponte entre o formulário (mapa chave → texto) e as tabelas relacionais ═══════════════ */
+
+export interface LinhaBanco { item_key: string; campo: string; valor: string }
+
+const COLUNA_ESCOLA: Record<string, string> = { '': 'resposta', d: 'detalhe', l: 'anexo_link', o: 'observacao', p: 'possui', q: 'qtd_existente', m: 'marca_obs' }
+const COLUNA_PARECER: Record<string, string> = { s: 'status_parecer', pc: 'status_parecer', o: 'observacao', qa: 'qtd_aproveitavel', ac: 'acao' }
+
+/** 'reu-01.p' → { item_key: 'reu-01', campo: 'possui' } */
+export function patchParaLinhasEscola(patch: Respostas): LinhaBanco[] {
+  return Object.entries(patch).flatMap(([k, valor]) => {
+    const [item_key, suf = ''] = k.split('.')
+    const campo = COLUNA_ESCOLA[suf]
+    return campo ? [{ item_key, campo, valor }] : []
+  })
+}
+
+/** 'par-02.s' → status_parecer; 'reu-01.qa' → qtd_aproveitavel; 'geral.obs' → texto do item 'geral.obs' */
+export function patchParaLinhasParecer(patch: Respostas): LinhaBanco[] {
+  return Object.entries(patch).flatMap(([k, valor]) => {
+    if (k.startsWith('geral.')) return [{ item_key: k, campo: 'texto', valor }]
+    const [item_key, suf = ''] = k.split('.')
+    const campo = COLUNA_PARECER[suf]
+    return campo ? [{ item_key, campo, valor }] : []
+  })
+}
+
+export interface RespostaBanco {
+  item_key: string
+  resposta: string | null; detalhe: string | null; anexo_link: string | null; observacao: string | null
+  possui: string | null; qtd_existente: number | null; marca_obs: string | null
+}
+export interface ParecerBanco {
+  item_key: string
+  status_parecer: string | null; observacao: string | null; qtd_aproveitavel: number | null; acao: string | null; texto: string | null
+}
+
+const emTexto = (v: unknown) => (v === null || v === undefined ? null : String(v).replace('.', ','))
+
+export function mapaDeRespostas(rows: RespostaBanco[]): Respostas {
+  const m: Respostas = {}
+  for (const r of rows) {
+    const k = r.item_key
+    if (r.resposta) m[k] = r.resposta
+    if (r.detalhe) m[k + '.d'] = r.detalhe
+    if (r.anexo_link) m[k + '.l'] = r.anexo_link
+    if (r.observacao) m[k + '.o'] = r.observacao
+    if (r.possui) m[k + '.p'] = r.possui
+    if (r.qtd_existente !== null && r.qtd_existente !== undefined) m[k + '.q'] = emTexto(r.qtd_existente) ?? ''
+    if (r.marca_obs) m[k + '.m'] = r.marca_obs
+  }
+  return m
+}
+
+export function mapaDePareceres(rows: ParecerBanco[]): Respostas {
+  const m: Respostas = {}
+  for (const r of rows) {
+    const k = r.item_key
+    if (k.startsWith('geral.')) { if (r.texto) m[k] = r.texto; continue }
+    if (r.status_parecer) m[k + (k.startsWith('par-') ? '.s' : '.pc')] = r.status_parecer
+    if (r.observacao) m[k + '.o'] = r.observacao
+    if (r.qtd_aproveitavel !== null && r.qtd_aproveitavel !== undefined) m[k + '.qa'] = emTexto(r.qtd_aproveitavel) ?? ''
+    if (r.acao) m[k + '.ac'] = r.acao
+  }
+  return m
 }
