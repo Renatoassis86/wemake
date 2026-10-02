@@ -90,4 +90,14 @@ export const SIDEBAR_CSS = `
   .sbc-item.is-on .sbc-n { color:#00c8ff; }
   .sbc-t { flex:1; min-width:0; }
   .sbc-breve { font:600 .54rem/1 var(--font-inter, sans-serif); letter-spacing:.1em; text-transform:uppercase; border:1px solid rgba(255,255,255,.2); border-radius:99px; padding:.25rem .45rem; color:rgba(255,255,255,.4); }
+  @media (max-width: 640px) {
+    .sbc-voltar { display:flex; align-items:center; min-height:44px; margin-bottom:.4rem; font-size:.85rem; }
+    .sbc-item { min-height:44px; font-size:.9rem; }
+    .sbc-rotulo { padding-top:.9rem; }
+  }
+  @media (orientation: landscape) and (max-height: 500px) {
+    .sbc-voltar { display:flex; align-items:center; min-height:44px; margin-bottom:.2rem; }
+    .sbc-item { min-height:44px; }
+    .sbc-rotulo { padding-top:.7rem; padding-bottom:.3rem; }
+  }
 `

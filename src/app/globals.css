@@ -1350,3 +1350,8 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
     flex: 0 0 auto;
   }
 }
+
+/* ── Tablet 641–1100px: menu lateral fixo mais estreito (acima de 900px; abaixo é drawer) ── */
+@media (min-width: 641px) and (max-width: 1100px) {
+  :root { --sidebar-w: 224px; }
+}

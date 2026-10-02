@@ -47,7 +47,7 @@ export function PaginasDoModulo({ slug }: { slug: ModuloSlug }) {
     <section aria-labelledby="pags-t">
       <h2 id="pags-t" className="ac-h3">As páginas deste módulo</h2>
       <p className="ac-sec-lead">
-        {itens.filter(p => p.status === 'disponível').length} de {itens.length} já têm página. As demais estão definidas e serão construídas na ordem que a equipe priorizar.
+        {itens.filter(p => p.status === 'disponível').length} de {itens.length} já têm página. As demais serão construídas na ordem que a equipe priorizar.
       </p>
       <ul className="ac-rows">
         {itens.map(p => {

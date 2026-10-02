@@ -70,7 +70,7 @@ export default async function CalendarioPage({ searchParams }: { searchParams: P
               <span className="ac-cal-n">{n}</span>
               <ul>
                 {itens.slice(0, 4).map((it, k) => (
-                  <li key={k} className={it.k === 'evento' ? 'is-evento' : undefined} data-s={it.status} title={`${it.titulo} — ${it.sub}`}>
+                  <li key={k} className={it.k === 'evento' ? 'is-evento' : undefined} data-s={it.status} title={`${it.titulo} · ${it.sub}`}>
                     {it.hora ? <b>{it.hora}</b> : null} {it.titulo}
                   </li>
                 ))}

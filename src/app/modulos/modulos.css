@@ -9,9 +9,11 @@
 .md-outros a { font: 600 .76rem/1 var(--ac-sans); color: rgba(255, 255, 255, .78); text-decoration: none; padding: .55rem .8rem; border-radius: 6px; white-space: nowrap; }
 .md-outros a:hover { color: #fff; background: rgba(255, 255, 255, .1); }
 .md-outros a.is-on { color: var(--ac-ink); background: var(--ac-cyan); }
+.md :focus-visible { outline: 2px solid var(--ac-ink); outline-offset: 3px; border-radius: 4px; }
+.md-hero :focus-visible { outline-color: var(--ac-cyan); }
 .md-hero h1 { font: 600 clamp(2.2rem, 5vw, 3.8rem)/1.05 var(--ac-sans); letter-spacing: -.025em; margin: 0 0 1rem; max-width: 16ch; text-wrap: balance; }
 
-.md-wrap { max-width: 1240px; margin: 0 auto; padding: clamp(2rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3.5rem) 4rem; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+.md-wrap { max-width: calc(1240px + 2 * clamp(1.25rem, 4vw, 3.5rem)); margin: 0 auto; padding: clamp(2rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3.5rem) 4rem; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
 @media (max-width: 900px) { .md-wrap { grid-template-columns: 1fr; } .md-login { order: -1; } }
 .md-desc { font-size: 1.2rem; line-height: 1.65; color: var(--ac-ink); max-width: 60ch; margin: 0 0 2.5rem; }
 .md-paginas { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ac-ink); }
@@ -33,7 +35,7 @@
 .md-botao:hover:not(:disabled) { background: var(--ac-ink-2); } .md-botao:disabled { opacity: .5; }
 .md-botao--clara { background: transparent; color: var(--ac-ink); border: 1px solid var(--ac-line-2); }
 .md-erro { color: #b3261e; font: 600 .85rem/1.4 var(--ac-sans); margin: .8rem 0 0; }
-.md-rodape { max-width: 1240px; margin: 0 auto; padding: 1.5rem clamp(1.25rem, 4vw, 3.5rem) 3rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; border-top: 1px solid var(--ac-line); font: 500 .8rem/1.4 var(--ac-sans); color: var(--ac-muted); }
+.md-rodape { max-width: calc(1240px + 2 * clamp(1.25rem, 4vw, 3.5rem)); margin: 0 auto; padding: 1.5rem clamp(1.25rem, 4vw, 3.5rem) 3rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; border-top: 1px solid var(--ac-line); font: 500 .8rem/1.4 var(--ac-sans); color: var(--ac-muted); }
 .md-rodape a { color: var(--ac-link); text-decoration: none; }
 
 .md-escola { margin-top: 1.25rem; padding: 1.5rem; background: #fff; border: 1px solid var(--ac-line); border-radius: 18px; }
@@ -42,3 +44,36 @@
 .md-escola .md-botao { display: block; text-align: center; }
 .md-wrap a.md-botao { color: #fff; }
 .md-wrap a.md-botao--clara { color: var(--ac-ink); }
+
+/* Mobile (retrato) */
+@media (max-width: 640px) {
+  .md-hero { padding-left: max(1.25rem, env(safe-area-inset-left)); padding-right: max(1.25rem, env(safe-area-inset-right)); }
+  .md-hero::after { width: 120px; right: -30px; bottom: -40px; opacity: .55; }
+  .md-outros { gap: 0; }
+  .md-outros a { min-height: 44px; display: inline-flex; align-items: center; padding: .4rem .65rem; }
+  .md-hero h1 { max-width: none; }
+  .md-login { position: static; padding: 1.3rem; }
+  .md-form input { font-size: 16px; min-height: 48px; }
+  .md-senha button { min-height: 44px; min-width: 44px; }
+  .md-botao { min-height: 48px; display: flex; align-items: center; justify-content: center; }
+  .md-paginas li { flex-wrap: wrap; gap: .5rem 1rem; }
+  .md-rodape { padding-left: max(1.25rem, env(safe-area-inset-left)); padding-right: max(1.25rem, env(safe-area-inset-right)); padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
+  .md-rodape a { min-height: 44px; display: inline-flex; align-items: center; }
+}
+
+/* Paisagem baixa */
+@media (orientation: landscape) and (max-height: 500px) {
+  .md-hero { padding-top: .75rem; padding-bottom: 1.5rem; padding-left: max(1.25rem, env(safe-area-inset-left)); padding-right: max(1.25rem, env(safe-area-inset-right)); }
+  .md-topo { margin-bottom: 1rem; }
+  .md-hero h1 { font-size: clamp(1.6rem, 6vh, 2.2rem); margin-bottom: .5rem; }
+  .md-outros a { min-height: 44px; display: inline-flex; align-items: center; }
+  .md-login { position: static; }
+  .md-wrap { padding-left: max(1.25rem, env(safe-area-inset-left)); padding-right: max(1.25rem, env(safe-area-inset-right)); }
+}
+
+/* ── Tablet 641–1100px (agente tablet) ── */
+@media (min-width: 641px) and (max-width: 1100px) {
+  .md-outros a { padding: .8rem .9rem; }
+  .md-form input { min-height: 2.9rem; }
+  .md-senha button { padding: .8rem; }
+}

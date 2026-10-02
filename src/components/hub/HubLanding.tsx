@@ -58,10 +58,10 @@ export default function HubLanding() {
         <div className="hub-hero-in">
           <p className="hub-eyebrow">Gestão geral · We Make</p>
           <h1>
-            Tudo o que a We Make precisa para <em>administrar, cobrar, pagar e crescer.</em>
+            Gestão que responde a Deus: <em>verdade nos números, bondade com as escolas, beleza no que se entrega.</em>
           </h1>
           <p className="hub-lead">
-            Ferramenta exclusiva para a equipe interna. Reúne a gestão administrativa, financeira, comercial, de contratos
+            Ferramenta da equipe interna da We Make. Reúne a gestão administrativa, financeira, comercial, de contratos
             e de pedidos, e a Academia We Make, cada uma com o seu acesso.
           </p>
           <div className="hero-cta-row hub-cta">
@@ -69,7 +69,7 @@ export default function HubLanding() {
             <Link href="/login" className="hub-btn hub-btn--line">Entrar na plataforma →</Link>
           </div>
           <p className="hub-escola-nota">
-            É de uma escola parceira? <Link href="/diagnostico">Acesse o formulário com o link que a We Make enviou.</Link>
+            Escola parceira: <Link href="/diagnostico">acesse o formulário com o link que a We Make enviou.</Link>
           </p>
         </div>
       </section>
@@ -80,7 +80,7 @@ export default function HubLanding() {
           <header className="hub-sec-h">
             <p className="hub-k">Módulos</p>
             <h2>Seis áreas de gestão, cada uma com o seu acesso.</h2>
-            <p>Escolha um módulo para ver o que ele representa, as páginas que traz e entrar com o seu usuário.</p>
+            <p>Escolha um módulo para ver as páginas que ele tem e entrar com o seu usuário.</p>
           </header>
 
           <ul className="hub-mods">
@@ -118,7 +118,7 @@ export default function HubLanding() {
         .hub-top { position:fixed; inset:0 0 auto 0; z-index:100; display:flex; background:rgba(3,43,54,.45); backdrop-filter:blur(12px); border-bottom:1px solid transparent; transition:background .25s, border-color .25s; }
         .hub-top.is-scrolled { background:rgba(3,43,54,.94); border-bottom-color:rgba(255,255,255,.1); }
         .hub-top-in { width:100%; max-width:1280px; margin:0 auto; padding:.8rem 1.75rem; display:flex; align-items:center; justify-content:space-between; gap:1.5rem; }
-        .hub-logo { display:flex; align-items:center; }
+        .hub-logo { display:flex; align-items:center; flex-shrink:0; }
         .hub-nav { display:flex; align-items:center; gap:.15rem; }
         .hub-nav a { font:600 .78rem/1 ${DISPLAY}; color:rgba(255,255,255,.86); text-decoration:none; padding:.6rem .85rem; border-radius:6px; white-space:nowrap; }
         .hub-nav a:hover { background:rgba(255,255,255,.1); color:#fff; }
@@ -127,12 +127,12 @@ export default function HubLanding() {
         .hub-nav a.hub-enter { margin-left:.6rem; background:var(--cyan); color:var(--ink); font-weight:700; border-radius:999px; padding:.6rem 1.15rem; }
         .hub-nav a.hub-enter:hover { background:#4fdcff; }
 
-        .hub-hero { position:relative; min-height:100vh; display:flex; align-items:center; overflow:hidden; background:var(--ink); }
+        .hub-hero { position:relative; min-height:min(100vh, 62rem); display:flex; align-items:center; overflow:hidden; background:var(--ink); }
         .hub-hero-bg { position:absolute; inset:0; }
         .hub-hero-shade { position:absolute; inset:0; background:linear-gradient(90deg, rgba(3,43,54,.94) 0%, rgba(3,43,54,.78) 46%, rgba(3,43,54,.5) 100%); }
-        .hub-hero-in { position:relative; width:100%; max-width:1280px; margin:0 auto; padding:7rem 1.75rem 4.5rem; }
+        .hub-hero-in { position:relative; width:100%; max-width:1280px; margin:0 auto; padding:clamp(5.5rem,10vh,8rem) 1.75rem clamp(3rem,7vh,5rem); }
         .hub-eyebrow { font:600 .72rem/1 ${DISPLAY}; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan); margin:0 0 1.5rem; }
-        .hub-hero h1 { font:600 clamp(2.2rem,5vw,4rem)/1.06 ${DISPLAY}; letter-spacing:-.028em; color:#fff; max-width:17ch; margin:0 0 1.5rem; text-wrap:balance; }
+        .hub-hero h1 { font:600 clamp(2.2rem,calc(1rem + 2.9vw),4rem)/1.06 ${DISPLAY}; letter-spacing:-.028em; color:#fff; max-width:21ch; margin:0 0 1.5rem; text-wrap:balance; }
         .hub-hero h1 em { font-style:normal; color:var(--cyan); }
         .hub-lead { font:400 clamp(1.05rem,1.4vw,1.25rem)/1.6 Georgia, 'Times New Roman', serif; color:rgba(255,255,255,.82); max-width:56ch; margin:0 0 2.4rem; }
         .hub-cta { display:flex; gap:.85rem; flex-wrap:wrap; }
@@ -144,6 +144,9 @@ export default function HubLanding() {
         .hub-escola-nota { margin:1.6rem 0 0; font:500 .9rem/1.5 ${DISPLAY}; color:rgba(255,255,255,.75); }
         .hub-escola-nota a { color:var(--cyan); text-decoration:underline; text-underline-offset:3px; }
 
+        .hub a:focus-visible { outline:3px solid var(--cyan); outline-offset:3px; border-radius:6px; }
+        .hub-mods a:focus-visible { outline-color:var(--ink); border-top-color:var(--cyan); }
+        .hub-btn--line:hover { background:rgba(255,255,255,.08); }
         .hub-sec { padding:clamp(3.5rem,7vw,6.5rem) 1.75rem; }
         .hub-sec--ivory { background:var(--ivory); }
         .hub-wrap { max-width:1280px; margin:0 auto; }
@@ -168,6 +171,14 @@ export default function HubLanding() {
         .hub-foot a:hover { color:#fff; }
 
         @media (max-width:1100px) { .hub-mods { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+        @media (min-width:769px) and (max-width:1060px) {
+          .hub-top-in { padding:.7rem 1rem; gap:.75rem; }
+          .hub-nav { gap:0; }
+          .hub-nav a { font-size:.72rem; padding:.55rem .5rem; }
+          .hub-nav a.hub-escola, .hub-nav a.hub-enter { margin-left:.3rem; padding:.5rem .8rem; }
+          .hub-logo img { height:30px !important; width:auto !important; }
+          .hub-hero-in, .hub-sec { padding-left:1rem; padding-right:1rem; }
+        }
         @media (min-width:769px) {
           .desktop-header { display:flex !important; }
           .desktop-footer { display:block !important; }
@@ -183,6 +194,33 @@ export default function HubLanding() {
           .hero-cta-row > * { text-align:center; min-height:52px; }
           .hub-sec { padding:2.5rem 1rem; }
           .hub-mods { grid-template-columns:1fr; }
+        }
+        /* Tablet retrato (641–768): módulos em 2 colunas, botões lado a lado */
+        @media (min-width:641px) and (max-width:768px) {
+          .hub-mods { grid-template-columns:repeat(2,minmax(0,1fr)); }
+          .hero-cta-row { flex-direction:row; width:auto; }
+          .hero-cta-row > * { min-height:48px; display:inline-flex; align-items:center; justify-content:center; }
+          .hub-hero-in { padding-left:1.5rem; padding-right:1.5rem; }
+          .hub-sec { padding:3rem 1.5rem; }
+        }
+        /* Tablet 769–900: a nav não cabe com os dois botões; o acesso da escola segue no hero (hub-escola-nota) */
+        @media (min-width:769px) and (max-width:900px) {
+          .hub-nav a.hub-escola { display:none; }
+        }
+        @media (orientation:landscape) and (max-height:500px) {
+          .hub-top-in { padding:.45rem max(1rem, env(safe-area-inset-right)) .45rem max(1rem, env(safe-area-inset-left)); gap:.75rem; }
+          .hub-logo { flex-shrink:0; }
+          .hub-logo img { height:28px !important; }
+          .hub-nav { gap:0; }
+          .hub-nav a { padding:.55rem .4rem; font-size:.74rem; }
+          .hub-nav a.hub-escola { margin-left:.35rem; padding:.5rem .75rem; }
+          .hub-nav a.hub-enter { margin-left:.35rem; padding:.55rem .9rem; }
+          .hub-hero { min-height:0; }
+          .hub-hero-in { padding:4.5rem max(1rem, env(safe-area-inset-right)) 2.5rem max(1rem, env(safe-area-inset-left)); }
+          .hub-eyebrow { margin-bottom:.9rem; }
+          .hub-hero h1 { margin-bottom:.9rem; }
+          .hub-lead { margin-bottom:1.4rem; }
+          .hub-sec { padding-top:2.5rem; padding-bottom:2.5rem; }
         }
       `}</style>
     </div>

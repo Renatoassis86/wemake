@@ -9,7 +9,9 @@
 .dg-sair:hover { border-color: var(--ac-cyan); background: rgba(255, 255, 255, .06); }
 
 /* ═════════════ Entrada (link ou PIN) ═════════════ */
-.dg-entrada > .dg-topo { background: var(--ac-ink); padding: 1.25rem var(--dg-pad); }
+.dg-entrada > .dg-topo { background: var(--ac-ink); padding: 1.25rem max(var(--dg-pad), calc((100% - 1120px) / 2 + var(--dg-pad))); }
+.dg :focus-visible { outline: 2px solid var(--ac-ink); outline-offset: 3px; }
+.dg-hero :focus-visible, .dg-entrada > .dg-topo :focus-visible { outline-color: var(--ac-cyan); }
 .dg-entrada-grid { max-width: 1120px; margin: 0 auto; padding: clamp(2.5rem, 6vw, 5rem) var(--dg-pad) 5rem; display: grid; gap: clamp(2rem, 5vw, 5rem); grid-template-columns: minmax(0, 1.2fr) minmax(320px, 1fr); align-items: center; }
 @media (max-width: 900px) { .dg-entrada-grid { grid-template-columns: 1fr; } .dg-pin { order: -1; } }
 .dg-intro .ac-eyebrow { color: var(--ac-link); }
@@ -144,5 +146,62 @@
 .dg-enviar:disabled { opacity: .5; cursor: default; }
 #enviar .dg-dica, #enviar .dg-erro { text-align: center; margin-left: auto; margin-right: auto; }
 
+/* Mobile (retrato) */
+@media (max-width: 640px) {
+  .dg-entrada > .dg-topo { padding-left: max(var(--dg-pad), env(safe-area-inset-left)); padding-right: max(var(--dg-pad), env(safe-area-inset-right)); }
+  .dg-sair { min-height: 44px; }
+  .dg-hero { padding-left: max(var(--dg-pad), env(safe-area-inset-left)); padding-right: max(var(--dg-pad), env(safe-area-inset-right)); }
+  .dg-hero::after { width: 96px; right: -24px; bottom: -32px; opacity: .5; }
+  .dg-steps-in { padding-left: max(var(--dg-pad), env(safe-area-inset-left)); padding-right: max(var(--dg-pad), env(safe-area-inset-right)); gap: 0; }
+  .dg-steps ol { max-width: 100%; -webkit-overflow-scrolling: touch; }
+  .dg-steps a { min-height: 44px; align-items: center; padding: .5rem .7rem; }
+  .dg-steps-r { padding-bottom: .5rem; }
+  .dg-main { padding-left: max(var(--dg-pad), env(safe-area-inset-left)); padding-right: max(var(--dg-pad), env(safe-area-inset-right)); padding-bottom: calc(4rem + env(safe-area-inset-bottom)); }
+  .dg-sec { scroll-margin-top: 6rem; border-radius: 14px; }
+  .dg input:not([type='radio']):not([type='checkbox']):not([type='file']), .dg textarea, .dg select { font-size: 16px; min-height: 48px; }
+  .dg-pin-form input { font-size: 1.5rem; letter-spacing: .14em; }
+  .dg-pin-form button, .dg-botao, .dg-enviar { min-height: 48px; justify-content: center; }
+  .dg-opcoes label { min-height: 44px; }
+  .dg-opcoes input, .dg-check input { width: 1.25rem; height: 1.25rem; }
+  .dg-check { min-height: 44px; }
+  .dg-filtro input[type='search'] { min-width: 0; max-width: none; flex: 1 1 100%; }
+  .dg-cont { margin-left: 0; }
+  .dg-arqs li { flex-wrap: wrap; }
+  .dg-arqs button { min-height: 44px; min-width: 44px; }
+  .dg-evid-h { flex-wrap: wrap; }
+  .dg-obs { min-width: 0; flex: 1 1 100%; }
+  .dg-rec-c { grid-template-columns: 1fr; }
+  .dg-resumo { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .dg-resumo th, .dg-resumo td { padding-right: .75rem; }
+}
+
+/* Paisagem baixa: barra de etapas deixa de ficar fixa (cobriria ~25% da altura) */
+@media (orientation: landscape) and (max-height: 500px) {
+  .dg-steps { position: static; }
+  .dg-sec { scroll-margin-top: 1rem; }
+  .dg-hero .dg-topo { margin-bottom: 1rem; }
+  .dg-hero { padding-bottom: 1.25rem; }
+  .dg-entrada-grid { padding-top: 1.5rem; padding-bottom: 2rem; }
+  .dg-steps a { min-height: 44px; align-items: center; padding-top: .5rem; padding-bottom: .5rem; }
+  .dg-sair { min-height: 44px; }
+  .dg-entrada > .dg-topo, .dg-hero, .dg-steps-in, .dg-main { padding-left: max(var(--dg-pad), env(safe-area-inset-left)); padding-right: max(var(--dg-pad), env(safe-area-inset-right)); }
+  .dg input:not([type='radio']):not([type='checkbox']):not([type='file']), .dg textarea, .dg select { font-size: 16px; }
+}
+
 @media print { .dg-steps, .dg-hero::after { display: none; } }
 @media (prefers-reduced-motion: reduce) { .dg * { transition: none !important; } }
+
+/* ── Tablet 641–1100px (agente tablet) ── */
+@media (min-width: 641px) and (max-width: 900px) {
+  /* recurso: texto em cima, campos embaixo, com 3 colunas de campo */
+  .dg-rec { grid-template-columns: 1fr; }
+  .dg-rec-c { grid-template-columns: minmax(150px, 1.1fr) minmax(90px, .7fr) minmax(0, 1.6fr); }
+  .dg-rec-m { grid-column: auto; }
+}
+@media (min-width: 641px) and (max-width: 1100px) {
+  .dg-passos li { padding-right: .75rem; }
+  .dg-arqs button { padding: .7rem .8rem; }
+  .dg-check { min-height: 2.75rem; }
+  .dg-check input { width: 1.4rem; height: 1.4rem; }
+  .dg-sair { padding: .8rem 1.2rem; }
+}

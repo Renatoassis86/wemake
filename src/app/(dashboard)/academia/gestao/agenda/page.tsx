@@ -44,7 +44,7 @@ export default async function AgendaPage() {
   return (
     <>
       <div className="ac-sec-linha">
-        <h2 className="ac-h3" style={{ margin: 0 }}>Agenda — próximos 60 dias</h2>
+        <h2 className="ac-h3" style={{ margin: 0 }}>Agenda: próximos 60 dias</h2>
         <NovoEventoForm implantacoes={d.implantacoes.filter(i => !i.arquivada)} pessoas={d.pessoas.map(p => p.nome)} />
       </div>
 

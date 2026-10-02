@@ -101,20 +101,20 @@ export default async function PainelPage() {
         )}
         <p className="ac-nota">
           Entra aqui a escola com risco Alto ou Crítico, qualquer etapa Bloqueada ou prazo vencido. Marco atual de cada escola:{' '}
-          {ativas.length ? ativas.map(i => `${i.escola_nome} — ${marcoAtual(i) ?? 'implantação encerrada'}`).join(' · ') : 'sem escolas ainda'}.
+          {ativas.length ? ativas.map(i => `${i.escola_nome} (${marcoAtual(i) ?? 'implantação encerrada'})`).join(' · ') : 'sem escolas ainda'}.
         </p>
       </section>
 
       <section aria-labelledby="impl-t">
         <div className="ac-sec-linha">
-          <h2 id="impl-t" className="ac-h3">Implantação — uma linha por escola</h2>
+          <h2 id="impl-t" className="ac-h3">Implantação: uma linha por escola</h2>
           <NovaEscolaForm escolas={d.escolas} pessoas={pessoas} />
         </div>
         <ImplantacaoGrid itens={ativas} pessoas={pessoas} />
         <p className="ac-nota">
           Regras do painel: atualize a linha a cada avanço; registre sempre a próxima ação, o responsável e o prazo; use
           “Bloqueado” só quando a escola não puder avançar; risco Alto ou Crítico exige motivo e uma ação concreta. Os
-          documentos guardam o detalhe de cada etapa —{' '}
+          documentos guardam o detalhe de cada etapa:{' '}
           <Link href="/academia/painel-mestre">leia o guia de uso do Painel Mestre</Link>. Etapas: {MARCOS.join(' → ')}.
         </p>
       </section>

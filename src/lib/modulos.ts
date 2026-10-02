@@ -66,9 +66,9 @@ export const MODULOS: Modulo[] = [
     nome: 'Gestão Administrativa',
     curto: 'Administrativa',
     eyebrow: 'Gestão administrativa',
-    deck: 'A estrutura que sustenta a operação da We Make.',
+    deck: 'A operação interna da We Make.',
     descricao:
-      'Reúne o que mantém a empresa funcionando por dentro: contabilidade e obrigações, pessoas e folha, compras e fornecedores, estoque e patrimônio, agenda da equipe, metas e as rotinas de governança.',
+      'Reúne contabilidade e obrigações, pessoas e folha, compras e fornecedores, estoque e patrimônio, agenda da equipe, metas e as rotinas de governança.',
     home: '/administrativo',
     prefixos: ['/administrativo'],
     paginas: [
@@ -87,7 +87,7 @@ export const MODULOS: Modulo[] = [
     nome: 'Gestão Financeira',
     curto: 'Financeira',
     eyebrow: 'Gestão financeira',
-    deck: 'Entradas, saídas e a saúde do caixa.',
+    deck: 'Entradas, saídas e situação do caixa.',
     descricao:
       'Acompanha o dinheiro da We Make: a receita que os contratos garantem, o que há para receber e pagar, o fluxo de caixa, o faturamento e o planejamento do ano.',
     home: '/financeiro',

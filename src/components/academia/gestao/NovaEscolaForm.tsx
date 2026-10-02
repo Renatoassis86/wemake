@@ -50,7 +50,7 @@ export default function NovaEscolaForm({ escolas, pessoas }: { escolas: { id: st
               <select name="prioridade" defaultValue="Normal">{PRIORIDADES.map(p => <option key={p}>{p}</option>)}</select>
             </label>
             <label><span>Data da assinatura</span><input type="date" name="data_assinatura" /></label>
-            <label><span>Onboarding — dia 1</span><input type="date" name="data_onboarding" /></label>
+            <label><span>Onboarding (dia 1)</span><input type="date" name="data_onboarding" /></label>
             <label><span>Início das aulas</span><input type="date" name="data_inicio_aulas" /></label>
           </div>
           <label className="ac-check">

@@ -70,7 +70,7 @@ export default function NovoDiagnosticoForm({ implantacoes }: { implantacoes: Im
         </label>
         {!impl ? <label><span>Nome da escola</span><input name="escola_nome" maxLength={160} required /></label> : null}
       </div>
-      <p className="ac-hint">Ao criar, o sistema gera um PIN de 8 caracteres. O sistema também gera um link; a escola entra por ele, sem precisar digitar nada, ou pelo PIN em <b>/diagnostico</b>.</p>
+      <p className="ac-hint">Ao criar, o sistema gera um PIN de 8 caracteres e um link. A escola entra pelo link, sem digitar nada, ou pelo PIN em <b>/diagnostico</b>.</p>
       <Aviso erro={erro} />
       <div className="ac-form-a">
         <button className="ac-btn" disabled={pending}>{pending ? 'Criando…' : 'Criar e gerar PIN'}</button>

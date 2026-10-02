@@ -40,7 +40,7 @@ export default async function WorkspacePage() {
                     {l.tarefas.map(t => (
                       <li key={t.titulo}>
                         {t.titulo}
-                        {t.quando?.nota ? <em> — {t.quando.nota}</em> : null}
+                        {t.quando?.nota ? <em> ({t.quando.nota})</em> : null}
                       </li>
                     ))}
                   </ol>

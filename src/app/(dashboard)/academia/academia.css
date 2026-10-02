@@ -37,6 +37,9 @@
 .ac h1, .ac h2, .ac h3, .ac h4 { font-family: var(--ac-sans); color: inherit; }
 .ac a { color: inherit; }
 .ac :focus-visible { outline: 2px solid var(--ac-cyan); outline-offset: 3px; border-radius: 2px; }
+/* fundo claro: o ciano some; usa a tinta. Painéis escuros voltam ao ciano. */
+.ac-wrap :focus-visible, .ac-trackbar :focus-visible, .ac-subnav :focus-visible { outline-color: var(--ac-ink); }
+.ac-wrap .ac-pinbox :focus-visible { outline-color: var(--ac-cyan); }
 
 /* ───────────────────────────── Capa / cabeçalho ───────────────────────────── */
 
@@ -46,6 +49,7 @@
   background: var(--ac-ink);
   color: #fff;
   padding: clamp(1.25rem, 3vw, 2rem) clamp(1.25rem, 4vw, 3.5rem) clamp(2rem, 4vw, 3.25rem);
+  padding-inline: max(clamp(1.25rem, 4vw, 3.5rem), calc((100% - 1240px) / 2 + clamp(1.25rem, 4vw, 3.5rem))); /* alinha com .ac-wrap em tela larga */
   isolation: isolate;
 }
 .ac-hero::after {
@@ -127,6 +131,7 @@
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--ac-line);
   padding: .75rem clamp(1.25rem, 4vw, 3.5rem) .6rem;
+  padding-inline: max(clamp(1.25rem, 4vw, 3.5rem), calc((100% - 1240px) / 2 + clamp(1.25rem, 4vw, 3.5rem)));
 }
 .ac-tracker {
   list-style: none; margin: 0; padding: 0;
@@ -144,7 +149,7 @@
 /* ───────────────────────────── Grade de leitura ───────────────────────────── */
 
 .ac-wrap {
-  max-width: 1240px; margin: 0 auto;
+  max-width: calc(1240px + 2 * clamp(1.25rem, 4vw, 3.5rem)); margin: 0 auto;
   padding: clamp(2rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3.5rem) clamp(3rem, 6vw, 6rem);
   display: grid; grid-template-columns: minmax(0, 1fr); gap: 3rem;
 }
@@ -376,6 +381,35 @@
   .ac-body { font-size: 1.02rem; }
 }
 
+/* Mobile (retrato): alvos de toque, safe-area, rolagem */
+@media (max-width: 640px) {
+  .ac-hero { padding-left: max(1.25rem, env(safe-area-inset-left)); padding-right: max(1.25rem, env(safe-area-inset-right)); }
+  .ac-wrap { padding-left: max(1.25rem, env(safe-area-inset-left)); padding-right: max(1.25rem, env(safe-area-inset-right)); padding-bottom: calc(3rem + env(safe-area-inset-bottom)); }
+  .ac-trackbar { padding-left: max(1.25rem, env(safe-area-inset-left)); -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+  .ac-hero h1, .ac-hero--index h1 { max-width: none; overflow-wrap: anywhere; }
+  .ac-toc-m summary { min-height: 44px; display: flex; align-items: center; justify-content: space-between; }
+  .ac-toc-i a { min-height: 44px; align-items: center; }
+  .ac-crumbs a { display: inline-flex; min-height: 44px; align-items: center; }
+  .ac-row a { padding-top: .9rem; padding-bottom: .9rem; min-height: 44px; }
+  .ac-journey a { min-height: 44px; }
+  .ac-pager a { min-height: 44px; }
+  .ac-quote blockquote { font-size: 1.15rem; }
+  .ac-fields { grid-template-columns: 1fr; }
+  .ac-table-wrap { -webkit-overflow-scrolling: touch; max-width: 100%; }
+  .ac-table.is-resources { min-width: 720px; }
+}
+
+/* Paisagem baixa: faixas fixas não podem ocupar a altura útil */
+@media (orientation: landscape) and (max-height: 500px) {
+  .ac-trackbar { position: static; }
+  .ac-hero { padding-top: .9rem; padding-bottom: 1.5rem; padding-left: max(1.25rem, env(safe-area-inset-left)); padding-right: max(1.25rem, env(safe-area-inset-right)); }
+  .ac-hero-top { margin-bottom: 1rem; }
+  .ac-hero h1, .ac-hero--index h1 { font-size: clamp(1.6rem, 7vh, 2.4rem); }
+  .ac-wrap { padding-left: max(1.25rem, env(safe-area-inset-left)); padding-right: max(1.25rem, env(safe-area-inset-right)); }
+  .ac-sec, .ac-sub { scroll-margin-top: 1rem; }
+  .ac-toc-m summary { min-height: 44px; display: flex; align-items: center; justify-content: space-between; }
+}
+
 @media print {
   .ac-trackbar, .ac-toc, .ac-toc-m, .ac-pager { display: none !important; }
   .ac-hero::after { display: none; }
@@ -383,3 +417,21 @@
   .ac-hero h1, .ac-deck, .ac-facts dd { color: #000; }
 }
 @media (prefers-reduced-motion: reduce) { .ac * { transition: none !important; } }
+
+/* ── Tablet 641–1100px (agente tablet) ── */
+@media (min-width: 641px) and (max-width: 1100px) {
+  /* medida de leitura ~70 caracteres */
+  .ac-article { max-width: 42rem; }
+  /* jornada: 4 colunas em vez de lista vertical larga / 7 colunas espremidas */
+  .ac-journey { grid-template-columns: repeat(4, minmax(0, 1fr)); border-left: 0; border-top: 3px solid var(--ac-ink); }
+  .ac-journey li { padding: 1.1rem 1rem 1.2rem 0; }
+  /* alvos de toque */
+  .ac-toc-i a { padding-block: .6rem; }
+  .ac-crumbs a { padding-block: .3rem; display: inline-block; }
+}
+/* paisagem 1024: sumário lateral cabe (sem esperar 1180) */
+@media (min-width: 1000px) and (max-width: 1100px) {
+  .ac-wrap--doc { grid-template-columns: minmax(0, 1fr) 200px; gap: 2rem; }
+  .ac-toc-m { display: none; }
+  .ac-toc { display: block; position: sticky; top: 4.6rem; align-self: start; max-height: calc(100vh - 6rem); overflow: auto; padding-right: .25rem; }
+}

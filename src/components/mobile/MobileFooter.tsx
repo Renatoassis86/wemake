@@ -57,7 +57,7 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
             lineHeight: 1.5,
             maxWidth: 280,
           }}>
-            Plataforma inteligente de gestão comercial para educação de qualidade.
+            Plataforma de gestão da We Make.
           </p>
         </div>
 

@@ -61,6 +61,12 @@ export default function DashboardTopbar() {
             border-bottom: 1px solid rgba(255,255,255,.08);
           }
         }
+        @media (max-width: 640px), (orientation: landscape) and (max-height: 500px) {
+          .dashboard-topbar {
+            padding-left: max(.5rem, env(safe-area-inset-left));
+            padding-right: max(.5rem, env(safe-area-inset-right));
+          }
+        }
         .dashboard-topbar-burger {
           width: 44px;
           height: 44px;

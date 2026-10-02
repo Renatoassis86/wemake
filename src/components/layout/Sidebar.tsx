@@ -507,6 +507,21 @@ export default function Sidebar({ profile, modulos = [], diagnosticos = false }:
           font-size: .9rem !important;
         }
       }
+      @media (max-width: 640px) {
+        #main-sidebar { overscroll-behavior: contain; }
+        #main-sidebar .mobile-close-btn { width: 44px !important; height: 44px !important; top: calc(8px + env(safe-area-inset-top)) !important; }
+        #main-sidebar nav { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+        #main-sidebar > div:last-child { padding-bottom: calc(.9rem + env(safe-area-inset-bottom)) !important; }
+        #main-sidebar > div:last-child button { min-width: 44px; min-height: 44px; }
+      }
+      @media (orientation: landscape) and (max-height: 500px) {
+        #main-sidebar { padding-left: env(safe-area-inset-left); }
+        #main-sidebar .sidebar-brand { padding-top: .6rem !important; padding-bottom: .5rem !important; }
+        #main-sidebar .mobile-close-btn { width: 44px !important; height: 44px !important; top: 4px !important; }
+        #main-sidebar nav { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+        #main-sidebar > div:last-child { padding-top: .5rem !important; padding-bottom: calc(.5rem + env(safe-area-inset-bottom)) !important; }
+        #main-sidebar > div:last-child button { min-width: 44px; min-height: 44px; }
+      }
     `}</style>
     </>
   )
