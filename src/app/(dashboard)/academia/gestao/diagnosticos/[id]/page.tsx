@@ -10,8 +10,7 @@ export default async function DiagnosticoDetalhe({ params }: { params: Promise<{
   if (!(await podeVerDiagnosticos())) {
     return (
       <section className="ac-setup">
-        <p className="ac-kicker">Acesso restrito</p>
-        <h2>Os diagnósticos das escolas são vistos só por quem a We Make autorizou</h2>
+        <h2>Esta conta não tem acesso aos diagnósticos</h2>
       </section>
     )
   }

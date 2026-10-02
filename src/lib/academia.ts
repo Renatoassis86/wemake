@@ -181,7 +181,7 @@ const BASE_DOCS: BaseDoc[] = [
     facts: [
       { k: 'Processo', v: 'Ativação Comercial junto ao time comercial da escola' },
       { k: 'Papel na trilha', v: 'Material do formador, que forma o multiplicador' },
-      { k: 'Uso', v: 'Documento interno · restrito à equipe de formadores We Make' },
+      { k: 'Uso', v: 'Documento interno · equipe de formadores We Make' },
       { k: 'Data', v: 'Setembro de 2026' },
       { k: 'Prazo da trilha', v: 'Até 30 dias corridos após o Handoff' },
       { k: 'Estrutura', v: '15 partes · 5 encontros de formação' },

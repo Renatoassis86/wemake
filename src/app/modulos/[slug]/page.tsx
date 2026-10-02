@@ -70,7 +70,6 @@ export default async function ModuloPage({ params, searchParams }: { params: Pro
         </main>
 
         <aside className="md-login" aria-labelledby="login-t">
-          <p className="ac-kicker">{m.acessoRotulo}</p>
           {!logado ? (
             <>
               <h2 id="login-t">Entrar em {m.nome}</h2>
@@ -87,7 +86,7 @@ export default async function ModuloPage({ params, searchParams }: { params: Pro
           ) : (
             <>
               <h2 id="login-t">Sem acesso a este módulo</h2>
-              <p role="alert">A conta {user?.email} não tem permissão para {m.nome}. {m.acessoRotulo}. Se precisar de acesso, fale com a direção da We Make.</p>
+              <p role="alert">A conta {user?.email} não tem acesso a {m.nome}. Entre com outra conta ou fale com a direção da We Make.</p>
               <Link href="/comercial" className="md-botao md-botao--clara">Ir para a Gestão Comercial</Link>
             </>
           )}

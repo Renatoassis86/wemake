@@ -248,7 +248,7 @@ export default function ComercialLoginPage() {
                 textTransform: 'uppercase', color: '#4A7FDB', marginBottom: '.65rem',
                 fontFamily: 'var(--font-montserrat, sans-serif)',
               }}>
-                ✦ Acesso Restrito Equipe Interna
+                ✦ Equipe We Make
               </div>
               <h2 style={{
                 fontFamily: 'var(--font-cormorant, serif)',

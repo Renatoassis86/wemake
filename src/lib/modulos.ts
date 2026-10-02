@@ -26,7 +26,6 @@ export interface Modulo {
   home: string
   /** prefixos de rota protegidos por este módulo */
   prefixos: string[]
-  acessoRotulo: string
 }
 
 /** Direção: Dênis (contato@wemake.tec.br) e Renato. */
@@ -72,7 +71,6 @@ export const MODULOS: Modulo[] = [
       'Reúne o que mantém a empresa funcionando por dentro: contabilidade e obrigações, pessoas e folha, compras e fornecedores, estoque e patrimônio, agenda da equipe, metas e as rotinas de governança.',
     home: '/administrativo',
     prefixos: ['/administrativo'],
-    acessoRotulo: 'Acesso restrito à direção',
     paginas: [
       { nome: 'Visão geral', descricao: 'As áreas administrativas e o que já está disponível em cada uma.', href: '/administrativo', status: 'disponível' },
       { nome: 'Contabilidade e obrigações fiscais', descricao: 'Calendário de obrigações e documentos para o contador.', status: 'em estruturação' },
@@ -94,7 +92,6 @@ export const MODULOS: Modulo[] = [
       'Acompanha o dinheiro da We Make: a receita que os contratos garantem, o que há para receber e pagar, o fluxo de caixa, o faturamento e o planejamento do ano.',
     home: '/financeiro',
     prefixos: ['/financeiro'],
-    acessoRotulo: 'Acesso restrito à direção',
     paginas: [
       { nome: 'Visão geral', descricao: 'Indicadores de receita contratada e as áreas financeiras.', href: '/financeiro', status: 'disponível' },
       { nome: 'Receita contratada', descricao: 'Receita anual e mensal de cada escola, calculada pelos contratos e pela quantidade de alunos.', href: '/financeiro/receita', status: 'disponível' },
@@ -113,10 +110,9 @@ export const MODULOS: Modulo[] = [
     eyebrow: 'Gestão comercial',
     deck: 'Escolas, negociações e indicadores comerciais em tempo real.',
     descricao:
-      'A ferramenta da equipe comercial: cadastro de escolas, pipeline, registros de negociação, propostas, jornada contratual, metas e dashboard. Todos os usuários atuais da plataforma têm acesso.',
+      'A ferramenta da equipe comercial: cadastro de escolas, pipeline, registros de negociação, propostas, jornada contratual, metas e dashboard.',
     home: '/comercial',
     prefixos: [],
-    acessoRotulo: 'Todos os usuários da plataforma',
     paginas: [
       { nome: 'Dashboard', descricao: 'Indicadores comerciais e visão geral das escolas.', href: '/comercial', status: 'disponível' },
       { nome: 'Escolas', descricao: 'Cadastro e histórico de cada escola parceira ou em prospecção.', href: '/comercial/escolas', status: 'disponível' },
@@ -138,7 +134,6 @@ export const MODULOS: Modulo[] = [
       'Acompanha a documentação contratual de cada escola: minutas, assinaturas, arquivos e prazos. A jornada contratual usada pela equipe comercial continua disponível para ela; aqui fica a visão de gestão.',
     home: '/contratos',
     prefixos: ['/contratos'],
-    acessoRotulo: 'Acesso restrito à direção',
     paginas: [
       { nome: 'Visão geral', descricao: 'Situação dos contratos e atalhos para a jornada contratual.', href: '/contratos', status: 'disponível' },
       { nome: 'Jornada contratual', descricao: 'Minuta, retorno, envio e assinatura de cada contrato, com os arquivos da escola.', href: '/comercial/contratos', status: 'disponível' },
@@ -157,11 +152,10 @@ export const MODULOS: Modulo[] = [
       'Os processos da implantação, cada um com a sua página, e a gestão do dia a dia: Painel Mestre, tarefas, quadro, calendário, agenda e o Diagnóstico do Espaço Maker respondido pelas escolas.',
     home: '/academia',
     prefixos: ['/academia'],
-    acessoRotulo: 'Acesso restrito: Renato, Dênis e Emanuel',
     paginas: [
       { nome: 'Documentos e processos', descricao: 'As 14 páginas dos processos, com o texto integral de cada documento.', href: '/academia', status: 'disponível' },
       { nome: 'Gestão da implantação', descricao: 'Painel Mestre, lista de tarefas, quadro, calendário, agenda e workspace.', href: '/academia/gestao', status: 'disponível' },
-      { nome: 'Diagnósticos das escolas', descricao: 'Respostas, fotos e parecer do Diagnóstico do Espaço Maker (restrito a Renato e Dênis).', href: '/academia/gestao/diagnosticos', status: 'disponível' },
+      { nome: 'Diagnósticos das escolas', descricao: 'Respostas, fotos e parecer do Diagnóstico do Espaço Maker.', href: '/academia/gestao/diagnosticos', status: 'disponível' },
     ],
   },
   {
@@ -174,7 +168,6 @@ export const MODULOS: Modulo[] = [
       'Acompanha os pedidos feitos pelas escolas parceiras: o que foi pedido, em que etapa está e quando chega. O módulo está em estruturação.',
     home: '/pedidos',
     prefixos: ['/pedidos'],
-    acessoRotulo: 'Acesso restrito à direção',
     paginas: [
       { nome: 'Visão geral', descricao: 'Resumo dos pedidos e o que já está disponível.', href: '/pedidos', status: 'disponível' },
       { nome: 'Pedidos das escolas', descricao: 'Registro e acompanhamento de cada pedido.', status: 'em estruturação' },

@@ -347,7 +347,7 @@ export default function LoginPage() {
                 textTransform: 'uppercase', color: '#5FE3D0', marginBottom: '.65rem',
                 fontFamily: 'var(--font-montserrat, sans-serif)',
               }}>
-                ✦ Acesso Restrito — Equipe We Make
+                ✦ Equipe We Make
               </div>
               <h2 style={{
                 fontFamily: 'var(--font-cormorant, serif)',

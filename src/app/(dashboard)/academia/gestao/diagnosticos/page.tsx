@@ -16,9 +16,8 @@ export default async function DiagnosticosPage() {
   if (!(await podeVerDiagnosticos())) {
     return (
       <section className="ac-setup" aria-labelledby="perm-t">
-        <p className="ac-kicker">Acesso restrito</p>
-        <h2 id="perm-t">Os diagnósticos das escolas são vistos só por quem a We Make autorizou</h2>
-        <p>As respostas e os arquivos enviados pelas escolas ficam disponíveis apenas para a direção e para a implantação. Se você precisa deste acesso, peça a inclusão do seu e-mail.</p>
+        <h2 id="perm-t">Esta conta não tem acesso aos diagnósticos</h2>
+        <p>Entre com outra conta ou fale com a direção da We Make.</p>
       </section>
     )
   }
@@ -41,7 +40,7 @@ export default async function DiagnosticosPage() {
         <div>
           <h2 className="ac-h3" style={{ margin: 0 }}>Diagnóstico do Espaço Maker</h2>
           <p className="ac-sec-lead" style={{ margin: '.4rem 0 0' }}>
-            A escola responde numa página externa, protegida por PIN. As respostas, os arquivos e o parecer ficam aqui, só para quem faz login e está autorizado.
+            A escola responde numa página externa, protegida por PIN. As respostas, os arquivos e o parecer ficam aqui.
           </p>
         </div>
         <NovoDiagnosticoForm implantacoes={g.implantacoes.filter(i => !i.arquivada)} />

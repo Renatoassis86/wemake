@@ -246,7 +246,7 @@ export default function ContratoLoginPage() {
                 textTransform: 'uppercase', color: '#16a34a', marginBottom: '.65rem',
                 fontFamily: 'var(--font-montserrat, sans-serif)',
               }}>
-                ✦ Acesso Restrito Equipe Interna
+                ✦ Equipe We Make
               </div>
               <h2 style={{
                 fontFamily: 'var(--font-cormorant, serif)',

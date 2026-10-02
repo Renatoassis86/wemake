@@ -246,7 +246,7 @@ export default function PedidosLoginPage() {
                 textTransform: 'uppercase', color: '#0ea5e9', marginBottom: '.65rem',
                 fontFamily: 'var(--font-montserrat, sans-serif)',
               }}>
-                ✦ Acesso Restrito Equipe Interna
+                ✦ Equipe We Make
               </div>
               <h2 style={{
                 fontFamily: 'var(--font-cormorant, serif)',

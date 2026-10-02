@@ -85,7 +85,6 @@ export default function HubLanding() {
                 <Link href={`/modulos/${m.slug}`}>
                   <span className="hub-mod-t">{m.nome}</span>
                   <span className="hub-mod-d">{m.descricao}</span>
-                  <span className="hub-mod-a">{m.acessoRotulo}</span>
                   <span className="hub-mod-l">Conhecer e entrar →</span>
                 </Link>
               </li>
