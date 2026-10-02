@@ -1,0 +1,37 @@
+/* Página de apresentação de cada módulo (pública): descrição, páginas e login */
+
+.md { min-height: 100vh; background: var(--ac-paper); }
+.md-hero { position: relative; overflow: hidden; isolation: isolate; background: var(--ac-ink); color: #fff; padding: 1.25rem clamp(1.25rem, 4vw, 3.5rem) clamp(2.5rem, 5vw, 4rem); }
+.md-hero::after { content: ''; position: absolute; right: -50px; bottom: -70px; width: clamp(180px, 24vw, 340px); aspect-ratio: 560 / 411; background: url('/academia/brand/mark-cyan.png') center / contain no-repeat; z-index: -1; }
+.md-hero-in { max-width: 1240px; margin: 0 auto; }
+.md-topo { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; margin-bottom: clamp(2rem, 5vw, 3.5rem); }
+.md-outros { display: flex; flex-wrap: wrap; gap: .1rem; }
+.md-outros a { font: 600 .76rem/1 var(--ac-sans); color: rgba(255, 255, 255, .78); text-decoration: none; padding: .55rem .8rem; border-radius: 6px; white-space: nowrap; }
+.md-outros a:hover { color: #fff; background: rgba(255, 255, 255, .1); }
+.md-outros a.is-on { color: var(--ac-ink); background: var(--ac-cyan); }
+.md-hero h1 { font: 600 clamp(2.2rem, 5vw, 3.8rem)/1.05 var(--ac-sans); letter-spacing: -.025em; margin: 0 0 1rem; max-width: 16ch; text-wrap: balance; }
+
+.md-wrap { max-width: 1240px; margin: 0 auto; padding: clamp(2rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3.5rem) 4rem; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+@media (max-width: 900px) { .md-wrap { grid-template-columns: 1fr; } .md-login { order: -1; } }
+.md-desc { font-size: 1.2rem; line-height: 1.65; color: var(--ac-ink); max-width: 60ch; margin: 0 0 2.5rem; }
+.md-paginas { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ac-ink); }
+.md-paginas li { display: flex; justify-content: space-between; gap: 1.5rem; align-items: baseline; padding: 1rem 0; border-bottom: 1px solid var(--ac-line); }
+.md-paginas b { display: block; font: 600 1.02rem/1.3 var(--ac-sans); color: var(--ac-ink); }
+.md-paginas span { display: block; font-size: .95rem; line-height: 1.5; color: var(--ac-muted); margin-top: .25rem; max-width: 56ch; }
+.md-paginas em { font: 700 .62rem/1 var(--ac-sans); letter-spacing: .12em; text-transform: uppercase; font-style: normal; border: 1px solid var(--ac-line-2); color: var(--ac-muted); border-radius: 999px; padding: .4rem .65rem; white-space: nowrap; }
+.md-paginas em.is-on { background: var(--ac-ink); border-color: var(--ac-ink); color: #fff; }
+
+.md-login { background: #fff; border: 1px solid var(--ac-line); border-radius: 14px; padding: 1.8rem; position: sticky; top: 1.5rem; }
+.md-login h2 { font: 600 1.35rem/1.2 var(--ac-sans); color: var(--ac-ink); margin: 0 0 .5rem; }
+.md-login > p { color: var(--ac-muted); font-size: .98rem; line-height: 1.55; margin: 0 0 1.2rem; }
+.md-form label { display: block; font: 600 .64rem/1.2 var(--ac-sans); letter-spacing: .16em; text-transform: uppercase; color: var(--ac-muted); margin: 1rem 0 .4rem; }
+.md-form input { width: 100%; font: 500 1rem/1.3 var(--ac-sans); padding: .8rem .9rem; border: 1px solid var(--ac-line-2); border-radius: 9px; background: var(--ac-paper); color: var(--ac-text); }
+.md-form input:focus { outline: 0; border-color: var(--ac-ink); box-shadow: 0 0 0 3px var(--ac-cyan-soft); }
+.md-senha { position: relative; } .md-senha input { padding-right: 5.5rem; }
+.md-senha button { position: absolute; right: .5rem; top: 50%; transform: translateY(-50%); background: none; border: 0; font: 600 .74rem/1 var(--ac-sans); color: var(--ac-link); cursor: pointer; padding: .4rem; }
+.md-botao { display: block; width: 100%; margin-top: 1.3rem; padding: 1rem; border: 0; border-radius: 10px; background: var(--ac-ink); color: #fff; font: 700 .95rem/1 var(--ac-sans); text-align: center; text-decoration: none; cursor: pointer; }
+.md-botao:hover:not(:disabled) { background: var(--ac-ink-2); } .md-botao:disabled { opacity: .5; }
+.md-botao--clara { background: transparent; color: var(--ac-ink); border: 1px solid var(--ac-line-2); }
+.md-erro { color: #b3261e; font: 600 .85rem/1.4 var(--ac-sans); margin: .8rem 0 0; }
+.md-rodape { max-width: 1240px; margin: 0 auto; padding: 1.5rem clamp(1.25rem, 4vw, 3.5rem) 3rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; border-top: 1px solid var(--ac-line); font: 500 .8rem/1.4 var(--ac-sans); color: var(--ac-muted); }
+.md-rodape a { color: var(--ac-link); text-decoration: none; }

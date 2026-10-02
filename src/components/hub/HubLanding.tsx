@@ -5,58 +5,9 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import MobileNav from '@/components/mobile/MobileNav'
 import MobileFooter from '@/components/mobile/MobileFooter'
-import { GRUPOS_AREAS } from '@/lib/gestao-geral'
+import { MODULOS } from '@/lib/modulos'
 
-/**
- * Plataformas já existentes (ou em integração) dentro da gestão geral.
- * "ativo" abre a plataforma; "em breve" ainda não tem página.
- */
-const PLATAFORMAS = [
-  {
-    id: 'comercial',
-    label: 'Gestão Comercial',
-    kicker: 'Plataforma',
-    description:
-      'Cadastro de escolas, pipeline, registros de negociação, propostas, contratos, metas e indicadores comerciais em tempo real.',
-    href: '/comercial',
-    status: 'ativo',
-  },
-  {
-    id: 'academia',
-    label: 'Academia We Make',
-    kicker: 'Nova seção',
-    description:
-      'A jornada de implantação da escola parceira, da assinatura do contrato à transição para o acompanhamento anual: normas, manuais, formulários e o Painel Mestre.',
-    href: '/academia',
-    status: 'ativo',
-  },
-  {
-    id: 'contratos',
-    label: 'Gestão de Contratos',
-    kicker: 'Plataforma',
-    description:
-      'Contratos digitais, assinaturas eletrônicas, modelos reutilizáveis e acompanhamento centralizado de toda a documentação.',
-    href: '#',
-    status: 'em breve',
-  },
-  {
-    id: 'censo',
-    label: 'Censo Escolar',
-    kicker: 'Plataforma',
-    description:
-      'Coleta de dados em momentos estratégicos do ano para formar o perfil dos alunos e orientar experiências customizadas.',
-    href: '#',
-    status: 'em breve',
-  },
-] as const
-
-const NAV = [
-  { label: 'Gestão Geral', href: '/gestao' },
-  { label: 'Gestão Comercial', href: '/comercial' },
-  { label: 'Gestão de Contratos', href: '#plataformas' },
-  { label: 'Censo Escolar', href: '#plataformas' },
-  { label: 'Academia We Make', href: '/academia' },
-]
+const NAV = MODULOS.map(m => ({ label: m.curto, href: `/modulos/${m.slug}` }))
 
 const DISPLAY = 'var(--font-inter, sans-serif)'
 
@@ -109,73 +60,36 @@ export default function HubLanding() {
             Tudo o que a We Make precisa para <em>administrar, cobrar, pagar e crescer.</em>
           </h1>
           <p className="hub-lead">
-            Ferramenta exclusiva para a equipe interna. Reúne a gestão administrativa e financeira, a operação comercial, os
-            contratos e a Academia We Make em um só lugar.
+            Ferramenta exclusiva para a equipe interna. Reúne a gestão administrativa, financeira, comercial, de contratos
+            e de pedidos, e a Academia We Make, cada uma com o seu acesso.
           </p>
           <div className="hero-cta-row hub-cta">
-            <Link href="/gestao" className="hub-btn hub-btn--solid">Abrir a Gestão Geral</Link>
+            <a href="#modulos" className="hub-btn hub-btn--solid">Conhecer os módulos</a>
             <Link href="/login" className="hub-btn hub-btn--line">Entrar na plataforma →</Link>
           </div>
         </div>
       </section>
 
-      {/* GESTÃO GERAL */}
-      <section id="gestao" className="hub-sec hub-sec--ivory">
+      {/* MÓDULOS */}
+      <section id="modulos" className="hub-sec hub-sec--ivory">
         <div className="hub-wrap">
           <header className="hub-sec-h">
-            <p className="hub-k">Gestão geral</p>
-            <h2>As áreas de uma gestão administrativa e financeira, num só painel.</h2>
-            <p>
-              Cada área vira uma seção da plataforma. A estrutura abaixo organiza o que será construído; as áreas marcadas
-              como “em estruturação” ainda não têm página.
-            </p>
+            <p className="hub-k">Módulos</p>
+            <h2>Seis áreas de gestão, cada uma com o seu acesso.</h2>
+            <p>Escolha um módulo para ver o que ele representa, as páginas que traz e entrar com o seu usuário.</p>
           </header>
 
-          <div className="hub-areas">
-            {GRUPOS_AREAS.map(a => (
-              <section key={a.slug} aria-labelledby={`a-${a.slug}`}>
-                <h3 id={`a-${a.slug}`}>{a.nome}</h3>
-                <p>{a.texto}</p>
-                <ul>
-                  {a.itens.map(i => (
-                    <li key={i.slug}>
-                      {i.status === 'ativo' && i.href ? <Link href={i.href}>{i.nome}</Link> : <span>{i.nome}</span>}
-                      <em className={i.status === 'ativo' ? 'is-on' : undefined}>{i.status === 'ativo' ? 'disponível' : 'em estruturação'}</em>
-                    </li>
-                  ))}
-                </ul>
-              </section>
+          <ul className="hub-mods">
+            {MODULOS.map(m => (
+              <li key={m.slug}>
+                <Link href={`/modulos/${m.slug}`}>
+                  <span className="hub-mod-t">{m.nome}</span>
+                  <span className="hub-mod-d">{m.descricao}</span>
+                  <span className="hub-mod-a">{m.acessoRotulo}</span>
+                  <span className="hub-mod-l">Conhecer e entrar →</span>
+                </Link>
+              </li>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* PLATAFORMAS */}
-      <section id="plataformas" className="hub-sec">
-        <div className="hub-wrap">
-          <header className="hub-sec-h">
-            <p className="hub-k">Plataformas</p>
-            <h2>O que já está no ar e o que vem a seguir.</h2>
-          </header>
-
-          <ul className="hub-plats">
-            {PLATAFORMAS.map(p => {
-              const inner = (
-                <>
-                  <span className="hub-plat-k">{p.kicker}</span>
-                  <span className="hub-plat-t">{p.label}</span>
-                  <span className="hub-plat-d">{p.description}</span>
-                  <span className={`hub-plat-s${p.status === 'ativo' ? ' is-on' : ''}`}>
-                    {p.status === 'ativo' ? 'Acessar →' : 'Em breve'}
-                  </span>
-                </>
-              )
-              return (
-                <li key={p.id}>
-                  {p.status === 'ativo' ? <Link href={p.href}>{inner}</Link> : <div className="is-off">{inner}</div>}
-                </li>
-              )
-            })}
           </ul>
         </div>
       </section>
@@ -231,25 +145,13 @@ export default function HubLanding() {
         .hub-sec-h h2 { font:600 clamp(1.7rem,3.4vw,2.6rem)/1.1 ${DISPLAY}; letter-spacing:-.022em; color:var(--ink); margin:0 0 1rem; text-wrap:balance; }
         .hub-sec-h p:last-child { color:#56676d; line-height:1.6; margin:0; }
 
-        .hub-areas { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(1.5rem,3vw,3rem); }
-        .hub-areas section { border-top:3px solid var(--ink); padding-top:1.1rem; }
-        .hub-areas h3 { font:600 1.25rem/1.2 ${DISPLAY}; color:var(--ink); margin:0 0 .35rem; }
-        .hub-areas section > p { color:#56676d; margin:0 0 1.1rem; font-size:.95rem; }
-        .hub-areas ul { list-style:none; margin:0; padding:0; }
-        .hub-areas li { display:flex; justify-content:space-between; gap:1rem; align-items:baseline; padding:.7rem 0; border-top:1px solid var(--line); font:500 .95rem/1.35 ${DISPLAY}; color:var(--ink); }
-        .hub-areas li a { color:var(--ink); text-decoration:none; border-bottom:1px solid var(--cyan); }
-        .hub-areas li em.is-on { color:var(--ink); }
-        .hub-areas li em { font:600 .6rem/1 ${DISPLAY}; letter-spacing:.12em; text-transform:uppercase; color:#56676d; font-style:normal; white-space:nowrap; }
-
-        .hub-plats { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1.25rem; }
-        .hub-plats li > a, .hub-plats li > div { display:flex; flex-direction:column; gap:.7rem; height:100%; padding:1.6rem 1.4rem 1.4rem; background:#fff; border:1px solid var(--line); border-radius:12px; text-decoration:none; color:inherit; transition:border-color .15s, transform .15s; }
-        .hub-plats li > a:hover { border-color:var(--ink2); transform:translateY(-2px); }
-        .hub-plats li > div.is-off { background:transparent; border-style:dashed; }
-        .hub-plat-k { font:700 .62rem/1 ${DISPLAY}; letter-spacing:.18em; text-transform:uppercase; color:#006b8f; }
-        .hub-plat-t { font:600 1.3rem/1.2 ${DISPLAY}; letter-spacing:-.012em; color:var(--ink); }
-        .hub-plat-d { font-size:.95rem; line-height:1.55; color:#3c4f55; flex:1; }
-        .hub-plat-s { font:700 .74rem/1 ${DISPLAY}; letter-spacing:.06em; text-transform:uppercase; color:#56676d; margin-top:.6rem; }
-        .hub-plat-s.is-on { color:var(--ink); }
+        .hub-mods { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.25rem; }
+        .hub-mods a { display:flex; flex-direction:column; gap:.75rem; height:100%; padding:1.7rem 1.5rem 1.4rem; background:#fff; border:1px solid var(--line); border-top:4px solid var(--ink); border-radius:0 0 12px 12px; text-decoration:none; color:inherit; transition:border-color .15s, transform .15s; }
+        .hub-mods a:hover { border-top-color:var(--cyan); transform:translateY(-2px); }
+        .hub-mod-t { font:600 1.3rem/1.2 ${DISPLAY}; letter-spacing:-.012em; color:var(--ink); }
+        .hub-mod-d { font-size:.96rem; line-height:1.6; color:#3c4f55; flex:1; }
+        .hub-mod-a { font:600 .66rem/1.3 ${DISPLAY}; letter-spacing:.12em; text-transform:uppercase; color:#56676d; }
+        .hub-mod-l { font:700 .82rem/1 ${DISPLAY}; color:var(--ink); margin-top:.3rem; }
 
         .hub-foot { display:none; background:var(--ink); color:#fff; padding:3rem 1.75rem; }
         .hub-foot-in { display:flex; justify-content:space-between; align-items:center; gap:2rem; flex-wrap:wrap; }
@@ -258,7 +160,7 @@ export default function HubLanding() {
         .hub-foot a { color:rgba(255,255,255,.7); font:500 .85rem/1 ${DISPLAY}; text-decoration:none; }
         .hub-foot a:hover { color:#fff; }
 
-        @media (max-width:1100px) { .hub-plats { grid-template-columns:repeat(2,minmax(0,1fr)); } .hub-areas { grid-template-columns:1fr; } }
+        @media (max-width:1100px) { .hub-mods { grid-template-columns:repeat(2,minmax(0,1fr)); } }
         @media (min-width:769px) {
           .desktop-header { display:flex !important; }
           .desktop-footer { display:block !important; }
@@ -273,7 +175,7 @@ export default function HubLanding() {
           .hero-cta-row { flex-direction:column; width:100%; }
           .hero-cta-row > * { text-align:center; min-height:52px; }
           .hub-sec { padding:2.5rem 1rem; }
-          .hub-plats { grid-template-columns:1fr; }
+          .hub-mods { grid-template-columns:1fr; }
         }
       `}</style>
     </div>

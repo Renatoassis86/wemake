@@ -16,7 +16,7 @@ import {
   Upload, Database, BookOpen, Crosshair, Milestone, GraduationCap, Landmark
 } from 'lucide-react'
 
-interface SidebarProps { profile: Profile | null }
+interface SidebarProps { profile: Profile | null; modulos?: string[] }
 
 // ── Nav groups ───────────────────────────────────────────────────────────────
 
@@ -64,7 +64,6 @@ const NAV_WIP = [
   { href: '/amostras',    label: 'Amostras',      icon: FlaskConical },
   { href: '/dashboards',  label: 'BI / Analytics',icon: BarChart2  },
   { href: '/ai-bob',      label: 'ALMA — IA',     icon: Bot        },
-  { href: '/financeiro',  label: 'Financeiro',    icon: DollarSign },
 ]
 
 // ── Subcomponents ─────────────────────────────────────────────────────────────
@@ -185,7 +184,8 @@ function NavItem({ href, label, icon: Icon, active, badge, external, wip }: NavI
 
 // ── Main Sidebar ──────────────────────────────────────────────────────────────
 
-export default function Sidebar({ profile }: SidebarProps) {
+export default function Sidebar({ profile, modulos = [] }: SidebarProps) {
+  const tem = (m: string) => modulos.includes(m)
   const pathname = usePathname()
   const router   = useRouter()
   const supabase = createClient()
@@ -297,15 +297,25 @@ export default function Sidebar({ profile }: SidebarProps) {
         <NavItem href="/tutorial" label="Tutorial"     icon={BookOpen} active={isActive('/tutorial')} />
         <NavDivider />
 
-        <SectionLabel>Gestão Geral</SectionLabel>
-        <NavItem href="/gestao" label="Gestão Geral" icon={Landmark} active={pathname === '/gestao'} badge="Novo" />
-        <NavItem href="/gestao/receita" label="Receita contratada" icon={DollarSign} active={isActive('/gestao/receita')} />
-        <NavDivider />
+        {tem('administrativo') || tem('financeiro') || tem('contratos') || tem('pedidos') ? (
+          <>
+            <SectionLabel>Gestão</SectionLabel>
+            {tem('administrativo') ? <NavItem href="/administrativo" label="Gestão Administrativa" icon={Landmark} active={isActive('/administrativo')} /> : null}
+            {tem('financeiro') ? <NavItem href="/financeiro" label="Gestão Financeira" icon={DollarSign} active={isActive('/financeiro')} /> : null}
+            {tem('contratos') ? <NavItem href="/contratos" label="Gestão de Contratos" icon={FileSignature} active={isActive('/contratos')} /> : null}
+            {tem('pedidos') ? <NavItem href="/pedidos" label="Gestão de Pedidos" icon={Package} active={isActive('/pedidos')} /> : null}
+            <NavDivider />
+          </>
+        ) : null}
 
-        <SectionLabel>Academia</SectionLabel>
-        <NavItem href="/academia" label="Academia We Make" icon={GraduationCap} active={pathname === '/academia' || (pathname.startsWith('/academia/') && !pathname.startsWith('/academia/gestao'))} badge="Novo" />
-        <NavItem href="/academia/gestao" label="Gestão da implantação" icon={Kanban} active={isActive('/academia/gestao')} />
-        <NavDivider />
+        {tem('academia') ? (
+          <>
+            <SectionLabel>Academia</SectionLabel>
+            <NavItem href="/academia" label="Academia We Make" icon={GraduationCap} active={pathname === '/academia' || (pathname.startsWith('/academia/') && !pathname.startsWith('/academia/gestao'))} badge="Novo" />
+            <NavItem href="/academia/gestao" label="Gestão da implantação" icon={Kanban} active={isActive('/academia/gestao')} />
+            <NavDivider />
+          </>
+        ) : null}
 
         <SectionLabel>CRM</SectionLabel>
         {NAV_CRM.map(item => (

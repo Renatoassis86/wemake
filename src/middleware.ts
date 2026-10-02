@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { moduloDoCaminho, moduloPermitido } from '@/lib/modulos'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -18,6 +19,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/videos') ||
     pathname.startsWith('/academia/brand') ||
     pathname.startsWith('/diagnostico') ||
+    pathname.startsWith('/modulos') ||
     pathname === '/favicon.ico' ||
     pathname === '/icon.png'
 
@@ -62,8 +64,29 @@ export async function middleware(request: NextRequest) {
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone()
-    url.pathname = '/login'
+    // quem tenta abrir um módulo sem estar logado cai na página do módulo, que explica o que ele é e traz o login
+    const modulo = moduloDoCaminho(pathname)
+    url.pathname = modulo ? `/modulos/${modulo}` : '/login'
+    url.search = ''
     return NextResponse.redirect(url)
+  }
+
+  // Rota antiga da Gestão Geral → agora é a Gestão Financeira
+  if (user && pathname.startsWith('/gestao')) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/financeiro'
+    return NextResponse.redirect(url)
+  }
+
+  // Módulos restritos: só entra quem está na lista do módulo (vale para páginas e ações)
+  if (user && !isPublic) {
+    const modulo = moduloDoCaminho(pathname)
+    if (modulo && !moduloPermitido(modulo, user.email)) {
+      const url = request.nextUrl.clone()
+      url.pathname = `/modulos/${modulo}`
+      url.search = '?acesso=negado'
+      return NextResponse.redirect(url)
+    }
   }
 
   // Usuário logado em /login → leva para o Hub (não mais /comercial direto)

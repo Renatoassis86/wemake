@@ -6,6 +6,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { MARCOS } from '@/lib/academia'
 import { PRIORIDADES, RISCOS, STATUS, type Implantacao, type Status } from '@/lib/academia-gestao'
 import { LISTAS, getLista, prazoDoModelo } from '@/lib/academia-workspace'
+import { moduloPermitido } from '@/lib/modulos'
 
 export type Resultado = { ok: true; msg?: string } | { ok: false; erro: string }
 
@@ -13,7 +14,7 @@ export type Resultado = { ok: true; msg?: string } | { ok: false; erro: string }
 async function autorizado() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  return user ?? null
+  return user && moduloPermitido('academia', user.email) ? user : null
 }
 
 const txt = (v: unknown, max = 600) => {

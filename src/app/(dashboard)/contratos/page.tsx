@@ -1,19 +1,36 @@
-﻿export default function Page() {
+import Link from 'next/link'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { PaginasDoModulo } from '@/components/academia/gestao/ModuloShell'
+
+export const dynamic = 'force-dynamic'
+export const metadata = { title: 'Gestão de Contratos · We Make' }
+
+export default async function ContratosPage() {
+  const { data, error } = await createAdminClient()
+    .from('contratos')
+    .select('contrato_assinado, contrato_enviado, minuta_enviada, declinou')
+  const c = (data ?? []) as { contrato_assinado: boolean; contrato_enviado: boolean; minuta_enviada: boolean; declinou: boolean }[]
+  const ativos = c.filter(x => !x.declinou)
+  const assinados = ativos.filter(x => x.contrato_assinado).length
+  const enviados = ativos.filter(x => x.contrato_enviado && !x.contrato_assinado).length
+  const minuta = ativos.filter(x => x.minuta_enviada && !x.contrato_enviado && !x.contrato_assinado).length
+  const andamento = ativos.length - assinados - enviados - minuta
+
   return (
-    <div className="p-6">
-      <div className="wip-banner">
-        <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
-          </svg>
-        </div>
-        <span className="wip-tag">Em Desenvolvimento</span>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginTop: '1rem', marginBottom: '.5rem' }}>Jornada Contratual</h2>
-        <p style={{ color: 'rgba(255,255,255,.75)', fontSize: '.95rem' }}>Gestão completa de contratos com minutas, assinaturas e prazos.</p>
-        <p style={{ color: 'rgba(255,255,255,.45)', fontSize: '.8rem', marginTop: '.5rem' }}>
-          Este módulo está em desenvolvimento e estará disponível em breve.
+    <>
+      <section aria-label="Situação dos contratos">
+        <dl className="ac-kpis">
+          <div><dt>Assinados</dt><dd>{error ? '—' : assinados}</dd></div>
+          <div><dt>Contrato enviado, aguardando assinatura</dt><dd>{error ? '—' : enviados}</dd></div>
+          <div><dt>Minuta enviada</dt><dd>{error ? '—' : minuta}</dd></div>
+          <div><dt>Em andamento</dt><dd>{error ? '—' : andamento}</dd></div>
+        </dl>
+        <p className="ac-nota">
+          Situação lida da Jornada Contratual de cada escola. Contratos declinados não entram na conta.{' '}
+          <Link href="/comercial/contratos">Abrir a jornada contratual →</Link>
         </p>
-      </div>
-    </div>
+      </section>
+      <PaginasDoModulo slug="contratos" />
+    </>
   )
 }

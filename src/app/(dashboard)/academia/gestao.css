@@ -267,3 +267,6 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 .ac-pin-valor { font: 700 2.2rem/1 ui-monospace, Consolas, monospace; letter-spacing: .2em; margin: .4rem 0 .8rem; }
 .ac-pinbox .ac-hint { color: rgba(255,255,255,.7); } .ac-pinbox .ac-btn { background: var(--ac-cyan); color: var(--ac-ink); } .ac-pinbox .ac-btn.is-ghost { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.4); }
 .ac-msg { white-space: pre-wrap; background: rgba(255,255,255,.08); border-radius: 8px; padding: .9rem 1rem; font: 500 .8rem/1.5 var(--ac-sans); margin: 1rem 0 0; }
+
+.ac-sobre { max-width: 90ch; margin: 0 0 2.5rem; padding: .9rem 1.2rem; border-left: 4px solid var(--ac-cyan); background: var(--ac-ivory); border-radius: 0 10px 10px 0; font-size: .98rem; line-height: 1.6; color: var(--ac-text); }
+.ac-sobre b { font-family: var(--ac-sans); color: var(--ac-ink); } .ac-sobre a { color: var(--ac-link); margin-left: .3rem; }

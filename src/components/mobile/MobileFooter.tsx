@@ -20,10 +20,12 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
     {
       title: 'Módulos',
       items: [
-        { label: 'Gestão Comercial' },
-        { label: 'Gestão de Contratos' },
-        { label: 'Censo Escolar' },
-        { label: 'Jornada de Relacionamento' },
+        { label: 'Gestão Administrativa', href: '/modulos/administrativo' },
+        { label: 'Gestão Financeira', href: '/modulos/financeiro' },
+        { label: 'Gestão Comercial', href: '/modulos/comercial' },
+        { label: 'Gestão de Contratos', href: '/modulos/contratos' },
+        { label: 'Academia We Make', href: '/modulos/academia' },
+        { label: 'Gestão de Pedidos', href: '/modulos/pedidos' },
       ],
     },
     {

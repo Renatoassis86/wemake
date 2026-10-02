@@ -2,7 +2,7 @@ import { carregarReceita } from '@/lib/gestao-receita'
 import { formatCurrency } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Receita contratada · Gestão Geral' }
+export const metadata = { title: 'Receita contratada · Gestão Financeira' }
 
 const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 
