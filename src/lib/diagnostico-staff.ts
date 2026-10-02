@@ -21,6 +21,7 @@ export interface DiagnosticoLinha {
   enviado_em: string | null
   expira_em: string
   created_at: string
+  link_token?: string
 }
 
 export interface ArquivoStaff {
@@ -39,7 +40,7 @@ export async function listarDiagnosticos(): Promise<{ setup: boolean; erro?: str
   const db = createAdminClient()
   const { data, error } = await db
     .from('academia_diagnosticos')
-    .select('id, implantacao_id, escola_nome, status, ultima_atividade, enviado_em, expira_em, created_at')
+    .select('id, implantacao_id, escola_nome, status, ultima_atividade, enviado_em, expira_em, created_at, link_token')
     .order('created_at', { ascending: false })
   if (FALTA_TABELA(error)) return { setup: true, itens: [] }
   if (error) return { setup: false, erro: error.message, itens: [] }
@@ -64,7 +65,7 @@ export async function carregarDiagnostico(id: string) {
   const db = createAdminClient()
   const { data, error } = await db
     .from('academia_diagnosticos')
-    .select('id, implantacao_id, escola_nome, status, ultima_atividade, enviado_em, expira_em, created_at')
+    .select('id, implantacao_id, escola_nome, status, ultima_atividade, enviado_em, expira_em, created_at, link_token')
     .eq('id', id)
     .maybeSingle()
   if (error || !data) return null

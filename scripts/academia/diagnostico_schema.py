@@ -179,6 +179,7 @@ create table if not exists public.academia_diagnosticos (
   implantacao_id   uuid references public.academia_implantacoes(id) on delete set null,
   escola_nome      text not null,
   pin_hash         text not null unique,
+  link_token       text not null unique default encode(gen_random_bytes(18), 'hex'),  -- link enviado à escola
   status           text not null default 'aberto'
                    check (status in ('aberto', 'enviado', 'em_analise', 'concluido')),
   ultima_atividade timestamptz,
@@ -189,6 +190,11 @@ create table if not exists public.academia_diagnosticos (
   updated_at       timestamptz not null default now()
 );
 create index if not exists academia_diagnosticos_impl_idx on public.academia_diagnosticos (implantacao_id);
+
+-- Quem já tinha a tabela da versão anterior: acrescenta o token do link (as linhas existentes ganham um).
+alter table public.academia_diagnosticos
+  add column if not exists link_token text not null default encode(gen_random_bytes(18), 'hex');
+create unique index if not exists academia_diagnosticos_link_idx on public.academia_diagnosticos (link_token);
 
 -- Versão anterior guardava as respostas em JSON dentro desta tabela: migra e remove.
 do $$

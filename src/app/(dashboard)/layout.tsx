@@ -5,6 +5,7 @@ import Sidebar from '@/components/layout/Sidebar'
 import DashboardTopbar from '@/components/layout/DashboardTopbar'
 import type { Profile } from '@/types/database'
 import { modulosDoUsuario } from '@/lib/modulos'
+import { podeVerDiagnosticos } from '@/lib/diagnostico-staff'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -36,10 +37,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
   } : null
 
   if (profile && !profile.is_active) redirect('/login?error=inactive')
+  const diagnosticos = await podeVerDiagnosticos()
 
   return (
     <div className="flex">
-      <Sidebar profile={profile} modulos={modulosDoUsuario(user.email)} />
+      <Sidebar profile={profile} modulos={modulosDoUsuario(user.email)} diagnosticos={diagnosticos} />
       <div
         className="dashboard-content"
         style={{ flex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}

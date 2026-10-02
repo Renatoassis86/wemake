@@ -5,7 +5,8 @@ import PinForm from './PinForm'
 
 export const dynamic = 'force-dynamic'
 
-export default async function DiagnosticoEntrada() {
+export default async function DiagnosticoEntrada({ searchParams }: { searchParams: Promise<{ erro?: string }> }) {
+  const { erro } = await searchParams
   if (await sessaoDiagnostico()) redirect('/diagnostico/preencher')
 
   return (
@@ -39,8 +40,10 @@ export default async function DiagnosticoEntrada() {
         </section>
 
         <section className="dg-pin" aria-labelledby="pin-t">
-          <h2 id="pin-t">Entrar com o PIN</h2>
-          <p>O PIN foi enviado pela We Make para a pessoa responsável na escola. Ele tem 8 caracteres, no formato XXXX-XXXX.</p>
+          <h2 id="pin-t">Acesso da escola</h2>
+          <p>A We Make enviou um <b>link</b> para a pessoa responsável na escola: é só abri-lo. Se preferir, digite aqui o <b>PIN</b> que veio junto, no formato XXXX-XXXX.</p>
+          {erro === 'link' ? <p role="alert" className="dg-erro" style={{ marginTop: 0 }}>Este link não é válido ou venceu. Peça um novo à We Make ou use o PIN.</p> : null}
+          {erro === 'tentativas' ? <p role="alert" className="dg-erro" style={{ marginTop: 0 }}>Muitas tentativas seguidas. Aguarde 15 minutos e tente de novo.</p> : null}
           <PinForm />
           <p className="dg-nota">
             Seu preenchimento é salvo automaticamente. Você pode parar e voltar depois com o mesmo PIN.

@@ -43,6 +43,7 @@ export default function HubLanding() {
             {NAV.map(n => (
               <Link key={n.label} href={n.href}>{n.label}</Link>
             ))}
+            <Link href="/diagnostico" className="hub-escola">Acesso da escola</Link>
             <Link href="/login" className="hub-enter">Entrar</Link>
           </nav>
         </div>
@@ -67,6 +68,9 @@ export default function HubLanding() {
             <a href="#modulos" className="hub-btn hub-btn--solid">Conhecer os módulos</a>
             <Link href="/login" className="hub-btn hub-btn--line">Entrar na plataforma →</Link>
           </div>
+          <p className="hub-escola-nota">
+            É de uma escola parceira? <Link href="/diagnostico">Acesse o formulário com o link que a We Make enviou.</Link>
+          </p>
         </div>
       </section>
 
@@ -118,6 +122,8 @@ export default function HubLanding() {
         .hub-nav { display:flex; align-items:center; gap:.15rem; }
         .hub-nav a { font:600 .78rem/1 ${DISPLAY}; color:rgba(255,255,255,.86); text-decoration:none; padding:.6rem .85rem; border-radius:6px; white-space:nowrap; }
         .hub-nav a:hover { background:rgba(255,255,255,.1); color:#fff; }
+        .hub-nav a.hub-escola { margin-left:.6rem; border:1px solid rgba(255,255,255,.4); border-radius:999px; padding:.55rem 1rem; }
+        .hub-nav a.hub-escola:hover { border-color:var(--cyan); }
         .hub-nav a.hub-enter { margin-left:.6rem; background:var(--cyan); color:var(--ink); font-weight:700; border-radius:999px; padding:.6rem 1.15rem; }
         .hub-nav a.hub-enter:hover { background:#4fdcff; }
 
@@ -135,6 +141,8 @@ export default function HubLanding() {
         .hub-btn--solid:hover { background:#4fdcff; }
         .hub-btn--line { color:#fff; border:1.5px solid rgba(255,255,255,.4); }
         .hub-btn--line:hover { border-color:var(--cyan); }
+        .hub-escola-nota { margin:1.6rem 0 0; font:500 .9rem/1.5 ${DISPLAY}; color:rgba(255,255,255,.75); }
+        .hub-escola-nota a { color:var(--cyan); text-decoration:underline; text-underline-offset:3px; }
 
         .hub-sec { padding:clamp(3.5rem,7vw,6.5rem) 1.75rem; }
         .hub-sec--ivory { background:var(--ivory); }

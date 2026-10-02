@@ -7,7 +7,7 @@ import {
 } from '@/lib/diagnostico'
 import type { ArquivoStaff, DiagnosticoLinha } from '@/lib/diagnostico-staff'
 import { definirStatus, salvarParecer } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
-import { NovoPinBtn } from './NovoDiagnosticoForm'
+import { NovoPinBtn, linkDaEscola } from './NovoDiagnosticoForm'
 import { Aviso, useRun } from './ui'
 
 const dataHora = (iso: string | null) =>
@@ -23,6 +23,7 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
   const sujo = useRef<Respostas>({})
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const st = useRun()
+  const [linkCopiado, setLinkCopiado] = useState(false)
 
   const descarregar = useCallback(async () => {
     const patch = sujo.current
@@ -51,6 +52,13 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
         <div>
           <p className="ac-kicker">Diagnóstico do Espaço Maker</p>
           <h2 className="ac-h3" style={{ fontSize: '1.7rem', margin: 0 }}>{diagnostico.escola_nome}</h2>
+          {diagnostico.link_token ? (
+            <p className="an-link">
+              <span>Link da escola</span>
+              <code>{linkDaEscola(diagnostico.link_token)}</code>
+              <button type="button" className="ac-btn-sm" onClick={async () => { try { await navigator.clipboard.writeText(linkDaEscola(diagnostico.link_token as string)); setLinkCopiado(true); setTimeout(() => setLinkCopiado(false), 2000) } catch { /* sem permissão */ } }}>{linkCopiado ? 'Copiado' : 'Copiar link'}</button>
+            </p>
+          ) : null}
           <p className="ac-hint" style={{ marginTop: '.5rem' }}>
             Criado em {dataHora(diagnostico.created_at)} · Enviado em {dataHora(diagnostico.enviado_em)} · Última atividade da escola {dataHora(diagnostico.ultima_atividade)} · PIN válido até {dataHora(diagnostico.expira_em)}
           </p>

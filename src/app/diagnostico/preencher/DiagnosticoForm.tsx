@@ -170,27 +170,31 @@ export default function DiagnosticoForm({
   }
 
   return (
-    <div className="dg-wrap">
-      <aside className="dg-side" aria-label="Seções do formulário">
-        <nav>
+    <div className="dg-page">
+      <nav className="dg-steps" aria-label="Seções do formulário">
+        <div className="dg-steps-in">
           <ol>
-            {SECOES.map((s, i) => {
-              const p = prog[i]
+            {SECOES.map((sec, i) => {
+              const pr = prog[i]
               return (
-                <li key={s.id} className={ativa === s.id ? 'is-on' : undefined}>
-                  <a href={`#${s.id}`}>
-                    <span>{s.nome}</span>
-                    {p ? <small>{p.feitos}/{p.total}</small> : null}
+                <li key={sec.id} className={ativa === sec.id ? 'is-on' : undefined}>
+                  <a href={`#${sec.id}`}>
+                    <span>{sec.nome}</span>
+                    {pr ? <small>{pr.feitos}/{pr.total}</small> : null}
                   </a>
                 </li>
               )
             })}
           </ol>
-        </nav>
-        <div className="dg-salvo" role="status" aria-live="polite" data-e={salvo.estado}>
-          {salvo.estado === 'salvando' ? 'Salvando…' : salvo.estado === 'erro' ? (salvo.erro ?? 'Erro ao salvar. Tentando de novo.') : salvo.quando ? `Salvo às ${salvo.quando}` : 'Tudo salvo automaticamente'}
+          <div className="dg-steps-r">
+            <span className="dg-barra" aria-hidden="true"><i style={{ width: `${Math.round((totalFeito / totalGeral) * 100)}%` }} /></span>
+            <span className="dg-prog">{totalFeito} de {totalGeral} itens</span>
+            <span className="dg-salvo" role="status" aria-live="polite" data-e={salvo.estado}>
+              {salvo.estado === 'salvando' ? 'Salvando…' : salvo.estado === 'erro' ? (salvo.erro ?? 'Erro ao salvar. Tentando de novo.') : salvo.quando ? `Salvo às ${salvo.quando}` : 'Salvo automaticamente'}
+            </span>
+          </div>
         </div>
-      </aside>
+      </nav>
 
       <main className="dg-main">
         {status === 'enviado' ? (
@@ -202,10 +206,6 @@ export default function DiagnosticoForm({
           <p className="dg-ok" role="status"><b>Em análise pela We Make.</b> O formulário está fechado para edição. Se precisar corrigir algo, fale com o seu contato na We Make.</p>
         ) : null}
 
-        <div className="dg-geral" aria-label="Andamento geral">
-          <span className="dg-barra"><i style={{ width: `${Math.round((totalFeito / totalGeral) * 100)}%` }} /></span>
-          <span>{totalFeito} de {totalGeral} itens respondidos</span>
-        </div>
 
         <fieldset disabled={travado} className="dg-fs">
           {/* ───────────── 1. Ambiente ───────────── */}
@@ -319,7 +319,7 @@ function Recursos({
       <p className="dg-dica">{dica}</p>
       <div className="dg-filtro">
         <input type="search" aria-label="Buscar item" placeholder="Buscar item…" value={busca} onChange={e => setBusca(e.target.value)} />
-        <label className="ac-check"><input type="checkbox" checked={soFaltam} onChange={e => setSoFaltam(e.target.checked)} /><span>Só os que faltam responder</span></label>
+        <label className="dg-check"><input type="checkbox" checked={soFaltam} onChange={e => setSoFaltam(e.target.checked)} /><span>Só os que faltam responder</span></label>
         <span className="dg-cont">{visiveis.length} de {itens.length} itens</span>
       </div>
       {visiveis.map((i, k) => {

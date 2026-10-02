@@ -20,7 +20,7 @@ export default async function PreencherPage() {
           </div>
           <p className="ac-eyebrow">Diagnóstico do Espaço Maker</p>
           <h1>{s.escola_nome}</h1>
-          <p className="ac-deck">Preencha o que souber agora. Tudo é salvo automaticamente e você pode voltar com o mesmo PIN.</p>
+          <p className="ac-deck">Preencha o que souber agora. Tudo é salvo automaticamente e você pode voltar quando quiser, pelo mesmo link ou PIN.</p>
         </div>
       </header>
 

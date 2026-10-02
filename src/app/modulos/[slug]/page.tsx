@@ -90,6 +90,13 @@ export default async function ModuloPage({ params, searchParams }: { params: Pro
               <Link href="/comercial" className="md-botao md-botao--clara">Ir para a Gestão Comercial</Link>
             </>
           )}
+          {m.slug === 'academia' ? (
+            <div className="md-escola">
+              <h2>Diagnóstico do Espaço Maker</h2>
+              <p>Para as escolas parceiras. Informe o PIN que a We Make enviou: o formulário da sua escola abre em seguida.</p>
+              <Link href="/diagnostico" className="md-botao md-botao--clara">Preencher o diagnóstico da escola</Link>
+            </div>
+          ) : null}
         </aside>
       </div>
 

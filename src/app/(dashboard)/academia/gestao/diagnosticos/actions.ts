@@ -17,7 +17,7 @@ async function autorizado() {
 const SEM_PERMISSAO = { ok: false as const, erro: 'Você não tem permissão para gerenciar diagnósticos.' }
 const refresh = () => revalidatePath('/academia/gestao/diagnosticos', 'layout')
 
-export type CriarResultado = { ok: true; id: string; pin: string } | { ok: false; erro: string }
+export type CriarResultado = { ok: true; id: string; pin: string; token: string } | { ok: false; erro: string }
 
 /** Cria o diagnóstico e devolve o PIN em texto UMA vez: depois só existe o hash. */
 export async function criarDiagnostico(fd: FormData): Promise<CriarResultado> {
@@ -40,9 +40,9 @@ export async function criarDiagnostico(fd: FormData): Promise<CriarResultado> {
     const { data, error } = await db
       .from('academia_diagnosticos')
       .insert({ implantacao_id: implantacaoId, escola_nome: nome, pin_hash: hashPin(pin), created_by: user.id })
-      .select('id')
+      .select('id, link_token')
       .single()
-    if (!error && data) { refresh(); return { ok: true, id: data.id, pin } }
+    if (!error && data) { refresh(); return { ok: true, id: data.id, pin, token: data.link_token } }
     if (error && error.code !== '23505') return { ok: false, erro: error.message }
   }
   return { ok: false, erro: 'Não foi possível gerar um PIN único. Tente de novo.' }
@@ -54,10 +54,12 @@ export async function regenerarPin(id: string): Promise<CriarResultado> {
   const db = createAdminClient()
   for (let i = 0; i < 5; i++) {
     const pin = gerarPin()
-    const { error } = await db.from('academia_diagnosticos')
+    const { data, error } = await db.from('academia_diagnosticos')
       .update({ pin_hash: hashPin(pin), expira_em: new Date(Date.now() + 120 * 24 * 3600 * 1000).toISOString() })
       .eq('id', id)
-    if (!error) { refresh(); return { ok: true, id, pin } }
+      .select('link_token')
+      .single()
+    if (!error && data) { refresh(); return { ok: true, id, pin, token: data.link_token } }
     if (error.code !== '23505') return { ok: false, erro: error.message }
   }
   return { ok: false, erro: 'Não foi possível gerar um PIN único. Tente de novo.' }

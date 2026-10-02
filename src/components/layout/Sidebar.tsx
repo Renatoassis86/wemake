@@ -16,7 +16,10 @@ import {
   Upload, Database, BookOpen, Crosshair, Milestone, GraduationCap, Landmark
 } from 'lucide-react'
 
-interface SidebarProps { profile: Profile | null; modulos?: string[] }
+import { AcademiaNav, ModuloLateral, SIDEBAR_CSS } from './SidebarContextual'
+import { moduloDoCaminho, getModulo } from '@/lib/modulos'
+
+interface SidebarProps { profile: Profile | null; modulos?: string[]; diagnosticos?: boolean }
 
 // ── Nav groups ───────────────────────────────────────────────────────────────
 
@@ -184,7 +187,7 @@ function NavItem({ href, label, icon: Icon, active, badge, external, wip }: NavI
 
 // ── Main Sidebar ──────────────────────────────────────────────────────────────
 
-export default function Sidebar({ profile, modulos = [] }: SidebarProps) {
+export default function Sidebar({ profile, modulos = [], diagnosticos = false }: SidebarProps) {
   const tem = (m: string) => modulos.includes(m)
   const pathname = usePathname()
   const router   = useRouter()
@@ -214,6 +217,9 @@ export default function Sidebar({ profile, modulos = [] }: SidebarProps) {
     router.refresh()
   }
 
+  const moduloAtual = moduloDoCaminho(pathname)
+  const emModulo = moduloAtual !== null && moduloAtual !== 'comercial'
+  const infoModulo = emModulo ? getModulo(moduloAtual) : null
   const isGerente = profile?.role === 'gerente'
   // Gestão de Usuários visível apenas para o administrador principal
   const isAdmin = profile?.email === 'contato@wemake.tec.br' || profile?.email === 'renato086@gmail.com'
@@ -237,7 +243,7 @@ export default function Sidebar({ profile, modulos = [] }: SidebarProps) {
       className={mobileOpen ? 'mobile-open' : ''}
       style={{
         width: 'var(--sidebar-w)', minHeight: '100vh',
-        background: 'linear-gradient(180deg, #0f172a 0%, #111827 100%)',
+        background: emModulo ? '#032b36' : 'linear-gradient(180deg, #0f172a 0%, #111827 100%)',
         position: 'fixed', top: 0, left: 0, bottom: 0,
         zIndex: 100, display: 'flex', flexDirection: 'column',
         borderRight: '1px solid rgba(255,255,255,.05)',
@@ -267,30 +273,41 @@ export default function Sidebar({ profile, modulos = [] }: SidebarProps) {
         padding: '1.1rem 1.1rem .9rem',
         borderBottom: '1px solid rgba(255,255,255,.05)',
       }}>
-        <Image
-          src="/images/we-make-1.png"
-          alt="We Make"
-          width={144}
-          height={36}
-          style={{ objectFit: 'contain', objectPosition: 'left', opacity: .88, width: 'auto', height: 'auto' }}
-        />
+        {emModulo ? (
+          <Image src="/academia/brand/logo-white.png" alt="We Make" width={640} height={148} style={{ height: 28, width: 'auto' }} />
+        ) : (
+          <Image
+            src="/images/we-make-1.png"
+            alt="We Make"
+            width={144}
+            height={36}
+            style={{ objectFit: 'contain', objectPosition: 'left', opacity: .88, width: 'auto', height: 'auto' }}
+          />
+        )}
         <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', marginTop: '.55rem' }}>
           <span style={{
             display: 'inline-block',
-            width: 6, height: 6, borderRadius: '50%', background: '#5FE3D0', flexShrink: 0,
+            width: 6, height: 6, borderRadius: '50%', background: emModulo ? '#00c8ff' : '#5FE3D0', flexShrink: 0,
           }} />
           <span style={{
             fontSize: '.6rem', fontWeight: 700, letterSpacing: '.1em',
-            textTransform: 'uppercase', color: 'rgba(95,227,208,.85)',
-            fontFamily: 'var(--font-montserrat, sans-serif)',
+            textTransform: 'uppercase', color: emModulo ? '#00c8ff' : 'rgba(95,227,208,.85)',
+            fontFamily: emModulo ? 'var(--font-inter, sans-serif)' : 'var(--font-montserrat, sans-serif)',
           }}>
-            Gestão Comercial
+            {infoModulo ? infoModulo.nome : 'Gestão Comercial'}
           </span>
         </div>
       </div>
 
       {/* ── Nav ───────────────────────────────────────────────── */}
       <nav style={{ flex: 1, overflowY: 'auto', padding: '.5rem 0 1rem' }}>
+
+        {moduloAtual === 'academia' ? (
+          <AcademiaNav pathname={pathname} diagnosticos={diagnosticos} />
+        ) : emModulo && moduloAtual ? (
+          <ModuloLateral slug={moduloAtual} pathname={pathname} />
+        ) : (
+        <>
 
         {/* ── Sobre + Tutorial — primeiras abas ────────────────── */}
         <NavItem href="/sobre"    label="Plataforma We Make" icon={Info}     active={isActive('/sobre')} />
@@ -374,6 +391,8 @@ export default function Sidebar({ profile, modulos = [] }: SidebarProps) {
             wip
           />
         ))}
+        </>
+        )}
       </nav>
 
       {/* ── User Footer ──────────────────────────────────────── */}
@@ -452,6 +471,7 @@ export default function Sidebar({ profile, modulos = [] }: SidebarProps) {
       </div>
     </aside>
 
+    <style>{SIDEBAR_CSS}</style>
     <style>{`
       /* Desktop: esconde o botão X completamente */
       .mobile-close-btn {
