@@ -275,3 +275,7 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 .an-link { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .8rem; margin: .8rem 0 0; font: 500 .85rem/1.3 var(--ac-sans); }
 .an-link span { font: 600 .62rem/1 var(--ac-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--ac-muted); }
 .an-link code { background: #fff; border: 1px solid var(--ac-line); border-radius: 6px; padding: .35rem .6rem; font: 500 .78rem/1.3 ui-monospace, Consolas, monospace; word-break: break-all; }
+.ac-btn-excluir { display: inline-flex; align-items: center; justify-content: center; color: #b3261e; padding: .5rem .55rem; }
+.ac-btn-excluir:hover:not(:disabled) { background: #fdecea; border-color: #b3261e; }
+.ac-btn-excluir:disabled { opacity: .5; cursor: default; }
+.ac-erro-linha { display: block; color: #b3261e; font: 600 .72rem/1.3 var(--ac-sans); max-width: 14rem; }

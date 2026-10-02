@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { emailsAutorizados, gerarPin, hashPin } from '@/lib/diagnostico-auth'
-import { CHAVES_PARECER, STATUS_DIAGNOSTICO, limparPatch, patchParaLinhasParecer, type StatusDiagnostico } from '@/lib/diagnostico'
+import { BUCKET, CHAVES_PARECER, STATUS_DIAGNOSTICO, limparPatch, patchParaLinhasParecer, type StatusDiagnostico } from '@/lib/diagnostico'
 
 /** Só quem está na lista (Renato e Dênis, a princípio) mexe nos diagnósticos e vê as respostas. */
 async function autorizado() {
@@ -80,6 +80,23 @@ export async function definirStatus(id: string, status: string): Promise<{ ok: b
   if (!user) return SEM_PERMISSAO
   if (!(status in STATUS_DIAGNOSTICO)) return { ok: false, erro: 'Status inválido.' }
   const { error } = await createAdminClient().from('academia_diagnosticos').update({ status: status as StatusDiagnostico }).eq('id', id)
+  if (error) return { ok: false, erro: error.message }
+  refresh()
+  return { ok: true }
+}
+
+/** Exclui o diagnóstico, as respostas, os pareceres e os arquivos da escola (inclusive no storage). Não tem volta. */
+export async function excluirDiagnostico(id: string): Promise<{ ok: boolean; erro?: string }> {
+  const user = await autorizado()
+  if (!user) return SEM_PERMISSAO
+  const db = createAdminClient()
+  const { data: arqs } = await db.from('academia_diagnostico_arquivos').select('path').eq('diagnostico_id', id)
+  const paths = (arqs ?? []).map(a => a.path as string)
+  if (paths.length) {
+    const { error: e1 } = await db.storage.from(BUCKET).remove(paths)
+    if (e1) return { ok: false, erro: `Não foi possível apagar os arquivos: ${e1.message}` }
+  }
+  const { error } = await db.from('academia_diagnosticos').delete().eq('id', id)
   if (error) return { ok: false, erro: error.message }
   refresh()
   return { ok: true }

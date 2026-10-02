@@ -4,6 +4,7 @@ import { fmtData } from '@/lib/academia-gestao'
 import { STATUS_DIAGNOSTICO, SCHEMA } from '@/lib/diagnostico'
 import { listarDiagnosticos, podeVerDiagnosticos } from '@/lib/diagnostico-staff'
 import NovoDiagnosticoForm from '@/components/academia/gestao/NovoDiagnosticoForm'
+import ExcluirDiagnostico from '@/components/academia/gestao/ExcluirDiagnostico'
 import SetupNotice from '@/components/academia/gestao/SetupNotice'
 
 export const dynamic = 'force-dynamic'
@@ -50,7 +51,7 @@ export default async function DiagnosticosPage() {
         <div className="ac-table-wrap" tabIndex={0} role="region" aria-label="Diagnósticos">
           <table className="ac-table">
             <thead>
-              <tr><th scope="col">Escola</th><th scope="col">Situação</th><th scope="col">Respondido</th><th scope="col">Enviado em</th><th scope="col">Última atividade</th><th scope="col">PIN vale até</th><th scope="col"><span className="sr-only">Abrir</span></th></tr>
+              <tr><th scope="col">Escola</th><th scope="col">Situação</th><th scope="col">Respondido</th><th scope="col">Enviado em</th><th scope="col">Última atividade</th><th scope="col">PIN vale até</th><th scope="col"><span className="sr-only">Ações</span></th></tr>
             </thead>
             <tbody>
               {d.itens.map(i => (
@@ -61,7 +62,7 @@ export default async function DiagnosticosPage() {
                   <td>{dataHora(i.enviado_em)}</td>
                   <td>{dataHora(i.ultima_atividade)}</td>
                   <td>{fmtData(i.expira_em)}</td>
-                  <td><Link href={`/academia/gestao/diagnosticos/${i.id}`} className="ac-btn-sm">Abrir</Link></td>
+                  <td><Link href={`/academia/gestao/diagnosticos/${i.id}`} className="ac-btn-sm">Abrir</Link><ExcluirDiagnostico id={i.id} escola={i.escola_nome} /></td>
                 </tr>
               ))}
             </tbody>
