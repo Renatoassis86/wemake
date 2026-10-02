@@ -1,0 +1,69 @@
+'use client'
+
+import { useRef, useState } from 'react'
+import { PRIORIDADES } from '@/lib/academia-gestao'
+import { criarImplantacao } from '@/app/(dashboard)/academia/gestao/actions'
+import { Aviso, useRun } from './ui'
+
+/** Cadastra uma escola no Painel Mestre (regra 1: cadastrar assim que o Handoff for concluído). */
+export default function NovaEscolaForm({ escolas, pessoas }: { escolas: { id: string; nome: string }[]; pessoas: string[] }) {
+  const ref = useRef<HTMLFormElement>(null)
+  const [aberto, setAberto] = useState(false)
+  const [escolaId, setEscolaId] = useState('')
+  const { pending, erro, msg, run } = useRun()
+
+  function aoDigitar(nome: string) {
+    setEscolaId(escolas.find(e => e.nome.toLowerCase() === nome.trim().toLowerCase())?.id ?? '')
+  }
+
+  return (
+    <div className="ac-nova">
+      {!aberto ? (
+        <button type="button" className="ac-btn" onClick={() => setAberto(true)}>+ Cadastrar escola no Painel</button>
+      ) : (
+        <form
+          ref={ref}
+          className="ac-form"
+          onSubmit={e => {
+            e.preventDefault()
+            const fd = new FormData(e.currentTarget)
+            fd.set('escola_id', escolaId)
+            run(() => criarImplantacao(fd), () => { ref.current?.reset(); setEscolaId(''); setAberto(false) })
+          }}
+        >
+          <h3 className="ac-form-t">Nova escola no Painel Mestre</h3>
+          <div className="ac-form-g">
+            <label>
+              <span>Escola</span>
+              <input name="escola_nome" list="ac-escolas" required maxLength={160} onChange={e => aoDigitar(e.target.value)} placeholder="Nome oficial da instituição" />
+              <datalist id="ac-escolas">{escolas.map(e => <option key={e.id} value={e.nome} />)}</datalist>
+              <small>{escolaId ? 'Vinculada ao cadastro comercial.' : 'Escolha uma escola do CRM ou digite o nome.'}</small>
+            </label>
+            <label><span>Cidade/UF</span><input name="cidade_uf" maxLength={80} /></label>
+            <label>
+              <span>Responsável We Make</span>
+              <input name="responsavel" list="ac-pessoas-nova" maxLength={120} />
+              <datalist id="ac-pessoas-nova">{pessoas.map(p => <option key={p} value={p} />)}</datalist>
+            </label>
+            <label>
+              <span>Prioridade</span>
+              <select name="prioridade" defaultValue="Normal">{PRIORIDADES.map(p => <option key={p}>{p}</option>)}</select>
+            </label>
+            <label><span>Data da assinatura</span><input type="date" name="data_assinatura" /></label>
+            <label><span>Onboarding — dia 1</span><input type="date" name="data_onboarding" /></label>
+            <label><span>Início das aulas</span><input type="date" name="data_inicio_aulas" /></label>
+          </div>
+          <label className="ac-check">
+            <input type="checkbox" name="gerar_tarefas" defaultChecked />
+            <span>Criar as tarefas-modelo dos documentos (prazos calculados pelas datas acima)</span>
+          </label>
+          <Aviso erro={erro} msg={msg} />
+          <div className="ac-form-a">
+            <button className="ac-btn" disabled={pending}>{pending ? 'Salvando…' : 'Cadastrar'}</button>
+            <button type="button" className="ac-btn is-ghost" onClick={() => setAberto(false)}>Cancelar</button>
+          </div>
+        </form>
+      )}
+    </div>
+  )
+}

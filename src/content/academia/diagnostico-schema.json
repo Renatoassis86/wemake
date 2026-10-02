@@ -1,0 +1,1409 @@
+{
+ "ambiente": [
+  {
+   "key": "amb-01",
+   "pergunta": "Uso atual do ambiente",
+   "tipo": "texto"
+  },
+  {
+   "key": "amb-02",
+   "pergunta": "O ambiente será exclusivo para a We Make?",
+   "tipo": "opcao",
+   "opcoes": [
+    "Sim",
+    "Não"
+   ],
+   "detalhe": true
+  },
+  {
+   "key": "amb-03",
+   "pergunta": "Quantidade aproximada de alunos simultaneamente",
+   "tipo": "numero"
+  },
+  {
+   "key": "amb-04",
+   "pergunta": "O espaço já possui mobiliário?",
+   "tipo": "opcao",
+   "opcoes": [
+    "Sim",
+    "Não",
+    "Parcialmente"
+   ],
+   "detalhe": true
+  },
+  {
+   "key": "amb-05",
+   "pergunta": "O espaço já possui equipamentos tecnológicos/maker?",
+   "tipo": "opcao",
+   "opcoes": [
+    "Sim",
+    "Não",
+    "Parcialmente"
+   ],
+   "detalhe": true
+  }
+ ],
+ "medidas": [
+  {
+   "key": "med-01",
+   "categoria": "Estrutura geral",
+   "info": "Comprimento de cada parede (identifique Parede 1, 2, 3...)"
+  },
+  {
+   "key": "med-02",
+   "categoria": "Estrutura geral",
+   "info": "Altura do pé-direito (piso ao teto)"
+  },
+  {
+   "key": "med-03",
+   "categoria": "Estrutura geral",
+   "info": "Paredes ou trechos irregulares / desníveis"
+  },
+  {
+   "key": "med-04",
+   "categoria": "Aberturas",
+   "info": "Portas: largura, altura, distância até paredes laterais e sentido de abertura"
+  },
+  {
+   "key": "med-05",
+   "categoria": "Aberturas",
+   "info": "Janelas: largura, altura, distância do piso e das paredes laterais"
+  },
+  {
+   "key": "med-06",
+   "categoria": "Instalações elétricas",
+   "info": "Localização de todas as tomadas"
+  },
+  {
+   "key": "med-07",
+   "categoria": "Instalações elétricas",
+   "info": "Altura das tomadas e quantidade por ponto"
+  },
+  {
+   "key": "med-08",
+   "categoria": "Instalações elétricas",
+   "info": "Tensão identificada (127V/220V), quando conhecida"
+  },
+  {
+   "key": "med-09",
+   "categoria": "Instalações elétricas",
+   "info": "Posição dos interruptores"
+  },
+  {
+   "key": "med-10",
+   "categoria": "Instalações elétricas",
+   "info": "Quadro elétrico no ambiente ou próximo"
+  },
+  {
+   "key": "med-11",
+   "categoria": "Climatização",
+   "info": "Ponto e/ou equipamento de ar-condicionado"
+  },
+  {
+   "key": "med-12",
+   "categoria": "Climatização",
+   "info": "Ventiladores existentes"
+  },
+  {
+   "key": "med-13",
+   "categoria": "Iluminação",
+   "info": "Pontos de iluminação no teto"
+  },
+  {
+   "key": "med-14",
+   "categoria": "Conectividade",
+   "info": "Pontos de rede / internet"
+  },
+  {
+   "key": "med-15",
+   "categoria": "Conectividade",
+   "info": "Qualidade aproximada do Wi-Fi no ambiente"
+  },
+  {
+   "key": "med-16",
+   "categoria": "Mídia",
+   "info": "TV/projetor e pontos correspondentes"
+  },
+  {
+   "key": "med-17",
+   "categoria": "Estrutura",
+   "info": "Pilares, vigas aparentes ou elementos estruturais"
+  },
+  {
+   "key": "med-18",
+   "categoria": "Estrutura",
+   "info": "Bancadas, pias, armários ou mobiliário fixo"
+  },
+  {
+   "key": "med-19",
+   "categoria": "Mobiliário",
+   "info": "Mesas, cadeiras, estantes, armários ou bancadas existentes — informar medidas aproximadas"
+  },
+  {
+   "key": "med-20",
+   "categoria": "Planta/Croqui",
+   "info": "Planta baixa do ambiente, se houver; caso contrário, croqui simples visto de cima"
+  }
+ ],
+ "evidencias": [
+  {
+   "key": "evi-01",
+   "nome": "Foto panorâmica a partir da entrada"
+  },
+  {
+   "key": "evi-02",
+   "nome": "Foto da Parede 1"
+  },
+  {
+   "key": "evi-03",
+   "nome": "Foto da Parede 2"
+  },
+  {
+   "key": "evi-04",
+   "nome": "Foto da Parede 3"
+  },
+  {
+   "key": "evi-05",
+   "nome": "Foto da Parede 4"
+  },
+  {
+   "key": "evi-06",
+   "nome": "Fotos das portas e janelas"
+  },
+  {
+   "key": "evi-07",
+   "nome": "Fotos das tomadas e pontos elétricos"
+  },
+  {
+   "key": "evi-08",
+   "nome": "Fotos dos equipamentos maker existentes"
+  },
+  {
+   "key": "evi-09",
+   "nome": "Fotos do mobiliário existente"
+  },
+  {
+   "key": "evi-10",
+   "nome": "Vídeo de 1 a 2 minutos percorrendo todo o ambiente"
+  },
+  {
+   "key": "evi-11",
+   "nome": "Planta baixa ou croqui do ambiente"
+  }
+ ],
+ "reutilizaveis": [
+  {
+   "key": "reu-01",
+   "categoria": "Máquina digital",
+   "item": "Impressora 3D",
+   "spec": "Impressora 3D Bambu Lab A1 Combo",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://www.3dcuritiba.com.br/impressora3dbambulaba1combo",
+   "valor": 5299.0
+  },
+  {
+   "key": "reu-02",
+   "categoria": "Máquina digital",
+   "item": "Balança digital eletrônica",
+   "spec": "Caga máxima 50kg, precisão 1g [compra internacional - Mercado Livre]",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/1f9RNEJ",
+   "valor": 160.0
+  },
+  {
+   "key": "reu-03",
+   "categoria": "Máquina manual",
+   "item": "Furadeira/Parafusadeira",
+   "spec": "Furadeira e Parafusadeira à Bateria 12V BIVOLT PFV 012 com Kit de Brocas e Bits VONDER",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/28yE4gB",
+   "valor": 216.31
+  },
+  {
+   "key": "reu-04",
+   "categoria": "Ferramenta",
+   "item": "Alicate universal",
+   "spec": "Alicate universal de aço 8 pol.",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/2xSQcVP",
+   "valor": 41.44
+  },
+  {
+   "key": "reu-05",
+   "categoria": "Ferramenta",
+   "item": "Alicate de bico meia cano reto",
+   "spec": "Alicate Bico Meia Cana Reto com Cabo Isolado 6 Pol.",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/26mYKqu",
+   "valor": 36.0
+  },
+  {
+   "key": "reu-06",
+   "categoria": "Ferramenta",
+   "item": "Alicate de corte diagonal",
+   "spec": "Alicate de corte diagonal 6 pol.",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/2AS556U",
+   "valor": 38.61
+  },
+  {
+   "key": "reu-07",
+   "categoria": "Ferramenta",
+   "item": "Alicate furador",
+   "spec": "Alicate furador 9 pol. com 6 posições",
+   "qtd": 2.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/2r8PNcd",
+   "valor": 27.89
+  },
+  {
+   "key": "reu-08",
+   "categoria": "Ferramenta",
+   "item": "Alicate de corte rente",
+   "spec": "Alicate Corte Diagonal rente 5\"",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/2q8wWhB",
+   "valor": 20.97
+  },
+  {
+   "key": "reu-09",
+   "categoria": "Ferramenta",
+   "item": "Kit de Broca para Furar e Parafusar, Maleta com 50 Peças",
+   "spec": "Jogo de brocas / bits para furar e parafusar com 50 peças - Black & Decker",
+   "qtd": 1.0,
+   "unid": "kit",
+   "ref": "https://meli.la/2z7CUTV",
+   "valor": 284.9
+  },
+  {
+   "key": "reu-10",
+   "categoria": "Ferramenta",
+   "item": "Chave de fenda e philips",
+   "spec": "Jogo de chave de fenda / phillips com 10 peças",
+   "qtd": 1.0,
+   "unid": "kit",
+   "ref": "https://meli.la/1NUx22T",
+   "valor": 67.26
+  },
+  {
+   "key": "reu-11",
+   "categoria": "Ferramenta",
+   "item": "Martelo de borracha",
+   "spec": "Martelo de borracha 55mm modelo americano",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/1dkyqTY",
+   "valor": 35.0
+  },
+  {
+   "key": "reu-12",
+   "categoria": "Ferramenta",
+   "item": "Paquímetro",
+   "spec": "Paquímetro Digital 150mm 6 Pol. em Fibra de Carbono",
+   "qtd": 3.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/19pzQRm",
+   "valor": 27.15
+  },
+  {
+   "key": "reu-13",
+   "categoria": "Ferramenta",
+   "item": "Trena",
+   "spec": "Trena de 5m x 19mm com Trava",
+   "qtd": 6.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/2kn7CvX",
+   "valor": 19.0
+  },
+  {
+   "key": "reu-14",
+   "categoria": "Ferramenta",
+   "item": "Escala métrica de aço INOX",
+   "spec": "Escala Métrica de Aço Inox Graduada 300mm",
+   "qtd": 6.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/2V65B5F",
+   "valor": 16.37
+  },
+  {
+   "key": "reu-15",
+   "categoria": "Ferramenta",
+   "item": "Pistola de cola quente",
+   "spec": "Pistola Para Cola Quente Make 10W Pequena Bivolt",
+   "qtd": 12.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/1iPwe4f",
+   "valor": 28.95
+  },
+  {
+   "key": "reu-16",
+   "categoria": "Ferramenta",
+   "item": "Bússola",
+   "spec": "Bússola de orientação",
+   "qtd": 6.0,
+   "unid": "unidade",
+   "ref": "https://www.amazon.com.br/orienta%C3%A7%C3%A3o-caminhadas-acampamento-mochil%C3%A3o-sobreviv%C3%AAncia/dp/B0FKBV773K?__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=125M4XAFW0TD6&dib=eyJ2IjoiMSJ9.ciVKHnNiUK5lvDdqlSzydp-tnTb4YIss7WvhuY2lY_bAIehz7i8N9zfsTZwGvcLbQRy37WJdjNe2buysDMeAkT8YuvoejiBZMzufWdbbVAhl1ufgD8Qs9z5F7wQ3Boq4hDJrfZHOrYCki49I5VYKgdgO6xzTl6VEZ2S4q9XFJ0zdg_rRUnlqC6j0tr6u5LFFJfLOr4-CaqmOH2H7jSy1YnT52F0mvSUYTU-Kaqo_0SEDGbTlHA2GJppWWukdY7uBrZQrtaLHRyINMra9nqOQSqU0kbaKWcgdpEXGCtgdTMI.Re5jFsuYfCkAnRWo-SJ_Puj8W4cD41FlcEvYnELUwR0&dib_tag=se&keywords=B%C3%BAssola&qid=1763489296&sprefix=b%C3%BAssola%2Caps%2C262&sr=8-16&th=1&linkCode=ll2&tag=wemake02-20&linkId=dbeecfc0c5045b9d421457dbeb50f2de&ref_=as_li_ss_tl",
+   "valor": 17.19
+  },
+  {
+   "key": "reu-17",
+   "categoria": "Ferramenta",
+   "item": "Lanterna",
+   "spec": "Lanterna Tática Militar X900 Recarregável Police Com Zoom",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/1KS7rbb",
+   "valor": 37.66
+  },
+  {
+   "key": "reu-18",
+   "categoria": "Papelaria",
+   "item": "Estilete de precisão",
+   "spec": "Estilete de precisão (kit 16 peças)",
+   "qtd": 1.0,
+   "unid": "kit",
+   "ref": "https://www.amazon.com.br/Estilete-Magn%C3%A9tico-Artesanato-Modelismo-Aeromodelismo/dp/B09D5MV56F?__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=M9BPDMW8L4RS&keywords=Estilete+Tipo+Bisturi&qid=1675786857&sprefix=estilete+tipo+bisturi+%2Caps%2C170&sr=8-4&linkCode=ll2&tag=wemake02-20&linkId=ea9a2f066d7fe9498a018473b285bb3f&ref_=as_li_ss_tl",
+   "valor": 17.0
+  },
+  {
+   "key": "reu-19",
+   "categoria": "Papelaria",
+   "item": "Base de corte",
+   "spec": "Base de corte multiuso a3",
+   "qtd": 6.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/2j7pWkp",
+   "valor": 49.89
+  },
+  {
+   "key": "reu-20",
+   "categoria": "Papelaria",
+   "item": "Grampeador",
+   "spec": "Grampeador de mesa até 20 folhas",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/2zpQp5x",
+   "valor": 26.0
+  },
+  {
+   "key": "reu-21",
+   "categoria": "Papelaria",
+   "item": "Estilete 18mm",
+   "spec": "Estilete largo 18mm",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/32KbR53",
+   "valor": 19.0
+  },
+  {
+   "key": "reu-22",
+   "categoria": "Papelaria",
+   "item": "Tesoura",
+   "spec": "Tesoura profissional 21cm",
+   "qtd": 4.0,
+   "unid": "kit",
+   "ref": "https://meli.la/1MbGDMm",
+   "valor": 28.13
+  },
+  {
+   "key": "reu-23",
+   "categoria": "Organização",
+   "item": "Bandeja organizadora",
+   "spec": "Bandeja Plástica Retangular Bioprátika 3 L (kit 5 unid)",
+   "qtd": 2.0,
+   "unid": "kit",
+   "ref": "https://meli.la/31GBbgn",
+   "valor": 78.99
+  },
+  {
+   "key": "reu-24",
+   "categoria": "Eletrônica",
+   "item": "Ferro de solda",
+   "spec": "Ferro De Solda 40w 220v com suporte",
+   "qtd": 6.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/1uPT573",
+   "valor": 28.13
+  },
+  {
+   "key": "reu-25",
+   "categoria": "Eletrônica",
+   "item": "Multimetro digital",
+   "spec": "Multímetro Digital Dt-830 - Brasfort",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/2JohQEf",
+   "valor": 30.88
+  },
+  {
+   "key": "reu-26",
+   "categoria": "Eletrônica",
+   "item": "Kit de robótica educacional Arduino",
+   "spec": "Microcontrolador Nano, servomotores, sensores, atuadores, protoboard, shields e fonte de energia",
+   "qtd": 10.0,
+   "unid": "kit",
+   "ref": "",
+   "valor": 500.0
+  },
+  {
+   "key": "reu-27",
+   "categoria": "Eletrônica",
+   "item": "Terceira mão de solda",
+   "spec": "Suporte Terceira Mão com Lupa e Garras Jacaré",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/2V3p8TJ",
+   "valor": 46.0
+  },
+  {
+   "key": "reu-28",
+   "categoria": "Eletrônica",
+   "item": "Alicate decapador",
+   "spec": "Alicate cortador e desencapador de cabos",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/1WJg5uU",
+   "valor": 24.0
+  },
+  {
+   "key": "reu-29",
+   "categoria": "Eletrônica",
+   "item": "Fios garra de jacaré",
+   "spec": "Fios garra de jacaré 50cm (kit 10 unid.)",
+   "qtd": 5.0,
+   "unid": "pacote",
+   "ref": "https://www.eletrogate.com/cabo-garra-jacare-x10-unidades?utm_source=Site&utm_medium=GoogleMerchant&utm_campaign=GoogleMerchant&gclid=CjwKCAiA55mPBhBOEiwANmzoQlo1Cxz3vN5T3ATXBT3s3Lhkczb7xnByWQJwoaptQ3geTT0lD6WQ0hoC5PkQAvD_BwE",
+   "valor": 12.5
+  },
+  {
+   "key": "reu-30",
+   "categoria": "Eletrônica",
+   "item": "Montagem LED + Resistor Pré-cablado",
+   "spec": "Kit 50 peças de LED + Resistor com suporte",
+   "qtd": 1.0,
+   "unid": "kit",
+   "ref": "https://pt.aliexpress.com/item/1005008510660133.html?spm=a2g0o.order_list.order_list_main.5.42f3caa49hCHGc&gatewayAdapt=glo2bra",
+   "valor": 52.0
+  },
+  {
+   "key": "reu-31",
+   "categoria": "Eletrônica",
+   "item": "Suporte para bateria 9V",
+   "spec": "Suporte para Bateria 9V com Tampa + Botão ON/OFF",
+   "qtd": 8.0,
+   "unid": "unidade",
+   "ref": "https://www.filipeflop.com/produto/suporte-para-bateria-9v-com-chave-liga-desliga/",
+   "valor": 10.9
+  },
+  {
+   "key": "reu-32",
+   "categoria": "Eletrônica",
+   "item": "Suporte para pilha AA",
+   "spec": "Suporte Box 2 Pilhas Aa Tampa E Chave Liga/desliga",
+   "qtd": 8.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/2zFXPHy",
+   "valor": 13.8
+  },
+  {
+   "key": "reu-33",
+   "categoria": "Eletrônica",
+   "item": "Motor DC",
+   "spec": "Motor DC 3-6V",
+   "qtd": 20.0,
+   "unid": "unidade",
+   "ref": "https://www.eletrogate.com/mini-motor-dc",
+   "valor": 2.9
+  },
+  {
+   "key": "reu-34",
+   "categoria": "Eletrônica",
+   "item": "Carregador de pilhas e bateria",
+   "spec": "Carregador De Pilha Aa Aaa Bateria 9v Recarregável Bivolt",
+   "qtd": 2.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/2DUYcNf",
+   "valor": 49.99
+  },
+  {
+   "key": "reu-35",
+   "categoria": "Eletrônica",
+   "item": "Pilhas recarregáveis",
+   "spec": "Kit 4 Pilhas AA 4700mah Recarregaveis",
+   "qtd": 1.0,
+   "unid": "kit",
+   "ref": "https://meli.la/252P8Vv",
+   "valor": 71.56
+  },
+  {
+   "key": "reu-36",
+   "categoria": "Eletrônica",
+   "item": "Bateria 9v recarregável",
+   "spec": "Caixa C/10 Baterias Recarregável 9v Knup 9v 450mah",
+   "qtd": 1.0,
+   "unid": "kit",
+   "ref": "https://meli.la/1oXqY91",
+   "valor": 242.12
+  },
+  {
+   "key": "reu-37",
+   "categoria": "Informática",
+   "item": "Notebooks i3 SSD 256gb",
+   "spec": "Notebook Intel Core i3 8GB 256GB SSD - 15,6” Full HD Windows 11",
+   "qtd": 10.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/17xx922",
+   "valor": 3849.9
+  },
+  {
+   "key": "reu-38",
+   "categoria": "Informática",
+   "item": "Mouse",
+   "spec": "Mouse com fio",
+   "qtd": 20.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/1EXywVC",
+   "valor": 32.25
+  },
+  {
+   "key": "reu-39",
+   "categoria": "Mídias",
+   "item": "Tv 65\"",
+   "spec": "Smart TV 65\" Samsung 4K UHD Crystal UHD",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/2q5Sgi4",
+   "valor": 3800.0
+  },
+  {
+   "key": "reu-40",
+   "categoria": "Segurança",
+   "item": "Luva de segurança",
+   "spec": "Kit 12 Pares Luva Tricotada Pigmentada Algodão Malha Epi Ca",
+   "qtd": 3.0,
+   "unid": "kit",
+   "ref": "https://meli.la/2qmyrPu",
+   "valor": 62.9
+  }
+ ],
+ "consumiveis": [
+  {
+   "key": "con-01",
+   "categoria": "Fixador",
+   "item": "Abraçadeira de nylon 10cm",
+   "spec": "Abraçadeira de nylon 25cm com 100 peças",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/13FpSYH",
+   "valor": 31.49
+  },
+  {
+   "key": "con-02",
+   "categoria": "Fixador",
+   "item": "Clips galvanizados",
+   "spec": "Clips de papel galvanizado n2/0 500g",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://www.kalunga.com.br/prod/clips-nr-2-0-galvanizado-lata-c-500g-spiral-pt-1-un/195426",
+   "valor": 19.9
+  },
+  {
+   "key": "con-03",
+   "categoria": "Fixador",
+   "item": "Clips aglutinantes",
+   "spec": "Prendedor de papel 32mm com 12 unidades",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://www.kalunga.com.br/prod/prendedor-de-papel-32mm-300132-easy-office-pt-12-un/374764",
+   "valor": 15.9
+  },
+  {
+   "key": "con-04",
+   "categoria": "Fixador",
+   "item": "Grampos",
+   "spec": "Grampo p/grampeador 26/6 galvanizado com 5000 unidades",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://www.kalunga.com.br/prod/grampo-p-grampeador-26-6-galvanizado-easy-office-cx-5000-un/377075",
+   "valor": 8.9
+  },
+  {
+   "key": "con-05",
+   "categoria": "Fixador",
+   "item": "Kit parafusos, arruelas e porcas",
+   "spec": "Kit Parafuso Phillips Porca Arruela 1/8 5/32 3/16 1/4 600pçs",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/1zpereg",
+   "valor": 58.1
+  },
+  {
+   "key": "con-06",
+   "categoria": "Fixador",
+   "item": "Colchetes latonados",
+   "spec": "Colchete Latonado, Bacchi, Nº 4, 2.2 cm, Caixa com 144 Unidades",
+   "qtd": 2.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/1CJtEKZ",
+   "valor": 22.9
+  },
+  {
+   "key": "con-07",
+   "categoria": "Adesivos",
+   "item": "Fita adesiva dupla face de papel",
+   "spec": "Fita Dupla Face de Papel, 12mmx30m, Adelbras com 6 unidades",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://www.kalunga.com.br/prod/fita-adesiva-dupla-face-pp-12mm-x-30m-transparente-nao-tecido-tectape-eb-6-un/305203",
+   "valor": 37.5
+  },
+  {
+   "key": "con-08",
+   "categoria": "Adesivos",
+   "item": "Fita Adesiva Reforçada 25m",
+   "spec": "Vonder, Fita Adesiva Reforçada, 50 Mm X 25 M Prata.",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/1eQrZN6",
+   "valor": 29.9
+  },
+  {
+   "key": "con-09",
+   "categoria": "Adesivos",
+   "item": "Fita adesiva transparente grossa",
+   "spec": "Kit 4 Fitas Adesivas  Empacotamento 45mm x 45m Transparente",
+   "qtd": 1.0,
+   "unid": "kit",
+   "ref": "https://meli.la/2JJ7wcR",
+   "valor": 30.0
+  },
+  {
+   "key": "con-10",
+   "categoria": "Adesivos",
+   "item": "Fita adesiva transparente fina",
+   "spec": "Fita Adesiva Transparente para Empacotamento leve 12mmx30m, com 10 unidades",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://www.kalunga.com.br/prod/fita-adesiva-pp-transparente-super-clear-12mm-x-30m-stick-tape-pt-10-un/305563",
+   "valor": 17.9
+  },
+  {
+   "key": "con-11",
+   "categoria": "Adesivos",
+   "item": "Fita crepe fina",
+   "spec": "Fita Crepe imobiliária/uso geral, 18mmx50m com 6 unidades",
+   "qtd": 8.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/1wE47CE",
+   "valor": 39.9
+  },
+  {
+   "key": "con-12",
+   "categoria": "Adesivos",
+   "item": "Fita crepe larga",
+   "spec": "Fita Crepe 3M 101LA - 48 mm x 50 m com 2 unidades",
+   "qtd": 3.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/2wrpYDU",
+   "valor": 35.0
+  },
+  {
+   "key": "con-13",
+   "categoria": "Adesivos",
+   "item": "Cola branca lavável",
+   "spec": "Cola branca 110g lavável",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://www.kalunga.com.br/prod/cola-branca-110g-lavavel-tenaz-henkel-un-1-un/214599",
+   "valor": 10.2
+  },
+  {
+   "key": "con-14",
+   "categoria": "Adesivos",
+   "item": "Cola bastão",
+   "spec": "Cola em bastão 21g com 12 unidades",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/1G46ZRC",
+   "valor": 22.0
+  },
+  {
+   "key": "con-15",
+   "categoria": "Adesivos",
+   "item": "Refil de cola quente fina",
+   "spec": "Refil de cola quente fina 1kg super transparente",
+   "qtd": 5.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/1BNLYPw",
+   "valor": 38.5
+  },
+  {
+   "key": "con-16",
+   "categoria": "Adesivos",
+   "item": "Fita isolante",
+   "spec": "Kit 10 unidades de Fita Isolante - 18 mm x 10 m",
+   "qtd": 1.0,
+   "unid": "kit",
+   "ref": "https://meli.la/25QdNBn",
+   "valor": 65.0
+  },
+  {
+   "key": "con-17",
+   "categoria": "Adesivos",
+   "item": "Fita condutiva",
+   "spec": "Fita de Cobre Adesiva 6mm x 5m",
+   "qtd": 10.0,
+   "unid": "unidade",
+   "ref": "https://www.usinainfo.com.br/fita-de-cobre/fita-de-cobre-adesiva-para-blindagem-e-protecao-6mm-x-5m-8026.html",
+   "valor": 19.85
+  },
+  {
+   "key": "con-18",
+   "categoria": "Madeira",
+   "item": "Palitos de picolé",
+   "spec": "Palitos de picolé Artesanato Ponta Redonda 11,5cm com 3000 unidades",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/1eUEaYg",
+   "valor": 140.7
+  },
+  {
+   "key": "con-19",
+   "categoria": "Madeira",
+   "item": "Palito abaixador de língua",
+   "spec": "Palito Artesanato Abaixador De Língua Madeira 500 Unidades",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/2W9Pvsv",
+   "valor": 45.5
+  },
+  {
+   "key": "con-20",
+   "categoria": "Madeira",
+   "item": "Palito de churrasco",
+   "spec": "Espetos De Bambu Para Churrasco 25 Cm 4 Mm - 2000 Unidades",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/1UuGcLd",
+   "valor": 76.82
+  },
+  {
+   "key": "con-21",
+   "categoria": "Madeira",
+   "item": "Palito de dente",
+   "spec": "Palito De Dente Caixinha Com 100 Unidades",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://mercado.carrefour.com.br/palito-de-dente-theoto-100-unidades-5221285/p",
+   "valor": 1.09
+  },
+  {
+   "key": "con-22",
+   "categoria": "Fluido",
+   "item": "Seringa descartável 20ml",
+   "spec": "Seringa Descartável Luer Lock 20ml com 50un. Descarpack",
+   "qtd": 4.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/1Ws16rp",
+   "valor": 53.83
+  },
+  {
+   "key": "con-23",
+   "categoria": "Fluido",
+   "item": "Tubo transparente",
+   "spec": "Mangueira / Tubo PU 6 mm x 1,00 Em Poliuretano Transparente",
+   "qtd": 40.0,
+   "unid": "metros",
+   "ref": "https://www.conexopecas.com.br/produtos/ver/888/mangueira-tubo-pu-6-mm-x-100-em-poliuretano-transparente-preco-por-metro#.YuWw5HbMKUl",
+   "valor": 1.96
+  },
+  {
+   "key": "con-24",
+   "categoria": "Fluido",
+   "item": "Mangueira de silicone",
+   "spec": "Mangueira De Silicone Para Aquários 10 Metros",
+   "qtd": 3.0,
+   "unid": "unidade",
+   "ref": "https://produto.mercadolivre.com.br/MLB-1518343089-mangueira-de-silicone-para-aquarios-10-metros-compressores-_JM#position=3&search_layout=grid&type=item&tracking_id=9b0f80f1-3d6b-4241-8f2a-3f2454298982",
+   "valor": 27.31
+  },
+  {
+   "key": "con-25",
+   "categoria": "Fluido",
+   "item": "Canudos plásticos 5mm",
+   "spec": "Canudos Plásticos para Refrigerante (fino) com 100 unid",
+   "qtd": 10.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/1WtLr21",
+   "valor": 13.78
+  },
+  {
+   "key": "con-26",
+   "categoria": "Fluido",
+   "item": "Canudos plásticos 10mm",
+   "spec": "Canudos Plásticos para shake (grosso) com 100 unid",
+   "qtd": 6.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/2HaFp8N",
+   "valor": 25.0
+  },
+  {
+   "key": "con-27",
+   "categoria": "Diverso",
+   "item": "Limpador de tubo",
+   "spec": "Limpador De tubo / Cachimbo Colorido 10 Cores 30cm X 6mm 100 Unid",
+   "qtd": 2.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/1PyhkXf",
+   "valor": 32.0
+  },
+  {
+   "key": "con-28",
+   "categoria": "Diverso",
+   "item": "Bolas de gude",
+   "spec": "Pacote 200 unid de bolas de gude de vidro",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/1ko7FjJ",
+   "valor": 31.54
+  },
+  {
+   "key": "con-29",
+   "categoria": "Diverso",
+   "item": "Copo de papel",
+   "spec": "Copo de papel descartável 210ml com 50 unidades",
+   "qtd": 10.0,
+   "unid": "pacote",
+   "ref": "https://www.kalunga.com.br/prod/copo-de-papel-descartavel-210ml-azevedo-pt-50-un/235026",
+   "valor": 24.4
+  },
+  {
+   "key": "con-30",
+   "categoria": "Diverso",
+   "item": "Copo americano",
+   "spec": "Copos americanos vermelho de maior resistencia 400ml com 100 unid.",
+   "qtd": 2.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/1AFjHnF",
+   "valor": 70.99
+  },
+  {
+   "key": "con-31",
+   "categoria": "Diverso",
+   "item": "Copo descartável",
+   "spec": "Copo Descartável branco 200ml com 100und",
+   "qtd": 2.0,
+   "unid": "pacote",
+   "ref": "https://www.mercadolivre.com.br/copo-200ml-descartavel-transparente---100-unidades/up/MLBU1746577431#polycard_client=search-nordic&search_layout=grid&position=11&type=product&tracking_id=9e56db50-ad0f-46c9-bef0-23d238287671&wid=MLB4495357506&sid=search",
+   "valor": 9.2
+  },
+  {
+   "key": "con-32",
+   "categoria": "Diverso",
+   "item": "Saco Zip lock",
+   "spec": "Saco Ziplock N7 14x20cm com 100 unidades",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/25872VZ",
+   "valor": 29.99
+  },
+  {
+   "key": "con-33",
+   "categoria": "Diverso",
+   "item": "Filtro de café",
+   "spec": "Filtro De Papel De Café Melitta Original 102 30 Unidades",
+   "qtd": 2.0,
+   "unid": "pacote",
+   "ref": "https://mercado.carrefour.com.br/filtro-descartavel-de-cafe-102-melitta-com-30-unidades-8353867/p",
+   "valor": 4.99
+  },
+  {
+   "key": "con-34",
+   "categoria": "Diverso",
+   "item": "Prendedor de roupa",
+   "spec": "Prendedor Pregador De Roupa Madeira Bambu Cor Bamboo 20 unidades",
+   "qtd": 6.0,
+   "unid": "kit",
+   "ref": "https://meli.la/11mKtot",
+   "valor": 18.46
+  },
+  {
+   "key": "con-35",
+   "categoria": "Diverso",
+   "item": "Algodão em disco",
+   "spec": "Algodao Disco 35G 60Unid.",
+   "qtd": 2.0,
+   "unid": "pacote",
+   "ref": "https://amzn.to/46BA4AO",
+   "valor": 9.9
+  },
+  {
+   "key": "con-36",
+   "categoria": "Diverso",
+   "item": "Colher descartável",
+   "spec": "Colher descartável reforçada 100 unid",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/18oHMVh",
+   "valor": 29.9
+  },
+  {
+   "key": "con-37",
+   "categoria": "Diverso",
+   "item": "Sacolas de lixo",
+   "spec": "Sacolas de lixo preto 15 litros com 100unid",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://www.kalunga.com.br/prod/saco-para-lixo-15lt-preto-basico-dover-rl-100-un/668232?cq_src=google_ads&cq_cmp=17963792319&cq_con=&cq_term=&cq_med=pla&cq_plac=&cq_net=x&cq_pos=&cq_plt=gp&pcID=3921&gad_source=1&gclid=Cj0KCQjw7Py4BhCbARIsAMMx-_LNX2-Ab5SjziOEttJpayRginJc79QyeBGoOsbKSUbO3fd_KhZJRj4aAt1FEALw_wcB",
+   "valor": 10.0
+  },
+  {
+   "key": "con-38",
+   "categoria": "Diverso",
+   "item": "Rolo de Papel alumínio",
+   "spec": "Rolo De Papel Alumínio Cozinha 30 Cm X 4 M 25 unidades",
+   "qtd": 1.0,
+   "unid": "kit",
+   "ref": "https://meli.la/1jrLrQh",
+   "valor": 98.39
+  },
+  {
+   "key": "con-39",
+   "categoria": "Diverso",
+   "item": "Bolas de algodão",
+   "spec": "Pacote de bolas de algodão - 50g com 3 unidades",
+   "qtd": 2.0,
+   "unid": "kit",
+   "ref": "https://www.mercadolivre.com.br/kit-3-algodao-bolas-bebe-sem-perfume-limpeza-macio-apolo/up/MLBU3040679497#polycard_client=search-nordic&search_layout=stack&position=9&type=product&tracking_id=bbc81d62-8703-4434-a59d-5772f042dd66&wid=MLB3989936093&sid=search",
+   "valor": 33.95
+  },
+  {
+   "key": "con-40",
+   "categoria": "Diverso",
+   "item": "Barbante",
+   "spec": "Barbante 8 fios 80% algodão c/305 mts",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://www.kalunga.com.br/prod/barbante-8-fios-80%20-algodao-c-305-mts-euroroma-pt-1-un/014781",
+   "valor": 14.4
+  },
+  {
+   "key": "con-41",
+   "categoria": "Diverso",
+   "item": "Linha de pesca trançada",
+   "spec": "Linha De Multifilamento Dalima 030mm 22kg 100mt 8 Fio Pe",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/1Zk6Zx3",
+   "valor": 29.99
+  },
+  {
+   "key": "con-42",
+   "categoria": "Diverso",
+   "item": "Linha de costura",
+   "spec": "Linha preta de costura (1300m)",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://www.bazarhorizonte.com.br/linha-para-costura-reta-120-triche---1300-metros-039491/p",
+   "valor": 4.49
+  },
+  {
+   "key": "con-43",
+   "categoria": "3D",
+   "item": "Filamento 3D - Azul",
+   "spec": "Filamento 3D PLA 1kg - Azul",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://www.3dcuritiba.com.br/filamento-pla-azul-175mm-3n3",
+   "valor": 105.44
+  },
+  {
+   "key": "con-44",
+   "categoria": "3D",
+   "item": "Filamento 3D - Branco",
+   "spec": "Filamento 3D PLA 1kg - Branco",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://www.3dcuritiba.com.br/filamento-pla-175mm-3n3",
+   "valor": 105.44
+  },
+  {
+   "key": "con-45",
+   "categoria": "3D",
+   "item": "Filamento 3D - Preto",
+   "spec": "Filamento 3D PLA 1kg - Preto",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://www.3dcuritiba.com.br/filamento-pla-preto-175mm-3n3",
+   "valor": 105.44
+  },
+  {
+   "key": "con-46",
+   "categoria": "3D",
+   "item": "Filamento 3D - Amarelo",
+   "spec": "Filamento 3D PLA 1kg - Amarelo",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://www.3dcuritiba.com.br/filamento-pla-amarelo-175mm-3n3",
+   "valor": 105.44
+  },
+  {
+   "key": "con-47",
+   "categoria": "3D",
+   "item": "Filamento 3D - Vermelho",
+   "spec": "Filamento 3D PLA 1kg - Vermelho",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://www.3dcuritiba.com.br/filamento-pla-vermelho-175mm-3n3",
+   "valor": 105.44
+  },
+  {
+   "key": "con-48",
+   "categoria": "3D",
+   "item": "Filamento 3D - Verde",
+   "spec": "Filamento 3D PLA 1kg - Verde",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://www.3dcuritiba.com.br/filamento-pla-verde-fluo-175mm-3n3",
+   "valor": 105.44
+  },
+  {
+   "key": "con-49",
+   "categoria": "3D",
+   "item": "Filamento 3D - Laranja",
+   "spec": "Filamento 3D PLA 1kg - Laranja",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://www.3dcuritiba.com.br/filamento-pla-3nmax-175mm-1kg-laranja",
+   "valor": 116.55
+  },
+  {
+   "key": "con-50",
+   "categoria": "Ímã",
+   "item": "Ímãs de Neodímio",
+   "spec": "Kit 50 unid Ímã de neodímio 10x4mm - N42",
+   "qtd": 3.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/1rMMdYa",
+   "valor": 99.9
+  },
+  {
+   "key": "con-51",
+   "categoria": "Ímã",
+   "item": "Ímã anel",
+   "spec": "Anel de Ferrite Ø55 x Ø24 x 10 mm",
+   "qtd": 20.0,
+   "unid": "unidade",
+   "ref": "https://www.casadoima.com.br/produto/ima-ferrite-anel-55x24x10-mm-137",
+   "valor": 3.7
+  },
+  {
+   "key": "con-52",
+   "categoria": "Ímã",
+   "item": "Ímã bloco",
+   "spec": "Bloco de Ferrite 6,5 x 8 x 20 mm",
+   "qtd": 20.0,
+   "unid": "unidade",
+   "ref": "https://www.casadoima.com.br/bloco-de-ferrite-6-5-x-8-x-20-mm",
+   "valor": 2.1
+  },
+  {
+   "key": "con-53",
+   "categoria": "Papelaria",
+   "item": "Resma de papel A4",
+   "spec": "Papel Sulfite Oficio A4 Resma Com 500 Folhas Allmax Multiuso",
+   "qtd": 3.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/2gpJ9EU",
+   "valor": 34.99
+  },
+  {
+   "key": "con-54",
+   "categoria": "Papelaria",
+   "item": "Elástico látex n. 18",
+   "spec": "Elástico látex especial amarelo n.18 c/ 1200 unidades",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/13QsPCo",
+   "valor": 33.21
+  },
+  {
+   "key": "con-55",
+   "categoria": "Papelaria",
+   "item": "Chapa de papelão branca",
+   "spec": "25 Chapas De Papelão Face Branco 87cm X 43cm Espessura 3mm",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/29uJpkf",
+   "valor": 75.99
+  },
+  {
+   "key": "con-56",
+   "categoria": "Papelaria",
+   "item": "Placa de isopor",
+   "spec": "Placas de EPS (ísopor®) 1000 x 500 x 20mm",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://www.kalunga.com.br/prod/placas-de-eps-isopor%C2%AE-20mm-isorecort-pt-1-un/441315",
+   "valor": 19.0
+  },
+  {
+   "key": "con-57",
+   "categoria": "Papelaria",
+   "item": "Cartolina",
+   "spec": "Cartolina 150g 50x66 cores mistas com 10 unidades",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://www.kalunga.com.br/prod/cartolina-150g-50x66-cores-mistas-card-set-spiral-pt-10-un/501606",
+   "valor": 13.2
+  },
+  {
+   "key": "con-58",
+   "categoria": "Papelaria",
+   "item": "Lápis grafite 8B",
+   "spec": "Lápis Grafite EcoLápis Castell 9000 8B Sextavado com 12 unidades",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://www.kalunga.com.br/prod/lapis-grafite-ecolapis-castell-9000-8b-sextavado-faber-castell-cx-12-un/413080",
+   "valor": 39.2
+  },
+  {
+   "key": "con-59",
+   "categoria": "Papelaria",
+   "item": "Caneta hidrográfica",
+   "spec": "Caneta hidrográfica com 12 cores",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://www.amazon.com.br/Canetinha-Estojo-Faber-Castell-15-0112CZF-Multicor/dp/B077J2FKQN?__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=23S0LD8Q09API&keywords=caneta%2Bhidrogr%C3%A1fica&qid=1697564756&sprefix=caneta%2Bhidrogr%C3%A1fica%2Bfaber%2Bcastell%2Caps%2C174&sr=8-5&th=&linkCode=ll2&tag=wemake02-20&linkId=2876dae40f0afb697df71db8e6c280f4&ref_=as_li_ss_tl",
+   "valor": 13.99
+  },
+  {
+   "key": "con-60",
+   "categoria": "Papelaria",
+   "item": "Post-it",
+   "spec": "Bloco autoadesivo 76x76mm amarelo com 400 folhas 4 unid",
+   "qtd": 1.0,
+   "unid": "pacote",
+   "ref": "https://www.kalunga.com.br/prod/bloco-autoadesivo-76x76-amarelo-c-100fls-stick-note-pt-4-un/041582",
+   "valor": 23.7
+  },
+  {
+   "key": "con-61",
+   "categoria": "Eletrônico",
+   "item": "LED azul",
+   "spec": "LED azul 5mm",
+   "qtd": 250.0,
+   "unid": "unidade",
+   "ref": "https://www.eletrogate.com/led-difuso-5mm-azul",
+   "valor": 0.24
+  },
+  {
+   "key": "con-62",
+   "categoria": "Eletrônico",
+   "item": "LED amarelo",
+   "spec": "LED amarelo difuso 5mm",
+   "qtd": 250.0,
+   "unid": "unidade",
+   "ref": "https://www.eletrogate.com/led-difuso-5mm-amarelo",
+   "valor": 0.15
+  },
+  {
+   "key": "con-63",
+   "categoria": "Eletrônico",
+   "item": "LED verde",
+   "spec": "LED verde 5mm",
+   "qtd": 250.0,
+   "unid": "unidade",
+   "ref": "https://www.eletrogate.com/led-difuso-5mm-verde",
+   "valor": 0.2
+  },
+  {
+   "key": "con-64",
+   "categoria": "Eletrônico",
+   "item": "LED vermelho",
+   "spec": "LED vermelho 5mm",
+   "qtd": 250.0,
+   "unid": "unidade",
+   "ref": "https://www.eletrogate.com/led-difuso-5mm-vermelho",
+   "valor": 0.19
+  },
+  {
+   "key": "con-65",
+   "categoria": "Eletrônico",
+   "item": "LED branco",
+   "spec": "LED branco 5mm",
+   "qtd": 250.0,
+   "unid": "unidade",
+   "ref": "https://www.eletrogate.com/led-difuso-5mm-branco",
+   "valor": 0.24
+  },
+  {
+   "key": "con-66",
+   "categoria": "Eletrônico",
+   "item": "Bateria de 3V (moeda)",
+   "spec": "CR2032, Bateria de Litio 3V, pacote com 50 unidades",
+   "qtd": 10.0,
+   "unid": "pacote",
+   "ref": "https://meli.la/16WTcLv",
+   "valor": 69.0
+  },
+  {
+   "key": "con-67",
+   "categoria": "Eletrônico",
+   "item": "Resistor 1kΩ",
+   "spec": "Resistor 1KΩ 1/4W com 10 Unidades",
+   "qtd": 10.0,
+   "unid": "pacote",
+   "ref": "https://www.eletrogate.com/resistor-1k-1-4w-10-unidades",
+   "valor": 0.9
+  },
+  {
+   "key": "con-68",
+   "categoria": "Eletrônico",
+   "item": "Resistor 300Ω",
+   "spec": "Resistor 330Ω 1/4W com 10 Unidades",
+   "qtd": 10.0,
+   "unid": "pacote",
+   "ref": "https://www.eletrogate.com/resistor-330r-1-4w-10-unidades",
+   "valor": 0.62
+  },
+  {
+   "key": "con-69",
+   "categoria": "Eletrônico",
+   "item": "Rolo de solda",
+   "spec": "Estanho em Fio, 1 mm, 40 x 60, com 250 G",
+   "qtd": 1.0,
+   "unid": "unidade",
+   "ref": "https://meli.la/1Cwpc3f",
+   "valor": 100.0
+  },
+  {
+   "key": "con-70",
+   "categoria": "Eletrônico",
+   "item": "Buzzer 5V",
+   "spec": "Buzzer Ativo 5v",
+   "qtd": 20.0,
+   "unid": "unidade",
+   "ref": "https://www.eletrogate.com/buzzer-ativo-5v",
+   "valor": 2.3
+  },
+  {
+   "key": "con-71",
+   "categoria": "Eletrônico",
+   "item": "Jumper macho/macho",
+   "spec": "Jumpers - Macho/Macho - 40 Unidades de 20cm",
+   "qtd": 8.0,
+   "unid": "pacote",
+   "ref": "https://www.eletrogate.com/jumpers-macho-macho-40-unidades-de-20-cm",
+   "valor": 9.9
+  },
+  {
+   "key": "con-72",
+   "categoria": "Eletrônico",
+   "item": "Jumper macho/fêmea",
+   "spec": "Jumpers - Macho/Femea - 40 Unidades de 20cm",
+   "qtd": 4.0,
+   "unid": "pacote",
+   "ref": "https://www.eletrogate.com/jumpers-macho-femea-40-unidades-de-20-cm",
+   "valor": 9.9
+  },
+  {
+   "key": "con-73",
+   "categoria": "Eletrônico",
+   "item": "Jumper fêmea/fêmea",
+   "spec": "Jumpers - Femea/Femea - 40 Unidades de 20cm",
+   "qtd": 4.0,
+   "unid": "pacote",
+   "ref": "https://www.eletrogate.com/jumpers-femea-femea-40-unidades-de-20-cm",
+   "valor": 8.9
+  },
+  {
+   "key": "con-74",
+   "categoria": "Segurança",
+   "item": "Óculos EPI",
+   "spec": "Óculos De Proteção Segurança Epi Incolor Transparente 10 unid",
+   "qtd": 3.0,
+   "unid": "kit",
+   "ref": "https://produto.mercadolivre.com.br/MLB-2692355754-kit-10-oculos-de-proteco-rj-imperial-seguranca-epi-obra-_JM#position%3D53%26search_layout%3Dgrid%26type%3Ditem%26tracking_id%3D9c8f37ac-476d-4d79-9d98-c45543365f9f",
+   "valor": 37.43
+  }
+ ],
+ "parecerAmbiente": [
+  {
+   "key": "par-01",
+   "item": "Dimensões do ambiente"
+  },
+  {
+   "key": "par-02",
+   "item": "Circulação"
+  },
+  {
+   "key": "par-03",
+   "item": "Iluminação"
+  },
+  {
+   "key": "par-04",
+   "item": "Ventilação / climatização"
+  },
+  {
+   "key": "par-05",
+   "item": "Instalações elétricas"
+  },
+  {
+   "key": "par-06",
+   "item": "Internet / conectividade"
+  },
+  {
+   "key": "par-07",
+   "item": "Mobiliário"
+  },
+  {
+   "key": "par-08",
+   "item": "Armazenamento"
+  },
+  {
+   "key": "par-09",
+   "item": "Área para máquinas"
+  },
+  {
+   "key": "par-10",
+   "item": "Organização para trabalho em grupos"
+  },
+  {
+   "key": "par-11",
+   "item": "Adequações gerais recomendadas"
+  }
+ ],
+ "listas": {
+  "possui": [
+   "Sim",
+   "Não",
+   "Parcialmente",
+   "Não sei informar",
+   "Não se aplica"
+  ],
+  "parecer": [
+   "Compatível",
+   "Compatível parcialmente",
+   "Necessita verificação",
+   "Inadequado",
+   "Não aplicável",
+   "Pendente"
+  ],
+  "acao": [
+   "Reutilizar",
+   "Complementar",
+   "Testar",
+   "Substituir",
+   "Adquirir",
+   "Desconsiderar"
+  ]
+ }
+}

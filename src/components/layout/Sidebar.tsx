@@ -13,7 +13,7 @@ import {
   Package, FlaskConical, BarChart2, Download,
   Bot, DollarSign, Table2, Info, FileSignature, ClipboardList,
   ExternalLink, GitBranch, Target, CalendarDays, FileAudio,
-  Upload, Database, BookOpen, Crosshair, Milestone
+  Upload, Database, BookOpen, Crosshair, Milestone, GraduationCap, Landmark
 } from 'lucide-react'
 
 interface SidebarProps { profile: Profile | null }
@@ -295,6 +295,16 @@ export default function Sidebar({ profile }: SidebarProps) {
         {/* ── Sobre + Tutorial — primeiras abas ────────────────── */}
         <NavItem href="/sobre"    label="Plataforma We Make" icon={Info}     active={isActive('/sobre')} />
         <NavItem href="/tutorial" label="Tutorial"     icon={BookOpen} active={isActive('/tutorial')} />
+        <NavDivider />
+
+        <SectionLabel>Gestão Geral</SectionLabel>
+        <NavItem href="/gestao" label="Gestão Geral" icon={Landmark} active={pathname === '/gestao'} badge="Novo" />
+        <NavItem href="/gestao/receita" label="Receita contratada" icon={DollarSign} active={isActive('/gestao/receita')} />
+        <NavDivider />
+
+        <SectionLabel>Academia</SectionLabel>
+        <NavItem href="/academia" label="Academia We Make" icon={GraduationCap} active={pathname === '/academia' || (pathname.startsWith('/academia/') && !pathname.startsWith('/academia/gestao'))} badge="Novo" />
+        <NavItem href="/academia/gestao" label="Gestão da implantação" icon={Kanban} active={isActive('/academia/gestao')} />
         <NavDivider />
 
         <SectionLabel>CRM</SectionLabel>
