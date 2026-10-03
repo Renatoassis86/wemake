@@ -27,10 +27,19 @@ export async function criarDiagnostico(fd: FormData): Promise<CriarResultado> {
   let nome = String(fd.get('escola_nome') ?? '').trim().slice(0, 160)
 
   const db = createAdminClient()
+  const escolaId = String(fd.get('escola_id') ?? '').trim()
+  let implId = implantacaoId
   if (implantacaoId) {
     const { data } = await db.from('academia_implantacoes').select('escola_nome').eq('id', implantacaoId).maybeSingle()
     if (!data) return { ok: false, erro: 'Escola do Painel não encontrada.' }
     nome = data.escola_nome
+  } else if (escolaId) {
+    // escola com contrato assinado no Comercial: herda o nome e, se já houver implantação, o vínculo
+    const { data } = await db.from('escolas').select('nome').eq('id', escolaId).maybeSingle()
+    if (!data) return { ok: false, erro: 'Escola não encontrada no cadastro comercial.' }
+    nome = data.nome
+    const { data: impl } = await db.from('academia_implantacoes').select('id').eq('escola_id', escolaId).limit(1).maybeSingle()
+    implId = impl?.id ?? null
   }
   if (!nome) return { ok: false, erro: 'Escolha uma escola do Painel ou digite o nome.' }
 
@@ -39,7 +48,7 @@ export async function criarDiagnostico(fd: FormData): Promise<CriarResultado> {
     const pin = gerarPin()
     const { data, error } = await db
       .from('academia_diagnosticos')
-      .insert({ implantacao_id: implantacaoId, escola_nome: nome, pin_hash: hashPin(pin), created_by: user.id })
+      .insert({ implantacao_id: implId, escola_nome: nome, pin_hash: hashPin(pin), created_by: user.id })
       .select('id, link_token')
       .single()
     if (!error && data) { refresh(); return { ok: true, id: data.id, pin, token: data.link_token } }

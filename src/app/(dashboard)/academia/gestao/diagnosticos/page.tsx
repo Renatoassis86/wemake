@@ -3,7 +3,8 @@ import { carregarGestao } from '@/lib/academia-data'
 import { fmtData } from '@/lib/academia-gestao'
 import { STATUS_DIAGNOSTICO, SCHEMA } from '@/lib/diagnostico'
 import { listarDiagnosticos, podeVerDiagnosticos } from '@/lib/diagnostico-staff'
-import NovoDiagnosticoForm from '@/components/academia/gestao/NovoDiagnosticoForm'
+import { createAdminClient } from '@/lib/supabase/admin'
+import NovoDiagnosticoForm, { GerarParaEscola, type EscolaAssinada } from '@/components/academia/gestao/NovoDiagnosticoForm'
 import ExcluirDiagnostico from '@/components/academia/gestao/ExcluirDiagnostico'
 import SetupNotice from '@/components/academia/gestao/SetupNotice'
 
@@ -12,6 +13,18 @@ export const metadata = { title: 'Diagnósticos · Academia We Make' }
 
 const dataHora = (iso: string | null) =>
   iso ? new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }) : '—'
+
+const norm = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim()
+
+/** Escolas com contrato assinado no Comercial (ignora declinados). */
+async function escolasAssinadas(): Promise<EscolaAssinada[]> {
+  const db = createAdminClient()
+  const { data: contratos } = await db.from('contratos').select('escola_id').eq('contrato_assinado', true).or('declinou.is.null,declinou.eq.false')
+  const ids = [...new Set((contratos ?? []).map((c: { escola_id: string | null }) => c.escola_id).filter(Boolean) as string[])]
+  if (!ids.length) return []
+  const { data: escolas } = await db.from('escolas').select('id, nome').in('id', ids).order('nome')
+  return (escolas ?? []) as EscolaAssinada[]
+}
 
 export default async function DiagnosticosPage() {
   if (!(await podeVerDiagnosticos())) {
@@ -23,11 +36,14 @@ export default async function DiagnosticosPage() {
     )
   }
 
-  const [d, g] = await Promise.all([listarDiagnosticos(), carregarGestao()])
+  const [d, g, assinadasTodas] = await Promise.all([listarDiagnosticos(), carregarGestao(), escolasAssinadas()])
   if (d.setup) {
     return <SetupNotice erro={undefined} sql="academia_diagnostico.sql" />
   }
   if (d.erro) return <SetupNotice erro={d.erro} />
+
+  const comDiagnostico = new Set(d.itens.map(i => norm(i.escola_nome)))
+  const assinadas = assinadasTodas.filter(a => !comDiagnostico.has(norm(a.nome)))
 
   const total = SCHEMA.ambiente.length + SCHEMA.medidas.length + SCHEMA.reutilizaveis.length + SCHEMA.consumiveis.length
   const feitos = (r: Record<string, string>) =>
@@ -44,8 +60,20 @@ export default async function DiagnosticosPage() {
             A escola responde numa página externa, protegida por PIN. As respostas, os arquivos e o parecer ficam aqui.
           </p>
         </div>
-        <NovoDiagnosticoForm implantacoes={g.implantacoes.filter(i => !i.arquivada)} />
+        <NovoDiagnosticoForm implantacoes={g.implantacoes.filter(i => !i.arquivada)} assinadas={assinadas} />
       </div>
+
+      {assinadas.length ? (
+        <section aria-labelledby="pend-t" className="ac-pend">
+          <h3 id="pend-t" className="ac-minor">Contrato assinado, sem diagnóstico</h3>
+          <p className="ac-sec-lead" style={{ margin: '0 0 .8rem' }}>Escolas marcadas como contrato assinado no Comercial. Gere o PIN e o link para cada uma.</p>
+          <ul className="ac-pend-lista">
+            {assinadas.map(a => (
+              <li key={a.id}><span>{a.nome}</span><GerarParaEscola escola={a} /></li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       {d.itens.length ? (
         <div className="ac-table-wrap" tabIndex={0} role="region" aria-label="Diagnósticos">

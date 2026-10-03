@@ -37,7 +37,35 @@ export function PinRevelado({ pin, token, escola, onFechar }: { pin: string; tok
   )
 }
 
-export default function NovoDiagnosticoForm({ implantacoes }: { implantacoes: Implantacao[] }) {
+export interface EscolaAssinada { id: string; nome: string }
+
+/** Botão direto para uma escola com contrato assinado que ainda não tem diagnóstico. */
+export function GerarParaEscola({ escola }: { escola: EscolaAssinada }) {
+  const [revelado, setRevelado] = useState<{ pin: string; token: string } | null>(null)
+  const { pending, erro, run } = useRun()
+  if (revelado) return <PinRevelado {...revelado} escola={escola.nome} onFechar={() => setRevelado(null)} />
+  return (
+    <>
+      <button
+        type="button"
+        className="ac-btn-sm"
+        disabled={pending}
+        onClick={() => run(async () => {
+          const fd = new FormData()
+          fd.set('escola_id', escola.id)
+          const r = await criarDiagnostico(fd)
+          if (r.ok) { setRevelado({ pin: r.pin, token: r.token }); return { ok: true } }
+          return r
+        })}
+      >
+        {pending ? 'Gerando…' : 'Gerar PIN e link'}
+      </button>
+      <Aviso erro={erro} />
+    </>
+  )
+}
+
+export default function NovoDiagnosticoForm({ implantacoes, assinadas = [] }: { implantacoes: Implantacao[]; assinadas?: EscolaAssinada[] }) {
   const [aberto, setAberto] = useState(false)
   const [revelado, setRevelado] = useState<{ pin: string; token: string; escola: string } | null>(null)
   const { pending, erro, run } = useRun()
@@ -52,7 +80,8 @@ export default function NovoDiagnosticoForm({ implantacoes }: { implantacoes: Im
       onSubmit={e => {
         e.preventDefault()
         const fd = new FormData(e.currentTarget)
-        const escola = impl ? implantacoes.find(i => i.id === impl)?.escola_nome ?? '' : String(fd.get('escola_nome') ?? '')
+        if (impl.startsWith('escola:')) { fd.set('escola_id', impl.slice(7)); fd.set('implantacao_id', '') }
+        const escola = impl.startsWith('escola:') ? assinadas.find(a => a.id === impl.slice(7))?.nome ?? '' : impl ? implantacoes.find(i => i.id === impl)?.escola_nome ?? '' : String(fd.get('escola_nome') ?? '')
         run(async () => {
           const r = await criarDiagnostico(fd)
           if (r.ok) { setRevelado({ pin: r.pin, token: r.token, escola }); return { ok: true } }
@@ -62,10 +91,19 @@ export default function NovoDiagnosticoForm({ implantacoes }: { implantacoes: Im
     >
       <h3 className="ac-form-t">Novo diagnóstico do Espaço Maker</h3>
       <div className="ac-form-g">
-        <label><span>Escola do Painel Mestre</span>
+        <label><span>Escola</span>
           <select name="implantacao_id" value={impl} onChange={e => setImpl(e.target.value)}>
             <option value="">— outra escola —</option>
-            {implantacoes.map(i => <option key={i.id} value={i.id}>{i.escola_nome}</option>)}
+            {assinadas.length ? (
+              <optgroup label="Contrato assinado (Comercial)">
+                {assinadas.map(a => <option key={a.id} value={`escola:${a.id}`}>{a.nome}</option>)}
+              </optgroup>
+            ) : null}
+            {implantacoes.length ? (
+              <optgroup label="Painel Mestre">
+                {implantacoes.map(i => <option key={i.id} value={i.id}>{i.escola_nome}</option>)}
+              </optgroup>
+            ) : null}
           </select>
         </label>
         {!impl ? <label><span>Nome da escola</span><input name="escola_nome" maxLength={160} required /></label> : null}

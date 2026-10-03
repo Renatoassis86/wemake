@@ -366,3 +366,8 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
   /* títulos de tarefas e células editáveis sem depender de hover */
   .ac-task-t, .ac-cell-in { border-color: var(--ac-line); background: #fff; }
 }
+
+.ac-pend { margin: 0 0 2rem; }
+.ac-pend-lista { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ac-line); }
+.ac-pend-lista li { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; padding: .75rem 0; border-bottom: 1px solid var(--ac-line); font: 600 .95rem/1.3 var(--ac-sans); color: var(--ac-ink); }
+.ac-pend-lista li > .ac-pinbox { flex-basis: 100%; }
