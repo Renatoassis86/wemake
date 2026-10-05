@@ -79,12 +79,13 @@ const FASE_EFETIVADA = { bg: '#f0fdfa', text: '#0f766e', border: '#5eead4' }
 // ela sai daqui e vai pro quadro real da fase em que estiver).
 // A escola "anda" de quadro sozinha conforme o checklist muda (não é
 // drag-and-drop) — o quadro é sempre derivado do estado real salvo no banco.
-type QuadroId = 'formulario' | 'proposta' | 'minuta' | 'contrato' | 'declinou' | 'efetivada'
+type QuadroId = 'formulario' | 'dados' | 'proposta' | 'minuta' | 'contrato' | 'declinou' | 'efetivada'
 
-const QUADRO_ORDEM: QuadroId[] = ['formulario', 'proposta', 'minuta', 'contrato', 'efetivada', 'declinou']
+const QUADRO_ORDEM: QuadroId[] = ['formulario', 'dados', 'proposta', 'minuta', 'contrato', 'efetivada', 'declinou']
 
 const QUADRO_DEF: Record<QuadroId, { label: string; sub: string; cor: string; headerBg: string }> = {
-  formulario: { label: 'Formulário Preenchido', sub: 'Formulário recebido — negociação em andamento, ainda sem proposta', cor: '#2563eb', headerBg: '#eff6ff' },
+  formulario: { label: 'Em Negociação', sub: 'Escola em contato com a equipe, ainda sem dados do formulário nem proposta', cor: '#2563eb', headerBg: '#eff6ff' },
+  dados:      { label: 'Dados para a Proposta', sub: 'A escola enviou os dados do formulário e a proposta está em construção', cor: '#0e7490', headerBg: '#ecfeff' },
   proposta:   { label: 'Proposta Enviada',      sub: 'Proposta comercial já enviada pra escola',                          cor: '#b45309', headerBg: '#fffbeb' },
   minuta:     { label: 'Minuta',                sub: 'Minuta enviada, em retorno ou em atualização',                     cor: '#a21caf', headerBg: '#fdf4ff' },
   contrato:   { label: 'Contrato',              sub: 'Contrato enviado para assinatura, assinado ou em implantação',     cor: '#6d28d9', headerBg: '#f5f3ff' },
@@ -94,7 +95,7 @@ const QUADRO_DEF: Record<QuadroId, { label: string; sub: string; cor: string; he
 
 const FASES_QUADRO_CONTRATO: FaseFunil[] = ['contrato_enviado', 'contrato_assinado', 'implantacao', 'parceiro_ativo']
 
-function classificarQuadro(l: { declinou: boolean; fase_funil: FaseFunil; marcado_veterana: boolean }): QuadroId {
+function classificarQuadro(l: { declinou: boolean; fase_funil: FaseFunil; marcado_veterana: boolean; formulario_recebido: boolean }): QuadroId {
   if (l.declinou) return 'declinou'
   if (FASES_QUADRO_CONTRATO.includes(l.fase_funil)) return 'contrato'
   if (l.fase_funil === 'minuta') return 'minuta'
@@ -103,6 +104,8 @@ function classificarQuadro(l: { declinou: boolean; fase_funil: FaseFunil; marcad
   // fica parcada aqui em vez de cair em "Formulário Preenchido" como se
   // fosse um lead novo em negociação.
   if (l.marcado_veterana) return 'efetivada'
+  // dados do formulário recebidos e nenhuma proposta ainda
+  if (l.formulario_recebido) return 'dados'
   return 'formulario'
 }
 
@@ -185,7 +188,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
   })
 
   const porQuadro: Record<QuadroId, typeof linhasFiltradas> = {
-    formulario: [], proposta: [], minuta: [], contrato: [], efetivada: [], declinou: [],
+    formulario: [], dados: [], proposta: [], minuta: [], contrato: [], efetivada: [], declinou: [],
   }
   for (const l of linhasFiltradas) porQuadro[classificarQuadro(l)].push(l)
 

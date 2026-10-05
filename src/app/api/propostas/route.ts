@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { normalizarNomeEscola } from '@/lib/utils'
+import { garantirEscolaDaProposta } from '@/lib/escola-da-proposta'
 
 export const dynamic = 'force-dynamic'
 
@@ -82,6 +83,12 @@ export async function POST(request: NextRequest) {
         .eq('ativa', true)
       const match = candidatas?.find(c => normalizarNomeEscola(c.nome) === alvo)
       if (match) escolaIdResolvido = match.id
+    }
+    // Escola ainda fora do cadastro (veio do formulário público ou é nova): cadastra agora para a
+    // proposta já subir no Funil de Contratação.
+    if (!escolaIdResolvido) {
+      const id = await garantirEscolaDaProposta(createAdminClient(), escola_nome, { responsavelId: user.id, numAlunos: num_alunos })
+      if (id) escolaIdResolvido = id
     }
 
     const insert: Record<string, unknown> = {

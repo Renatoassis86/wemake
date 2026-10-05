@@ -7,6 +7,7 @@ import { createPublicClient } from '@/lib/supabase/public'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { calcPotencial, calcProbabilidade, calcClassificacao } from '@/types/database'
 import type { StageNegociacao } from '@/types/database'
+import { registrarFormularioNoFunil } from '@/lib/escola-da-proposta'
 
 // ─── Tipos de retorno das actions (para uso em Client Components) ─────────────
 
@@ -1325,6 +1326,13 @@ export async function enviarFormularioPublico(formData: FormData): Promise<Actio
         precadastro_id: inserted.id,
       },
     })
+
+    // Os dados chegaram: a escola entra no Funil de Contratação (quadro "Dados para a Proposta")
+    try {
+      await registrarFormularioNoFunil(supabase, nome_fantasia || razao_social, { cnpj, numAlunos: qtdTotal || null })
+    } catch (funilErr) {
+      console.error('[enviarFormularioPublico] Falha ao subir para o funil:', funilErr)
+    }
 
     return { success: true, id: String(inserted.id) }
   } catch (err: any) {
