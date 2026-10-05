@@ -136,14 +136,18 @@ export async function adicionarEscolaManual(escolaId: string): Promise<ActionRes
  * adiciona ela à lista da tela, marcada como veterana. Ver nota em
  * adicionarEscolaManual sobre nunca marcar contrato_assinado aqui.
  */
-export async function criarEscolaVeterana(nome: string, estado: string | null): Promise<ActionResult & { escolaId?: string }> {
+export async function criarEscolaVeterana(nome: string, estado: string | null, cidade?: string | null): Promise<ActionResult & { escolaId?: string }> {
   const nomeLimpo = nome.trim()
   if (nomeLimpo.length < 2) return { success: false, error: 'Nome inválido' }
   const estadoLimpo = estado?.trim().toUpperCase().slice(0, 2) || null
 
+  const cidadeLimpa = cidade?.trim().slice(0, 120) || null
+
   const admin = createAdminClient()
+  const { data: jaExiste } = await admin.from('escolas').select('id').ilike('nome', nomeLimpo.replace(/[%_]/g, ' ')).limit(1).maybeSingle()
+  if (jaExiste) return { success: false, error: 'Já existe uma escola com esse nome no cadastro. Busque pelo nome em "Adicionar escola parceira à lista".' }
   const { data: novaEscola, error: errEscola } = await admin
-    .from('escolas').insert({ nome: nomeLimpo, estado: estadoLimpo, ativa: true }).select('id').single()
+    .from('escolas').insert({ nome: nomeLimpo, estado: estadoLimpo, cidade: cidadeLimpa, ativa: true }).select('id').single()
   if (errEscola) return { success: false, error: errEscola.message }
 
   const { error } = await admin.from('contratos').insert({ escola_id: novaEscola.id, marcado_veterana: true })

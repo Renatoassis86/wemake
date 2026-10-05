@@ -1,11 +1,18 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
 // POST — cria ou atualiza um usuário no sistema
 export async function POST(req: Request) {
+  // só um gerente logado cria ou altera usuários (a rota estava aberta a qualquer visitante)
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
   const admin = createAdminClient()
+  const { data: me } = await admin.from('usuarios').select('role').eq('id', user.id).single()
+  if (me?.role !== 'gerente') return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
   const body = await req.json()
   const { email, password, nome_completo, role = 'consultor', cargo = '' } = body
 

@@ -200,8 +200,8 @@ function TagVeterana({ escolaId, veterana, editavel }: { escolaId: string; veter
   )
 }
 
-function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste, veteranaColunaExiste, salvarCampo, remover, removendo, removendoId }: {
-  titulo: string; subtitulo: string; corAccent: string; linhas: EscolaLinha[]
+function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste, veteranaColunaExiste, salvarCampo, remover, removendo, removendoId, acao }: {
+  titulo: string; subtitulo: string; corAccent: string; linhas: EscolaLinha[]; acao?: React.ReactNode
   livroColunaExiste: boolean; veteranaColunaExiste: boolean
   salvarCampo: (escolaId: string, campo: string, valor: number) => void
   remover: (escolaId: string, nome: string) => void
@@ -223,8 +223,11 @@ function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste,
           </div>
           <div style={{ fontSize: '.68rem', color: '#94a3b8', marginTop: '.15rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{subtitulo}</div>
         </div>
-        <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: corAccent }}>
-          {totalGeral.toLocaleString('pt-BR')} alunos
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          {acao}
+          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: corAccent }}>
+            {totalGeral.toLocaleString('pt-BR')} alunos
+          </div>
         </div>
       </div>
 
@@ -303,6 +306,54 @@ function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste,
         </table>
       </div>
     </div>
+  )
+}
+
+const UFS = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO']
+
+/** Botão "+ Nova escola" no cabeçalho da tabela: abre um formulário curto e cadastra a escola já nesta lista. */
+function NovaEscolaInline({ cor }: { cor: string }) {
+  const router = useRouter()
+  const [aberto, setAberto] = useState(false)
+  const [nome, setNome] = useState('')
+  const [cidade, setCidade] = useState('')
+  const [uf, setUf] = useState('')
+  const [erro, setErro] = useState('')
+  const [pendente, iniciar] = useTransition()
+
+  function salvar(e: React.FormEvent) {
+    e.preventDefault()
+    setErro('')
+    iniciar(async () => {
+      const res = await criarEscolaVeterana(nome, uf || null, cidade || null)
+      if (res.success) { setNome(''); setCidade(''); setUf(''); setAberto(false); router.refresh() }
+      else setErro(res.error ?? 'Não foi possível cadastrar.')
+    })
+  }
+
+  const campo: React.CSSProperties = { padding: '.5rem .65rem', borderRadius: 8, border: '1.5px solid #e2e8f0', fontSize: '.8rem', boxSizing: 'border-box', fontFamily: 'var(--font-inter,sans-serif)' }
+
+  if (!aberto) {
+    return (
+      <button type="button" onClick={() => setAberto(true)} style={{ padding: '.5rem .9rem', borderRadius: 8, border: `1.5px solid ${cor}`, background: '#fff', color: cor, fontSize: '.76rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap' }}>
+        + Nova escola
+      </button>
+    )
+  }
+  return (
+    <form onSubmit={salvar} style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
+      <input value={nome} onChange={e => setNome(e.target.value)} placeholder="Nome da escola" required minLength={2} maxLength={160} autoFocus aria-label="Nome da escola" style={{ ...campo, width: 220 }} />
+      <input value={cidade} onChange={e => setCidade(e.target.value)} placeholder="Cidade" maxLength={120} aria-label="Cidade" style={{ ...campo, width: 140 }} />
+      <select value={uf} onChange={e => setUf(e.target.value)} aria-label="UF" style={{ ...campo, width: 70 }}>
+        <option value="">UF</option>
+        {UFS.map(u => <option key={u} value={u}>{u}</option>)}
+      </select>
+      <button disabled={pendente} style={{ padding: '.5rem .9rem', borderRadius: 8, border: 'none', background: cor, color: '#fff', fontSize: '.76rem', fontWeight: 700, cursor: pendente ? 'wait' : 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+        {pendente ? 'Cadastrando…' : 'Cadastrar'}
+      </button>
+      <button type="button" onClick={() => { setAberto(false); setErro('') }} style={{ padding: '.5rem .7rem', borderRadius: 8, border: '1.5px solid #e2e8f0', background: '#fff', fontSize: '.76rem', cursor: 'pointer' }}>Cancelar</button>
+      {erro ? <span role="alert" style={{ flexBasis: '100%', color: '#b3261e', fontSize: '.72rem', fontWeight: 600 }}>{erro}</span> : null}
+    </form>
   )
 }
 
@@ -453,6 +504,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
         titulo="Parcerias Fechadas — Ano Corrente"
         subtitulo="Escolas veteranas — parceria já efetivada, sem negócio novo em andamento pro ano que vem"
         corAccent="#0f766e"
+        acao={<NovaEscolaInline cor="#0f766e" />}
         linhas={linhasFechadas}
         livroColunaExiste={livroColunaExiste}
         veteranaColunaExiste={veteranaColunaExiste}

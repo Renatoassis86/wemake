@@ -100,8 +100,36 @@ export async function definirMarco(id: string, marco: string, status: string): P
   const marcos = { ...(atual.marcos as Record<string, Status>), [marco]: st }
   const { error } = await db.from('academia_implantacoes').update({ marcos }).eq('id', id)
   if (error) return { ok: false, erro: msgErro(error) }
+  await sincronizarComercial(id, marcos)
   refresh()
   return { ok: true }
+}
+
+/**
+ * A Academia é a fonte do andamento da implantação; o status do contrato no Comercial acompanha.
+ * Nenhuma etapa iniciada = não iniciada · todas concluídas = concluída · o resto = em andamento.
+ * Só mexe em contrato assinado e não declinado da mesma escola, e só quando o status muda.
+ */
+async function sincronizarComercial(implId: string, marcos: Record<string, Status>) {
+  try {
+    const db = createAdminClient()
+    const { data: impl } = await db.from('academia_implantacoes').select('escola_id').eq('id', implId).maybeSingle()
+    if (!impl?.escola_id) return
+    const valores = MARCOS.map(m => marcos[m] ?? 'Não iniciado')
+    const novo = valores.every(v => v === 'Concluído') ? 'concluida' : valores.every(v => v === 'Não iniciado') ? 'nao_iniciada' : 'em_andamento'
+    const { data: contratos } = await db.from('contratos')
+      .select('id, implantacao_status, implantacao_iniciada_em')
+      .eq('escola_id', impl.escola_id).eq('contrato_assinado', true).or('declinou.is.null,declinou.eq.false')
+    const agora = new Date().toISOString()
+    for (const c of contratos ?? []) {
+      if (c.implantacao_status === novo) continue
+      const patch: Record<string, unknown> = { implantacao_status: novo }
+      if (novo === 'em_andamento' && !c.implantacao_iniciada_em) patch.implantacao_iniciada_em = agora
+      if (novo === 'concluida') patch.implantacao_concluida_em = agora
+      else patch.implantacao_concluida_em = null
+      await db.from('contratos').update(patch).eq('id', c.id)
+    }
+  } catch { /* a sincronização nunca deve impedir o registro do marco */ }
 }
 
 /* ─────────────────────────────────── Tarefas ──────────────────────────────── */

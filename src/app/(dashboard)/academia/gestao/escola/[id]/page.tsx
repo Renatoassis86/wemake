@@ -87,7 +87,7 @@ export default async function FichaEscolaPage({ params }: { params: Promise<{ id
             </dl>
           ) : <p className="ac-vazio">Esta escola ainda não está ligada ao cadastro comercial. Cadastre ou ligue pelo nome no Painel.</p>}
           {c?.implantacao_status === 'concluida' && pct < 100 ? (
-            <p className="ac-aviso is-erro" role="status">O Comercial marca a implantação como concluída, mas a Academia mostra {pct}%. Confira qual dos dois está certo.</p>
+            <p className="ac-aviso is-erro" role="status">O Comercial marca a implantação como concluída, mas a Academia mostra {pct}%. A Academia manda: ao registrar uma etapa, o status do contrato é atualizado sozinho.</p>
           ) : null}
         </section>
       </div>
