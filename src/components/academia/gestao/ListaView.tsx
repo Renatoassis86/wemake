@@ -6,7 +6,7 @@ import {
 } from '@/lib/academia-gestao'
 import { LISTAS, PASTAS } from '@/lib/academia-workspace'
 import { atualizarTarefa, criarTarefa, excluirTarefa } from '@/app/(dashboard)/academia/gestao/actions'
-import { Aviso, StatusSelect, useRun } from './ui'
+import { Aviso, SelectPessoa, StatusSelect, useRun } from './ui'
 
 function Linha({ t, escola, pessoas }: { t: Tarefa; escola?: string; pessoas: string[] }) {
   const { pending, erro, run } = useRun()
@@ -37,10 +37,7 @@ function Linha({ t, escola, pessoas }: { t: Tarefa; escola?: string; pessoas: st
           <select className="ac-cell-in" value={t.prioridade} aria-label="Prioridade" onChange={e => salvar({ prioridade: e.target.value as Prioridade })}>
             {PRIORIDADES.map(p => <option key={p}>{p}</option>)}
           </select>
-          <input
-            className="ac-cell-in" defaultValue={t.responsavel ?? ''} list="ac-pessoas-l" placeholder="Responsável" aria-label="Responsável"
-            onBlur={e => { if (e.target.value !== (t.responsavel ?? '')) salvar({ responsavel: e.target.value }) }}
-          />
+          <SelectPessoa pessoas={pessoas} value={t.responsavel} onChange={v => salvar({ responsavel: v })} />
           <input
             className={`ac-cell-in${vencida ? ' is-vencido' : ''}`} type="date" defaultValue={t.prazo ?? ''} aria-label="Prazo"
             onChange={e => salvar({ prazo: e.target.value })}
@@ -57,7 +54,7 @@ function Linha({ t, escola, pessoas }: { t: Tarefa; escola?: string; pessoas: st
   )
 }
 
-function NovaTarefa({ implantacoes, escola }: { implantacoes: Implantacao[]; escola: string }) {
+function NovaTarefa({ implantacoes, escola, pessoas }: { implantacoes: Implantacao[]; escola: string; pessoas: string[] }) {
   const { pending, erro, run } = useRun()
   return (
     <form
@@ -80,6 +77,7 @@ function NovaTarefa({ implantacoes, escola }: { implantacoes: Implantacao[]; esc
         ))}
       </select>
       <input name="titulo" placeholder="Nova tarefa…" required maxLength={300} aria-label="Título da nova tarefa" />
+      <SelectPessoa pessoas={pessoas} name="responsavel" defaultValue="" className="" />
       <input name="prazo" type="date" aria-label="Prazo" />
       <button className="ac-btn" disabled={pending}>Adicionar</button>
       <Aviso erro={erro} />
@@ -99,7 +97,6 @@ export default function ListaView({ implantacoes, tarefas, pessoas }: { implanta
 
   return (
     <div>
-      <datalist id="ac-pessoas-l">{pessoas.map(p => <option key={p} value={p} />)}</datalist>
       <div className="ac-filtros">
         <label><span>Escola</span>
           <select value={escola} onChange={e => setEscola(e.target.value)}>
@@ -117,7 +114,7 @@ export default function ListaView({ implantacoes, tarefas, pessoas }: { implanta
         <span className="ac-contagem">{filtradas.length} de {tarefas.length} tarefas</span>
       </div>
 
-      <NovaTarefa implantacoes={implantacoes} escola={escola} />
+      <NovaTarefa implantacoes={implantacoes} escola={escola} pessoas={pessoas} />
 
       {PASTAS.map(p => {
         const doGrupo = p.listas.map(l => ({ l, itens: filtradas.filter(t => t.lista === l.slug) }))

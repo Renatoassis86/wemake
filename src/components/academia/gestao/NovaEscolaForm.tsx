@@ -3,17 +3,23 @@
 import { useRef, useState } from 'react'
 import { PRIORIDADES } from '@/lib/academia-gestao'
 import { criarImplantacao } from '@/app/(dashboard)/academia/gestao/actions'
-import { Aviso, useRun } from './ui'
+import { Aviso, SelectPessoa, useRun } from './ui'
 
 /** Cadastra uma escola no Painel Mestre (regra 1: cadastrar assim que o Handoff for concluído). */
-export default function NovaEscolaForm({ escolas, pessoas }: { escolas: { id: string; nome: string }[]; pessoas: string[] }) {
+export default function NovaEscolaForm({ escolas, pessoas }: { escolas: { id: string; nome: string; cidade_uf?: string; responsavel?: string }[]; pessoas: string[] }) {
   const ref = useRef<HTMLFormElement>(null)
   const [aberto, setAberto] = useState(false)
   const [escolaId, setEscolaId] = useState('')
+  const [cidade, setCidade] = useState('')
+  const [resp, setResp] = useState('')
   const { pending, erro, msg, run } = useRun()
 
   function aoDigitar(nome: string) {
-    setEscolaId(escolas.find(e => e.nome.toLowerCase() === nome.trim().toLowerCase())?.id ?? '')
+    const e = escolas.find(x => x.nome.toLowerCase() === nome.trim().toLowerCase())
+    setEscolaId(e?.id ?? '')
+    // herda do cadastro comercial o que já está lá, sem sobrescrever o que a pessoa digitou
+    if (e?.cidade_uf && !cidade) setCidade(e.cidade_uf)
+    if (e?.responsavel && !resp && pessoas.includes(e.responsavel)) setResp(e.responsavel)
   }
 
   return (
@@ -28,7 +34,7 @@ export default function NovaEscolaForm({ escolas, pessoas }: { escolas: { id: st
             e.preventDefault()
             const fd = new FormData(e.currentTarget)
             fd.set('escola_id', escolaId)
-            run(() => criarImplantacao(fd), () => { ref.current?.reset(); setEscolaId(''); setAberto(false) })
+            run(() => criarImplantacao(fd), () => { ref.current?.reset(); setEscolaId(''); setCidade(''); setResp(''); setAberto(false) })
           }}
         >
           <h3 className="ac-form-t">Nova escola no Painel Mestre</h3>
@@ -39,11 +45,10 @@ export default function NovaEscolaForm({ escolas, pessoas }: { escolas: { id: st
               <datalist id="ac-escolas">{escolas.map(e => <option key={e.id} value={e.nome} />)}</datalist>
               <small>{escolaId ? 'Vinculada ao cadastro comercial.' : 'Escolha uma escola do CRM ou digite o nome.'}</small>
             </label>
-            <label><span>Cidade/UF</span><input name="cidade_uf" maxLength={80} /></label>
+            <label><span>Cidade/UF</span><input name="cidade_uf" maxLength={80} value={cidade} onChange={e => setCidade(e.target.value)} /></label>
             <label>
               <span>Responsável We Make</span>
-              <input name="responsavel" list="ac-pessoas-nova" maxLength={120} />
-              <datalist id="ac-pessoas-nova">{pessoas.map(p => <option key={p} value={p} />)}</datalist>
+              <SelectPessoa pessoas={pessoas} name="responsavel" value={resp} onChange={setResp} className="" />
             </label>
             <label>
               <span>Prioridade</span>

@@ -4,18 +4,22 @@ import { carregarGestao } from '@/lib/academia-data'
 import { fmtData, marcoAtual, percentual, prazoVencido, resumo, RISCO_AJUDA, STATUS, STATUS_AJUDA } from '@/lib/academia-gestao'
 import ImplantacaoGrid from '@/components/academia/gestao/ImplantacaoGrid'
 import NovaEscolaForm from '@/components/academia/gestao/NovaEscolaForm'
+import AssinadasPendentes from '@/components/academia/gestao/AssinadasPendentes'
+import { carregarAssinadas } from '@/lib/academia-comercial'
 import SetupNotice from '@/components/academia/gestao/SetupNotice'
 import { Chip } from '@/components/academia/gestao/ui'
 
 export const dynamic = 'force-dynamic'
 
 export default async function PainelPage() {
-  const d = await carregarGestao({ escolas: true })
+  const [d, assinadas] = await Promise.all([carregarGestao({ escolas: true }), carregarAssinadas()])
   if (d.setup || d.erro) return <SetupNotice erro={d.erro} />
 
   const ativas = d.implantacoes.filter(i => !i.arquivada)
   const r = resumo(d.implantacoes)
   const pessoas = d.pessoas.map(p => p.nome)
+  const noPainel = new Set(d.implantacoes.map(i => i.escola_id).filter(Boolean))
+  const foraDoPainel = assinadas.filter(a => !noPainel.has(a.id))
 
   return (
     <>
@@ -110,6 +114,7 @@ export default async function PainelPage() {
           <h2 id="impl-t" className="ac-h3">Implantação: uma linha por escola</h2>
           <NovaEscolaForm escolas={d.escolas} pessoas={pessoas} />
         </div>
+        <AssinadasPendentes escolas={foraDoPainel} />
         <ImplantacaoGrid itens={ativas} pessoas={pessoas} />
         <p className="ac-nota">
           Regras do painel: atualize a linha a cada avanço; registre sempre a próxima ação, o responsável e o prazo; use

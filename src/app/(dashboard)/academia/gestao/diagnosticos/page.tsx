@@ -3,8 +3,8 @@ import { carregarGestao } from '@/lib/academia-data'
 import { fmtData } from '@/lib/academia-gestao'
 import { STATUS_DIAGNOSTICO, SCHEMA } from '@/lib/diagnostico'
 import { listarDiagnosticos, podeVerDiagnosticos } from '@/lib/diagnostico-staff'
-import { createAdminClient } from '@/lib/supabase/admin'
-import NovoDiagnosticoForm, { GerarParaEscola, type EscolaAssinada } from '@/components/academia/gestao/NovoDiagnosticoForm'
+import { carregarAssinadas } from '@/lib/academia-comercial'
+import NovoDiagnosticoForm, { GerarParaEscola } from '@/components/academia/gestao/NovoDiagnosticoForm'
 import ExcluirDiagnostico from '@/components/academia/gestao/ExcluirDiagnostico'
 import SetupNotice from '@/components/academia/gestao/SetupNotice'
 
@@ -16,16 +16,6 @@ const dataHora = (iso: string | null) =>
 
 const norm = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim()
 
-/** Escolas com contrato assinado no Comercial (ignora declinados). */
-async function escolasAssinadas(): Promise<EscolaAssinada[]> {
-  const db = createAdminClient()
-  const { data: contratos } = await db.from('contratos').select('escola_id').eq('contrato_assinado', true).or('declinou.is.null,declinou.eq.false')
-  const ids = [...new Set((contratos ?? []).map((c: { escola_id: string | null }) => c.escola_id).filter(Boolean) as string[])]
-  if (!ids.length) return []
-  const { data: escolas } = await db.from('escolas').select('id, nome').in('id', ids).order('nome')
-  return (escolas ?? []) as EscolaAssinada[]
-}
-
 export default async function DiagnosticosPage() {
   if (!(await podeVerDiagnosticos())) {
     return (
@@ -36,7 +26,7 @@ export default async function DiagnosticosPage() {
     )
   }
 
-  const [d, g, assinadasTodas] = await Promise.all([listarDiagnosticos(), carregarGestao(), escolasAssinadas()])
+  const [d, g, assinadasTodas] = await Promise.all([listarDiagnosticos(), carregarGestao(), carregarAssinadas()])
   if (d.setup) {
     return <SetupNotice erro={undefined} sql="academia_diagnostico.sql" />
   }

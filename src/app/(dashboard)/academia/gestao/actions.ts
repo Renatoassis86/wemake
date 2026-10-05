@@ -7,6 +7,8 @@ import { MARCOS } from '@/lib/academia'
 import { PRIORIDADES, RISCOS, STATUS, type Implantacao, type Status } from '@/lib/academia-gestao'
 import { LISTAS, getLista, prazoDoModelo } from '@/lib/academia-workspace'
 import { moduloPermitido } from '@/lib/modulos'
+import { carregarAssinadas } from '@/lib/academia-comercial'
+import { equipeComNomes } from '@/lib/academia-equipe'
 
 export type Resultado = { ok: true; msg?: string } | { ok: false; erro: string }
 
@@ -212,7 +214,9 @@ export async function criarEvento(fd: FormData): Promise<Resultado> {
   const inicio = new Date(`${dia}T${hi}:00-03:00`)
   const fim = hf ? new Date(`${dia}T${hf}:00-03:00`) : null
   if (Number.isNaN(inicio.getTime())) return { ok: false, erro: 'Horário inválido.' }
-  const { error } = await createAdminClient().from('academia_eventos').insert({
+  const db = createAdminClient()
+  const implId = txt(fd.get('implantacao_id'), 60)
+  const { error } = await db.from('academia_eventos').insert({
     titulo,
     tipo: txt(fd.get('tipo'), 40) ?? 'Reunião',
     inicio: inicio.toISOString(),
@@ -220,12 +224,59 @@ export async function criarEvento(fd: FormData): Promise<Resultado> {
     local: txt(fd.get('local'), 160),
     responsavel: txt(fd.get('responsavel'), 120),
     notas: txt(fd.get('notas'), 1500),
-    implantacao_id: txt(fd.get('implantacao_id'), 60),
+    implantacao_id: implId,
     created_by: user.id,
   })
   if (error) return { ok: false, erro: msgErro(error) }
+
+  // espelha na Agenda geral da plataforma, ligada à escola quando ela existe no cadastro comercial
+  let escolaId: string | null = null
+  if (implId) {
+    const { data: impl } = await db.from('academia_implantacoes').select('escola_id').eq('id', implId).maybeSingle()
+    escolaId = impl?.escola_id ?? null
+  }
+  const resp = txt(fd.get('responsavel'), 120)
+  await db.from('agenda_eventos').insert({
+    titulo: `Academia · ${titulo}`,
+    descricao: [txt(fd.get('notas'), 1500), resp ? `Responsável: ${resp}` : null].filter(Boolean).join(' · ') || null,
+    local: txt(fd.get('local'), 160),
+    tipo: 'reuniao',
+    cor: '#00c8ff',
+    data_inicio: inicio.toISOString(),
+    data_fim: (fim && !Number.isNaN(fim.getTime()) ? fim : new Date(inicio.getTime() + 3600_000)).toISOString(),
+    dia_inteiro: false,
+    escola_id: escolaId,
+    criado_por: user.id,
+  })
   refresh()
   return { ok: true }
+}
+
+/** Traz para o Painel Mestre as escolas com contrato assinado no Comercial que ainda não estão nele. */
+export async function trazerAssinadas(escolaIds?: string[]): Promise<Resultado> {
+  const user = await autorizado()
+  if (!user) return { ok: false, erro: 'Sessão expirada. Entre novamente.' }
+  const db = createAdminClient()
+  const [assinadas, { data: existentes }, { data: usuarios }] = await Promise.all([
+    carregarAssinadas(),
+    db.from('academia_implantacoes').select('escola_id'),
+    db.from('usuarios').select('email, nome_completo').eq('ativo', true),
+  ])
+  const equipe = new Set(equipeComNomes(usuarios ?? []).map(p => p.nome))
+  const jaTem = new Set((existentes ?? []).map((e: { escola_id: string | null }) => e.escola_id).filter(Boolean))
+  const novas = assinadas.filter(a => !jaTem.has(a.id) && (!escolaIds || escolaIds.includes(a.id)))
+  if (!novas.length) return { ok: true, msg: 'Nenhuma escola nova para trazer.' }
+  const { error } = await db.from('academia_implantacoes').insert(novas.map(a => ({
+    escola_id: a.id,
+    escola_nome: a.nome,
+    cidade_uf: a.cidade_uf || null,
+    responsavel: equipe.has(a.responsavel_comercial) ? a.responsavel_comercial : null,
+    proxima_acao: 'Preencher a Ficha de Handoff Comercial → Implantação',
+    created_by: user.id,
+  })))
+  if (error) return { ok: false, erro: msgErro(error) }
+  refresh()
+  return { ok: true, msg: novas.length === 1 ? '1 escola trazida para o Painel.' : `${novas.length} escolas trazidas para o Painel.` }
 }
 
 export async function excluirEvento(id: string): Promise<Resultado> {

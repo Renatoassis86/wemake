@@ -1,3 +1,4 @@
+import { equipeComNomes } from '@/lib/academia-equipe'
 import { createAdminClient } from '@/lib/supabase/admin'
 import type { Evento, Implantacao, Tarefa } from '@/lib/academia-gestao'
 
@@ -9,7 +10,7 @@ export interface GestaoData {
   tarefas: Tarefa[]
   eventos: Evento[]
   pessoas: { id: string; nome: string }[]
-  escolas: { id: string; nome: string }[]
+  escolas: { id: string; nome: string; cidade_uf: string; responsavel: string }[]
 }
 
 const FALTA_TABELA = (e: { code?: string; message?: string } | null) =>
@@ -23,7 +24,7 @@ export async function carregarGestao(opts: { escolas?: boolean } = {}): Promise<
     db.from('academia_implantacoes').select('*').order('created_at', { ascending: true }),
     db.from('academia_tarefas').select('*').order('ordem', { ascending: true }),
     db.from('academia_eventos').select('*').order('inicio', { ascending: true }),
-    db.from('usuarios').select('id, nome_completo').eq('ativo', true).order('nome_completo'),
+    db.from('usuarios').select('id, email, nome_completo').eq('ativo', true).order('nome_completo'),
   ])
 
   if (FALTA_TABELA(impl.error) || FALTA_TABELA(tar.error) || FALTA_TABELA(eve.error)) return { ...vazio, setup: true }
@@ -32,8 +33,14 @@ export async function carregarGestao(opts: { escolas?: boolean } = {}): Promise<
 
   let escolas: GestaoData['escolas'] = []
   if (opts.escolas) {
-    const { data } = await db.from('escolas').select('id, nome').order('nome')
-    escolas = (data ?? []) as GestaoData['escolas']
+    const { data } = await db.from('escolas').select('id, nome, cidade, estado, responsavel_id').order('nome')
+    const nomePorId = new Map(((usu.data ?? []) as { id: string; email: string | null; nome_completo: string | null }[]).map(u => [u.id, u.nome_completo ?? '']))
+    escolas = ((data ?? []) as { id: string; nome: string; cidade: string | null; estado: string | null; responsavel_id: string | null }[]).map(e => ({
+      id: e.id,
+      nome: e.nome,
+      cidade_uf: [e.cidade, e.estado].filter(Boolean).join('/'),
+      responsavel: nomePorId.get(e.responsavel_id ?? '') ?? '',
+    }))
   }
 
   return {
@@ -41,9 +48,7 @@ export async function carregarGestao(opts: { escolas?: boolean } = {}): Promise<
     implantacoes: (impl.data ?? []) as Implantacao[],
     tarefas: (tar.data ?? []) as Tarefa[],
     eventos: (eve.data ?? []) as Evento[],
-    pessoas: ((usu.data ?? []) as { id: string; nome_completo: string | null }[])
-      .filter(u => u.nome_completo)
-      .map(u => ({ id: u.id, nome: u.nome_completo as string })),
+    pessoas: equipeComNomes((usu.data ?? []) as { email: string | null; nome_completo: string | null }[]).map(p => ({ id: p.email, nome: p.nome })),
     escolas,
   }
 }

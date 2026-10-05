@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import { TIPOS_EVENTO, type Implantacao } from '@/lib/academia-gestao'
 import { criarEvento, excluirEvento, gerarTarefas } from '@/app/(dashboard)/academia/gestao/actions'
-import { Aviso, useRun } from './ui'
+import { Aviso, SelectPessoa, useRun } from './ui'
 
 export function NovoEventoForm({
   implantacoes, pessoas, inicial,
@@ -40,8 +40,7 @@ export function NovoEventoForm({
           </select>
         </label>
         <label><span>Responsável</span>
-          <input name="responsavel" list="ac-pessoas-ev" maxLength={120} />
-          <datalist id="ac-pessoas-ev">{pessoas.map(p => <option key={p} value={p} />)}</datalist>
+          <SelectPessoa pessoas={pessoas} name="responsavel" defaultValue="" className="" />
         </label>
         <label><span>Local</span><input name="local" maxLength={160} /></label>
       </div>

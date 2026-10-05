@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
 import { MARCOS } from '@/lib/academia'
 import {
@@ -7,7 +8,7 @@ import {
   type Implantacao, type Prioridade, type Risco, type Status,
 } from '@/lib/academia-gestao'
 import { atualizarImplantacao, definirMarco, gerarTarefas } from '@/app/(dashboard)/academia/gestao/actions'
-import { Aviso, StatusSelect, useRun } from './ui'
+import { Aviso, SelectPessoa, StatusSelect, useRun } from './ui'
 
 /** Campo de texto que só grava quando perde o foco e o valor mudou. */
 function Campo({
@@ -39,9 +40,10 @@ function Linha({ i, pessoas }: { i: Implantacao; pessoas: string[] }) {
       <th scope="row" className="ac-grid-escola">
         <Campo valor={i.escola_nome} rotulo="Escola" onSalvar={v => salvar({ escola_nome: v })} />
         <Campo valor={i.cidade_uf} rotulo="Cidade/UF" onSalvar={v => salvar({ cidade_uf: v })} />
+        <Link href={`/academia/gestao/escola/${i.id}`} className="ac-ficha-link">Ficha da escola →</Link>
         <Aviso erro={erro} msg={msg} />
       </th>
-      <td><Campo valor={i.responsavel} rotulo="Responsável We Make" lista="ac-pessoas" onSalvar={v => salvar({ responsavel: v })} /></td>
+      <td><SelectPessoa pessoas={pessoas} value={i.responsavel} label="Responsável We Make" onChange={v => salvar({ responsavel: v })} /></td>
       <td>
         <select className="ac-cell-in" value={i.prioridade} aria-label="Prioridade" onChange={e => salvar({ prioridade: e.target.value as Prioridade })}>
           {PRIORIDADES.map(p => <option key={p}>{p}</option>)}
@@ -57,7 +59,7 @@ function Linha({ i, pessoas }: { i: Implantacao; pessoas: string[] }) {
         </td>
       ))}
       <td><Campo valor={i.proxima_acao} rotulo="Próxima ação" largura={240} onSalvar={v => salvar({ proxima_acao: v })} /></td>
-      <td><Campo valor={i.responsavel_acao} rotulo="Responsável pela próxima ação" lista="ac-pessoas" onSalvar={v => salvar({ responsavel_acao: v })} /></td>
+      <td><SelectPessoa pessoas={pessoas} value={i.responsavel_acao} label="Responsável pela próxima ação" onChange={v => salvar({ responsavel_acao: v })} /></td>
       <td className={prazoVencido(i) ? 'is-vencido' : undefined}>
         <Campo valor={i.prazo} tipo="date" rotulo="Prazo" onSalvar={v => salvar({ prazo: v })} />
       </td>
@@ -93,7 +95,6 @@ export default function ImplantacaoGrid({ itens, pessoas }: { itens: Implantacao
   }
   return (
     <div className="ac-grid-wrap" role="region" aria-label="Implantação por escola" tabIndex={0}>
-      <datalist id="ac-pessoas">{pessoas.map(p => <option key={p} value={p} />)}</datalist>
       <table className="ac-grid">
         <thead>
           <tr>

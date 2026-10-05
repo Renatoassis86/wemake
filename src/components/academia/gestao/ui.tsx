@@ -54,3 +54,21 @@ export function StatusSelect({
 export function Chip({ s, children }: { s: string; children?: ReactNode }) {
   return <span className="ac-chip" data-s={s}>{children ?? s}</span>
 }
+
+/** Escolha do responsável entre a equipe interna. Mantém um nome antigo (fora da equipe) visível até ser trocado. */
+export function SelectPessoa({
+  pessoas, value, onChange, name, label = 'Responsável', vazio = 'Sem responsável', defaultValue, className = 'ac-cell-in',
+}: {
+  pessoas: string[]; value?: string | null; onChange?: (v: string) => void; name?: string; label?: string
+  vazio?: string; defaultValue?: string; className?: string
+}) {
+  const atual = value ?? defaultValue ?? ''
+  const lista = atual && !pessoas.includes(atual) ? [atual, ...pessoas] : pessoas
+  const props = value !== undefined ? { value: atual } : { defaultValue: atual }
+  return (
+    <select className={className} name={name} aria-label={label} {...props} onChange={onChange ? e => onChange(e.target.value) : undefined}>
+      <option value="">{vazio}</option>
+      {lista.map(p => <option key={p} value={p}>{p}</option>)}
+    </select>
+  )
+}
