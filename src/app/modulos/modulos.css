@@ -77,3 +77,4 @@
   .md-form input { min-height: 2.9rem; }
   .md-senha button { padding: .8rem; }
 }
+.md-link-copia { margin: .9rem 0 0 !important; font: 600 .78rem/1.4 var(--ac-sans) !important; color: var(--ac-ink) !important; overflow-wrap: anywhere; user-select: all; }
