@@ -35,10 +35,10 @@ export default async function DiagnosticosPage() {
   const comDiagnostico = new Set(d.itens.map(i => norm(i.escola_nome)))
   const assinadas = assinadasTodas.filter(a => !comDiagnostico.has(norm(a.nome)))
 
-  const total = SCHEMA.ambiente.length + SCHEMA.medidas.length + SCHEMA.reutilizaveis.length + SCHEMA.consumiveis.length
+  const total = SCHEMA.ambiente.length + SCHEMA.briefing.length + SCHEMA.reutilizaveis.length + SCHEMA.consumiveis.length
   const feitos = (r: Record<string, string>) =>
     SCHEMA.ambiente.filter(a => r[a.key]).length +
-    SCHEMA.medidas.filter(m => r[m.key]).length +
+    SCHEMA.briefing.filter(b => r[b.key]).length +
     [...SCHEMA.reutilizaveis, ...SCHEMA.consumiveis].filter(i => r[i.key + '.p']).length
 
   return (

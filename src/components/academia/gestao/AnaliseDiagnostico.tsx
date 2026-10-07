@@ -96,6 +96,7 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
 
       <section id="an-medidas" className="an-sec">
         <h3 className="ac-h3">2. Medidas e briefing <small>respostas da escola</small></h3>
+        {SCHEMA.medidas.some(m => resp[m.key] || resp[m.key + '.l']) ? (
         <div className="ac-table-wrap" tabIndex={0} role="region" aria-label="Medidas">
           <table className="ac-table">
             <thead><tr><th scope="col">Categoria</th><th scope="col">Informação</th><th scope="col">Resposta / medida</th><th scope="col">Anexo ou link</th><th scope="col">Arquivos enviados</th></tr></thead>
@@ -107,6 +108,7 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
             </tbody>
           </table>
         </div>
+        ) : null}
       
         {['2.2 Climatização', '2.3 Mobiliário'].map(grupo => (
           <div key={grupo}>

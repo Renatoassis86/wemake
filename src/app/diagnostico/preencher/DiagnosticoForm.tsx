@@ -297,21 +297,6 @@ export default function DiagnosticoForm({
               <p>Não é necessário elaborar uma planta técnica profissional. Caso a escola não possua a planta baixa do ambiente, poderá ser feito um croqui simples à mão, visto de cima, desde que as medidas e a posição dos elementos sejam indicadas com clareza. As informações registradas serão utilizadas pela equipe responsável para compreender as características e limitações do espaço e desenvolver o projeto arquitetônico da Sala Maker com maior precisão.</p>
             </aside>
 
-            {SCHEMA.medidas.map((m, i) => {
-              const nova = i === 0 || SCHEMA.medidas[i - 1].categoria !== m.categoria
-              return (
-                <div key={m.key}>
-                  {nova ? <h3 className="ac-minor">{m.categoria}</h3> : null}
-                  <div className="dg-q dg-medida">
-                    <label htmlFor={m.key}>{m.info}</label>
-                    <textarea id={m.key} rows={2} value={r[m.key] ?? ''} onChange={e => set(m.key, e.target.value)} placeholder="Resposta ou medida" />
-                    <input aria-label={`Anexo ou link: ${m.info}`} placeholder="Link ou nome do arquivo, se houver" value={r[m.key + '.l'] ?? ''} onChange={e => set(m.key + '.l', e.target.value)} />
-                    <div className="dg-anexo-med">{anexos(m.key, false)}</div>
-                  </div>
-                </div>
-              )
-            })}
-
             {['2.2 Climatização', '2.3 Mobiliário'].map(grupo => (
               <div key={grupo} className="dg-brief">
                 <h3 className="ac-minor">{grupo}</h3>
@@ -323,8 +308,7 @@ export default function DiagnosticoForm({
           {/* ───────────── 3. Evidências ───────────── */}
           <section id="evidencias" className="dg-sec">
             <header><span className="ac-num">3</span><div><div className="ac-kicker">Evidências obrigatórias</div><h2>Fotos, vídeo e planta</h2></div></header>
-            <p className="dg-dica">Planta ou croqui em PDF ou foto, fotos (JPG, PNG, HEIC) e vídeo (MP4, MOV), até 200 MB cada. No celular, o botão abre a câmera ou a galeria.</p>
-            {SCHEMA.evidencias.map(ev => {
+                        {SCHEMA.evidencias.map(ev => {
               const total = arquivos.filter(x => x.evidencia_key === ev.key).length
               return (
                 <div key={ev.key} className="dg-evid">

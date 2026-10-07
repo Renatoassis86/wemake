@@ -105,8 +105,8 @@ export function andamento(r: Respostas, evidenciasComArquivo: Set<string>): Anda
     { secao: 'Ambiente', feitos: SCHEMA.ambiente.filter(a => preenchido(r[a.key])).length, total: SCHEMA.ambiente.length },
     {
       secao: 'Medidas',
-      feitos: SCHEMA.medidas.filter(m => preenchido(r[m.key])).length + SCHEMA.briefing.filter(b => briefingVisivel(b, r) && preenchido(r[b.key])).length,
-      total: SCHEMA.medidas.length + SCHEMA.briefing.filter(b => briefingVisivel(b, r)).length,
+      feitos: SCHEMA.briefing.filter(b => briefingVisivel(b, r) && preenchido(r[b.key])).length,
+      total: SCHEMA.briefing.filter(b => briefingVisivel(b, r)).length,
     },
     { secao: 'Evidências', feitos: SCHEMA.evidencias.filter(e => evidenciasComArquivo.has(e.key)).length, total: SCHEMA.evidencias.length },
     { secao: 'Recursos reutilizáveis', feitos: rec(SCHEMA.reutilizaveis), total: SCHEMA.reutilizaveis.length },

@@ -1,3 +1,4 @@
+import { headers } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -23,6 +24,9 @@ export default async function ModuloPage({ params, searchParams }: { params: Pro
   const m = getModulo(slug)
   if (!m) notFound()
 
+  const cab = await headers()
+  const host = cab.get('x-forwarded-host') ?? cab.get('host') ?? ''
+  const origem = host ? `${cab.get('x-forwarded-proto') ?? 'https'}://${host}` : ''
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   const logado = !!user
@@ -95,7 +99,7 @@ export default async function ModuloPage({ params, searchParams }: { params: Pro
               <h2>Formulário de cadastro da escola</h2>
               <p>Envie este link à escola. Ela informa os dados cadastrais e os alunos por série, e a escola entra no Funil de Contratação para montarmos a proposta.</p>
               <Link href="/formulario" className="md-botao md-botao--clara">Abrir o formulário da escola</Link>
-              <p className="md-link-copia">https://comercial.wemake.tec.br/formulario</p>
+              <p className="md-link-copia">{origem}/formulario</p>
             </div>
           ) : null}
           {m.slug === 'academia' ? (
