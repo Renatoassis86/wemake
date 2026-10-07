@@ -3,6 +3,11 @@ import schemaJson from '@/content/academia/diagnostico-schema.json'
 /* ═══════════════════ Estrutura do Diagnóstico (da planilha oficial) ═══════════════════ */
 
 export interface PerguntaAmbiente { key: string; pergunta: string; tipo: 'texto' | 'numero' | 'opcao'; opcoes?: string[]; detalhe?: boolean }
+export interface Briefing {
+  key: string; grupo: string; pergunta: string; tipo: 'opcao' | 'multi' | 'longo'; opcoes?: string[]; dica?: string
+  /** a pergunta só aparece quando a resposta de outra pergunta bate */
+  se?: { key: string; igual?: string; contem?: string }
+}
 export interface Medida { key: string; categoria: string; info: string }
 export interface Evidencia { key: string; nome: string }
 export interface Recurso { key: string; categoria: string; item: string; spec: string; qtd: number; unid: string; ref: string; valor: number }
@@ -10,6 +15,7 @@ export interface ItemParecer { key: string; item: string }
 
 export interface DiagnosticoSchema {
   ambiente: PerguntaAmbiente[]
+  briefing: Briefing[]
   medidas: Medida[]
   evidencias: Evidencia[]
   reutilizaveis: Recurso[]
@@ -39,6 +45,7 @@ export const STATUS_DIAGNOSTICO: Record<StatusDiagnostico, string> = {
 export const CHAVES_ESCOLA: Set<string> = (() => {
   const k = new Set<string>()
   SCHEMA.ambiente.forEach(a => { k.add(a.key); if (a.detalhe) k.add(a.key + '.d') })
+  SCHEMA.briefing.forEach(b => k.add(b.key))
   SCHEMA.medidas.forEach(m => { k.add(m.key); k.add(m.key + '.l') })
   SCHEMA.evidencias.forEach(e => k.add(e.key + '.o'))
   ;[...SCHEMA.reutilizaveis, ...SCHEMA.consumiveis].forEach(r => { k.add(r.key + '.p'); k.add(r.key + '.q'); k.add(r.key + '.m') })
@@ -58,13 +65,29 @@ export const CHAVES_PARECER: Set<string> = (() => {
 export const CHAVES_ANEXO: Set<string> = new Set([...SCHEMA.evidencias.map(e => e.key), ...SCHEMA.medidas.map(m => m.key)])
 
 export const MAX_TEXTO = 600
+/** Respostas longas do briefing (equipamento de climatização, mobiliário) aceitam mais texto. */
+export const MAX_TEXTO_LONGO = 4000
+const CHAVES_LONGAS = new Set(SCHEMA.briefing.filter(b => b.tipo === 'longo').map(b => b.key))
+
+/** Respostas de múltipla escolha ficam guardadas numa linha só, separadas por "; ". */
+export const SEPARADOR_MULTI = '; '
+export const valoresMulti = (v: string | undefined) => (v ? v.split(SEPARADOR_MULTI).filter(Boolean) : [])
+
+/** A pergunta do briefing está visível com as respostas atuais? */
+export function briefingVisivel(b: Briefing, r: Respostas) {
+  if (!b.se) return true
+  const base = r[b.se.key] ?? ''
+  if (b.se.igual !== undefined) return base === b.se.igual
+  if (b.se.contem !== undefined) return valoresMulti(base).includes(b.se.contem)
+  return true
+}
 
 export function limparPatch(patch: Record<string, unknown>, permitidas: Set<string>): Respostas {
   const out: Respostas = {}
   for (const [k, v] of Object.entries(patch)) {
     if (!permitidas.has(k)) continue
     const s = typeof v === 'string' ? v : typeof v === 'number' ? String(v) : ''
-    out[k] = s.replace(/\u0000/g, '').slice(0, MAX_TEXTO)
+    out[k] = s.replace(/\u0000/g, '').slice(0, CHAVES_LONGAS.has(k) ? MAX_TEXTO_LONGO : MAX_TEXTO)
   }
   return out
 }
@@ -80,7 +103,11 @@ export function andamento(r: Respostas, evidenciasComArquivo: Set<string>): Anda
   const rec = (itens: Recurso[]) => itens.filter(i => preenchido(r[i.key + '.p'])).length
   return [
     { secao: 'Ambiente', feitos: SCHEMA.ambiente.filter(a => preenchido(r[a.key])).length, total: SCHEMA.ambiente.length },
-    { secao: 'Medidas', feitos: SCHEMA.medidas.filter(m => preenchido(r[m.key])).length, total: SCHEMA.medidas.length },
+    {
+      secao: 'Medidas',
+      feitos: SCHEMA.medidas.filter(m => preenchido(r[m.key])).length + SCHEMA.briefing.filter(b => briefingVisivel(b, r) && preenchido(r[b.key])).length,
+      total: SCHEMA.medidas.length + SCHEMA.briefing.filter(b => briefingVisivel(b, r)).length,
+    },
     { secao: 'Evidências', feitos: SCHEMA.evidencias.filter(e => evidenciasComArquivo.has(e.key)).length, total: SCHEMA.evidencias.length },
     { secao: 'Recursos reutilizáveis', feitos: rec(SCHEMA.reutilizaveis), total: SCHEMA.reutilizaveis.length },
     { secao: 'Consumíveis', feitos: rec(SCHEMA.consumiveis), total: SCHEMA.consumiveis.length },

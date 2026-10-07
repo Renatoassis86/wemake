@@ -205,3 +205,14 @@
   .dg-check input { width: 1.4rem; height: 1.4rem; }
   .dg-sair { padding: .8rem 1.2rem; }
 }
+
+/* briefing (2.1 a 2.3) */
+.dg-lista { margin: 0 0 1.4rem; padding: 0 0 0 1.1rem; display: grid; gap: .65rem; max-width: 70ch; font-size: .95rem; line-height: 1.6; color: var(--ac-text); }
+.dg-lista li::marker { color: var(--ac-link); }
+.dg-lista b { color: var(--ac-ink); }
+.dg-importante { margin: 0 0 2rem; padding: 1.1rem 1.25rem; border-left: 4px solid var(--ac-cyan); background: var(--ac-cyan-soft); border-radius: 0 12px 12px 0; max-width: 70ch; }
+.dg-importante b { display: block; font: 700 .68rem/1 var(--ac-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--ac-ink); margin-bottom: .5rem; }
+.dg-importante p { margin: 0; font-size: .94rem; line-height: 1.6; color: var(--ac-ink); }
+.dg-dica--campo { margin: -.2rem 0 .7rem; font-size: .88rem; }
+.dg-brief { margin-top: 2.2rem; }
+.dg-brief .dg-q { margin-bottom: 1.6rem; }

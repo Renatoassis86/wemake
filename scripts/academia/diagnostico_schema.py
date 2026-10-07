@@ -52,7 +52,16 @@ for i, r in enumerate(range(5, 10), start=1):
 
 medidas = [{'key': f'med-{i:02d}', 'categoria': s(ws.cell(r, 1).value), 'info': s(ws.cell(r, 2).value)}
            for i, r in enumerate(range(13, 33), start=1)]
-evidencias = [{'key': f'evi-{i:02d}', 'nome': s(ws.cell(r, 1).value)} for i, r in enumerate(range(36, 47), start=1)]
+# Evidências obrigatórias: lista atualizada pelo Dênis (outubro/2026), no lugar das 11 da planilha.
+EVIDENCIAS_OBRIGATORIAS = [
+    'Planta baixa e/ou croqui do ambiente',
+    'Fotos gerais da sala',
+    'Fotos das Portas e Janelas',
+    'Fotos das tomadas e pontos elétricos',
+    'Fotos, fichas técnicas ou outros arquivos relacionados ao mobiliário',
+    'Vídeo de 1 a 2 minutos percorrendo todo o ambiente',
+]
+evidencias = [{'key': f'evi-{i:02d}', 'nome': n} for i, n in enumerate(EVIDENCIAS_OBRIGATORIAS, start=1)]
 parecer_ambiente = [{'key': f'par-{i:02d}', 'item': s(ws.cell(r, 1).value)} for i, r in enumerate(range(51, 62), start=1)]
 
 
@@ -77,8 +86,42 @@ def recursos(nome_aba, prefixo):
     return itens
 
 
+# Briefing da sala (seção 2 do documento do Dênis): perguntas que não vêm da planilha.
+# tipo: opcao (uma escolha) | multi (várias escolhas) | longo (resposta longa)
+# se: a pergunta só aparece quando a resposta indicada for dada (a resposta antiga não se perde ao esconder).
+SIM_NAO_INDEFINIDO = ['Sim', 'Não', 'Ainda não está definido']
+BRIEFING = [
+    {'key': 'cli-01', 'grupo': '2.2 Climatização', 'tipo': 'multi',
+     'pergunta': 'O ambiente possui atualmente algum sistema de climatização?',
+     'opcoes': ['Ar-condicionado', 'Ventilador', 'Não possui']},
+    {'key': 'cli-02', 'grupo': '2.2 Climatização', 'tipo': 'opcao',
+     'pergunta': 'Se o ambiente não possui climatização, a escola pretende instalar algum equipamento?',
+     'opcoes': SIM_NAO_INDEFINIDO, 'se': {'key': 'cli-01', 'contem': 'Não possui'}},
+    {'key': 'cli-03', 'grupo': '2.2 Climatização', 'tipo': 'longo',
+     'pergunta': 'Se sim, qual equipamento pretende instalar?',
+     'se': {'key': 'cli-02', 'igual': 'Sim'}},
+    {'key': 'cli-04', 'grupo': '2.2 Climatização', 'tipo': 'longo',
+     'pergunta': 'Se possível, informe também o modelo, capacidade ou especificações do equipamento que está sendo considerado.',
+     'se': {'key': 'cli-02', 'igual': 'Sim'}},
+    {'key': 'mob-01', 'grupo': '2.3 Mobiliário', 'tipo': 'opcao',
+     'pergunta': 'A escola pretende aproveitar algum mobiliário já existente no ambiente?',
+     'opcoes': SIM_NAO_INDEFINIDO},
+    {'key': 'mob-02', 'grupo': '2.3 Mobiliário', 'tipo': 'longo',
+     'pergunta': 'Se sim, quais móveis pretende manter e utilizar na Sala Maker?',
+     'dica': 'Exemplos: mesas, cadeiras, bancadas, armários, estantes, gaveteiros, móveis com pia etc.',
+     'se': {'key': 'mob-01', 'igual': 'Sim'}},
+    {'key': 'mob-03', 'grupo': '2.3 Mobiliário', 'tipo': 'longo',
+     'pergunta': 'Quais informações sobre esse mobiliário a escola consegue fornecer?',
+     'se': {'key': 'mob-01', 'igual': 'Sim'}},
+    {'key': 'mob-04', 'grupo': '2.3 Mobiliário', 'tipo': 'longo',
+     'pergunta': 'Informações, medidas ou links do mobiliário',
+     'dica': 'Sempre que possível, envie largura, profundidade, altura, quantidade e características relevantes para o projeto. Pode descrever aqui, anexar fotografias ou colar links dos modelos e produtos existentes.',
+     'se': {'key': 'mob-01', 'igual': 'Sim'}},
+]
+
 listas = wb['Listas']
 schema = {
+    'briefing': BRIEFING,
     'ambiente': ambiente,
     'medidas': medidas,
     'evidencias': evidencias,
@@ -121,6 +164,8 @@ def add(key, secao, categoria, titulo, spec='', qtd=None, unid='', ref='', valor
 
 for a in ambiente:
     add(a['key'], 'ambiente', 'Caracterização do ambiente', a['pergunta'])
+for b in BRIEFING:
+    add(b['key'], 'ambiente', b['grupo'], b['pergunta'])
 for m in medidas:
     add(m['key'], 'medida', m['categoria'], m['info'])
 for e in evidencias:

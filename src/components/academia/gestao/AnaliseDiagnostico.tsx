@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { formatCurrency } from '@/lib/utils'
 import {
-  SCHEMA, STATUS_DIAGNOSTICO, qtdAAdquirir, resumoParecer, type Recurso, type Respostas, type StatusDiagnostico,
+  SCHEMA, STATUS_DIAGNOSTICO, briefingVisivel, qtdAAdquirir, resumoParecer, type Recurso, type Respostas, type StatusDiagnostico,
 } from '@/lib/diagnostico'
 import type { ArquivoStaff, DiagnosticoLinha } from '@/lib/diagnostico-staff'
 import { definirStatus, salvarParecer } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
@@ -95,7 +95,7 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
       </section>
 
       <section id="an-medidas" className="an-sec">
-        <h3 className="ac-h3">2. Medidas <small>respostas da escola</small></h3>
+        <h3 className="ac-h3">2. Medidas e briefing <small>respostas da escola</small></h3>
         <div className="ac-table-wrap" tabIndex={0} role="region" aria-label="Medidas">
           <table className="ac-table">
             <thead><tr><th scope="col">Categoria</th><th scope="col">Informação</th><th scope="col">Resposta / medida</th><th scope="col">Anexo ou link</th><th scope="col">Arquivos enviados</th></tr></thead>
@@ -107,6 +107,20 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
             </tbody>
           </table>
         </div>
+      
+        {['2.2 Climatização', '2.3 Mobiliário'].map(grupo => (
+          <div key={grupo}>
+            <h4 className="ac-minor">{grupo}</h4>
+            <dl className="an-dl">
+              {SCHEMA.briefing.filter(b => b.grupo === grupo && briefingVisivel(b, resp)).map(b => (
+                <div key={b.key}>
+                  <dt>{b.pergunta}</dt>
+                  <dd>{resp[b.key] ? <span style={{ whiteSpace: 'pre-wrap' }}>{resp[b.key]}</span> : <em>sem resposta</em>}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        ))}
       </section>
 
       <section id="an-evidencias" className="an-sec">

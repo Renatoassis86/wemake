@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import {
-  BUCKET, SCHEMA, andamento, type Recurso, type Respostas, type StatusDiagnostico,
+  BUCKET, SCHEMA, SEPARADOR_MULTI, andamento, briefingVisivel, valoresMulti, type Briefing, type Recurso, type Respostas, type StatusDiagnostico,
 } from '@/lib/diagnostico'
 import {
   confirmarUpload, enviarDiagnostico, pedirUpload, removerArquivo, salvarRespostas, type ArquivoPublico,
@@ -24,7 +24,7 @@ const tamanhoLegivel = (b: number | null) => {
 
 const SECOES = [
   { id: 'ambiente', nome: 'O ambiente' },
-  { id: 'medidas', nome: 'Medidas' },
+  { id: 'medidas', nome: 'Medidas e briefing' },
   { id: 'evidencias', nome: 'Fotos, vídeo e planta' },
   { id: 'reutilizaveis', nome: 'Recursos que a escola já tem' },
   { id: 'consumiveis', nome: 'Materiais de consumo' },
@@ -135,6 +135,45 @@ export default function DiagnosticoForm({
     if (res.ok) { setStatus('enviado'); window.scrollTo({ top: 0, behavior: 'smooth' }) } else setErroFinal(res.erro ?? 'Não foi possível enviar.')
   }
 
+  /** Pergunta do briefing (2.2 e 2.3): uma escolha, várias escolhas ou resposta longa. */
+  const pergunta = (b: Briefing) => (
+    <div key={b.key} className="dg-q">
+      <label htmlFor={b.key}>{b.pergunta}</label>
+      {b.dica ? <p className="dg-dica dg-dica--campo">{b.dica}</p> : null}
+      {b.tipo === 'opcao' ? (
+        <div className="dg-opcoes" role="radiogroup" aria-label={b.pergunta}>
+          {b.opcoes!.map(o => (
+            <label key={o} className={r[b.key] === o ? 'is-on' : undefined}>
+              <input type="radio" name={b.key} checked={r[b.key] === o} onChange={() => set(b.key, o)} />{o}
+            </label>
+          ))}
+        </div>
+      ) : b.tipo === 'multi' ? (
+        <div className="dg-opcoes" role="group" aria-label={b.pergunta}>
+          {b.opcoes!.map(o => {
+            const atuais = valoresMulti(r[b.key])
+            const marcado = atuais.includes(o)
+            const exclusiva = o === 'Não possui'
+            return (
+              <label key={o} className={marcado ? 'is-on' : undefined}>
+                <input
+                  type="checkbox"
+                  checked={marcado}
+                  onChange={() => {
+                    const base = marcado ? atuais.filter(x => x !== o) : exclusiva ? [o] : [...atuais.filter(x => x !== 'Não possui'), o]
+                    set(b.key, base.join(SEPARADOR_MULTI))
+                  }}
+                />{o}
+              </label>
+            )
+          })}
+        </div>
+      ) : (
+        <textarea id={b.key} rows={4} value={r[b.key] ?? ''} onChange={e => set(b.key, e.target.value)} />
+      )}
+    </div>
+  )
+
   /** Lista de arquivos + botão de anexar, para uma evidência (evi-XX) ou para uma medida (med-XX). */
   const anexos = (key: string, comObs: boolean) => {
     const meus = arquivos.filter(a => a.evidencia_key === key)
@@ -236,10 +275,28 @@ export default function DiagnosticoForm({
             </div>
           </section>
 
-          {/* ───────────── 2. Medidas ───────────── */}
+          {/* ───────────── 2. Checklist de medidas da sala e briefing ───────────── */}
           <section id="medidas" className="dg-sec">
-            <header><span className="ac-num">2</span><div><div className="ac-kicker">Checklist de medidas e briefing</div><h2>Medidas da sala</h2></div></header>
-            <p className="dg-dica">Use trena. Não é preciso desenho técnico nem escala: identifique as paredes como Parede 1, 2, 3 e anote as medidas em metros ou centímetros. Em cada linha você pode colar um link ou anexar uma foto ou arquivo.</p>
+            <header><span className="ac-num">2</span><div><div className="ac-kicker">Medidas, climatização e mobiliário</div><h2>Checklist de medidas da sala e briefing</h2></div></header>
+
+            <h3 className="ac-minor">2.1 Levantamento das medidas do ambiente</h3>
+            <p className="dg-dica">
+              Com o auxílio de uma trena, faça o levantamento das medidas e dos principais elementos existentes no ambiente.
+              Registre essas informações na planta baixa ou no croqui da sala, indicando:
+            </p>
+            <ul className="dg-lista">
+              <li><b>Paredes e dimensões gerais:</b> meça o comprimento de cada parede e a altura do ambiente, do piso ao teto. Caso existam pilares, vigas, rebaixamentos, nichos ou outras interferências estruturais, indique também sua localização e suas dimensões.</li>
+              <li><b>Portas:</b> informe a largura e a altura de cada porta, sua posição em relação às paredes mais próximas e o sentido de abertura.</li>
+              <li><b>Janelas:</b> informe a largura e a altura de cada janela, sua posição em relação às paredes mais próximas e a altura do piso até a parte inferior da janela (peitoril).</li>
+              <li><b>Climatização:</b> informe se o ambiente possui ar-condicionado, climatizador ou ventiladores. Indique no croqui onde cada equipamento está localizado e, sempre que possível, sua altura em relação ao piso.</li>
+              <li><b>Tomadas e pontos elétricos:</b> identifique todas as tomadas existentes. Para cada uma, informe sua posição em relação às paredes, a altura do piso até o centro da tomada e, quando houver mais de uma tomada na mesma parede, a distância entre elas. Caso existam tomadas ou pontos elétricos específicos, como 220 V, identifique-os.</li>
+              <li><b>Interruptores:</b> identifique a posição de todos os interruptores, indicando sua distância em relação à parede mais próxima e a altura em relação ao piso.</li>
+            </ul>
+            <aside className="dg-importante">
+              <b>Importante</b>
+              <p>Não é necessário elaborar uma planta técnica profissional. Caso a escola não possua a planta baixa do ambiente, poderá ser feito um croqui simples à mão, visto de cima, desde que as medidas e a posição dos elementos sejam indicadas com clareza. As informações registradas serão utilizadas pela equipe responsável para compreender as características e limitações do espaço e desenvolver o projeto arquitetônico da Sala Maker com maior precisão.</p>
+            </aside>
+
             {SCHEMA.medidas.map((m, i) => {
               const nova = i === 0 || SCHEMA.medidas[i - 1].categoria !== m.categoria
               return (
@@ -254,12 +311,19 @@ export default function DiagnosticoForm({
                 </div>
               )
             })}
+
+            {['2.2 Climatização', '2.3 Mobiliário'].map(grupo => (
+              <div key={grupo} className="dg-brief">
+                <h3 className="ac-minor">{grupo}</h3>
+                {SCHEMA.briefing.filter(b => b.grupo === grupo && briefingVisivel(b, r)).map(b => pergunta(b))}
+              </div>
+            ))}
           </section>
 
           {/* ───────────── 3. Evidências ───────────── */}
           <section id="evidencias" className="dg-sec">
             <header><span className="ac-num">3</span><div><div className="ac-kicker">Evidências obrigatórias</div><h2>Fotos, vídeo e planta</h2></div></header>
-            <p className="dg-dica">Fotos (JPG, PNG, HEIC), vídeo (MP4, MOV) e PDF, até 200 MB cada. No celular, o botão abre a câmera ou a galeria.</p>
+            <p className="dg-dica">Planta ou croqui em PDF ou foto, fotos (JPG, PNG, HEIC) e vídeo (MP4, MOV), até 200 MB cada. No celular, o botão abre a câmera ou a galeria.</p>
             {SCHEMA.evidencias.map(ev => {
               const total = arquivos.filter(x => x.evidencia_key === ev.key).length
               return (

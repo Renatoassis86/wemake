@@ -1,4 +1,95 @@
 {
+ "briefing": [
+  {
+   "key": "cli-01",
+   "grupo": "2.2 Climatização",
+   "tipo": "multi",
+   "pergunta": "O ambiente possui atualmente algum sistema de climatização?",
+   "opcoes": [
+    "Ar-condicionado",
+    "Ventilador",
+    "Não possui"
+   ]
+  },
+  {
+   "key": "cli-02",
+   "grupo": "2.2 Climatização",
+   "tipo": "opcao",
+   "pergunta": "Se o ambiente não possui climatização, a escola pretende instalar algum equipamento?",
+   "opcoes": [
+    "Sim",
+    "Não",
+    "Ainda não está definido"
+   ],
+   "se": {
+    "key": "cli-01",
+    "contem": "Não possui"
+   }
+  },
+  {
+   "key": "cli-03",
+   "grupo": "2.2 Climatização",
+   "tipo": "longo",
+   "pergunta": "Se sim, qual equipamento pretende instalar?",
+   "se": {
+    "key": "cli-02",
+    "igual": "Sim"
+   }
+  },
+  {
+   "key": "cli-04",
+   "grupo": "2.2 Climatização",
+   "tipo": "longo",
+   "pergunta": "Se possível, informe também o modelo, capacidade ou especificações do equipamento que está sendo considerado.",
+   "se": {
+    "key": "cli-02",
+    "igual": "Sim"
+   }
+  },
+  {
+   "key": "mob-01",
+   "grupo": "2.3 Mobiliário",
+   "tipo": "opcao",
+   "pergunta": "A escola pretende aproveitar algum mobiliário já existente no ambiente?",
+   "opcoes": [
+    "Sim",
+    "Não",
+    "Ainda não está definido"
+   ]
+  },
+  {
+   "key": "mob-02",
+   "grupo": "2.3 Mobiliário",
+   "tipo": "longo",
+   "pergunta": "Se sim, quais móveis pretende manter e utilizar na Sala Maker?",
+   "dica": "Exemplos: mesas, cadeiras, bancadas, armários, estantes, gaveteiros, móveis com pia etc.",
+   "se": {
+    "key": "mob-01",
+    "igual": "Sim"
+   }
+  },
+  {
+   "key": "mob-03",
+   "grupo": "2.3 Mobiliário",
+   "tipo": "longo",
+   "pergunta": "Quais informações sobre esse mobiliário a escola consegue fornecer?",
+   "se": {
+    "key": "mob-01",
+    "igual": "Sim"
+   }
+  },
+  {
+   "key": "mob-04",
+   "grupo": "2.3 Mobiliário",
+   "tipo": "longo",
+   "pergunta": "Informações, medidas ou links do mobiliário",
+   "dica": "Sempre que possível, envie largura, profundidade, altura, quantidade e características relevantes para o projeto. Pode descrever aqui, anexar fotografias ou colar links dos modelos e produtos existentes.",
+   "se": {
+    "key": "mob-01",
+    "igual": "Sim"
+   }
+  }
+ ],
  "ambiente": [
   {
    "key": "amb-01",
@@ -148,47 +239,27 @@
  "evidencias": [
   {
    "key": "evi-01",
-   "nome": "Foto panorâmica a partir da entrada"
+   "nome": "Planta baixa e/ou croqui do ambiente"
   },
   {
    "key": "evi-02",
-   "nome": "Foto da Parede 1"
+   "nome": "Fotos gerais da sala"
   },
   {
    "key": "evi-03",
-   "nome": "Foto da Parede 2"
+   "nome": "Fotos das Portas e Janelas"
   },
   {
    "key": "evi-04",
-   "nome": "Foto da Parede 3"
-  },
-  {
-   "key": "evi-05",
-   "nome": "Foto da Parede 4"
-  },
-  {
-   "key": "evi-06",
-   "nome": "Fotos das portas e janelas"
-  },
-  {
-   "key": "evi-07",
    "nome": "Fotos das tomadas e pontos elétricos"
   },
   {
-   "key": "evi-08",
-   "nome": "Fotos dos equipamentos maker existentes"
+   "key": "evi-05",
+   "nome": "Fotos, fichas técnicas ou outros arquivos relacionados ao mobiliário"
   },
   {
-   "key": "evi-09",
-   "nome": "Fotos do mobiliário existente"
-  },
-  {
-   "key": "evi-10",
+   "key": "evi-06",
    "nome": "Vídeo de 1 a 2 minutos percorrendo todo o ambiente"
-  },
-  {
-   "key": "evi-11",
-   "nome": "Planta baixa ou croqui do ambiente"
   }
  ],
  "reutilizaveis": [
