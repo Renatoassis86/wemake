@@ -88,7 +88,6 @@ def recursos(nome_aba, prefixo):
 
 # Briefing da sala (seção 2 do documento do Dênis): perguntas que não vêm da planilha.
 # tipo: opcao (uma escolha) | multi (várias escolhas) | longo (resposta longa)
-# se: a pergunta só aparece quando a resposta indicada for dada (a resposta antiga não se perde ao esconder).
 SIM_NAO_INDEFINIDO = ['Sim', 'Não', 'Ainda não está definido']
 BRIEFING = [
     {'key': 'cli-01', 'grupo': '2.2 Climatização', 'tipo': 'multi',
@@ -96,27 +95,22 @@ BRIEFING = [
      'opcoes': ['Ar-condicionado', 'Ventilador', 'Não possui']},
     {'key': 'cli-02', 'grupo': '2.2 Climatização', 'tipo': 'opcao',
      'pergunta': 'Se o ambiente não possui climatização, a escola pretende instalar algum equipamento?',
-     'opcoes': SIM_NAO_INDEFINIDO, 'se': {'key': 'cli-01', 'contem': 'Não possui'}},
+     'opcoes': SIM_NAO_INDEFINIDO},
     {'key': 'cli-03', 'grupo': '2.2 Climatização', 'tipo': 'longo',
-     'pergunta': 'Se sim, qual equipamento pretende instalar?',
-     'se': {'key': 'cli-02', 'igual': 'Sim'}},
+     'pergunta': 'Se sim, qual equipamento pretende instalar?'},
     {'key': 'cli-04', 'grupo': '2.2 Climatização', 'tipo': 'longo',
-     'pergunta': 'Se possível, informe também o modelo, capacidade ou especificações do equipamento que está sendo considerado.',
-     'se': {'key': 'cli-02', 'igual': 'Sim'}},
+     'pergunta': 'Se possível, informe também o modelo, capacidade ou especificações do equipamento que está sendo considerado.'},
     {'key': 'mob-01', 'grupo': '2.3 Mobiliário', 'tipo': 'opcao',
      'pergunta': 'A escola pretende aproveitar algum mobiliário já existente no ambiente?',
      'opcoes': SIM_NAO_INDEFINIDO},
     {'key': 'mob-02', 'grupo': '2.3 Mobiliário', 'tipo': 'longo',
      'pergunta': 'Se sim, quais móveis pretende manter e utilizar na Sala Maker?',
-     'dica': 'Exemplos: mesas, cadeiras, bancadas, armários, estantes, gaveteiros, móveis com pia etc.',
-     'se': {'key': 'mob-01', 'igual': 'Sim'}},
+     'dica': 'Exemplos: mesas, cadeiras, bancadas, armários, estantes, gaveteiros, móveis com pia etc.'},
     {'key': 'mob-03', 'grupo': '2.3 Mobiliário', 'tipo': 'longo',
-     'pergunta': 'Quais informações sobre esse mobiliário a escola consegue fornecer?',
-     'se': {'key': 'mob-01', 'igual': 'Sim'}},
+     'pergunta': 'Quais informações sobre esse mobiliário a escola consegue fornecer?'},
     {'key': 'mob-04', 'grupo': '2.3 Mobiliário', 'tipo': 'longo',
-     'pergunta': 'Informações, medidas ou links do mobiliário',
-     'dica': 'Sempre que possível, envie largura, profundidade, altura, quantidade e características relevantes para o projeto. Pode descrever aqui, anexar fotografias ou colar links dos modelos e produtos existentes.',
-     'se': {'key': 'mob-01', 'igual': 'Sim'}},
+     'pergunta': 'Informações, medidas ou links do mobiliário:',
+     'dica': 'Sempre que possível, envie as dimensões dos móveis, considerando:\n• largura;\n• profundidade;\n• altura;\n• quantidade;\n• características relevantes para o projeto.\n\nAs informações podem ser enviadas de diferentes formas: descritas no campo abaixo, por meio de fotografias ou por links dos modelos/produtos existentes.'},
 ]
 
 listas = wb['Listas']

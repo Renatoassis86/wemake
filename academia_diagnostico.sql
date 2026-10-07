@@ -324,7 +324,7 @@ values
   ('mob-01', 'ambiente', '2.3 Mobiliário', 'A escola pretende aproveitar algum mobiliário já existente no ambiente?', null, null, null, null, null, 10),
   ('mob-02', 'ambiente', '2.3 Mobiliário', 'Se sim, quais móveis pretende manter e utilizar na Sala Maker?', null, null, null, null, null, 11),
   ('mob-03', 'ambiente', '2.3 Mobiliário', 'Quais informações sobre esse mobiliário a escola consegue fornecer?', null, null, null, null, null, 12),
-  ('mob-04', 'ambiente', '2.3 Mobiliário', 'Informações, medidas ou links do mobiliário', null, null, null, null, null, 13),
+  ('mob-04', 'ambiente', '2.3 Mobiliário', 'Informações, medidas ou links do mobiliário:', null, null, null, null, null, 13),
   ('med-01', 'medida', 'Estrutura geral', 'Comprimento de cada parede (identifique Parede 1, 2, 3...)', null, null, null, null, null, 14),
   ('med-02', 'medida', 'Estrutura geral', 'Altura do pé-direito (piso ao teto)', null, null, null, null, null, 15),
   ('med-03', 'medida', 'Estrutura geral', 'Paredes ou trechos irregulares / desníveis', null, null, null, null, null, 16),

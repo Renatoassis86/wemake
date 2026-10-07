@@ -216,3 +216,5 @@
 .dg-dica--campo { margin: -.2rem 0 .7rem; font-size: .88rem; }
 .dg-brief { margin-top: 2.2rem; }
 .dg-brief .dg-q { margin-bottom: 1.6rem; }
+
+.dg-dica--campo { white-space: pre-line; }
