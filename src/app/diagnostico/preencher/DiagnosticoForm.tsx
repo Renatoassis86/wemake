@@ -171,6 +171,7 @@ export default function DiagnosticoForm({
       ) : (
         <textarea id={b.key} rows={4} value={r[b.key] ?? ''} onChange={e => set(b.key, e.target.value)} />
       )}
+      {b.anexo ? <div className="dg-anexo-med">{anexos(b.key, false)}</div> : null}
     </div>
   )
 

@@ -5,6 +5,8 @@ import schemaJson from '@/content/academia/diagnostico-schema.json'
 export interface PerguntaAmbiente { key: string; pergunta: string; tipo: 'texto' | 'numero' | 'opcao'; opcoes?: string[]; detalhe?: boolean }
 export interface Briefing {
   key: string; grupo: string; pergunta: string; tipo: 'opcao' | 'multi' | 'longo'; opcoes?: string[]; dica?: string
+  /** aceita fotos e arquivos anexados à própria pergunta */
+  anexo?: boolean
   /** a pergunta só aparece quando a resposta de outra pergunta bate */
   se?: { key: string; igual?: string; contem?: string }
 }
@@ -62,7 +64,7 @@ export const CHAVES_PARECER: Set<string> = (() => {
 })()
 
 /** Itens que aceitam anexo: as evidências obrigatórias e cada linha do checklist de medidas ("Anexo ou link"). */
-export const CHAVES_ANEXO: Set<string> = new Set([...SCHEMA.evidencias.map(e => e.key), ...SCHEMA.medidas.map(m => m.key)])
+export const CHAVES_ANEXO: Set<string> = new Set([...SCHEMA.evidencias.map(e => e.key), ...SCHEMA.medidas.map(m => m.key), ...SCHEMA.briefing.filter(b => b.anexo).map(b => b.key)])
 
 export const MAX_TEXTO = 600
 /** Respostas longas do briefing (equipamento de climatização, mobiliário) aceitam mais texto. */

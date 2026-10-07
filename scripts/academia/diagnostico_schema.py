@@ -109,7 +109,7 @@ BRIEFING = [
     {'key': 'mob-03', 'grupo': '2.3 Mobiliário', 'tipo': 'longo',
      'pergunta': 'Quais informações sobre esse mobiliário a escola consegue fornecer?'},
     {'key': 'mob-04', 'grupo': '2.3 Mobiliário', 'tipo': 'longo',
-     'pergunta': 'Informações, medidas ou links do mobiliário:',
+     'pergunta': 'Informações, medidas ou links do mobiliário:', 'anexo': True,
      'dica': 'Sempre que possível, envie as dimensões dos móveis, considerando:\n• largura;\n• profundidade;\n• altura;\n• quantidade;\n• características relevantes para o projeto.\n\nAs informações podem ser enviadas de diferentes formas: descritas no campo abaixo, por meio de fotografias ou por links dos modelos/produtos existentes.'},
 ]
 

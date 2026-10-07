@@ -117,7 +117,10 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
               {SCHEMA.briefing.filter(b => b.grupo === grupo && briefingVisivel(b, resp)).map(b => (
                 <div key={b.key}>
                   <dt>{b.pergunta}</dt>
-                  <dd>{resp[b.key] ? <span style={{ whiteSpace: 'pre-wrap' }}>{resp[b.key]}</span> : <em>sem resposta</em>}</dd>
+                  <dd>
+                    {resp[b.key] ? <span style={{ whiteSpace: 'pre-wrap' }}>{resp[b.key]}</span> : <em>sem resposta</em>}
+                    {b.anexo ? porEvidencia(b.key).map(a => <div key={a.id}>{a.url ? <a className="ac-link" href={a.url} target="_blank" rel="noopener noreferrer">{a.nome}</a> : a.nome}</div>) : null}
+                  </dd>
                 </div>
               ))}
             </dl>

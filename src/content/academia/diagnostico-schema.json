@@ -63,6 +63,7 @@
    "grupo": "2.3 Mobiliário",
    "tipo": "longo",
    "pergunta": "Informações, medidas ou links do mobiliário:",
+   "anexo": true,
    "dica": "Sempre que possível, envie as dimensões dos móveis, considerando:\n• largura;\n• profundidade;\n• altura;\n• quantidade;\n• características relevantes para o projeto.\n\nAs informações podem ser enviadas de diferentes formas: descritas no campo abaixo, por meio de fotografias ou por links dos modelos/produtos existentes."
   }
  ],
