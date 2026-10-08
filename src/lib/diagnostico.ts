@@ -28,6 +28,9 @@ export interface DiagnosticoSchema {
 
 export const SCHEMA = schemaJson as DiagnosticoSchema
 
+/** Seção "Materiais de consumo" (item 5): fora do diagnóstico por decisão da We Make. Os dados continuam no catálogo, caso volte. */
+export const INCLUI_CONSUMIVEIS = false
+
 /** Bucket privado (criado em academia_diagnostico.sql). */
 export const BUCKET = 'academia-diagnosticos'
 
@@ -112,7 +115,7 @@ export function andamento(r: Respostas, evidenciasComArquivo: Set<string>): Anda
     },
     { secao: 'Evidências', feitos: SCHEMA.evidencias.filter(e => evidenciasComArquivo.has(e.key)).length, total: SCHEMA.evidencias.length },
     { secao: 'Recursos reutilizáveis', feitos: rec(SCHEMA.reutilizaveis), total: SCHEMA.reutilizaveis.length },
-    { secao: 'Consumíveis', feitos: rec(SCHEMA.consumiveis), total: SCHEMA.consumiveis.length },
+    ...(INCLUI_CONSUMIVEIS ? [{ secao: 'Consumíveis', feitos: rec(SCHEMA.consumiveis), total: SCHEMA.consumiveis.length }] : []),
   ]
 }
 
@@ -139,7 +142,7 @@ export function resumoParecer(parecer: Respostas) {
     return { cadastrados: itens.length, comAquisicao, custo }
   }
   const reu = calc(SCHEMA.reutilizaveis)
-  const con = calc(SCHEMA.consumiveis)
+  const con = calc(INCLUI_CONSUMIVEIS ? SCHEMA.consumiveis : [])
   return { reu, con, total: reu.custo + con.custo }
 }
 

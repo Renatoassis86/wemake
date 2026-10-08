@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { formatCurrency } from '@/lib/utils'
 import {
-  SCHEMA, STATUS_DIAGNOSTICO, briefingVisivel, qtdAAdquirir, resumoParecer, type Recurso, type Respostas, type StatusDiagnostico,
+  INCLUI_CONSUMIVEIS, SCHEMA, STATUS_DIAGNOSTICO, briefingVisivel, qtdAAdquirir, resumoParecer, type Recurso, type Respostas, type StatusDiagnostico,
 } from '@/lib/diagnostico'
 import type { ArquivoStaff, DiagnosticoLinha } from '@/lib/diagnostico-staff'
 import { definirStatus, salvarParecer } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
@@ -77,7 +77,7 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
 
       <nav className="an-nav" aria-label="Seções">
         <a href="#an-ambiente">Ambiente</a><a href="#an-medidas">Medidas</a><a href="#an-evidencias">Evidências</a>
-        <a href="#an-reu">Reutilizáveis</a><a href="#an-con">Consumíveis</a><a href="#an-parecer">Parecer</a><a href="#an-resumo">Resumo</a>
+        <a href="#an-reu">Reutilizáveis</a>{INCLUI_CONSUMIVEIS ? <a href="#an-con">Consumíveis</a> : null}<a href="#an-parecer">Parecer</a><a href="#an-resumo">Resumo</a>
         <span className="an-salvo" data-e={salvo}>{salvo === 'salvando' ? 'Salvando parecer…' : salvo === 'erro' ? 'Erro ao salvar. Tentando de novo.' : 'Parecer salvo'}</span>
       </nav>
 
@@ -152,11 +152,11 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
       </section>
 
       <Tabela id="an-reu" titulo="4. Recursos reutilizáveis" itens={SCHEMA.reutilizaveis} resp={resp} p={p} set={set} />
-      <Tabela id="an-con" titulo="5. Recursos consumíveis" itens={SCHEMA.consumiveis} resp={resp} p={p} set={set} />
+      {INCLUI_CONSUMIVEIS ? <Tabela id="an-con" titulo="5. Recursos consumíveis" itens={SCHEMA.consumiveis} resp={resp} p={p} set={set} /> : null}
 
       {/* ── parecer do ambiente ── */}
       <section id="an-parecer" className="an-sec">
-        <h3 className="ac-h3">6. Parecer técnico do ambiente <small>preenchimento da We Make</small></h3>
+        <h3 className="ac-h3">{INCLUI_CONSUMIVEIS ? 6 : 5}. Parecer técnico do ambiente <small>preenchimento da We Make</small></h3>
         <div className="ac-table-wrap" tabIndex={0} role="region" aria-label="Parecer do ambiente">
           <table className="ac-table">
             <thead><tr><th scope="col">Item avaliado</th><th scope="col">Status</th><th scope="col">Observação / adequação recomendada</th></tr></thead>
@@ -181,10 +181,10 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
       </section>
 
       <section id="an-resumo" className="an-sec">
-        <h3 className="ac-h3">7. Resumo We Make</h3>
+        <h3 className="ac-h3">{INCLUI_CONSUMIVEIS ? 7 : 6}. Resumo We Make</h3>
         <dl className="ac-kpis an-kpis">
           <div><dt>Reutilizáveis com aquisição</dt><dd>{resumo.reu.comAquisicao}<small> de {resumo.reu.cadastrados}</small></dd></div>
-          <div><dt>Consumíveis com aquisição</dt><dd>{resumo.con.comAquisicao}<small> de {resumo.con.cadastrados}</small></dd></div>
+          {INCLUI_CONSUMIVEIS ? <div><dt>Consumíveis com aquisição</dt><dd>{resumo.con.comAquisicao}<small> de {resumo.con.cadastrados}</small></dd></div> : null}
           <div><dt>Custo estimado, reutilizáveis</dt><dd className="ac-kpi-m">{formatCurrency(resumo.reu.custo)}</dd></div>
           <div><dt>Custo total estimado</dt><dd className="ac-kpi-m">{formatCurrency(resumo.total)}</dd></div>
         </dl>

@@ -13,8 +13,7 @@ insert into public.academia_diag_itens (item_key, secao, categoria, titulo, orde
   ('cli-04', 'ambiente', '2.2 Climatização', 'Se possível, informe também o modelo, capacidade ou especificações do equipamento que está sendo considerado.', 304),
   ('mob-01', 'ambiente', '2.3 Mobiliário', 'A escola pretende aproveitar algum mobiliário já existente no ambiente?', 311),
   ('mob-02', 'ambiente', '2.3 Mobiliário', 'Se sim, quais móveis pretende manter e utilizar na Sala Maker?', 312),
-  ('mob-03', 'ambiente', '2.3 Mobiliário', 'Quais informações sobre esse mobiliário a escola consegue fornecer?', 313),
-  ('mob-04', 'ambiente', '2.3 Mobiliário', 'Informações, medidas ou links do mobiliário', 314)
+  ('mob-03', 'ambiente', '2.3 Mobiliário', 'Quais informações sobre esse mobiliário a escola consegue fornecer?', 313)
 on conflict (item_key) do update set
   secao = excluded.secao, categoria = excluded.categoria, titulo = excluded.titulo, ordem = excluded.ordem;
 
@@ -37,3 +36,7 @@ delete from public.academia_diag_itens     where item_key in ('evi-07', 'evi-08'
 -- conferência: deve listar 8 itens de briefing e 6 evidências
 select item_key, secao, categoria, titulo from public.academia_diag_itens
  where item_key like 'cli-%' or item_key like 'mob-%' or item_key like 'evi-%' order by secao, item_key;
+
+-- Atualização de 08/10/2026: sai o campo "Informações, medidas ou links do mobiliário" (mob-04)
+delete from public.academia_diag_respostas where item_key = 'mob-04';
+delete from public.academia_diag_itens     where item_key = 'mob-04';

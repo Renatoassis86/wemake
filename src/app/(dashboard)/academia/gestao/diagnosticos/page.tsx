@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { carregarGestao } from '@/lib/academia-data'
 import { fmtData } from '@/lib/academia-gestao'
-import { STATUS_DIAGNOSTICO, SCHEMA } from '@/lib/diagnostico'
+import { INCLUI_CONSUMIVEIS, STATUS_DIAGNOSTICO, SCHEMA } from '@/lib/diagnostico'
 import { listarDiagnosticos, podeVerDiagnosticos } from '@/lib/diagnostico-staff'
 import { carregarAssinadas } from '@/lib/academia-comercial'
 import NovoDiagnosticoForm, { GerarParaEscola } from '@/components/academia/gestao/NovoDiagnosticoForm'
@@ -35,11 +35,11 @@ export default async function DiagnosticosPage() {
   const comDiagnostico = new Set(d.itens.map(i => norm(i.escola_nome)))
   const assinadas = assinadasTodas.filter(a => !comDiagnostico.has(norm(a.nome)))
 
-  const total = SCHEMA.ambiente.length + SCHEMA.briefing.length + SCHEMA.reutilizaveis.length + SCHEMA.consumiveis.length
+  const total = SCHEMA.ambiente.length + SCHEMA.briefing.length + SCHEMA.reutilizaveis.length + (INCLUI_CONSUMIVEIS ? SCHEMA.consumiveis.length : 0)
   const feitos = (r: Record<string, string>) =>
     SCHEMA.ambiente.filter(a => r[a.key]).length +
     SCHEMA.briefing.filter(b => r[b.key]).length +
-    [...SCHEMA.reutilizaveis, ...SCHEMA.consumiveis].filter(i => r[i.key + '.p']).length
+    [...SCHEMA.reutilizaveis, ...(INCLUI_CONSUMIVEIS ? SCHEMA.consumiveis : [])].filter(i => r[i.key + '.p']).length
 
   return (
     <>

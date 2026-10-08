@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import {
-  BUCKET, SCHEMA, SEPARADOR_MULTI, andamento, briefingVisivel, valoresMulti, type Briefing, type Recurso, type Respostas, type StatusDiagnostico,
+  BUCKET, INCLUI_CONSUMIVEIS, SCHEMA, SEPARADOR_MULTI, andamento, briefingVisivel, valoresMulti, type Briefing, type Recurso, type Respostas, type StatusDiagnostico,
 } from '@/lib/diagnostico'
 import {
   confirmarUpload, enviarDiagnostico, pedirUpload, removerArquivo, salvarRespostas, type ArquivoPublico,
@@ -22,7 +22,7 @@ const tamanhoLegivel = (b: number | null) => {
   return `${(b / 1024 / 1024).toFixed(1).replace('.', ',')} MB`
 }
 
-const SECOES = [
+const SECOES_TODAS = [
   { id: 'ambiente', nome: 'O ambiente' },
   { id: 'medidas', nome: 'Medidas e briefing' },
   { id: 'evidencias', nome: 'Fotos, vídeo e planta' },
@@ -30,6 +30,7 @@ const SECOES = [
   { id: 'consumiveis', nome: 'Materiais de consumo' },
   { id: 'enviar', nome: 'Enviar' },
 ]
+const SECOES = SECOES_TODAS.filter(s => INCLUI_CONSUMIVEIS || s.id !== 'consumiveis')
 
 export default function DiagnosticoForm({
   escola, statusInicial, respostasIniciais, arquivosIniciais,
@@ -132,7 +133,7 @@ export default function DiagnosticoForm({
     await descarregar()
     const res = await enviarDiagnostico()
     setEnviandoFinal(false)
-    if (res.ok) { setStatus('enviado'); window.scrollTo({ top: 0, behavior: 'smooth' }) } else setErroFinal(res.erro ?? 'Não foi possível enviar.')
+    if (res.ok) { setStatus('enviado') } else setErroFinal(res.erro ?? 'Não foi possível enviar.')
   }
 
   /** Pergunta do briefing (2.2 e 2.3): uma escolha, várias escolhas ou resposta longa. */
@@ -239,7 +240,7 @@ export default function DiagnosticoForm({
       <main className="dg-main">
         {status === 'enviado' ? (
           <p className="dg-ok" role="status">
-            <b>Enviado à We Make.</b> Recebemos o diagnóstico de {escola}. Você ainda pode corrigir ou acrescentar informações até a We Make iniciar a análise.
+            <b>Diagnóstico enviado com sucesso.</b> Em breve nossa equipe entrará em contato para as próximas etapas. Você ainda pode corrigir ou acrescentar informações até a We Make iniciar a análise.
           </p>
         ) : null}
         {travado ? (
@@ -326,13 +327,13 @@ export default function DiagnosticoForm({
           {/* ───────────── 4 e 5. Recursos ───────────── */}
           <Recursos id="reutilizaveis" numero={4} titulo="Recursos que a escola já tem" kicker="Recursos reutilizáveis" itens={SCHEMA.reutilizaveis} r={r} set={set}
             dica="Informe só se a escola possui o item, a quantidade e, quando souber, a marca ou o modelo. Você não precisa decidir se serve: a We Make analisa." />
-          <Recursos id="consumiveis" numero={5} titulo="Materiais de consumo" kicker="Recursos consumíveis" itens={SCHEMA.consumiveis} r={r} set={set}
-            dica="Informe o que existe hoje em estoque. Os links de compra são só uma referência: itens equivalentes servem, desde que respeitem a especificação." />
+          {INCLUI_CONSUMIVEIS ? <Recursos id="consumiveis" numero={5} titulo="Materiais de consumo" kicker="Recursos consumíveis" itens={SCHEMA.consumiveis} r={r} set={set}
+            dica="Informe o que existe hoje em estoque. Os links de compra são só uma referência: itens equivalentes servem, desde que respeitem a especificação." /> : null}
         </fieldset>
 
         {/* ───────────── Enviar ───────────── */}
         <section id="enviar" className="dg-sec">
-          <header><span className="ac-num">6</span><div><div className="ac-kicker">Último passo</div><h2>Enviar à We Make</h2></div></header>
+          <header><span className="ac-num">{INCLUI_CONSUMIVEIS ? 6 : 5}</span><div><div className="ac-kicker">Último passo</div><h2>Enviar à We Make</h2></div></header>
           <table className="dg-resumo">
             <tbody>
               {prog.map(p => (
@@ -342,6 +343,15 @@ export default function DiagnosticoForm({
           </table>
           <p className="dg-dica">Pode enviar mesmo que falte algum item: a We Make avisa se precisar de complementos. Depois de enviar, você ainda pode editar até a análise começar.</p>
           {erroFinal ? <p role="alert" className="dg-erro">{erroFinal}</p> : null}
+          {status === 'enviado' ? (
+            <div className="dg-sucesso" role="status">
+              <span aria-hidden="true">✓</span>
+              <div>
+                <b>Diagnóstico enviado com sucesso.</b>
+                <p>Em breve nossa equipe entrará em contato para as próximas etapas.</p>
+              </div>
+            </div>
+          ) : null}
           <button type="button" className="dg-enviar" disabled={travado || enviandoFinal} onClick={enviarFinal}>
             {enviandoFinal ? 'Enviando…' : status === 'enviado' ? 'Enviar de novo com as alterações' : 'Enviar à We Make'}
           </button>
@@ -379,11 +389,6 @@ function Recursos({
             <div className={`dg-rec${r[i.key + '.p'] ? ' is-feito' : ''}`}>
               <div className="dg-rec-i">
                 <b>{i.item}</b>
-                <span>{i.spec}</span>
-                <small>
-                  Recomendado: {i.qtd.toLocaleString('pt-BR')} {i.unid}
-                  {i.ref ? <> · <a href={i.ref} target="_blank" rel="noopener noreferrer">referência de compra</a></> : null}
-                </small>
               </div>
               <div className="dg-rec-c">
                 <label><span>A escola possui?</span>

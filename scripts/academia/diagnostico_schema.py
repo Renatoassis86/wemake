@@ -108,9 +108,6 @@ BRIEFING = [
      'dica': 'Exemplos: mesas, cadeiras, bancadas, armários, estantes, gaveteiros, móveis com pia etc.'},
     {'key': 'mob-03', 'grupo': '2.3 Mobiliário', 'tipo': 'longo',
      'pergunta': 'Quais informações sobre esse mobiliário a escola consegue fornecer?'},
-    {'key': 'mob-04', 'grupo': '2.3 Mobiliário', 'tipo': 'longo',
-     'pergunta': 'Informações, medidas ou links do mobiliário:', 'anexo': True,
-     'dica': 'Sempre que possível, envie as dimensões dos móveis, considerando:\n• largura;\n• profundidade;\n• altura;\n• quantidade;\n• características relevantes para o projeto.\n\nAs informações podem ser enviadas de diferentes formas: descritas no campo abaixo, por meio de fotografias ou por links dos modelos/produtos existentes.'},
 ]
 
 listas = wb['Listas']
@@ -128,6 +125,12 @@ schema = {
         'acao': [s(listas.cell(r, 3).value) for r in range(2, 8) if listas.cell(r, 3).value],
     },
 }
+# Nomes ajustados pela We Make (outubro/2026)
+RENOMEAR = {'reu-39': 'TV ou projetor'}
+for _r in schema['reutilizaveis']:
+    if _r['key'] in RENOMEAR:
+        _r['item'] = RENOMEAR[_r['key']]
+
 os.makedirs(os.path.dirname(OUT_JSON), exist_ok=True)
 with open(OUT_JSON, 'w', encoding='utf-8') as f:
     json.dump(schema, f, ensure_ascii=False, indent=1)
