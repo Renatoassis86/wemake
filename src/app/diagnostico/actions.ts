@@ -42,7 +42,7 @@ export async function sessaoDiagnostico(): Promise<SessaoDiagnostico | null> {
     .select('id, escola_nome, status, expira_em')
     .eq('id', id)
     .maybeSingle()
-  if (!data || new Date(data.expira_em) < new Date()) return null
+  if (!data || new Date(data.expira_em) < new Date() || data.status === 'concluido') return null
   const { data: linhas } = await db
     .from('academia_diag_respostas')
     .select('item_key, resposta, detalhe, anexo_link, observacao, possui, qtd_existente, marca_obs')
@@ -72,8 +72,8 @@ export async function entrarComPin(_anterior: { erro?: string } | undefined, fd:
     .eq('ip_hash', ip).eq('sucesso', false).gte('criado_em', desde)
   if ((count ?? 0) >= 8) return { erro: 'Muitas tentativas seguidas. Aguarde 15 minutos e tente de novo.' }
 
-  const { data } = await db.from('academia_diagnosticos').select('id, expira_em').eq('pin_hash', hashPin(pin)).maybeSingle()
-  const ok = !!data && new Date(data.expira_em) > new Date()
+  const { data } = await db.from('academia_diagnosticos').select('id, expira_em, status').eq('pin_hash', hashPin(pin)).maybeSingle()
+  const ok = !!data && new Date(data.expira_em) > new Date() && data.status !== 'concluido'
   await db.from('academia_pin_tentativas').insert({ ip_hash: ip, sucesso: ok })
   if (!ok || !data) return { erro: 'PIN não encontrado ou vencido. Confira o código que a We Make enviou.' }
 

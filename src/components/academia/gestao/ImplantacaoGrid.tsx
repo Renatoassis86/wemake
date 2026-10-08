@@ -64,14 +64,14 @@ function Linha({ i, pessoas }: { i: Implantacao; pessoas: string[] }) {
         <Link href={`/academia/gestao/escola/${i.id}`} className="ac-ficha-link">Ficha da escola →</Link>
         <Aviso erro={erro} msg={msg} />
       </th>
-      <td><SelectPessoa pessoas={pessoas} value={i.responsavel} label="Responsável We Make" onChange={v => salvar({ responsavel: v })} /></td>
-      <td>
+      <td data-label="Responsável We Make"><SelectPessoa pessoas={pessoas} value={i.responsavel} label="Responsável We Make" onChange={v => salvar({ responsavel: v })} /></td>
+      <td data-label="Prioridade">
         <select className="ac-cell-in" value={i.prioridade} aria-label="Prioridade" onChange={e => salvar({ prioridade: e.target.value as Prioridade })}>
           {PRIORIDADES.map(p => <option key={p}>{p}</option>)}
         </select>
       </td>
       {MARCOS.map(m => (
-        <td key={m} className="ac-grid-marco">
+        <td data-label={m} key={m} className="ac-grid-marco">
           <StatusSelect
             value={(i.marcos?.[m] ?? 'Não iniciado') as Status}
             label={m}
@@ -86,25 +86,25 @@ function Linha({ i, pessoas }: { i: Implantacao; pessoas: string[] }) {
           ) : null}
         </td>
       ))}
-      <td><Campo valor={i.proxima_acao} rotulo="Próxima ação" largura={240} onSalvar={v => salvar({ proxima_acao: v })} /></td>
-      <td><SelectPessoa pessoas={pessoas} value={i.responsavel_acao} label="Responsável pela próxima ação" onChange={v => salvar({ responsavel_acao: v })} /></td>
-      <td className={prazoVencido(i) ? 'is-vencido' : undefined}>
+      <td data-label="Próxima ação"><Campo valor={i.proxima_acao} rotulo="Próxima ação" largura={240} onSalvar={v => salvar({ proxima_acao: v })} /></td>
+      <td data-label="Responsável pela ação"><SelectPessoa pessoas={pessoas} value={i.responsavel_acao} label="Responsável pela próxima ação" onChange={v => salvar({ responsavel_acao: v })} /></td>
+      <td data-label="Prazo" className={prazoVencido(i) ? 'is-vencido' : undefined}>
         <Campo valor={i.prazo} tipo="date" rotulo="Prazo" onSalvar={v => salvar({ prazo: v })} />
       </td>
-      <td>
+      <td data-label="Risco">
         <select className="ac-cell-in ac-risco" data-r={i.risco} value={i.risco} aria-label="Risco" onChange={e => run(() => trocarRisco(e.target.value as Risco))}>
           {RISCOS.map(r => <option key={r}>{r}</option>)}
         </select>
       </td>
-      <td className={motivoPendente ? 'is-falta' : undefined}>
+      <td data-label="Motivo / bloqueio" className={motivoPendente ? 'is-falta' : undefined}>
         <Campo valor={i.motivo_bloqueio} rotulo="Motivo / bloqueio" largura={220} onSalvar={v => salvar({ motivo_bloqueio: v })} />
         {motivoPendente ? <span className="ac-hint">Obrigatório: risco Alto/Crítico ou etapa Bloqueada.</span> : null}
       </td>
-      <td className="ac-grid-pct" aria-label={`${pct}% da implantação`}>
+      <td data-label="% Implantação" className="ac-grid-pct" aria-label={`${pct}% da implantação`}>
         <span className="ac-bar"><i style={{ width: `${pct}%` }} /></span>
         <b>{pct}%</b>
       </td>
-      <td className="ac-grid-acoes">
+      <td data-label="Ações" className="ac-grid-acoes">
         <button type="button" className="ac-btn-sm" onClick={() => run(() => gerarTarefas(i.id))} title="Cria as tarefas-modelo dos documentos para esta escola">
           Gerar tarefas
         </button>

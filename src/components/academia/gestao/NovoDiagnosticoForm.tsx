@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import type { Implantacao } from '@/lib/academia-gestao'
-import { criarDiagnostico, regenerarPin } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
+import { criarDiagnostico, regenerarPin, revogarAcesso } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
 import { Aviso, useRun } from './ui'
 
 /** Link de acesso da escola (/diagnostico/e/<token>) montado com o endereço atual do site. */
@@ -131,6 +131,22 @@ export function NovoPinBtn({ id, escola }: { id: string; escola: string }) {
         {pending ? 'Gerando…' : 'Gerar novo PIN'}
       </button>
       <Aviso erro={erro} />
+    </>
+  )
+}
+
+export function RevogarAcessoBtn({ id, escola }: { id: string; escola: string }) {
+  const { pending, erro, msg, run } = useRun()
+  return (
+    <>
+      <button
+        type="button" className="ac-btn-sm is-ghost" disabled={pending}
+        title="O link e o PIN atuais deixam de abrir. Para reabrir, gere um novo PIN."
+        onClick={() => { if (confirm(`Encerrar o acesso de ${escola}? O link e o PIN atuais deixam de funcionar.`)) run(async () => { const r = await revogarAcesso(id); return r.ok ? { ok: true as const, msg: 'Acesso encerrado.' } : { ok: false as const, erro: r.erro ?? 'Não foi possível encerrar.' } }) }}
+      >
+        {pending ? 'Encerrando…' : 'Encerrar acesso da escola'}
+      </button>
+      <Aviso erro={erro} msg={msg} />
     </>
   )
 }

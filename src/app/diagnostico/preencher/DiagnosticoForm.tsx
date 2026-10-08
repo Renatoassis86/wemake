@@ -128,6 +128,8 @@ export default function DiagnosticoForm({
   const [enviandoFinal, setEnviandoFinal] = useState(false)
   const [erroFinal, setErroFinal] = useState('')
   async function enviarFinal() {
+    const faltam = prog.filter(x => x.feitos < x.total).map(x => `${x.secao}: ${x.feitos} de ${x.total}`)
+    if (faltam.length && !window.confirm(`Ainda há itens sem resposta:\n\n${faltam.join('\n')}\n\nDeseja enviar mesmo assim? Você poderá completar depois, até a We Make iniciar a análise.`)) return
     setEnviandoFinal(true); setErroFinal('')
     if (timer.current) clearTimeout(timer.current)
     await descarregar()

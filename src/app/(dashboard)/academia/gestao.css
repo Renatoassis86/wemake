@@ -384,3 +384,18 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 
 .ac-auto { display: block; margin: .25rem auto 0; padding: .1rem .45rem; border: 1px solid var(--ac-line-2); border-radius: 99px; background: var(--ac-ivory); font: 600 .6rem/1.5 var(--ac-sans); color: var(--ac-muted); cursor: pointer; }
 .ac-auto:hover { border-color: var(--ac-ink); color: var(--ac-ink); }
+
+/* Painel Mestre no celular: um cartão por escola, sem rolagem lateral */
+@media (max-width: 640px) {
+  .ac-grid-wrap { max-height: none; overflow: visible; border: 0; background: transparent; }
+  .ac-grid, .ac-grid tbody { display: block; min-width: 0; width: 100%; }
+  .ac-grid thead { display: none; }
+  .ac-grid tbody tr { display: grid; grid-template-columns: 1fr 1fr; gap: .15rem .9rem; background: #fff; border: 1px solid var(--ac-line); border-radius: 14px; padding: .95rem 1rem; margin: 0 0 1rem; }
+  .ac-grid tbody tr:nth-child(even) td, .ac-grid tbody tr:nth-child(even) th { background: transparent; }
+  .ac-grid tbody th.ac-grid-escola { grid-column: 1 / -1; position: static; box-shadow: none; border: 0; padding: 0 0 .55rem; min-width: 0; background: transparent; }
+  .ac-grid td { display: block; border: 0; padding: .4rem 0; min-width: 0 !important; background: transparent; }
+  .ac-grid td::before { content: attr(data-label); display: block; margin-bottom: .2rem; font: 700 .58rem/1.2 var(--ac-sans); letter-spacing: .1em; text-transform: uppercase; color: var(--ac-muted); }
+  .ac-grid td[data-label="Próxima ação"], .ac-grid td[data-label="Motivo / bloqueio"], .ac-grid td[data-label="Ações"], .ac-grid td[data-label="% Implantação"] { grid-column: 1 / -1; }
+  .ac-grid td[data-label="Ações"]::before { display: none; }
+  .ac-grid .ac-cell-in, .ac-grid select, .ac-grid input { width: 100%; }
+}

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { randomBytes } from 'crypto'
 import { emailsAutorizados, gerarPin, hashPin } from '@/lib/diagnostico-auth'
 import { auditar } from '@/lib/auditoria'
 import { BUCKET, CHAVES_PARECER, STATUS_DIAGNOSTICO, limparPatch, patchParaLinhasParecer, type StatusDiagnostico } from '@/lib/diagnostico'
@@ -65,7 +66,7 @@ export async function regenerarPin(id: string): Promise<CriarResultado> {
   for (let i = 0; i < 5; i++) {
     const pin = gerarPin()
     const { data, error } = await db.from('academia_diagnosticos')
-      .update({ pin_hash: hashPin(pin), expira_em: new Date(Date.now() + 120 * 24 * 3600 * 1000).toISOString() })
+      .update({ pin_hash: hashPin(pin), link_token: randomBytes(18).toString('hex'), expira_em: new Date(Date.now() + 120 * 24 * 3600 * 1000).toISOString() })
       .eq('id', id)
       .select('link_token')
       .single()
@@ -114,6 +115,20 @@ export async function excluirDiagnostico(id: string): Promise<{ ok: boolean; err
   const { error } = await db.from('academia_diagnosticos').delete().eq('id', id)
   if (error) return { ok: false, erro: error.message }
   await auditar(user, 'DELETE', 'academia_diagnosticos', id, null, { ...antes, arquivos_apagados: paths.length })
+  refresh()
+  return { ok: true }
+}
+
+/** Encerra o acesso da escola agora: o link e o PIN deixam de abrir e as sessões em andamento caem. */
+export async function revogarAcesso(id: string): Promise<{ ok: boolean; erro?: string }> {
+  const user = await autorizado()
+  if (!user) return SEM_PERMISSAO
+  const { error } = await createAdminClient()
+    .from('academia_diagnosticos')
+    .update({ expira_em: new Date().toISOString(), link_token: randomBytes(18).toString('hex') })
+    .eq('id', id)
+  if (error) return { ok: false, erro: error.message }
+  await auditar(user, 'UPDATE', 'academia_diagnosticos', id, { acao: 'acesso da escola encerrado' })
   refresh()
   return { ok: true }
 }

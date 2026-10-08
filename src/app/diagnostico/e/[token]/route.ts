@@ -22,8 +22,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     .eq('ip_hash', ip).eq('sucesso', false).gte('criado_em', desde)
   if ((count ?? 0) >= 8) return NextResponse.redirect(destino('/diagnostico?erro=tentativas'))
 
-  const { data } = await db.from('academia_diagnosticos').select('id, expira_em').eq('link_token', token.toLowerCase()).maybeSingle()
-  const ok = !!data && new Date(data.expira_em) > new Date()
+  const { data } = await db.from('academia_diagnosticos').select('id, expira_em, status').eq('link_token', token.toLowerCase()).maybeSingle()
+  const ok = !!data && new Date(data.expira_em) > new Date() && data.status !== 'concluido'
   await db.from('academia_pin_tentativas').insert({ ip_hash: ip, sucesso: ok })
   if (!ok || !data) return NextResponse.redirect(destino('/diagnostico?erro=link'))
 

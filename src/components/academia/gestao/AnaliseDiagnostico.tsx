@@ -7,7 +7,7 @@ import {
 } from '@/lib/diagnostico'
 import type { ArquivoStaff, DiagnosticoLinha } from '@/lib/diagnostico-staff'
 import { definirStatus, salvarParecer } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
-import { NovoPinBtn, linkDaEscola } from './NovoDiagnosticoForm'
+import { NovoPinBtn, RevogarAcessoBtn, linkDaEscola } from './NovoDiagnosticoForm'
 import { Aviso, useRun } from './ui'
 
 const dataHora = (iso: string | null) =>
@@ -18,6 +18,8 @@ const tamanho = (b: number | null) => (!b ? '' : b < 1048576 ? `${Math.max(1, Ma
 export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnostico: DiagnosticoLinha; arquivos: ArquivoStaff[] }) {
   const resp = diagnostico.respostas as Respostas
   const [p, setP] = useState<Respostas>(diagnostico.parecer as Respostas)
+  const semParecer = SCHEMA.reutilizaveis.some(i => !((diagnostico.parecer as Respostas)[i.key + '.pc'] || p[i.key + '.pc']))
+
   const [status, setStatus] = useState<StatusDiagnostico>(diagnostico.status)
   const [salvo, setSalvo] = useState<'ok' | 'salvando' | 'erro'>('ok')
   const sujo = useRef<Respostas>({})
@@ -70,6 +72,7 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
             {status !== 'concluido' ? <button type="button" className="ac-btn-sm" onClick={() => mudarStatus('concluido')}>Concluir devolutiva</button> : null}
             {status !== 'aberto' ? <button type="button" className="ac-btn-sm is-ghost" onClick={() => { if (confirm('Reabrir para a escola editar?')) mudarStatus('aberto') }}>Reabrir para a escola</button> : null}
             <NovoPinBtn id={diagnostico.id} escola={diagnostico.escola_nome} />
+            <RevogarAcessoBtn id={diagnostico.id} escola={diagnostico.escola_nome} />
           </div>
           <Aviso erro={st.erro} />
         </div>
@@ -186,7 +189,7 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
           <div><dt>Reutilizáveis com aquisição</dt><dd>{resumo.reu.comAquisicao}<small> de {resumo.reu.cadastrados}</small></dd></div>
           {INCLUI_CONSUMIVEIS ? <div><dt>Consumíveis com aquisição</dt><dd>{resumo.con.comAquisicao}<small> de {resumo.con.cadastrados}</small></dd></div> : null}
           <div><dt>Custo estimado, reutilizáveis</dt><dd className="ac-kpi-m">{formatCurrency(resumo.reu.custo)}</dd></div>
-          <div><dt>Custo total estimado</dt><dd className="ac-kpi-m">{formatCurrency(resumo.total)}</dd></div>
+          <div><dt>Custo total estimado{semParecer ? ' (preliminar: há itens sem parecer)' : ''}</dt><dd className="ac-kpi-m">{formatCurrency(resumo.total)}</dd></div>
         </dl>
         <p className="ac-hint">Quantidade a adquirir = quantidade recomendada − quantidade aproveitável. Os valores de referência são orientativos; a escola pode comprar itens equivalentes.</p>
         <div className="an-geral-g">
@@ -200,6 +203,14 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
 }
 
 function Tabela({ id, titulo, itens, resp, p, set }: { id: string; titulo: string; itens: Recurso[]; resp: Respostas; p: Respostas; set: (k: string, v: string) => void }) {
+  /** Não aceita mais "aproveitável" do que a escola declarou (se declarou "Não", zero). */
+  const limitarAproveitavel = (key: string, valor: string) => {
+    const n = Number(valor.replace(',', '.'))
+    if (!Number.isFinite(n)) return valor
+    const declarado = Number((resp[key + '.q'] ?? '').replace(',', '.'))
+    const teto = resp[key + '.p'] === 'Não' ? 0 : resp[key + '.q'] && Number.isFinite(declarado) ? declarado : null
+    return teto !== null && n > teto ? String(teto) : valor
+  }
   return (
     <section id={id} className="an-sec">
       <h3 className="ac-h3">{titulo} <small>escola informa · We Make analisa</small></h3>
@@ -226,7 +237,7 @@ function Tabela({ id, titulo, itens, resp, p, set }: { id: string; titulo: strin
                       <option value="">—</option>{SCHEMA.listas.parecer.map(o => <option key={o}>{o}</option>)}
                     </select>
                   </td>
-                  <td><input className="ac-cell-in an-num" inputMode="decimal" value={p[i.key + '.qa'] ?? ''} onChange={e => set(i.key + '.qa', e.target.value.replace(/[^\d.,]/g, ''))} aria-label={`Quantidade aproveitável: ${i.item}`} /></td>
+                  <td><input className="ac-cell-in an-num" inputMode="decimal" value={p[i.key + '.qa'] ?? ''} onChange={e => set(i.key + '.qa', limitarAproveitavel(i.key, e.target.value.replace(/[^\d.,]/g, '')))} aria-label={`Quantidade aproveitável: ${i.item}`} /></td>
                   <td>
                     <select className="ac-cell-in" value={p[i.key + '.ac'] ?? ''} onChange={e => set(i.key + '.ac', e.target.value)} aria-label={`Ação: ${i.item}`}>
                       <option value="">—</option>{SCHEMA.listas.acao.map(o => <option key={o}>{o}</option>)}
