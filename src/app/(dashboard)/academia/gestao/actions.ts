@@ -8,6 +8,7 @@ import { PRIORIDADES, RISCOS, STATUS, type Implantacao, type Status } from '@/li
 import { LISTAS, getLista, prazoDoModelo } from '@/lib/academia-workspace'
 import { moduloPermitido } from '@/lib/modulos'
 import { carregarAssinadas } from '@/lib/academia-comercial'
+import { auditar } from '@/lib/auditoria'
 import { equipeComNomes } from '@/lib/academia-equipe'
 
 export type Resultado = { ok: true; msg?: string } | { ok: false; erro: string }
@@ -33,6 +34,49 @@ function refresh() {
 
 const msgErro = (e: { message?: string } | null) => e?.message ?? 'Não foi possível salvar.'
 
+const dataBR = (iso: string) => iso.split('-').reverse().join('/')
+
+/** Assinatura ≤ onboarding ≤ início das aulas. Devolve a mensagem do primeiro par fora de ordem. */
+function erroDatas(assinatura: string | null, onboarding: string | null, aulas: string | null): string | null {
+  if (assinatura && onboarding && onboarding < assinatura) return `O onboarding (${dataBR(onboarding)}) não pode ser antes da assinatura (${dataBR(assinatura)}).`
+  if (onboarding && aulas && aulas < onboarding) return `O início das aulas (${dataBR(aulas)}) não pode ser antes do onboarding (${dataBR(onboarding)}).`
+  if (assinatura && aulas && aulas < assinatura) return `O início das aulas (${dataBR(aulas)}) não pode ser antes da assinatura (${dataBR(assinatura)}).`
+  return null
+}
+
+type Db = ReturnType<typeof createAdminClient>
+type Quem = { id: string; email?: string | null }
+
+/**
+ * O status de uma etapa nasce das tarefas dela: nenhuma começada = Não iniciado; todas concluídas = Concluído;
+ * o resto = Em andamento. O gestor pode decidir à mão (aí a etapa deixa de seguir as tarefas até ele voltar ao automático).
+ * Estados que só o gestor define (Aguardando…, Bloqueado) nunca são sobrescritos.
+ */
+async function recalcularMarco(db: Db, user: Quem, implId: string | null, marcoIdx: number | null) {
+  if (!implId || marcoIdx === null || marcoIdx < 0 || marcoIdx >= MARCOS.length) return
+  try {
+    const { data: impl } = await db.from('academia_implantacoes').select('*').eq('id', implId).maybeSingle()
+    if (!impl) return
+    const nome = MARCOS[marcoIdx]
+    if ((impl.marcos_manuais ?? {})[nome]) return
+    const { data: ts } = await db.from('academia_tarefas').select('status').eq('implantacao_id', implId).eq('marco', marcoIdx)
+    const lista = (ts ?? []).map(t => t.status as Status)
+    if (!lista.length) return
+    const atual = ((impl.marcos ?? {})[nome] ?? 'Não iniciado') as Status
+    if (!['Não iniciado', 'Em andamento', 'Concluído'].includes(atual)) return
+    const novo: Status = lista.every(s => s === 'Concluído') ? 'Concluído' : lista.some(s => s !== 'Não iniciado') ? 'Em andamento' : 'Não iniciado'
+    if (novo === atual) return
+    const marcos = { ...(impl.marcos as Record<string, Status>), [nome]: novo }
+    await db.from('academia_implantacoes').update({ marcos }).eq('id', implId)
+    await sincronizarComercial(implId, marcos)
+    await auditar(user, 'UPDATE', 'academia_implantacoes', implId, { etapa: nome, status: novo, origem: 'tarefas' }, { etapa: nome, status: atual })
+  } catch { /* o cálculo automático nunca deve impedir a ação do usuário */ }
+}
+
+async function recalcularTodos(db: Db, user: Quem, implId: string) {
+  for (let m = 0; m < MARCOS.length; m++) await recalcularMarco(db, user, implId, m)
+}
+
 /* ─────────────────────────────── Implantações ─────────────────────────────── */
 
 export async function criarImplantacao(fd: FormData): Promise<Resultado> {
@@ -40,6 +84,12 @@ export async function criarImplantacao(fd: FormData): Promise<Resultado> {
   if (!user) return { ok: false, erro: 'Sessão expirada. Entre novamente.' }
   const escola_nome = txt(fd.get('escola_nome'), 160)
   if (!escola_nome) return { ok: false, erro: 'Informe o nome da escola.' }
+
+  const assinatura = data(fd.get('data_assinatura'))
+  const onboarding = data(fd.get('data_onboarding'))
+  const aulas = data(fd.get('data_inicio_aulas'))
+  const erroOrdem = erroDatas(assinatura, onboarding, aulas)
+  if (erroOrdem) return { ok: false, erro: erroOrdem }
 
   const db = createAdminClient()
   const { data: nova, error } = await db
@@ -61,6 +111,7 @@ export async function criarImplantacao(fd: FormData): Promise<Resultado> {
   if (error || !nova) return { ok: false, erro: msgErro(error) }
 
   if (fd.get('gerar_tarefas') === 'on') await gerarTarefasPara(nova.id)
+  await auditar(user, 'INSERT', 'academia_implantacoes', nova.id, { escola: escola_nome })
   refresh()
   return { ok: true, msg: 'Escola cadastrada no Painel Mestre.' }
 }
@@ -83,24 +134,87 @@ export async function atualizarImplantacao(id: string, patch: Record<string, unk
     else upd[k] = txt(v, k === 'motivo_bloqueio' || k === 'proxima_acao' ? 1000 : 160)
   }
   if (!Object.keys(upd).length) return { ok: true }
-  const { error } = await createAdminClient().from('academia_implantacoes').update(upd).eq('id', id)
+
+  const db = createAdminClient()
+  const { data: antes } = await db.from('academia_implantacoes').select('*').eq('id', id).maybeSingle()
+  if (!antes) return { ok: false, erro: 'Escola não encontrada no Painel.' }
+
+  // datas em ordem: assinatura ≤ onboarding ≤ início das aulas
+  const dt = (k: string) => (k in upd ? (upd[k] as string | null) : (antes[k] as string | null))
+  const erroOrdem = erroDatas(dt('data_assinatura'), dt('data_onboarding'), dt('data_inicio_aulas'))
+  if (erroOrdem) return { ok: false, erro: erroOrdem }
+
+  // risco Alto ou Crítico exige o motivo (regra escrita no próprio painel)
+  const risco = (upd.risco ?? antes.risco) as string
+  const motivo = 'motivo_bloqueio' in upd ? upd.motivo_bloqueio : antes.motivo_bloqueio
+  if ((risco === 'Alto' || risco === 'Crítico') && !motivo && ('risco' in upd || 'motivo_bloqueio' in upd)) {
+    return { ok: false, erro: `JUSTIFICAR:Informe o motivo para o risco ${risco}.` }
+  }
+
+  const { error } = await db.from('academia_implantacoes').update(upd).eq('id', id)
   if (error) return { ok: false, erro: msgErro(error) }
+  const antigo: Record<string, unknown> = {}
+  for (const k of Object.keys(upd)) antigo[k] = antes[k]
+  await auditar(user, 'UPDATE', 'academia_implantacoes', id, { escola: antes.escola_nome, ...upd }, { escola: antes.escola_nome, ...antigo })
   refresh()
   return { ok: true }
 }
 
-export async function definirMarco(id: string, marco: string, status: string): Promise<Resultado> {
+export async function definirMarco(id: string, marco: string, status: string, justificativa?: string): Promise<Resultado> {
   const user = await autorizado()
   if (!user) return { ok: false, erro: 'Sessão expirada. Entre novamente.' }
   const st = dentro(STATUS, status)
   if (!(MARCOS as readonly string[]).includes(marco) || !st) return { ok: false, erro: 'Marco ou status inválido.' }
   const db = createAdminClient()
-  const { data: atual, error: e1 } = await db.from('academia_implantacoes').select('marcos').eq('id', id).single()
-  if (e1 || !atual) return { ok: false, erro: msgErro(e1) }
-  const marcos = { ...(atual.marcos as Record<string, Status>), [marco]: st }
-  const { error } = await db.from('academia_implantacoes').update({ marcos }).eq('id', id)
+  const { data: impl, error: e1 } = await db.from('academia_implantacoes').select('*').eq('id', id).single()
+  if (e1 || !impl) return { ok: false, erro: msgErro(e1) }
+  const atuais = (impl.marcos ?? {}) as Record<string, Status>
+  const just = txt(justificativa, 1000)
+
+  // "Concluído" só com as etapas anteriores concluídas — ou com justificativa registrada
+  if (st === 'Concluído') {
+    const idx = (MARCOS as readonly string[]).indexOf(marco)
+    const abertas = MARCOS.slice(0, idx).filter(m => (atuais[m] ?? 'Não iniciado') !== 'Concluído')
+    if (abertas.length && !just) {
+      return { ok: false, erro: `JUSTIFICAR:Há etapas anteriores em aberto (${abertas.join(', ')}). Para concluir "${marco}" mesmo assim, informe a justificativa.` }
+    }
+  }
+  const upd: Record<string, unknown> = {}
+  if (st === 'Bloqueado' && !impl.motivo_bloqueio) {
+    if (!just) return { ok: false, erro: `JUSTIFICAR:Informe o motivo do bloqueio da etapa "${marco}".` }
+    upd.motivo_bloqueio = just
+  }
+
+  const marcos = { ...atuais, [marco]: st }
+  upd.marcos = marcos
+  // a decisão do gestor vale até ele voltar ao cálculo automático
+  if ('marcos_manuais' in impl) upd.marcos_manuais = { ...(impl.marcos_manuais ?? {}), [marco]: true }
+  const { error } = await db.from('academia_implantacoes').update(upd).eq('id', id)
   if (error) return { ok: false, erro: msgErro(error) }
   await sincronizarComercial(id, marcos)
+  await auditar(user, 'UPDATE', 'academia_implantacoes', id,
+    { escola: impl.escola_nome, etapa: marco, status: st, justificativa: just, origem: 'gestor' },
+    { escola: impl.escola_nome, etapa: marco, status: atuais[marco] ?? 'Não iniciado' })
+  refresh()
+  return { ok: true }
+}
+
+/** Devolve a etapa ao cálculo automático pelas tarefas. */
+export async function voltarAoAutomatico(id: string, marco: string): Promise<Resultado> {
+  const user = await autorizado()
+  if (!user) return { ok: false, erro: 'Sessão expirada. Entre novamente.' }
+  const idx = (MARCOS as readonly string[]).indexOf(marco)
+  if (idx < 0) return { ok: false, erro: 'Etapa inválida.' }
+  const db = createAdminClient()
+  const { data: impl } = await db.from('academia_implantacoes').select('*').eq('id', id).maybeSingle()
+  if (!impl) return { ok: false, erro: 'Escola não encontrada.' }
+  if ('marcos_manuais' in impl) {
+    const m = { ...(impl.marcos_manuais ?? {}) } as Record<string, boolean>
+    delete m[marco]
+    await db.from('academia_implantacoes').update({ marcos_manuais: m }).eq('id', id)
+  }
+  await recalcularMarco(db, user, id, idx)
+  await auditar(user, 'UPDATE', 'academia_implantacoes', id, { escola: impl.escola_nome, etapa: marco, origem: 'volta ao automático' })
   refresh()
   return { ok: true }
 }
@@ -169,6 +283,8 @@ export async function gerarTarefas(implId: string): Promise<Resultado> {
   const user = await autorizado()
   if (!user) return { ok: false, erro: 'Sessão expirada. Entre novamente.' }
   const n = await gerarTarefasPara(implId)
+  await recalcularTodos(createAdminClient(), user, implId)
+  await auditar(user, 'INSERT', 'academia_tarefas', implId, { tarefas_criadas: n })
   refresh()
   return { ok: true, msg: n ? `${n} tarefas criadas a partir dos documentos.` : 'Nenhuma tarefa nova: as tarefas-modelo já existem para esta escola.' }
 }
@@ -193,6 +309,8 @@ export async function criarTarefa(fd: FormData): Promise<Resultado> {
     created_by: user.id,
   })
   if (error) return { ok: false, erro: msgErro(error) }
+  await recalcularMarco(createAdminClient(), user, txt(fd.get('implantacao_id'), 60), lista.marco)
+  await auditar(user, 'INSERT', 'academia_tarefas', null, { titulo, lista: lista.slug })
   refresh()
   return { ok: true }
 }
@@ -213,8 +331,16 @@ export async function atualizarTarefa(id: string, patch: Record<string, unknown>
     else upd[k] = txt(v, k === 'descricao' ? 2000 : 300)
   }
   if (!Object.keys(upd).length) return { ok: true }
-  const { error } = await createAdminClient().from('academia_tarefas').update(upd).eq('id', id)
+  const db = createAdminClient()
+  const { data: antes } = await db.from('academia_tarefas').select('titulo, status, prazo, responsavel, prioridade, implantacao_id, marco').eq('id', id).maybeSingle()
+  const { error } = await db.from('academia_tarefas').update(upd).eq('id', id)
   if (error) return { ok: false, erro: msgErro(error) }
+  if (antes) {
+    const antigo: Record<string, unknown> = {}
+    for (const k of Object.keys(upd)) if (k in antes) antigo[k] = (antes as Record<string, unknown>)[k]
+    await auditar(user, 'UPDATE', 'academia_tarefas', id, { tarefa: antes.titulo, ...upd }, { tarefa: antes.titulo, ...antigo })
+    if ('status' in upd) await recalcularMarco(db, user, antes.implantacao_id, antes.marco)
+  }
   refresh()
   return { ok: true }
 }
@@ -222,8 +348,14 @@ export async function atualizarTarefa(id: string, patch: Record<string, unknown>
 export async function excluirTarefa(id: string): Promise<Resultado> {
   const user = await autorizado()
   if (!user) return { ok: false, erro: 'Sessão expirada. Entre novamente.' }
-  const { error } = await createAdminClient().from('academia_tarefas').delete().eq('id', id)
+  const db = createAdminClient()
+  const { data: antes } = await db.from('academia_tarefas').select('titulo, status, implantacao_id, marco').eq('id', id).maybeSingle()
+  const { error } = await db.from('academia_tarefas').delete().eq('id', id)
   if (error) return { ok: false, erro: msgErro(error) }
+  if (antes) {
+    await auditar(user, 'DELETE', 'academia_tarefas', id, null, antes)
+    await recalcularMarco(db, user, antes.implantacao_id, antes.marco)
+  }
   refresh()
   return { ok: true }
 }
@@ -242,6 +374,7 @@ export async function criarEvento(fd: FormData): Promise<Resultado> {
   const inicio = new Date(`${dia}T${hi}:00-03:00`)
   const fim = hf ? new Date(`${dia}T${hf}:00-03:00`) : null
   if (Number.isNaN(inicio.getTime())) return { ok: false, erro: 'Horário inválido.' }
+  if (fim && !Number.isNaN(fim.getTime()) && fim <= inicio) return { ok: false, erro: 'O horário de término precisa ser depois do início.' }
   const db = createAdminClient()
   const implId = txt(fd.get('implantacao_id'), 60)
   const { error } = await db.from('academia_eventos').insert({
@@ -276,6 +409,7 @@ export async function criarEvento(fd: FormData): Promise<Resultado> {
     escola_id: escolaId,
     criado_por: user.id,
   })
+  await auditar(user, 'INSERT', 'academia_eventos', null, { titulo, inicio: inicio.toISOString() })
   refresh()
   return { ok: true }
 }
@@ -304,6 +438,7 @@ export async function trazerAssinadas(escolaIds?: string[]): Promise<Resultado> 
   })))
   if (error) return { ok: false, erro: msgErro(error) }
   refresh()
+  await auditar(user, 'INSERT', 'academia_implantacoes', null, { escolas: novas.map(n => n.nome), origem: 'contrato assinado no Comercial' })
   return { ok: true, msg: novas.length === 1 ? '1 escola trazida para o Painel.' : `${novas.length} escolas trazidas para o Painel.` }
 }
 

@@ -7,7 +7,7 @@ import {
   PRIORIDADES, RISCOS, exigeMotivo, fmtData, percentual, prazoVencido,
   type Implantacao, type Prioridade, type Risco, type Status,
 } from '@/lib/academia-gestao'
-import { atualizarImplantacao, definirMarco, gerarTarefas } from '@/app/(dashboard)/academia/gestao/actions'
+import { atualizarImplantacao, definirMarco, gerarTarefas, voltarAoAutomatico, type Resultado } from '@/app/(dashboard)/academia/gestao/actions'
 import { Aviso, SelectPessoa, StatusSelect, useRun } from './ui'
 
 /** Campo de texto que só grava quando perde o foco e o valor mudou. */
@@ -35,6 +35,27 @@ function Linha({ i, pessoas }: { i: Implantacao; pessoas: string[] }) {
   const motivoPendente = exigeMotivo(i) && !i.motivo_bloqueio
   const salvar = (patch: Record<string, unknown>) => run(() => atualizarImplantacao(i.id, patch))
 
+  /** Quando a regra pede uma justificativa, o servidor responde "JUSTIFICAR:…" e a pessoa a informa aqui. */
+  const semPrefixo = (r: Resultado): Resultado => (r.ok ? r : { ok: false, erro: r.erro.replace(/^JUSTIFICAR:/, '') })
+  async function trocarMarco(m: string, s: Status): Promise<Resultado> {
+    let r = await definirMarco(i.id, m, s)
+    if (!r.ok && r.erro.startsWith('JUSTIFICAR:')) {
+      const just = window.prompt(r.erro.slice('JUSTIFICAR:'.length))
+      if (!just?.trim()) return { ok: false, erro: 'Alteração cancelada: faltou a justificativa.' }
+      r = await definirMarco(i.id, m, s, just.trim())
+    }
+    return semPrefixo(r)
+  }
+  async function trocarRisco(novo: Risco): Promise<Resultado> {
+    let r = await atualizarImplantacao(i.id, { risco: novo })
+    if (!r.ok && r.erro.startsWith('JUSTIFICAR:')) {
+      const motivo = window.prompt(r.erro.slice('JUSTIFICAR:'.length))
+      if (!motivo?.trim()) return { ok: false, erro: 'Alteração cancelada: faltou o motivo.' }
+      r = await atualizarImplantacao(i.id, { risco: novo, motivo_bloqueio: motivo.trim() })
+    }
+    return semPrefixo(r)
+  }
+
   return (
     <tr className={pending ? 'is-saving' : undefined}>
       <th scope="row" className="ac-grid-escola">
@@ -54,8 +75,15 @@ function Linha({ i, pessoas }: { i: Implantacao; pessoas: string[] }) {
           <StatusSelect
             value={(i.marcos?.[m] ?? 'Não iniciado') as Status}
             label={m}
-            onChange={s => run(() => definirMarco(i.id, m, s))}
+            onChange={s => run(() => trocarMarco(m, s))}
           />
+          {i.marcos_manuais?.[m] ? (
+            <button
+              type="button" className="ac-auto"
+              title="Esta etapa foi definida pelo gestor. Clique para voltar ao cálculo automático pelas tarefas."
+              onClick={() => run(() => voltarAoAutomatico(i.id, m))}
+            >manual ↺</button>
+          ) : null}
         </td>
       ))}
       <td><Campo valor={i.proxima_acao} rotulo="Próxima ação" largura={240} onSalvar={v => salvar({ proxima_acao: v })} /></td>
@@ -64,7 +92,7 @@ function Linha({ i, pessoas }: { i: Implantacao; pessoas: string[] }) {
         <Campo valor={i.prazo} tipo="date" rotulo="Prazo" onSalvar={v => salvar({ prazo: v })} />
       </td>
       <td>
-        <select className="ac-cell-in ac-risco" data-r={i.risco} value={i.risco} aria-label="Risco" onChange={e => salvar({ risco: e.target.value as Risco })}>
+        <select className="ac-cell-in ac-risco" data-r={i.risco} value={i.risco} aria-label="Risco" onChange={e => run(() => trocarRisco(e.target.value as Risco))}>
           {RISCOS.map(r => <option key={r}>{r}</option>)}
         </select>
       </td>

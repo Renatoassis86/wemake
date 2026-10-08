@@ -137,6 +137,8 @@ export default function FormularioPublico() {
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const [isFormDirty, setIsFormDirty] = useState(false)
   const feedbackRef = useRef<HTMLDivElement | null>(null)
+  // depois de um envio bem-sucedido o rascunho local não pode voltar a ser gravado
+  const enviadoRef = useRef(false)
 
   // Segmentos controlados — cada um expande sua sub-grade de séries quando marcado
   const [segInfantil, setSegInfantil] = useState(false)
@@ -195,6 +197,7 @@ export default function FormularioPublico() {
   // AUTO-SAVE a cada 1 segundo - GARANTE que dados estão SEMPRE salvos IMEDIATAMENTE
   useEffect(() => {
     const autoSaveInterval = setInterval(() => {
+      if (enviadoRef.current) return
       const formElement = document.querySelector('form')
       if (formElement) {
         const formData = new FormData(formElement)
@@ -241,13 +244,6 @@ export default function FormularioPublico() {
     try {
       const formData = new FormData(e.currentTarget)
 
-      // Log dos dados sendo enviados
-      console.log('📝 Enviando formulário...')
-      console.log('Dados do formulário:')
-      for (let [key, value] of formData.entries()) {
-        console.log(`  ${key}: ${value}`)
-      }
-
       const result = await enviarFormularioPublico(formData)
 
       console.log('📤 Resultado do servidor:', result)
@@ -261,7 +257,8 @@ export default function FormularioPublico() {
 
         console.log('✅ SUCESSO! Dados salvos no banco de dados')
 
-        // Limpa rascunhos pra a página recarregar em branco
+        // Limpa rascunhos pra a página recarregar em branco (e impede que sejam gravados de novo)
+        enviadoRef.current = true
         try {
           localStorage.removeItem('formulario_rascunho_auto')
           localStorage.removeItem('formulario_rascunho')
@@ -609,6 +606,11 @@ export default function FormularioPublico() {
                 <Field label="Valor do Ticket Médio da Escola" name="ticket_medio" type="text" required placeholder="R$ 0,00" />
               </Row>
             </Section>
+
+            <aside style={{ margin: '0 0 1.25rem', padding: '1rem 1.15rem', border: '1px solid #e2e8f0', borderLeft: '4px solid #5FE3D0', borderRadius: 10, background: '#f8fafc', fontSize: '.82rem', lineHeight: 1.6, color: '#334155' }}>
+              <b style={{ display: 'block', marginBottom: '.25rem', color: '#0f172a' }}>Como usamos os seus dados</b>
+              Os dados deste formulário, incluindo o CPF e o endereço do representante legal, servem para preparar a proposta comercial e o contrato da sua escola. Quem acessa é a equipe da We Make. Para corrigir ou pedir a exclusão dos dados, escreva para contato@wemake.tec.br.
+            </aside>
 
             <div className="form-actions" style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
               <button

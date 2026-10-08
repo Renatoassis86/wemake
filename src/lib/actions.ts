@@ -32,7 +32,8 @@ async function createAuditLog(action: 'INSERT' | 'UPDATE' | 'DELETE', tableName:
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return
 
-  await supabase.from('audit_log').insert({
+  // service role: a policy da tabela recusava o insert do usuário comum e nada era registrado
+  await createAdminClient().from('audit_log').insert({
     user_id: user.id,
     user_email: user.email,
     action,

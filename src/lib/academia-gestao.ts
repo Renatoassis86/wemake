@@ -38,6 +38,8 @@ export interface Implantacao {
   responsavel: string | null
   prioridade: Prioridade
   marcos: Record<string, Status>
+  /** etapas cujo status o gestor definiu à mão (não seguem mais o cálculo pelas tarefas) */
+  marcos_manuais?: Record<string, boolean>
   proxima_acao: string | null
   responsavel_acao: string | null
   prazo: string | null
@@ -96,6 +98,18 @@ export function prazoVencido(i: Pick<Implantacao, 'prazo' | 'marcos'>) {
   return !!i.prazo && i.prazo < hojeISO() && percentual(i) < 1
 }
 
+/** Quantas tarefas abertas e vencidas cada escola tem. */
+export function tarefasVencidas(tarefas: Pick<Tarefa, 'implantacao_id' | 'prazo' | 'status'>[]) {
+  const hoje = hojeISO()
+  const porEscola = new Map<string, number>()
+  for (const t of tarefas) {
+    if (t.implantacao_id && t.prazo && t.prazo < hoje && t.status !== 'Concluído') {
+      porEscola.set(t.implantacao_id, (porEscola.get(t.implantacao_id) ?? 0) + 1)
+    }
+  }
+  return porEscola
+}
+
 export function temBloqueio(i: Pick<Implantacao, 'marcos'>) {
   return MARCOS.some(m => i.marcos?.[m] === 'Bloqueado')
 }
@@ -109,8 +123,9 @@ export function exigeAtencao(i: Implantacao) {
   return i.risco === 'Alto' || i.risco === 'Crítico' || temBloqueio(i) || prazoVencido(i)
 }
 
-export function resumo(impls: Implantacao[]) {
+export function resumo(impls: Implantacao[], tarefas: Pick<Tarefa, 'implantacao_id' | 'prazo' | 'status'>[] = []) {
   const ativas = impls.filter(i => !i.arquivada)
+  const comTarefaVencida = tarefasVencidas(tarefas)
   const porEtapa = MARCOS.map(m => {
     const concluidas = ativas.filter(i => i.marcos?.[m] === 'Concluído').length
     return { nome: m, concluidas, total: ativas.length, pct: ativas.length ? concluidas / ativas.length : 0 }
@@ -123,10 +138,11 @@ export function resumo(impls: Implantacao[]) {
     escolas: ativas.length,
     goLive: ativas.filter(i => i.marcos?.['Go-Live'] === 'Concluído').length,
     riscoAlto: ativas.filter(i => i.risco === 'Alto' || i.risco === 'Crítico').length,
-    vencidos: ativas.filter(prazoVencido).length,
+    // prazo da escola vencido OU tarefa aberta e vencida
+    vencidos: ativas.filter(i => prazoVencido(i) || comTarefaVencida.has(i.id)).length,
     porEtapa,
     porRisco,
-    atencao: ativas.filter(exigeAtencao),
+    atencao: ativas.filter(i => exigeAtencao(i) || comTarefaVencida.has(i.id)),
   }
 }
 

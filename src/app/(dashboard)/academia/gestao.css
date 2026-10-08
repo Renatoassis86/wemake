@@ -381,3 +381,6 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 .ac-ficha-dl > div { display: grid; grid-template-columns: minmax(8rem, 11rem) minmax(0, 1fr); gap: .75rem; padding: .7rem 0; border-bottom: 1px solid var(--ac-line); }
 .ac-ficha-dl dt { font: 600 .66rem/1.4 var(--ac-sans); letter-spacing: .1em; text-transform: uppercase; color: var(--ac-muted); padding-top: .15rem; }
 .ac-ficha-dl dd { margin: 0; font: 500 .94rem/1.45 var(--ac-sans); color: var(--ac-ink); overflow-wrap: anywhere; }
+
+.ac-auto { display: block; margin: .25rem auto 0; padding: .1rem .45rem; border: 1px solid var(--ac-line-2); border-radius: 99px; background: var(--ac-ivory); font: 600 .6rem/1.5 var(--ac-sans); color: var(--ac-muted); cursor: pointer; }
+.ac-auto:hover { border-color: var(--ac-ink); color: var(--ac-ink); }

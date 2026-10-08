@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { emailsAutorizados, gerarPin, hashPin } from '@/lib/diagnostico-auth'
+import { auditar } from '@/lib/auditoria'
 import { BUCKET, CHAVES_PARECER, STATUS_DIAGNOSTICO, limparPatch, patchParaLinhasParecer, type StatusDiagnostico } from '@/lib/diagnostico'
 
 /** Só quem está na lista (Renato e Dênis, a princípio) mexe nos diagnósticos e vê as respostas. */
@@ -51,7 +52,7 @@ export async function criarDiagnostico(fd: FormData): Promise<CriarResultado> {
       .insert({ implantacao_id: implId, escola_nome: nome, pin_hash: hashPin(pin), created_by: user.id })
       .select('id, link_token')
       .single()
-    if (!error && data) { refresh(); return { ok: true, id: data.id, pin, token: data.link_token } }
+    if (!error && data) { await auditar(user, 'INSERT', 'academia_diagnosticos', data.id, { escola: nome }); refresh(); return { ok: true, id: data.id, pin, token: data.link_token } }
     if (error && error.code !== '23505') return { ok: false, erro: error.message }
   }
   return { ok: false, erro: 'Não foi possível gerar um PIN único. Tente de novo.' }
@@ -68,7 +69,7 @@ export async function regenerarPin(id: string): Promise<CriarResultado> {
       .eq('id', id)
       .select('link_token')
       .single()
-    if (!error && data) { refresh(); return { ok: true, id, pin, token: data.link_token } }
+    if (!error && data) { await auditar(user, 'UPDATE', 'academia_diagnosticos', id, { acao: 'novo PIN gerado' }); refresh(); return { ok: true, id, pin, token: data.link_token } }
     if (error.code !== '23505') return { ok: false, erro: error.message }
   }
   return { ok: false, erro: 'Não foi possível gerar um PIN único. Tente de novo.' }
@@ -81,6 +82,7 @@ export async function salvarParecer(id: string, patch: Record<string, unknown>):
   if (!Object.keys(limpo).length) return { ok: true }
   const { data, error } = await createAdminClient().rpc('academia_salvar_pareceres', { p_id: id, p_rows: patchParaLinhasParecer(limpo) })
   if (error) return { ok: false, erro: error.message }
+  if (data) await auditar(user, 'UPDATE', 'academia_diag_pareceres', id, { campos: Object.keys(limpo) })
   return data ? { ok: true } : { ok: false, erro: 'Diagnóstico não encontrado.' }
 }
 
@@ -88,8 +90,11 @@ export async function definirStatus(id: string, status: string): Promise<{ ok: b
   const user = await autorizado()
   if (!user) return SEM_PERMISSAO
   if (!(status in STATUS_DIAGNOSTICO)) return { ok: false, erro: 'Status inválido.' }
-  const { error } = await createAdminClient().from('academia_diagnosticos').update({ status: status as StatusDiagnostico }).eq('id', id)
+  const db = createAdminClient()
+  const { data: antes } = await db.from('academia_diagnosticos').select('escola_nome, status').eq('id', id).maybeSingle()
+  const { error } = await db.from('academia_diagnosticos').update({ status: status as StatusDiagnostico }).eq('id', id)
   if (error) return { ok: false, erro: error.message }
+  await auditar(user, 'UPDATE', 'academia_diagnosticos', id, { escola: antes?.escola_nome, status }, { escola: antes?.escola_nome, status: antes?.status })
   refresh()
   return { ok: true }
 }
@@ -105,8 +110,10 @@ export async function excluirDiagnostico(id: string): Promise<{ ok: boolean; err
     const { error: e1 } = await db.storage.from(BUCKET).remove(paths)
     if (e1) return { ok: false, erro: `Não foi possível apagar os arquivos: ${e1.message}` }
   }
+  const { data: antes } = await db.from('academia_diagnosticos').select('escola_nome, status').eq('id', id).maybeSingle()
   const { error } = await db.from('academia_diagnosticos').delete().eq('id', id)
   if (error) return { ok: false, erro: error.message }
+  await auditar(user, 'DELETE', 'academia_diagnosticos', id, null, { ...antes, arquivos_apagados: paths.length })
   refresh()
   return { ok: true }
 }

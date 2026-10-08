@@ -16,7 +16,7 @@ export default async function PainelPage() {
   if (d.setup || d.erro) return <SetupNotice erro={d.erro} />
 
   const ativas = d.implantacoes.filter(i => !i.arquivada)
-  const r = resumo(d.implantacoes)
+  const r = resumo(d.implantacoes, d.tarefas)
   const pessoas = d.pessoas.map(p => p.nome)
   const noPainel = new Set(d.implantacoes.map(i => i.escola_id).filter(Boolean))
   const foraDoPainel = assinadas.filter(a => !noPainel.has(a.id))
