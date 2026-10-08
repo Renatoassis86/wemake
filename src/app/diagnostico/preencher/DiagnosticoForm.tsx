@@ -313,7 +313,7 @@ export default function DiagnosticoForm({
                       <li>quantidade;</li>
                       <li>características relevantes para o projeto.</li>
                     </ul>
-                    <p className="dg-dica dg-dica--campo">As informações podem ser descritas no campo acima ou enviadas por links dos modelos/produtos existentes.</p>
+                    <p className="dg-dica dg-dica--campo">As informações podem ser descritas no campo acima. Ou você pode inserir links de referência dos modelos.</p>
                   </div>
                 ) : null}
               </div>
