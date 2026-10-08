@@ -126,10 +126,13 @@ schema = {
     },
 }
 # Nomes ajustados pela We Make (outubro/2026)
-RENOMEAR = {'reu-39': 'TV ou projetor'}
+RENOMEAR = {'reu-39': 'TV ou projetor', 'reu-37': 'Notebooks ou desktops'}
+# Itens que saíram do diagnóstico (a chave não é reaproveitada)
+EXCLUIR = {'reu-30'}  # Montagem LED + Resistor Pré-cablado
 for _r in schema['reutilizaveis']:
     if _r['key'] in RENOMEAR:
         _r['item'] = RENOMEAR[_r['key']]
+schema['reutilizaveis'] = [_r for _r in schema['reutilizaveis'] if _r['key'] not in EXCLUIR]
 
 os.makedirs(os.path.dirname(OUT_JSON), exist_ok=True)
 with open(OUT_JSON, 'w', encoding='utf-8') as f:

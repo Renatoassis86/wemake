@@ -523,16 +523,6 @@
    "valor": 12.5
   },
   {
-   "key": "reu-30",
-   "categoria": "Eletrônica",
-   "item": "Montagem LED + Resistor Pré-cablado",
-   "spec": "Kit 50 peças de LED + Resistor com suporte",
-   "qtd": 1.0,
-   "unid": "kit",
-   "ref": "https://pt.aliexpress.com/item/1005008510660133.html?spm=a2g0o.order_list.order_list_main.5.42f3caa49hCHGc&gatewayAdapt=glo2bra",
-   "valor": 52.0
-  },
-  {
    "key": "reu-31",
    "categoria": "Eletrônica",
    "item": "Suporte para bateria 9V",
@@ -595,7 +585,7 @@
   {
    "key": "reu-37",
    "categoria": "Informática",
-   "item": "Notebooks i3 SSD 256gb",
+   "item": "Notebooks ou desktops",
    "spec": "Notebook Intel Core i3 8GB 256GB SSD - 15,6” Full HD Windows 11",
    "qtd": 10.0,
    "unid": "unidade",
