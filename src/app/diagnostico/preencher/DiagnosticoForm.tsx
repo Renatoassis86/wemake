@@ -303,6 +303,19 @@ export default function DiagnosticoForm({
               <div key={grupo} className="dg-brief">
                 <h3 className="ac-minor">{grupo}</h3>
                 {SCHEMA.briefing.filter(b => b.grupo === grupo && briefingVisivel(b, r)).map(b => pergunta(b))}
+                {grupo === '2.3 Mobiliário' ? (
+                  <div className="dg-q">
+                    <p className="dg-dica dg-dica--campo">Sempre que possível, envie as dimensões dos móveis, considerando:</p>
+                    <ul className="dg-lista">
+                      <li>largura;</li>
+                      <li>profundidade;</li>
+                      <li>altura;</li>
+                      <li>quantidade;</li>
+                      <li>características relevantes para o projeto.</li>
+                    </ul>
+                    <p className="dg-dica dg-dica--campo">As informações podem ser enviadas de diferentes formas: descritas no campo abaixo, por meio de fotografias ou por links dos modelos/produtos existentes.</p>
+                  </div>
+                ) : null}
               </div>
             ))}
           </section>
