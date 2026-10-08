@@ -19,15 +19,15 @@ interface ConviteParams {
 
 function fmtDataHora(iso: string, diaInteiro: boolean) {
   const d = new Date(iso)
-  const data = d.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })
+  const data = d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo', weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })
   if (diaInteiro) return data
-  const hora = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+  const hora = d.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' })
   return `${data} às ${hora}`
 }
 
 function htmlConvite(p: ConviteParams) {
   const inicio = fmtDataHora(p.dataInicio, p.diaInteiro)
-  const fim    = p.diaInteiro ? '' : new Date(p.dataFim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+  const fim    = p.diaInteiro ? '' : new Date(p.dataFim).toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' })
   const isLink = p.local?.startsWith('http')
 
   return `<!DOCTYPE html>

@@ -117,7 +117,7 @@ export default async function AdminpanelPage() {
                   {logs?.map((log: any) => (
                     <tr key={log.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                       <td style={{ padding: '.85rem 1.25rem', fontSize: '.75rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                        {new Date(log.created_at).toLocaleString('pt-BR')}
+                        {new Date(log.created_at).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
                       </td>
                       <td style={{ padding: '.85rem 1.25rem', fontSize: '.8rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                         {log.user_email || 'Sistema'}

@@ -79,7 +79,7 @@ export default async function ComercialDashboard({ searchParams }: Props) {
     <div>
       <PageHeader
         title="Dashboard Comercial"
-        subtitle={`Ao vivo · atualizado a cada acesso · ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', hour: '2-digit', minute: '2-digit' })}`}
+        subtitle={`Ao vivo · atualizado a cada acesso · ${new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: 'long', hour: '2-digit', minute: '2-digit' })}`}
         actions={
           <Link href="/comercial/registros/novo" style={{ display: 'inline-flex', alignItems: 'center', gap: '.35rem', padding: '.45rem 1rem', borderRadius: 9999, background: '#4A7FDB', color: '#fff', textDecoration: 'none', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 12px rgba(74,127,219,.3)' }}>
             <Plus size={13} /> Novo Registro

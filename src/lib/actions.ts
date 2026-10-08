@@ -8,6 +8,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { calcPotencial, calcProbabilidade, calcClassificacao } from '@/types/database'
 import type { StageNegociacao } from '@/types/database'
 import { registrarFormularioNoFunil } from '@/lib/escola-da-proposta'
+import { cnpjValido, cpfValido, formatarReais, valorEmReais } from '@/lib/validacao-docs'
 
 // ─── Tipos de retorno das actions (para uso em Client Components) ─────────────
 
@@ -1202,7 +1203,20 @@ export async function enviarFormularioPublico(formData: FormData): Promise<Actio
 
     // Dados da seção 5: Financeiro
     const fin_email_cobranca = formData.get('fin_email_cobranca') as string
-    const ticket_medio = formData.get('ticket_medio') as string || null
+    const ticket_bruto = formData.get('ticket_medio') as string || null
+
+    // Validações: dígitos de CNPJ e CPF, ano letivo em ordem e ticket em reais
+    if (cnpj && !cnpjValido(cnpj)) return { success: false, error: 'O CNPJ informado não é válido. Confira os números.' }
+    if (legal_cpf && !cpfValido(legal_cpf)) return { success: false, error: 'O CPF do representante legal não é válido. Confira os números.' }
+    if (data_inicio_letivo && data_fim_letivo && data_fim_letivo <= data_inicio_letivo) {
+      return { success: false, error: 'O fim do ano letivo precisa ser depois do início.' }
+    }
+    let ticket_medio: string | null = null
+    if (ticket_bruto) {
+      const valor = valorEmReais(ticket_bruto)
+      if (valor === null) return { success: false, error: 'O valor do ticket médio precisa ser um número em reais, por exemplo 300,00.' }
+      ticket_medio = formatarReais(valor)
+    }
 
     const payload = {
       resp_email,

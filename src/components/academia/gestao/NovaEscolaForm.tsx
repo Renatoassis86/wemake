@@ -41,11 +41,11 @@ export default function NovaEscolaForm({ escolas, pessoas }: { escolas: { id: st
           <div className="ac-form-g">
             <label>
               <span>Escola</span>
-              <input name="escola_nome" list="ac-escolas" required maxLength={160} onChange={e => aoDigitar(e.target.value)} placeholder="Nome oficial da instituição" />
+              <input name="escola_nome" aria-label="Escola" list="ac-escolas" required maxLength={160} onChange={e => aoDigitar(e.target.value)} placeholder="Nome oficial da instituição" />
               <datalist id="ac-escolas">{escolas.map(e => <option key={e.id} value={e.nome} />)}</datalist>
               <small>{escolaId ? 'Vinculada ao cadastro comercial.' : 'Escolha uma escola do CRM ou digite o nome.'}</small>
             </label>
-            <label><span>Cidade/UF</span><input name="cidade_uf" maxLength={80} value={cidade} onChange={e => setCidade(e.target.value)} /></label>
+            <label><span>Cidade/UF</span><input name="cidade_uf" aria-label="Cidade e UF" maxLength={80} value={cidade} onChange={e => setCidade(e.target.value)} /></label>
             <label>
               <span>Responsável We Make</span>
               <SelectPessoa pessoas={pessoas} name="responsavel" value={resp} onChange={setResp} className="" />
@@ -54,12 +54,12 @@ export default function NovaEscolaForm({ escolas, pessoas }: { escolas: { id: st
               <span>Prioridade</span>
               <select name="prioridade" defaultValue="Normal">{PRIORIDADES.map(p => <option key={p}>{p}</option>)}</select>
             </label>
-            <label><span>Data da assinatura</span><input type="date" name="data_assinatura" /></label>
-            <label><span>Onboarding (dia 1)</span><input type="date" name="data_onboarding" /></label>
-            <label><span>Início das aulas</span><input type="date" name="data_inicio_aulas" /></label>
+            <label><span>Data da assinatura</span><input type="date" name="data_assinatura" aria-label="Data da assinatura" /></label>
+            <label><span>Onboarding (dia 1)</span><input type="date" name="data_onboarding" aria-label="Data do onboarding (dia 1)" /></label>
+            <label><span>Início das aulas</span><input type="date" name="data_inicio_aulas" aria-label="Data de início das aulas" /></label>
           </div>
           <label className="ac-check">
-            <input type="checkbox" name="gerar_tarefas" defaultChecked />
+            <input type="checkbox" name="gerar_tarefas" aria-label="Criar as tarefas-modelo dos documentos" defaultChecked />
             <span>Criar as tarefas-modelo dos documentos (prazos calculados pelas datas acima)</span>
           </label>
           <Aviso erro={erro} msg={msg} />
