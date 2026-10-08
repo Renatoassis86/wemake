@@ -362,7 +362,7 @@ values
   ('par-10', 'parecer_ambiente', 'Parecer técnico do ambiente', 'Organização para trabalho em grupos', null, null, null, null, null, 48),
   ('par-11', 'parecer_ambiente', 'Parecer técnico do ambiente', 'Adequações gerais recomendadas', null, null, null, null, null, 49),
   ('reu-01', 'reutilizavel', 'Máquina digital', 'Impressora 3D', 'Impressora 3D Bambu Lab A1 Combo', 1.0, 'unidade', 'https://www.3dcuritiba.com.br/impressora3dbambulaba1combo', 5299.0, 50),
-  ('reu-02', 'reutilizavel', 'Máquina digital', 'Balança digital eletrônica', 'Caga máxima 50kg, precisão 1g [compra internacional - Mercado Livre]', 1.0, 'unidade', 'https://meli.la/1f9RNEJ', 160.0, 51),
+  ('reu-02', 'reutilizavel', 'Máquina digital', 'Balança digital eletrônica', 'Carga máxima 50kg, precisão 1g [compra internacional - Mercado Livre]', 1.0, 'unidade', 'https://meli.la/1f9RNEJ', 160.0, 51),
   ('reu-03', 'reutilizavel', 'Máquina manual', 'Furadeira/Parafusadeira', 'Furadeira e Parafusadeira à Bateria 12V BIVOLT PFV 012 com Kit de Brocas e Bits VONDER', 1.0, 'unidade', 'https://meli.la/28yE4gB', 216.31, 52),
   ('reu-04', 'reutilizavel', 'Ferramenta', 'Alicate universal', 'Alicate universal de aço 8 pol.', 1.0, 'unidade', 'https://meli.la/2xSQcVP', 41.44, 53),
   ('reu-05', 'reutilizavel', 'Ferramenta', 'Alicate de bico meia cano reto', 'Alicate Bico Meia Cana Reto com Cabo Isolado 6 Pol.', 1.0, 'unidade', 'https://meli.la/26mYKqu', 36.0, 54),

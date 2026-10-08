@@ -133,6 +133,9 @@ for _r in schema['reutilizaveis']:
     if _r['key'] in RENOMEAR:
         _r['item'] = RENOMEAR[_r['key']]
 schema['reutilizaveis'] = [_r for _r in schema['reutilizaveis'] if _r['key'] not in EXCLUIR]
+# Erros de digitação da planilha original
+for _r in schema['reutilizaveis'] + schema['consumiveis']:
+    _r['spec'] = _r['spec'].replace('Caga máxima', 'Carga máxima')
 
 os.makedirs(os.path.dirname(OUT_JSON), exist_ok=True)
 with open(OUT_JSON, 'w', encoding='utf-8') as f:

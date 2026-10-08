@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin'
+import { UFS } from '@/lib/ufs'
 import { notFound } from 'next/navigation'
 import { upsertEscola } from '@/lib/actions'
 import PageHeader from '@/components/layout/PageHeader'
@@ -144,8 +145,11 @@ export default async function EscolaEditar({ params }: Props) {
                   <input name="cidade" className="form-control" defaultValue={e.cidade ?? ''} />
                 </div>
                 <div>
-                  <label className="form-label">Estado (UF)</label>
-                  <input name="estado" className="form-control" maxLength={2} defaultValue={e.estado ?? ''} style={{ textTransform: 'uppercase' }} />
+                  <label className="form-label">Estado (UF) *</label>
+                  <select name="estado" className="form-control" required defaultValue={e.estado ?? ''}>
+                    <option value="">Selecione...</option>
+                    {UFS.map(u => <option key={u} value={u}>{u}</option>)}
+                  </select>
                 </div>
               </div>
             </div>
@@ -271,8 +275,8 @@ export default async function EscolaEditar({ params }: Props) {
             <div className="card-body" style={{ padding: '1.6rem' }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem' }}>
                 <div>
-                  <label className="form-label">Origem do Lead</label>
-                  <select name="origem_lead" className="form-control" defaultValue={e.origem_lead ?? ''}>
+                  <label className="form-label">Origem do Lead *</label>
+                  <select name="origem_lead" className="form-control" required defaultValue={e.origem_lead ?? ''}>
                     <option value="">Selecione...</option>
                     {ORIGEM_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                   </select>

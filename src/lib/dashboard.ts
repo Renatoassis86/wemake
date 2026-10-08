@@ -155,7 +155,9 @@ export async function getDashboardData(filtros: DashboardFiltros): Promise<Dashb
 
   // ── KPIs ───────────────────────────────────────────────────────────────
   const propostasComValor = linhasFiltradas.filter(l => l.proposta_id && l.proposta_valor_aluno_ano)
-  const propostasEnviadas = linhasFiltradas.filter(l => l.proposta_id !== null).length
+  // mesma definição da tela de Metas: escola com proposta gerada OU marcada como "proposta enviada" no checklist
+  // (antes só contava a proposta gerada e o card divergia do Funil de Contratação)
+  const propostasEnviadas = linhasFiltradas.filter(l => l.proposta_id !== null || l.proposta_enviada_manual).length
   const contratosAssinados = linhasFiltradas.filter(l => l.contrato_assinado).length
 
   const kpis = {

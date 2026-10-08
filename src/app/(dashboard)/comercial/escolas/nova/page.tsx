@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { UFS } from '@/lib/ufs'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { upsertEscola } from '@/lib/actions'
 import PageHeader from '@/components/layout/PageHeader'
@@ -161,8 +162,11 @@ export default async function EscolaNova({ searchParams }: Props) {
                   <input name="cidade" style={input} />
                 </div>
                 <div>
-                  <label style={label}>Estado (UF)</label>
-                  <input name="estado" style={input} maxLength={2} placeholder="Ex: PB" />
+                  <label style={label}>Estado (UF) *</label>
+                  <select name="estado" style={input} required defaultValue="">
+                    <option value="">Selecione...</option>
+                    {UFS.map(u => <option key={u} value={u}>{u}</option>)}
+                  </select>
                 </div>
               </div>
             </div>
@@ -334,8 +338,8 @@ export default async function EscolaNova({ searchParams }: Props) {
             <div style={cardBody}>
               <div style={{ ...grid2, marginBottom: '1.25rem' }}>
                 <div>
-                  <label style={label}>Origem do Lead</label>
-                  <select name="origem_lead" style={input}>
+                  <label style={label}>Origem do Lead *</label>
+                  <select name="origem_lead" style={input} required>
                     <option value="">Selecione...</option>
                     {ORIGEM_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                   </select>

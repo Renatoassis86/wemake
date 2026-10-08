@@ -228,7 +228,7 @@ function Tabela({ id, titulo, itens, resp, p, set }: { id: string; titulo: strin
               return (
                 <tr key={i.key}>
                   <td><b>{i.item}</b><span className="an-spec">{i.spec}</span></td>
-                  <td>{i.qtd.toLocaleString('pt-BR')} {i.unid}</td>
+                  <td>{i.qtd.toLocaleString('pt-BR')} {i.qtd > 1 && i.unid && !/s$/i.test(i.unid) ? i.unid + 's' : i.unid}</td>
                   <td>{resp[i.key + '.p'] || <em className="an-vazio">—</em>}</td>
                   <td>{resp[i.key + '.q'] || ''}</td>
                   <td>{resp[i.key + '.m'] || ''}</td>
