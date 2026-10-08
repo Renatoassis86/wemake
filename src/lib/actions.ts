@@ -7,7 +7,7 @@ import { createPublicClient } from '@/lib/supabase/public'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { calcPotencial, calcProbabilidade, calcClassificacao } from '@/types/database'
 import type { StageNegociacao } from '@/types/database'
-import { registrarFormularioNoFunil } from '@/lib/escola-da-proposta'
+import { preencherValorDaProposta, registrarFormularioNoFunil } from '@/lib/escola-da-proposta'
 import { cnpjValido, cpfValido, formatarReais, valorEmReais } from '@/lib/validacao-docs'
 
 // ─── Tipos de retorno das actions (para uso em Client Components) ─────────────
@@ -843,6 +843,9 @@ export async function upsertContrato(formData: FormData) {
 
   if (error) throw new Error(error.message)
 
+  // contrato assinado sem valor: traz o valor da proposta, quando só há um
+  if (payload.contrato_assinado === true) await preencherValorDaProposta(createAdminClient(), escola_id)
+
   revalidatePath('/comercial/contratos')
   revalidatePath('/comercial/funil-contratacao', 'layout')
   redirect(`/comercial/contratos?escola=${escola_id}`)
@@ -1100,6 +1103,9 @@ export async function atualizarChecklistContratoInline(formData: FormData): Prom
     : await supabase.from('contratos').insert({ ...payload, escola_id, created_by: user.id })
 
   if (error) return { success: false, error: error.message }
+
+  // contrato assinado sem valor: traz o valor da proposta, quando só há um
+  if (payload.contrato_assinado === true) await preencherValorDaProposta(createAdminClient(), escola_id)
 
   revalidatePath('/comercial/funil-contratacao', 'layout')
   revalidatePath('/comercial/contratos', 'layout')

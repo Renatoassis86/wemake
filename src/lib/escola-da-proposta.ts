@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { normalizarNomeEscola } from '@/lib/utils'
+import { SEGMENTOS_CONTRATO, calcTotalAlunosContrato, calcValorTotalContrato } from '@/lib/contratos'
 
 /**
  * Garante que a escola de uma proposta exista no cadastro (`escolas`). O Funil de Contratação lê as
@@ -73,4 +74,33 @@ export async function registrarFormularioNoFunil(
     : await admin.from('contratos').insert({ escola_id: escolaId, ...flags })
   if (error) console.error('[registrarFormularioNoFunil]', error.message)
   return escolaId
+}
+
+/**
+ * Contrato assinado sem valor: copia o valor por aluno/ano da proposta da escola para todas as séries.
+ * Só age quando as propostas ativas da escola têm UM único valor (se houver mais de um, não dá para saber
+ * qual foi aceita e a equipe comercial escolhe). Nunca sobrescreve um contrato que já tem valor.
+ * Devolve o valor aplicado, ou null se nada foi feito.
+ */
+export async function preencherValorDaProposta(admin: SupabaseClient, escolaId: string): Promise<number | null> {
+  const { data: contrato } = await admin.from('contratos').select('*').eq('escola_id', escolaId).maybeSingle()
+  if (!contrato || calcValorTotalContrato(contrato) > 0 || calcTotalAlunosContrato(contrato) === 0) return null
+  const { data: escola } = await admin.from('escolas').select('nome').eq('id', escolaId).maybeSingle()
+  const alvo = normalizarNomeEscola(escola?.nome ?? '')
+  const { data: props } = await admin.from('propostas').select('escola_id, escola_nome, valor_aluno_ano').is('arquivada_em', null)
+  const valores = [...new Set(
+    (props ?? [])
+      .filter(p => p.escola_id === escolaId || (!p.escola_id && alvo && normalizarNomeEscola(p.escola_nome ?? '') === alvo))
+      .map(p => Number(p.valor_aluno_ano))
+      .filter(v => Number.isFinite(v) && v > 0),
+  )]
+  if (valores.length !== 1) return null
+  const patch: Record<string, number> = {}
+  for (const [, valKey] of SEGMENTOS_CONTRATO) patch[valKey] = valores[0]
+  const { error } = await admin.from('contratos').update(patch).eq('id', contrato.id)
+  if (error) {
+    console.error('[preencherValorDaProposta]', error.message)
+    return null
+  }
+  return valores[0]
 }
