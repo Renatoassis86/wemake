@@ -12,6 +12,11 @@ export type Momento = 'conhecer' | 'explorar' | 'criar'
 export const STATUS_TAGS = ['dado', 'sugerido', 'decidido'] as const
 export type StatusTag = (typeof STATUS_TAGS)[number]
 
+/** Status de execução de um cartão PARA UMA ESCOLA — diferente do status_tag
+ * (que é sobre a confiança do dado no molde, não sobre o andamento real). */
+export const STATUS_EXECUCAO = ['Não iniciado', 'Em andamento', 'Aguardando escola', 'Aguardando We Make', 'Concluído', 'Bloqueado'] as const
+export type StatusExecucao = (typeof STATUS_EXECUCAO)[number]
+
 async function autorizado() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -79,9 +84,13 @@ export async function atualizarCartao(id: string, patch: Record<string, unknown>
   if ('descricao' in patch) upd.descricao = txt(patch.descricao, 2000)
   if ('fonte' in patch) upd.fonte = txt(patch.fonte, 300) || null
   if ('marco' in patch) upd.marco = txt(patch.marco, 60) || null
+  // status_padrao vale pra TODAS as escolas que não têm uma exceção própria
+  // em academia_cronograma_status — é o jeito de marcar uma etapa feita pra
+  // todo mundo de uma vez, sem entrar escola por escola.
+  if ('status_padrao' in patch && STATUS_EXECUCAO.includes(patch.status_padrao as StatusExecucao)) upd.status_padrao = patch.status_padrao
 
   const db = createAdminClient()
-  const { data: antes } = await db.from('academia_cronograma_cards').select('titulo, data_label, status_tag, descricao, fonte, marco').eq('id', id).maybeSingle()
+  const { data: antes } = await db.from('academia_cronograma_cards').select('titulo, data_label, status_tag, descricao, fonte, marco, status_padrao').eq('id', id).maybeSingle()
   const { error } = await db.from('academia_cronograma_cards').update(upd).eq('id', id)
   if (error) return { ok: false, erro: error.message }
 
@@ -99,6 +108,32 @@ export async function excluirCartao(id: string): Promise<Resultado> {
   if (error) return { ok: false, erro: error.message }
 
   await auditar(user, 'DELETE', 'academia_cronograma_cards', id, { ativo: false })
+  refresh()
+  return { ok: true }
+}
+
+/** Cria ou atualiza o status de UM cartão PARA UMA escola — status de execução,
+ * prazo (pode variar por escola) e anotações. Upsert: a linha só passa a
+ * existir quando alguém mexe no cartão pela primeira vez para aquela escola. */
+export async function salvarStatusCartao(cardId: string, escolaId: string, patch: { status?: string; prazo_data?: string | null; anotacoes?: string }): Promise<Resultado> {
+  const user = await autorizado()
+  if (!user) return { ok: false, erro: 'Sessão expirada. Entre novamente.' }
+  if (!escolaId) return { ok: false, erro: 'Selecione uma escola primeiro.' }
+
+  const upd: Record<string, unknown> = { card_id: cardId, escola_id: escolaId, updated_by: user.id, updated_at: new Date().toISOString() }
+  if (patch.status !== undefined) {
+    if (!STATUS_EXECUCAO.includes(patch.status as StatusExecucao)) return { ok: false, erro: 'Status inválido.' }
+    upd.status = patch.status
+  }
+  if (patch.prazo_data !== undefined) upd.prazo_data = patch.prazo_data || null
+  if (patch.anotacoes !== undefined) upd.anotacoes = txt(patch.anotacoes, 4000)
+
+  const db = createAdminClient()
+  const { data: antes } = await db.from('academia_cronograma_status').select('status, prazo_data, anotacoes').eq('card_id', cardId).eq('escola_id', escolaId).maybeSingle()
+  const { error } = await db.from('academia_cronograma_status').upsert(upd, { onConflict: 'card_id,escola_id' })
+  if (error) return { ok: false, erro: error.message }
+
+  await auditar(user, antes ? 'UPDATE' : 'INSERT', 'academia_cronograma_status', cardId, patch, antes ?? undefined)
   refresh()
   return { ok: true }
 }

@@ -3,7 +3,10 @@
 import { useMemo, useRef, useState, useTransition } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
-import { criarCartao, atualizarCartao, excluirCartao, reordenarCartao, STATUS_TAGS, type Momento, type StatusTag } from '@/app/(dashboard)/academia/ciclo-anual/actions'
+import {
+  criarCartao, atualizarCartao, excluirCartao, salvarStatusCartao,
+  STATUS_TAGS, STATUS_EXECUCAO, type Momento, type StatusTag, type StatusExecucao,
+} from '@/app/(dashboard)/academia/ciclo-anual/actions'
 
 export interface CronogramaCard {
   id: string
@@ -15,10 +18,15 @@ export interface CronogramaCard {
   descricao: string
   fonte: string | null
   marco: string | null
+  /** status de execução que vale pra toda escola sem exceção própria registrada */
+  status_padrao: StatusExecucao
 }
 
 /** escola_nome[] agrupado por status, por marco — ex.: kanbanData['Handoff']['Concluído'] = ['Colégio X', ...] */
 export type KanbanData = Record<string, Record<string, string[]>>
+
+/** status de execução da escola selecionada, por cartão */
+export type StatusPorCard = Record<string, { status: string; prazo_data: string | null; anotacoes: string }>
 
 const MOMENTOS: { slug: Momento; nome: string }[] = [
   { slug: 'conhecer', nome: 'Conhecer — Implantação' },
@@ -28,12 +36,19 @@ const MOMENTOS: { slug: Momento; nome: string }[] = [
 
 const STATUS_ORDEM = ['Não iniciado', 'Em andamento', 'Aguardando escola', 'Aguardando We Make', 'Bloqueado', 'Concluído']
 const TAG_LABEL: Record<StatusTag, string> = { dado: 'Dado', sugerido: 'Sugerido', decidido: 'Decidido' }
+const EXEC_CURTO: Record<StatusExecucao, string> = {
+  'Não iniciado': 'Não iniciado', 'Em andamento': 'Em andamento', 'Aguardando escola': 'Aguard. escola',
+  'Aguardando We Make': 'Aguard. We Make', 'Concluído': 'Concluído', 'Bloqueado': 'Bloqueado',
+}
 
 function reduzMovimento() {
   return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 }
 
-export function CicloAnualBoard({ cards, kanbanData, marcos }: { cards: CronogramaCard[]; kanbanData: KanbanData; marcos: string[] }) {
+export function CicloAnualBoard({ cards, kanbanData, marcos, escolaId, escolaNome, statusPorCard, proximoVencerId }: {
+  cards: CronogramaCard[]; kanbanData: KanbanData; marcos: string[]
+  escolaId: string; escolaNome: string; statusPorCard: StatusPorCard; proximoVencerId: string | null
+}) {
   const porMomento = useMemo(() => {
     const m: Record<Momento, CronogramaCard[]> = { conhecer: [], explorar: [], criar: [] }
     for (const c of cards) m[c.momento].push(c)
@@ -45,11 +60,10 @@ export function CicloAnualBoard({ cards, kanbanData, marcos }: { cards: Cronogra
   const origensRef = useRef(new Map<string, HTMLButtonElement>())
 
   return (
-    <div className="ca-page">
-      <div className="ca-head">
-        <h1>Ciclo Anual da Academia</h1>
-        <p className="ca-lede">O cronograma de pós-venda da Academia We Make, do contrato assinado ao fechamento do ciclo, nos três momentos da jornada: Conhecer, Explorar e Criar.</p>
-        <p className="ca-hint">Cartões editáveis. Ligado a um marco do Painel Mestre, cada um revela no verso o andamento real das escolas naquela fase.</p>
+    <>
+      <div className="ca-escola-head">
+        <h2>{escolaNome}</h2>
+        <p>Clique num cartão para registrar o status, o prazo e anotações desta escola.</p>
       </div>
 
       {MOMENTOS.map(m => (
@@ -61,36 +75,42 @@ export function CicloAnualBoard({ cards, kanbanData, marcos }: { cards: Cronogra
           </div>
 
           <div className="ca-grid">
-            {porMomento[m.slug].map(c => (
-              <button
-                key={c.id}
-                ref={el => { if (el) origensRef.current.set(c.id, el); else origensRef.current.delete(c.id) }}
-                type="button"
-                className={`ca-card${cartaoAberto?.id === c.id ? ' ca-ghost' : ''}`}
-                onClick={() => setCartaoAberto(c)}
-              >
-                <div className="ca-card-top">
-                  <span className="ca-date">{c.data_label || '—'}</span>
-                  <span className="ca-card-actions">
-                    <span
-                      role="button" tabIndex={0} className="ca-icon-btn" title="Editar"
-                      onClick={e => { e.stopPropagation(); setFormAberto({ momento: m.slug, cartao: c }) }}
-                      onKeyDown={e => { if (e.key === 'Enter') { e.stopPropagation(); setFormAberto({ momento: m.slug, cartao: c }) } }}
-                    >✎</span>
-                    <span
-                      role="button" tabIndex={0} className="ca-icon-btn" title="Excluir"
-                      onClick={e => { e.stopPropagation(); if (confirm(`Excluir o cartão "${c.titulo}"?`)) excluirCartao(c.id) }}
-                      onKeyDown={e => { if (e.key === 'Enter') e.stopPropagation() }}
-                    >🗑</span>
-                  </span>
-                </div>
-                <h3>{c.titulo}</h3>
-                <div className="ca-card-foot">
-                  <span className={`ca-tag ${c.status_tag}`}>{TAG_LABEL[c.status_tag]}</span>
-                  {c.marco ? <span className="ca-tag marco">{c.marco}</span> : null}
-                </div>
-              </button>
-            ))}
+            {porMomento[m.slug].map(c => {
+              const exec = statusPorCard[c.id]?.status || 'Não iniciado'
+              const ehProximo = c.id === proximoVencerId
+              return (
+                <button
+                  key={c.id}
+                  ref={el => { if (el) origensRef.current.set(c.id, el); else origensRef.current.delete(c.id) }}
+                  type="button"
+                  data-exec={exec}
+                  className={`ca-card${cartaoAberto?.id === c.id ? ' ca-ghost' : ''}${ehProximo ? ' ca-proximo' : ''}`}
+                  onClick={() => setCartaoAberto(c)}
+                >
+                  {ehProximo ? <span className="ca-proximo-flag">Próximo prazo</span> : null}
+                  <div className="ca-card-top">
+                    <span className="ca-date">{c.data_label || '—'}</span>
+                    <span className="ca-card-actions">
+                      <span
+                        role="button" tabIndex={0} className="ca-icon-btn" title="Editar o cartão"
+                        onClick={e => { e.stopPropagation(); setFormAberto({ momento: m.slug, cartao: c }) }}
+                        onKeyDown={e => { if (e.key === 'Enter') { e.stopPropagation(); setFormAberto({ momento: m.slug, cartao: c }) } }}
+                      >✎</span>
+                      <span
+                        role="button" tabIndex={0} className="ca-icon-btn" title="Excluir o cartão"
+                        onClick={e => { e.stopPropagation(); if (confirm(`Excluir o cartão "${c.titulo}"?`)) excluirCartao(c.id) }}
+                        onKeyDown={e => { if (e.key === 'Enter') e.stopPropagation() }}
+                      >🗑</span>
+                    </span>
+                  </div>
+                  <h3>{c.titulo}</h3>
+                  <div className="ca-card-foot">
+                    <span className="ca-tag-exec">{EXEC_CURTO[exec as StatusExecucao] ?? exec}</span>
+                    {c.marco ? <span className="ca-tag marco">{c.marco}</span> : null}
+                  </div>
+                </button>
+              )
+            })}
 
             {formAberto?.momento === m.slug && !formAberto.cartao ? (
               <CartaoForm momento={m.slug} marcos={marcos} onFechar={() => setFormAberto(null)} />
@@ -110,10 +130,13 @@ export function CicloAnualBoard({ cards, kanbanData, marcos }: { cards: Cronogra
           cartao={cartaoAberto}
           origem={origensRef.current.get(cartaoAberto.id) ?? null}
           kanban={cartaoAberto.marco ? kanbanData[cartaoAberto.marco] : null}
+          escolaId={escolaId}
+          statusAtual={statusPorCard[cartaoAberto.id] ?? null}
+          ehProximo={cartaoAberto.id === proximoVencerId}
           onFechar={() => setCartaoAberto(null)}
         />
       ) : null}
-    </div>
+    </>
   )
 }
 
@@ -165,7 +188,7 @@ function EditarOverlay({ cartao, marcos, onFechar }: { cartao: CronogramaCard; m
   function salvar(fd: FormData) {
     const patch = {
       titulo: fd.get('titulo'), data_label: fd.get('data_label'), status_tag: fd.get('status_tag'),
-      descricao: fd.get('descricao'), fonte: fd.get('fonte'), marco: fd.get('marco'),
+      descricao: fd.get('descricao'), fonte: fd.get('fonte'), marco: fd.get('marco'), status_padrao: fd.get('status_padrao'),
     }
     startTransition(async () => {
       const res = await atualizarCartao(cartao.id, patch)
@@ -180,7 +203,7 @@ function EditarOverlay({ cartao, marcos, onFechar }: { cartao: CronogramaCard; m
           <div><label htmlFor="ed-titulo">Título</label><input id="ed-titulo" name="titulo" required maxLength={200} defaultValue={cartao.titulo} /></div>
           <div className="ca-form-row">
             <div><label htmlFor="ed-data">Data / janela</label><input id="ed-data" name="data_label" defaultValue={cartao.data_label} /></div>
-            <div><label htmlFor="ed-tag">Status</label>
+            <div><label htmlFor="ed-tag">Status do dado</label>
               <select id="ed-tag" name="status_tag" defaultValue={cartao.status_tag}>
                 {STATUS_TAGS.map(s => <option key={s} value={s}>{TAG_LABEL[s]}</option>)}
               </select>
@@ -193,6 +216,13 @@ function EditarOverlay({ cartao, marcos, onFechar }: { cartao: CronogramaCard; m
               <option value="">— nenhum —</option>
               {marcos.map(m => <option key={m} value={m}>{m}</option>)}
             </select>
+          </div>
+          <div className="ca-form-divisor">
+            <label htmlFor="ed-padrao">Status padrão — vale pra <b>todas as escolas</b></label>
+            <select id="ed-padrao" name="status_padrao" defaultValue={cartao.status_padrao}>
+              {STATUS_EXECUCAO.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+            <p className="ca-form-ajuda">Muda o status de quem ainda não tem exceção própria registrada — inclusive escolas que você ainda vai cadastrar. Use para marcar algo feito de uma vez para todo mundo, como "contratos enviados". Para ajustar só uma escola, abra o cartão por ela e mude o status no verso.</p>
           </div>
           <div className="ca-form-actions">
             <button type="submit" className="ca-btn primario" disabled={pending}>{pending ? 'Salvando…' : 'Salvar'}</button>
@@ -209,16 +239,42 @@ function EditarOverlay({ cartao, marcos, onFechar }: { cartao: CronogramaCard; m
 
 function alvoCentral() {
   const vw = window.innerWidth, vh = window.innerHeight
-  const w = Math.min(640, vw - 24), h = Math.min(Math.round(vh * 0.82), 700)
+  const w = Math.min(680, vw - 24), h = Math.min(Math.round(vh * 0.85), 760)
   return { left: Math.round((vw - w) / 2), top: Math.round((vh - h) / 2), width: w, height: h }
 }
 
-function FlipOverlay({ cartao, origem, kanban, onFechar }: { cartao: CronogramaCard; origem: HTMLElement | null; kanban: Record<string, string[]> | null; onFechar: () => void }) {
+function FlipOverlay({ cartao, origem, kanban, escolaId, statusAtual, ehProximo, onFechar }: {
+  cartao: CronogramaCard; origem: HTMLElement | null; kanban: Record<string, string[]> | null
+  escolaId: string; statusAtual: { status: string; prazo_data: string | null; anotacoes: string } | null
+  ehProximo: boolean; onFechar: () => void
+}) {
   const cenaRef = useRef<HTMLDivElement>(null)
   const cartaoRef = useRef<HTMLDivElement>(null)
   const [revelado, setRevelado] = useState(false)
   const [fechando, setFechando] = useState(false)
   const origemRectRef = useRef(origem?.getBoundingClientRect() ?? null)
+  const router = useRouter()
+
+  const [status, setStatus] = useState(statusAtual?.status || 'Não iniciado')
+  const [prazo, setPrazo] = useState(statusAtual?.prazo_data ?? '')
+  const [anotacoes, setAnotacoes] = useState(statusAtual?.anotacoes ?? '')
+  const [salvandoStatus, startStatusTransition] = useTransition()
+  const [salvandoNotas, startNotasTransition] = useTransition()
+
+  function salvarStatus(novoStatus: string, novoPrazo: string) {
+    startStatusTransition(async () => {
+      const res = await salvarStatusCartao(cartao.id, escolaId, { status: novoStatus, prazo_data: novoPrazo || null })
+      if (res.ok) router.refresh()
+      else alert(res.erro)
+    })
+  }
+
+  function salvarNotas() {
+    startNotasTransition(async () => {
+      const res = await salvarStatusCartao(cartao.id, escolaId, { anotacoes })
+      if (!res.ok) alert(res.erro)
+    })
+  }
 
   function abrir(cena: HTMLDivElement, cartaoEl: HTMLDivElement) {
     const r = origemRectRef.current
@@ -301,29 +357,68 @@ function FlipOverlay({ cartao, origem, kanban, onFechar }: { cartao: CronogramaC
             <div className="ca-flip-corpo">
               {revelado ? (
                 <>
-                  <div>
+                  {ehProximo ? <div className="ca-verso-alerta">⏰ Esta é a próxima etapa com prazo a vencer para esta escola.</div> : null}
+
+                  <section className="ca-verso-bloco">
+                    <h4>Sobre esta etapa</h4>
                     <p className="ca-desc">{cartao.descricao || 'Sem descrição ainda — clique em editar no cartão para completar.'}</p>
                     {cartao.fonte ? <p className="ca-fonte">{cartao.fonte}</p> : null}
-                  </div>
+                  </section>
+
+                  <section className="ca-verso-bloco ca-verso-status">
+                    <h4>Status para esta escola</h4>
+                    <div className="ca-status-row">
+                      <select
+                        value={status}
+                        onChange={e => { setStatus(e.target.value); salvarStatus(e.target.value, prazo) }}
+                        disabled={salvandoStatus}
+                        aria-label="Status de execução"
+                      >
+                        {STATUS_EXECUCAO.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                      <label className="ca-prazo-label">
+                        Prazo
+                        <input
+                          type="date"
+                          value={prazo}
+                          onChange={e => { setPrazo(e.target.value); salvarStatus(status, e.target.value) }}
+                          disabled={salvandoStatus}
+                        />
+                      </label>
+                      {salvandoStatus ? <span className="ca-salvando">Salvando…</span> : null}
+                    </div>
+                  </section>
+
+                  <section className="ca-verso-bloco">
+                    <h4>Anotações</h4>
+                    <textarea
+                      className="ca-notas"
+                      value={anotacoes}
+                      onChange={e => setAnotacoes(e.target.value)}
+                      onBlur={salvarNotas}
+                      placeholder="Como está o andamento, pendências, combinados com a escola…"
+                      rows={4}
+                    />
+                    {salvandoNotas ? <span className="ca-salvando">Salvando…</span> : null}
+                  </section>
+
                   {cartao.marco ? (
-                    <div>
+                    <section className="ca-verso-bloco">
                       <p className="ca-kanban-title">Escolas no marco "{cartao.marco}" · Painel Mestre</p>
                       {colunas.length ? (
                         <div className="ca-kanban">
-                          {colunas.map(status => (
-                            <div className="ca-kanban-col" key={status}>
-                              <h4><span>{status}</span><span>{kanban?.[status]?.length ?? 0}</span></h4>
-                              <ul>{kanban?.[status]?.map(nome => <li key={nome}>{nome}</li>)}</ul>
+                          {colunas.map(s => (
+                            <div className="ca-kanban-col" key={s}>
+                              <h4><span>{s}</span><span>{kanban?.[s]?.length ?? 0}</span></h4>
+                              <ul>{kanban?.[s]?.map(nome => <li key={nome}>{nome}</li>)}</ul>
                             </div>
                           ))}
                         </div>
                       ) : (
                         <p className="ca-kanban-vazio">Nenhuma escola neste marco ainda.</p>
                       )}
-                    </div>
-                  ) : (
-                    <p className="ca-kanban-vazio">Este cartão ainda não está ligado a um marco do Painel Mestre — edite o cartão para ligar e ver o kanban de escolas aqui.</p>
-                  )}
+                    </section>
+                  ) : null}
                 </>
               ) : null}
             </div>
