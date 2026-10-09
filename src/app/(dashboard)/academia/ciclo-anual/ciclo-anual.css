@@ -1,10 +1,10 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    Ciclo Anual da Academia — cartões editáveis do cronograma de pós-venda,
-   agrupados nos 3 momentos (Conhecer/Explorar/Criar). O cartão clicado voa até
-   o centro e gira (mesma técnica do painel de saúde mental, cartao-giratorio.js,
-   portada para React com a Web Animations API) revelando o verso: descrição do
-   processo e, quando ligado a um marco do Painel Mestre, o kanban real de
-   escolas naquela fase.
+   agrupados nos 3 momentos (Conhecer/Explorar/Criar). O cartão clicado abre um
+   modal centralizado que entra em escala e gira revelando o verso: descrição
+   do processo e, quando ligado a um marco do Painel Mestre, o kanban real de
+   escolas naquela fase. Tudo por transição CSS pura — sem Web Animations API
+   nem manipulação manual de DOM, que travava a aba em algumas máquinas.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .ca-page { padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 4vw, 3.5rem) 5rem; max-width: 1400px; margin: 0 auto; }
@@ -38,7 +38,6 @@
 .ca-card { position: relative; background: var(--ac-paper); border: 1.5px solid var(--ac-line); border-radius: 14px; padding: 1.1rem 1.2rem; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: .5rem; min-height: 148px; transition: border-color .15s, box-shadow .15s, transform .15s, background .15s; font-family: var(--ac-sans); }
 .ca-card:hover { border-color: var(--ac-cyan); box-shadow: 0 8px 22px rgba(3,43,54,.1); transform: translateY(-2px); }
 .ca-card:focus-visible { outline: 2px solid var(--ac-cyan); outline-offset: 2px; }
-.ca-card.ca-ghost { visibility: hidden; }
 
 /* ── Cor do cartão pelo status de execução da escola selecionada ──────────
    Não iniciado fica neutro de propósito — só os estados que exigem atenção
@@ -91,12 +90,36 @@
 .ca-btn.secundario:hover { background: var(--ac-ivory-2); }
 
 /* ── Overlay: cartão voa até o centro e gira ───────────────────────────── */
-.ca-flip-fundo { position: fixed; inset: 0; z-index: 90; background: radial-gradient(circle at 50% 42%, rgba(3,43,54,.42), rgba(3,10,13,.8)); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
-.ca-flip-cena { position: fixed; z-index: 91; perspective: 1700px; will-change: transform; }
-.ca-flip-cartao { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; will-change: transform; }
+.ca-flip-fundo {
+  position: fixed; inset: 0; z-index: 90;
+  background: radial-gradient(circle at 50% 42%, rgba(3,43,54,.42), rgba(3,10,13,.8));
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  opacity: 0; pointer-events: none; transition: opacity .26s ease;
+}
+.ca-flip-fundo.is-open { opacity: 1; pointer-events: auto; }
+
+.ca-flip-cena {
+  position: fixed; left: 50%; top: 50%; z-index: 91;
+  width: min(680px, calc(100vw - 24px)); height: min(85vh, 760px);
+  perspective: 1700px;
+  transform: translate(-50%, -50%) scale(.93); opacity: 0; pointer-events: none;
+  transition: transform .32s cubic-bezier(.22,1,.36,1), opacity .28s ease;
+}
+.ca-flip-cena.is-open { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
+
+.ca-flip-cartao {
+  position: relative; width: 100%; height: 100%; transform-style: preserve-3d;
+  transform: rotateY(0deg); transition: transform .5s cubic-bezier(.3,.7,.2,1);
+}
+.ca-flip-cena.is-open .ca-flip-cartao { transform: rotateY(180deg); }
+
 .ca-flip-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 16px; overflow: hidden; background: #fff; box-shadow: 0 34px 90px rgba(3,43,54,.45), 0 0 0 1px rgba(255,255,255,.4); }
 .ca-flip-frente { display: flex; flex-direction: column; justify-content: center; padding: 1.2rem 1.4rem; }
 .ca-flip-verso { transform: rotateY(180deg); display: flex; flex-direction: column; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ca-flip-fundo, .ca-flip-cena, .ca-flip-cartao { transition: none; }
+}
 
 .ca-flip-topo { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 1.1rem 1rem 1rem 1.3rem; background: var(--ac-ink); color: #fff; flex: 0 0 auto; }
 .ca-flip-topo h2 { margin: 0; font: 700 1.05rem/1.3 var(--ac-sans); color: #fff; }

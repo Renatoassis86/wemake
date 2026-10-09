@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useRef, useState, useTransition } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import {
@@ -41,10 +41,6 @@ const EXEC_CURTO: Record<StatusExecucao, string> = {
   'Aguardando We Make': 'Aguard. We Make', 'Concluído': 'Concluído', 'Bloqueado': 'Bloqueado',
 }
 
-function reduzMovimento() {
-  return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-}
-
 export function CicloAnualBoard({ cards, kanbanData, marcos, escolaId, escolaNome, statusPorCard, proximoVencerId }: {
   cards: CronogramaCard[]; kanbanData: KanbanData; marcos: string[]
   escolaId: string; escolaNome: string; statusPorCard: StatusPorCard; proximoVencerId: string | null
@@ -57,7 +53,6 @@ export function CicloAnualBoard({ cards, kanbanData, marcos, escolaId, escolaNom
 
   const [formAberto, setFormAberto] = useState<{ momento: Momento; cartao?: CronogramaCard } | null>(null)
   const [cartaoAberto, setCartaoAberto] = useState<CronogramaCard | null>(null)
-  const origensRef = useRef(new Map<string, HTMLButtonElement>())
 
   return (
     <>
@@ -81,10 +76,9 @@ export function CicloAnualBoard({ cards, kanbanData, marcos, escolaId, escolaNom
               return (
                 <button
                   key={c.id}
-                  ref={el => { if (el) origensRef.current.set(c.id, el); else origensRef.current.delete(c.id) }}
                   type="button"
                   data-exec={exec}
-                  className={`ca-card${cartaoAberto?.id === c.id ? ' ca-ghost' : ''}${ehProximo ? ' ca-proximo' : ''}`}
+                  className={`ca-card${ehProximo ? ' ca-proximo' : ''}`}
                   onClick={() => setCartaoAberto(c)}
                 >
                   {ehProximo ? <span className="ca-proximo-flag">Próximo prazo</span> : null}
@@ -128,7 +122,6 @@ export function CicloAnualBoard({ cards, kanbanData, marcos, escolaId, escolaNom
       {cartaoAberto ? (
         <FlipOverlay
           cartao={cartaoAberto}
-          origem={origensRef.current.get(cartaoAberto.id) ?? null}
           kanban={cartaoAberto.marco ? kanbanData[cartaoAberto.marco] : null}
           escolaId={escolaId}
           statusAtual={statusPorCard[cartaoAberto.id] ?? null}
@@ -235,25 +228,26 @@ function EditarOverlay({ cartao, marcos, onFechar }: { cartao: CronogramaCard; m
   )
 }
 
-/* ─────────────────────── Overlay: cartão voa e gira ─────────────────────── */
+/* ─────────────────────── Overlay: modal com giro em CSS ───────────────────────
+   Versão 1 animava left/top/width/height via Web Animations API, imperativamente,
+   a partir de refs em callback — forçava layout síncrono a cada frame e travava
+   a aba em algumas máquinas ao abrir um cartão. Esta versão não toca o DOM
+   manualmente: é um `<dialog>` comum, escala e gira só por transição CSS,
+   disparada por uma classe que o React liga um instante depois do mount. */
 
-function alvoCentral() {
-  const vw = window.innerWidth, vh = window.innerHeight
-  const w = Math.min(680, vw - 24), h = Math.min(Math.round(vh * 0.85), 760)
-  return { left: Math.round((vw - w) / 2), top: Math.round((vh - h) / 2), width: w, height: h }
-}
-
-function FlipOverlay({ cartao, origem, kanban, escolaId, statusAtual, ehProximo, onFechar }: {
-  cartao: CronogramaCard; origem: HTMLElement | null; kanban: Record<string, string[]> | null
+function FlipOverlay({ cartao, kanban, escolaId, statusAtual, ehProximo, onFechar }: {
+  cartao: CronogramaCard; kanban: Record<string, string[]> | null
   escolaId: string; statusAtual: { status: string; prazo_data: string | null; anotacoes: string } | null
   ehProximo: boolean; onFechar: () => void
 }) {
-  const cenaRef = useRef<HTMLDivElement>(null)
-  const cartaoRef = useRef<HTMLDivElement>(null)
-  const [revelado, setRevelado] = useState(false)
-  const [fechando, setFechando] = useState(false)
-  const origemRectRef = useRef(origem?.getBoundingClientRect() ?? null)
   const router = useRouter()
+  const [aberto, setAberto] = useState(false)
+  const [fechando, setFechando] = useState(false)
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setAberto(true))
+    return () => cancelAnimationFrame(id)
+  }, [])
 
   const [status, setStatus] = useState(statusAtual?.status || 'Não iniciado')
   const [prazo, setPrazo] = useState(statusAtual?.prazo_data ?? '')
@@ -276,62 +270,11 @@ function FlipOverlay({ cartao, origem, kanban, escolaId, statusAtual, ehProximo,
     })
   }
 
-  // Técnica FLIP: o "cena" já nasce no tamanho e posição finais (um único
-  // layout, sem custo); só a transform anima — translate+scale compositados
-  // pela GPU, sem recalcular left/top/width/height a cada frame. Animar
-  // left/top/width/height direto (como a v1 fazia) força layout síncrono em
-  // todo frame e, combinado com a rotação 3D ao mesmo tempo, podia travar a
-  // aba em máquinas mais fracas.
-  function abrir(cena: HTMLDivElement, cartaoEl: HTMLDivElement) {
-    const r = origemRectRef.current
-    const reduz = reduzMovimento()
-    const alvo = alvoCentral()
-    Object.assign(cena.style, { left: alvo.left + 'px', top: alvo.top + 'px', width: alvo.width + 'px', height: alvo.height + 'px' })
-
-    if (!r || reduz || !cena.animate) {
-      cartaoEl.style.transform = 'rotateY(180deg)'
-      setRevelado(true)
-      return
-    }
-    const dur = 850
-    const dx = (r.left + r.width / 2) - (alvo.left + alvo.width / 2)
-    const dy = (r.top + r.height / 2) - (alvo.top + alvo.height / 2)
-    const sx = r.width / alvo.width, sy = r.height / alvo.height
-    cena.animate([
-      { transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})` },
-      { transform: 'translate(0, 0) scale(1, 1)' },
-    ], { duration: dur, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'forwards' })
-    const giro = cartaoEl.animate([
-      { transform: 'rotateY(0deg) scale(1)' },
-      { transform: 'rotateY(-12deg) scale(1.08)', offset: .25 },
-      { transform: 'rotateY(130deg) scale(1.06)', offset: .65 },
-      { transform: 'rotateY(180deg) scale(1)' },
-    ], { duration: dur, easing: 'cubic-bezier(.3,.7,.2,1)', fill: 'forwards' })
-    giro.onfinish = () => setRevelado(true)
-  }
-
   function fechar() {
     if (fechando) return
     setFechando(true)
-    const cena = cenaRef.current, cartaoEl = cartaoRef.current
-    const reduz = reduzMovimento()
-    if (!cena || !cartaoEl || reduz || !cena.animate) { onFechar(); return }
-    const alvoVolta = origem?.getBoundingClientRect() ?? origemRectRef.current ?? alvoCentral()
-    const atual = cena.getBoundingClientRect()
-    const dur = 560
-    const dx = (alvoVolta.left + alvoVolta.width / 2) - (atual.left + atual.width / 2)
-    const dy = (alvoVolta.top + alvoVolta.height / 2) - (atual.top + atual.height / 2)
-    const sx = atual.width ? alvoVolta.width / atual.width : 1, sy = atual.height ? alvoVolta.height / atual.height : 1
-    cena.animate([
-      { transform: 'translate(0, 0) scale(1, 1)', opacity: 1 },
-      { transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`, opacity: .4 },
-    ], { duration: dur, easing: 'cubic-bezier(.5,0,.2,1)', fill: 'forwards' })
-    const giro = cartaoEl.animate([
-      { transform: 'rotateY(180deg) scale(1)' },
-      { transform: 'rotateY(60deg) scale(1.05)', offset: .55 },
-      { transform: 'rotateY(0deg) scale(1)' },
-    ], { duration: dur, easing: 'cubic-bezier(.5,0,.2,1)', fill: 'forwards' })
-    giro.onfinish = onFechar
+    setAberto(false)
+    window.setTimeout(onFechar, 260) // acompanha a duração da transição CSS de fechar
   }
 
   function teclas(e: React.KeyboardEvent) {
@@ -344,15 +287,9 @@ function FlipOverlay({ cartao, origem, kanban, escolaId, statusAtual, ehProximo,
 
   return createPortal(
     <div onKeyDown={teclas}>
-      <div className="ca-flip-fundo" onClick={fechar} />
-      <div
-        className="ca-flip-cena"
-        ref={el => {
-          if (el && !cenaRef.current) { cenaRef.current = el; requestAnimationFrame(() => { if (cartaoRef.current) abrir(el, cartaoRef.current) }) }
-        }}
-        role="dialog" aria-modal="true" aria-label={cartao.titulo}
-      >
-        <div className="ca-flip-cartao" ref={cartaoRef}>
+      <div className={`ca-flip-fundo${aberto ? ' is-open' : ''}`} onClick={fechar} />
+      <div className={`ca-flip-cena${aberto ? ' is-open' : ''}`} role="dialog" aria-modal="true" aria-label={cartao.titulo}>
+        <div className="ca-flip-cartao">
           <div className="ca-flip-face ca-flip-frente" aria-hidden="true">
             <div className="ca-card-top"><span className="ca-date">{cartao.data_label || '—'}</span></div>
             <h3 style={{ font: '700 .95rem/1.4 var(--ac-sans)', color: 'var(--ac-ink)' }}>{cartao.titulo}</h3>
@@ -363,71 +300,67 @@ function FlipOverlay({ cartao, origem, kanban, escolaId, statusAtual, ehProximo,
               <button type="button" className="ca-flip-x" onClick={fechar} aria-label="Fechar">&times;</button>
             </div>
             <div className="ca-flip-corpo">
-              {revelado ? (
-                <>
-                  {ehProximo ? <div className="ca-verso-alerta">⏰ Esta é a próxima etapa com prazo a vencer para esta escola.</div> : null}
+              {ehProximo ? <div className="ca-verso-alerta">⏰ Esta é a próxima etapa com prazo a vencer para esta escola.</div> : null}
 
-                  <section className="ca-verso-bloco">
-                    <h4>Sobre esta etapa</h4>
-                    <p className="ca-desc">{cartao.descricao || 'Sem descrição ainda — clique em editar no cartão para completar.'}</p>
-                    {cartao.fonte ? <p className="ca-fonte">{cartao.fonte}</p> : null}
-                  </section>
+              <section className="ca-verso-bloco">
+                <h4>Sobre esta etapa</h4>
+                <p className="ca-desc">{cartao.descricao || 'Sem descrição ainda — clique em editar no cartão para completar.'}</p>
+                {cartao.fonte ? <p className="ca-fonte">{cartao.fonte}</p> : null}
+              </section>
 
-                  <section className="ca-verso-bloco ca-verso-status">
-                    <h4>Status para esta escola</h4>
-                    <div className="ca-status-row">
-                      <select
-                        value={status}
-                        onChange={e => { setStatus(e.target.value); salvarStatus(e.target.value, prazo) }}
-                        disabled={salvandoStatus}
-                        aria-label="Status de execução"
-                      >
-                        {STATUS_EXECUCAO.map(s => <option key={s} value={s}>{s}</option>)}
-                      </select>
-                      <label className="ca-prazo-label">
-                        Prazo
-                        <input
-                          type="date"
-                          value={prazo}
-                          onChange={e => { setPrazo(e.target.value); salvarStatus(status, e.target.value) }}
-                          disabled={salvandoStatus}
-                        />
-                      </label>
-                      {salvandoStatus ? <span className="ca-salvando">Salvando…</span> : null}
-                    </div>
-                  </section>
-
-                  <section className="ca-verso-bloco">
-                    <h4>Anotações</h4>
-                    <textarea
-                      className="ca-notas"
-                      value={anotacoes}
-                      onChange={e => setAnotacoes(e.target.value)}
-                      onBlur={salvarNotas}
-                      placeholder="Como está o andamento, pendências, combinados com a escola…"
-                      rows={4}
+              <section className="ca-verso-bloco ca-verso-status">
+                <h4>Status para esta escola</h4>
+                <div className="ca-status-row">
+                  <select
+                    value={status}
+                    onChange={e => { setStatus(e.target.value); salvarStatus(e.target.value, prazo) }}
+                    disabled={salvandoStatus}
+                    aria-label="Status de execução"
+                  >
+                    {STATUS_EXECUCAO.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                  <label className="ca-prazo-label">
+                    Prazo
+                    <input
+                      type="date"
+                      value={prazo}
+                      onChange={e => { setPrazo(e.target.value); salvarStatus(status, e.target.value) }}
+                      disabled={salvandoStatus}
                     />
-                    {salvandoNotas ? <span className="ca-salvando">Salvando…</span> : null}
-                  </section>
+                  </label>
+                  {salvandoStatus ? <span className="ca-salvando">Salvando…</span> : null}
+                </div>
+              </section>
 
-                  {cartao.marco ? (
-                    <section className="ca-verso-bloco">
-                      <p className="ca-kanban-title">Escolas no marco "{cartao.marco}" · Painel Mestre</p>
-                      {colunas.length ? (
-                        <div className="ca-kanban">
-                          {colunas.map(s => (
-                            <div className="ca-kanban-col" key={s}>
-                              <h4><span>{s}</span><span>{kanban?.[s]?.length ?? 0}</span></h4>
-                              <ul>{kanban?.[s]?.map(nome => <li key={nome}>{nome}</li>)}</ul>
-                            </div>
-                          ))}
+              <section className="ca-verso-bloco">
+                <h4>Anotações</h4>
+                <textarea
+                  className="ca-notas"
+                  value={anotacoes}
+                  onChange={e => setAnotacoes(e.target.value)}
+                  onBlur={salvarNotas}
+                  placeholder="Como está o andamento, pendências, combinados com a escola…"
+                  rows={4}
+                />
+                {salvandoNotas ? <span className="ca-salvando">Salvando…</span> : null}
+              </section>
+
+              {cartao.marco ? (
+                <section className="ca-verso-bloco">
+                  <p className="ca-kanban-title">Escolas no marco "{cartao.marco}" · Painel Mestre</p>
+                  {colunas.length ? (
+                    <div className="ca-kanban">
+                      {colunas.map(s => (
+                        <div className="ca-kanban-col" key={s}>
+                          <h4><span>{s}</span><span>{kanban?.[s]?.length ?? 0}</span></h4>
+                          <ul>{kanban?.[s]?.map(nome => <li key={nome}>{nome}</li>)}</ul>
                         </div>
-                      ) : (
-                        <p className="ca-kanban-vazio">Nenhuma escola neste marco ainda.</p>
-                      )}
-                    </section>
-                  ) : null}
-                </>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="ca-kanban-vazio">Nenhuma escola neste marco ainda.</p>
+                  )}
+                </section>
               ) : null}
             </div>
           </div>
