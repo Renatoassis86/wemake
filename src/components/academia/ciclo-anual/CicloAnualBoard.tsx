@@ -276,22 +276,30 @@ function FlipOverlay({ cartao, origem, kanban, escolaId, statusAtual, ehProximo,
     })
   }
 
+  // Técnica FLIP: o "cena" já nasce no tamanho e posição finais (um único
+  // layout, sem custo); só a transform anima — translate+scale compositados
+  // pela GPU, sem recalcular left/top/width/height a cada frame. Animar
+  // left/top/width/height direto (como a v1 fazia) força layout síncrono em
+  // todo frame e, combinado com a rotação 3D ao mesmo tempo, podia travar a
+  // aba em máquinas mais fracas.
   function abrir(cena: HTMLDivElement, cartaoEl: HTMLDivElement) {
     const r = origemRectRef.current
     const reduz = reduzMovimento()
+    const alvo = alvoCentral()
+    Object.assign(cena.style, { left: alvo.left + 'px', top: alvo.top + 'px', width: alvo.width + 'px', height: alvo.height + 'px' })
+
     if (!r || reduz || !cena.animate) {
-      const d = alvoCentral()
-      Object.assign(cena.style, { left: d.left + 'px', top: d.top + 'px', width: d.width + 'px', height: d.height + 'px' })
       cartaoEl.style.transform = 'rotateY(180deg)'
       setRevelado(true)
       return
     }
-    Object.assign(cena.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' })
-    const alvo = alvoCentral()
     const dur = 850
+    const dx = (r.left + r.width / 2) - (alvo.left + alvo.width / 2)
+    const dy = (r.top + r.height / 2) - (alvo.top + alvo.height / 2)
+    const sx = r.width / alvo.width, sy = r.height / alvo.height
     cena.animate([
-      { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' },
-      { left: alvo.left + 'px', top: alvo.top + 'px', width: alvo.width + 'px', height: alvo.height + 'px' },
+      { transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})` },
+      { transform: 'translate(0, 0) scale(1, 1)' },
     ], { duration: dur, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'forwards' })
     const giro = cartaoEl.animate([
       { transform: 'rotateY(0deg) scale(1)' },
@@ -299,10 +307,7 @@ function FlipOverlay({ cartao, origem, kanban, escolaId, statusAtual, ehProximo,
       { transform: 'rotateY(130deg) scale(1.06)', offset: .65 },
       { transform: 'rotateY(180deg) scale(1)' },
     ], { duration: dur, easing: 'cubic-bezier(.3,.7,.2,1)', fill: 'forwards' })
-    giro.onfinish = () => {
-      Object.assign(cena.style, { left: alvo.left + 'px', top: alvo.top + 'px', width: alvo.width + 'px', height: alvo.height + 'px' })
-      setRevelado(true)
-    }
+    giro.onfinish = () => setRevelado(true)
   }
 
   function fechar() {
@@ -314,9 +319,12 @@ function FlipOverlay({ cartao, origem, kanban, escolaId, statusAtual, ehProximo,
     const alvoVolta = origem?.getBoundingClientRect() ?? origemRectRef.current ?? alvoCentral()
     const atual = cena.getBoundingClientRect()
     const dur = 560
+    const dx = (alvoVolta.left + alvoVolta.width / 2) - (atual.left + atual.width / 2)
+    const dy = (alvoVolta.top + alvoVolta.height / 2) - (atual.top + atual.height / 2)
+    const sx = atual.width ? alvoVolta.width / atual.width : 1, sy = atual.height ? alvoVolta.height / atual.height : 1
     cena.animate([
-      { left: atual.left + 'px', top: atual.top + 'px', width: atual.width + 'px', height: atual.height + 'px', opacity: 1 },
-      { left: alvoVolta.left + 'px', top: alvoVolta.top + 'px', width: alvoVolta.width + 'px', height: alvoVolta.height + 'px', opacity: .4 },
+      { transform: 'translate(0, 0) scale(1, 1)', opacity: 1 },
+      { transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`, opacity: .4 },
     ], { duration: dur, easing: 'cubic-bezier(.5,0,.2,1)', fill: 'forwards' })
     const giro = cartaoEl.animate([
       { transform: 'rotateY(180deg) scale(1)' },

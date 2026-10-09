@@ -92,7 +92,7 @@
 
 /* ── Overlay: cartão voa até o centro e gira ───────────────────────────── */
 .ca-flip-fundo { position: fixed; inset: 0; z-index: 90; background: radial-gradient(circle at 50% 42%, rgba(3,43,54,.42), rgba(3,10,13,.8)); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
-.ca-flip-cena { position: fixed; z-index: 91; perspective: 1700px; }
+.ca-flip-cena { position: fixed; z-index: 91; perspective: 1700px; will-change: transform; }
 .ca-flip-cartao { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; will-change: transform; }
 .ca-flip-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 16px; overflow: hidden; background: #fff; box-shadow: 0 34px 90px rgba(3,43,54,.45), 0 0 0 1px rgba(255,255,255,.4); }
 .ca-flip-frente { display: flex; flex-direction: column; justify-content: center; padding: 1.2rem 1.4rem; }
