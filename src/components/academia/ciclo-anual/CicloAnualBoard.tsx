@@ -7,6 +7,7 @@ import {
   criarCartao, atualizarCartao, excluirCartao, salvarStatusCartao,
   STATUS_TAGS, STATUS_EXECUCAO, type Momento, type StatusTag, type StatusExecucao,
 } from '@/app/(dashboard)/academia/ciclo-anual/actions'
+import { CapturadorDeErros, ErroBoundaryCicloAnual } from './ErroBoundary'
 
 export interface CronogramaCard {
   id: string
@@ -56,6 +57,7 @@ export function CicloAnualBoard({ cards, kanbanData, marcos, escolaId, escolaNom
 
   return (
     <>
+      <CapturadorDeErros />
       <div className="ca-escola-head">
         <h2>{escolaNome}</h2>
         <p>Clique num cartão para registrar o status, o prazo e anotações desta escola.</p>
@@ -120,14 +122,16 @@ export function CicloAnualBoard({ cards, kanbanData, marcos, escolaId, escolaNom
       ) : null}
 
       {cartaoAberto ? (
-        <FlipOverlay
-          cartao={cartaoAberto}
-          kanban={cartaoAberto.marco ? kanbanData[cartaoAberto.marco] : null}
-          escolaId={escolaId}
-          statusAtual={statusPorCard[cartaoAberto.id] ?? null}
-          ehProximo={cartaoAberto.id === proximoVencerId}
-          onFechar={() => setCartaoAberto(null)}
-        />
+        <ErroBoundaryCicloAnual>
+          <FlipOverlay
+            cartao={cartaoAberto}
+            kanban={cartaoAberto.marco ? kanbanData[cartaoAberto.marco] : null}
+            escolaId={escolaId}
+            statusAtual={statusPorCard[cartaoAberto.id] ?? null}
+            ehProximo={cartaoAberto.id === proximoVencerId}
+            onFechar={() => setCartaoAberto(null)}
+          />
+        </ErroBoundaryCicloAnual>
       ) : null}
     </>
   )
