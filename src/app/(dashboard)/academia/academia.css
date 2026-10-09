@@ -41,44 +41,67 @@
 .ac-wrap :focus-visible, .ac-trackbar :focus-visible, .ac-subnav :focus-visible { outline-color: var(--ac-ink); }
 .ac-wrap .ac-pinbox :focus-visible { outline-color: var(--ac-cyan); }
 
-/* ── Cartão fixo do Cronograma — sempre visível, topo direito, em toda a Academia ── */
+/* ── Cartão fixo do Cronograma — a coisa mais importante da Academia, sempre em
+   evidência no topo direito, em qualquer página. Fundo ciano sólido (não
+   contorno): o hero já é escuro com a marca em ciano translúcida ao fundo, e um
+   contorno fino na mesma cor some ali. Maior que um selo de propósito — isso não
+   é um detalhe de rodapé, é o ponto de entrada mais importante do site. O anel
+   pulsante chama o olho sem travar leitura (para e ganha glow fixo em hover/foco,
+   e nunca anima com prefers-reduced-motion). */
 .ac-pin-ciclo {
   position: fixed;
-  /* 6rem limpa a logo e a linha de breadcrumbs do .ac-hero (que termina com o
-     selo "Uso interno") em qualquer variante — senão o cartão fixo cai em
-     cima delas no topo da página, antes do usuário rolar. */
-  top: calc(6rem + env(safe-area-inset-top, 0px));
-  right: max(1.1rem, env(safe-area-inset-right, 0px));
-  z-index: 60;
+  top: max(1rem, env(safe-area-inset-top, 0px));
+  right: max(1rem, env(safe-area-inset-right, 0px));
+  z-index: 70;
   display: flex;
-  flex-direction: column;
-  gap: .1rem;
-  background: var(--ac-ink);
-  border: 1.5px solid var(--ac-cyan);
-  border-radius: 12px;
-  padding: .55rem .9rem;
+  align-items: center;
+  gap: .85rem;
+  background: var(--ac-cyan);
+  border-radius: 18px;
+  padding: .85rem 1.3rem .85rem 1rem;
   text-decoration: none;
-  box-shadow: 0 10px 28px rgba(3, 43, 54, .35);
-  transition: transform .15s, box-shadow .15s;
+  box-shadow: 0 14px 34px rgba(3, 43, 54, .5), 0 0 0 1px rgba(255, 255, 255, .3);
+  transition: transform .18s, box-shadow .18s;
+  animation: ac-pin-respira 2.6s ease-in-out infinite;
 }
 .ac-pin-ciclo:hover, .ac-pin-ciclo:focus-visible {
-  transform: translateY(1px) scale(1.02);
-  box-shadow: 0 14px 34px rgba(3, 43, 54, .45);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 20px 44px rgba(3, 43, 54, .6), 0 0 0 1px rgba(255, 255, 255, .4);
   outline: none;
+  animation-play-state: paused;
 }
+@keyframes ac-pin-respira {
+  0%, 100% { box-shadow: 0 14px 34px rgba(3, 43, 54, .5), 0 0 0 1px rgba(255, 255, 255, .3), 0 0 0 0 rgba(0, 200, 255, .55); }
+  50% { box-shadow: 0 14px 34px rgba(3, 43, 54, .5), 0 0 0 1px rgba(255, 255, 255, .3), 0 0 0 9px rgba(0, 200, 255, 0); }
+}
+.ac-pin-ico { flex: 0 0 auto; width: 44px; height: 44px; border-radius: 50%; background: var(--ac-ink); display: flex; align-items: center; justify-content: center; }
+.ac-pin-ico svg { width: 22px; height: 22px; color: var(--ac-cyan); }
+.ac-pin-text { display: flex; flex-direction: column; gap: .15rem; line-height: 1.15; }
 .ac-pin-eyebrow {
-  font: 800 .6rem/1 var(--ac-sans);
+  font: 800 .62rem/1 var(--ac-sans);
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: var(--ac-cyan);
+  color: rgba(3, 43, 54, .72);
 }
 .ac-pin-title {
-  font: 700 .82rem/1.2 var(--ac-sans);
-  color: #fff;
+  font: 800 1.02rem/1.2 var(--ac-sans);
+  color: var(--ac-ink);
+  white-space: nowrap;
 }
-@media (max-width: 640px) {
-  .ac-pin-ciclo { padding: .4rem .65rem; border-radius: 10px; }
-  .ac-pin-title { font-size: .72rem; }
+.ac-pin-sub {
+  font: 600 .72rem/1.2 var(--ac-sans);
+  color: rgba(3, 43, 54, .78);
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) { .ac-pin-ciclo { animation: none; } }
+/* no mobile, o DashboardTopbar sticky (56px) ocupa o topo — o cartão desce pra não cair em cima dele,
+   e perde o texto de apoio pra caber sem invadir o conteúdo */
+@media (max-width: 760px) {
+  .ac-pin-ciclo { top: calc(56px + .7rem); right: .7rem; padding: .55rem .9rem .55rem .55rem; gap: .6rem; border-radius: 16px; }
+  .ac-pin-ico { width: 34px; height: 34px; }
+  .ac-pin-ico svg { width: 18px; height: 18px; }
+  .ac-pin-title { font-size: .82rem; white-space: normal; max-width: 38vw; }
+  .ac-pin-sub { display: none; }
 }
 
 /* ───────────────────────────── Capa / cabeçalho ───────────────────────────── */
