@@ -1,0 +1,55 @@
+{
+  "slug": "relatorio-resultados-prescricao",
+  "source": "a criar · Processo A6, Arquitetura de Processos 2027",
+  "titleText": "RELATÓRIO DE RESULTADOS E PRESCRIÇÃO",
+  "trio": [
+    { "k": "OBJETIVO", "v": "Consolidar o resultado do ano e prescrever o ciclo seguinte" },
+    { "k": "QUEM VALIDA", "v": "Pedagógico We Make (PED) e Direção (DIR)" },
+    { "k": "QUANDO", "v": "Novembro e dezembro — final do ano letivo" }
+  ],
+  "lead": ["Fecha a Fase 7: qualidade da implementação, evolução da equipe docente e uma prescrição objetiva para o ciclo seguinte"],
+  "blocks": [
+    { "t": "minor", "x": "Finalidade" },
+    { "t": "p", "x": "Ao final do ano letivo, consolidar um relatório de resultados da escola — qualidade da implementação do currículo, evolução da equipe docente ao longo do ano e principais pontos de atenção — com uma prescrição objetiva de ações recomendadas para o ciclo seguinte. Serve de base tanto para a conversa de renovação contratual quanto para o planejamento da própria Academia We Make no ano seguinte." },
+    { "t": "minor", "x": "Princípio" },
+    { "t": "p", "x": "**O fechamento de um ciclo nunca é apenas administrativo: é o insumo principal para que o ciclo seguinte comece mais bem calibrado do que o anterior.**" },
+    { "t": "minor", "x": "Entradas" },
+    { "t": "p", "x": "Todos os registros do ano: Ficha de Diagnóstico de Entrada Docente, roteiros de reunião de acompanhamento, Formulário de Meio de Ciclo, registros de chamados e indicadores da plataforma." },
+
+    { "t": "sec", "x": "Relatório de Resultados e Prescrição" },
+    { "t": "field", "x": "Escola" },
+    { "t": "field", "x": "Responsável We Make (PED)" },
+    { "t": "field", "x": "Data do relatório" },
+    { "t": "field", "x": "Nível de acompanhamento ao longo do ano (histórico A/B/C por período)" },
+
+    { "t": "sub", "x": "Qualidade da implementação do currículo", "n": "1" },
+    { "t": "field", "x": "Progresso do currículo em relação ao planejado" },
+    { "t": "field", "x": "Trilhas de formação temática concluídas no ano" },
+    { "t": "field", "x": "Principais resultados pedagógicos observados" },
+
+    { "t": "sub", "x": "Evolução da equipe docente", "n": "2" },
+    { "t": "field", "x": "Comparação com o diagnóstico de entrada (início do ano)" },
+    { "t": "field", "x": "Comparação com o diagnóstico de meio de ciclo" },
+    { "t": "field", "x": "Autonomia alcançada ao final do ano" },
+
+    { "t": "sub", "x": "Pontos de atenção do ano", "n": "3" },
+    { "t": "table", "rows": [
+      [{"b":[{"t":"p","x":"**Ponto de atenção**"}]}, {"b":[{"t":"p","x":"**Impacto no ano**"}]}, {"b":[{"t":"p","x":"**Resolvido?**"}]}],
+      [{"b":[]}, {"b":[]}, {"b":[]}],
+      [{"b":[]}, {"b":[]}, {"b":[]}],
+      [{"b":[]}, {"b":[]}, {"b":[]}]
+    ], "hdr": true },
+
+    { "t": "sub", "x": "Prescrição para o ciclo seguinte", "n": "4" },
+    { "t": "field", "x": "Nível de acompanhamento recomendado para o próximo ano" },
+    { "t": "field", "x": "Ações recomendadas antes do próximo Onboarding ou Fase 2" },
+    { "t": "field", "x": "Formações temáticas a priorizar" },
+    { "t": "field", "x": "Recomendação para a conversa de renovação contratual" },
+
+    { "t": "table", "rows": [
+      [{"b":[{"t":"p","x":"**VALIDAÇÃO PEDAGÓGICO WE MAKE**"}]}, {"b":[{"t":"p","x":"**CIÊNCIA DIREÇÃO (DIR)**"}]}],
+      [{"b":[{"t":"p","x":"Nome: __________________________\nData: ____/____/______"}]}, {"b":[{"t":"p","x":"Nome: __________________________\nData: ____/____/______"}]}]
+    ], "hdr": true },
+    { "t": "minor", "x": "GATE: RELATÓRIO APRESENTADO À DIREÇÃO → ALIMENTA A FASE 0 DO CICLO SEGUINTE E A RENOVAÇÃO CONTRATUAL" }
+  ]
+}

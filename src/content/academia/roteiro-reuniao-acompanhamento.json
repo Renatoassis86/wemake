@@ -1,0 +1,58 @@
+{
+  "slug": "roteiro-reuniao-acompanhamento",
+  "source": "a criar · Processos A2 e A3, Arquitetura de Processos 2027",
+  "titleText": "ROTEIRO DE REUNIÃO DE ACOMPANHAMENTO",
+  "trio": [
+    { "k": "OBJETIVO", "v": "Padronizar as reuniões de acompanhamento pedagógico" },
+    { "k": "QUEM CONDUZ", "v": "Pedagógico We Make (PED)" },
+    { "k": "QUANDO", "v": "1º bimestre (Fase 3) e ano letivo, na cadência do nível (Fase 4)" }
+  ],
+  "lead": ["Estrutura fixa de 40 minutos — Conhecer, Explorar e Criar — para toda reunião de acompanhamento pedagógico nunca sair sem uma ação registrada"],
+  "blocks": [
+    { "t": "minor", "x": "Finalidade" },
+    { "t": "p", "x": "Dar à reunião de acompanhamento — seja a mais próxima da Implantação Intensiva (Fase 3, 1º bimestre) seja a de cadência regular ao longo do ano (Fase 4) — uma estrutura fixa, para que toda escola receba o mesmo padrão de atenção e toda reunião termine com um registro no Painel da Academia." },
+    { "t": "minor", "x": "Regra de ouro" },
+    { "t": "p", "x": "**Reunião sem ação registrada não conta como acompanhamento.**" },
+
+    { "t": "sec", "x": "Estrutura da reunião" },
+    { "t": "table", "rows": [
+      [{"b":[{"t":"p","x":"**Momento**"}]}, {"b":[{"t":"p","x":"**Tempo**"}]}, {"b":[{"t":"p","x":"**O que acontece**"}]}],
+      [{"b":[{"t":"p","x":"**Conhecer**"}]}, {"b":[{"t":"p","x":"10 min"}]}, {"b":[{"t":"p","x":"Ouvir como estão as aulas, o que funcionou, o que travou; olhar juntos os dados da plataforma."}]}],
+      [{"b":[{"t":"p","x":"**Explorar**"}]}, {"b":[{"t":"p","x":"20 min"}]}, {"b":[{"t":"p","x":"Analisar a dificuldade principal e orientar, com demonstração quando for técnica."}]}],
+      [{"b":[{"t":"p","x":"**Criar**"}]}, {"b":[{"t":"p","x":"10 min"}]}, {"b":[{"t":"p","x":"Fechar uma ação com dono e prazo e registrar no Painel da Academia."}]}]
+    ], "hdr": true },
+
+    { "t": "sub", "x": "Identificação", "n": "1" },
+    { "t": "field", "x": "Escola" },
+    { "t": "field", "x": "Nível de acompanhamento (A, B ou C)" },
+    { "t": "field", "x": "Data da reunião" },
+    { "t": "field", "x": "Participantes" },
+
+    { "t": "sub", "x": "Conhecer — como estão as aulas", "n": "2" },
+    { "t": "p", "x": "**O que funcionou nas últimas semanas? O que travou?**" },
+    { "t": "lines" },
+    { "t": "minor", "x": "O que os dados da plataforma mostram (acesso, diário, progresso do currículo)?" },
+    { "t": "lines" },
+
+    { "t": "sub", "x": "Explorar — a dificuldade principal", "n": "3" },
+    { "t": "field", "x": "Dificuldade priorizada nesta reunião" },
+    { "t": "p", "x": "**Orientação dada (com demonstração, quando técnica)**" },
+    { "t": "lines" },
+    { "t": "lines" },
+
+    { "t": "sub", "x": "Criar — a ação registrada", "n": "4" },
+    { "t": "field", "x": "Ação combinada" },
+    { "t": "field", "x": "Responsável" },
+    { "t": "field", "x": "Prazo" },
+
+    { "t": "sub", "x": "Alertas verificados", "n": "5" },
+    { "t": "p", "x": "Alertas automáticos da plataforma a conferir antes da reunião, quando disponíveis: professor sem acesso há 14 dias; diário sem registro há 3 semanas; projeto atrasado mais de 2 semanas em relação ao planejamento; avaliação negativa de aula." },
+    { "t": "check", "x": "Nenhum alerta pendente." },
+    { "t": "check", "x": "Professor sem acesso há 14 dias ou mais." },
+    { "t": "check", "x": "Diário sem registro há 3 semanas ou mais." },
+    { "t": "check", "x": "Projeto atrasado mais de 2 semanas em relação ao planejamento." },
+    { "t": "check", "x": "Avaliação negativa de aula." },
+
+    { "t": "minor", "x": "GATE: AÇÃO REGISTRADA NO PAINEL DA ACADEMIA → REUNIÃO CONTA COMO ACOMPANHAMENTO DA FASE 3 OU 4" }
+  ]
+}

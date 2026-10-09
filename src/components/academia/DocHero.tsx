@@ -27,7 +27,6 @@ export default function DocHero({ crumbs, eyebrow, title, deck, tipo, facts, var
             style={{ height: 30, width: 'auto' }}
           />
         </Link>
-        <span className="ac-pill">Uso interno</span>
       </div>
 
       <nav className="ac-crumbs" aria-label="Você está em">
@@ -37,6 +36,7 @@ export default function DocHero({ crumbs, eyebrow, title, deck, tipo, facts, var
             {c.href ? <Link href={c.href}>{c.label}</Link> : <span>{c.label}</span>}
           </span>
         ))}
+        <span className="ac-pill ac-pill--crumb">Uso interno</span>
       </nav>
 
       <div className="ac-eyebrow">

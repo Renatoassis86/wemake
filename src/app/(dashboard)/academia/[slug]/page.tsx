@@ -26,7 +26,7 @@ export default async function AcademiaDocPage({ params }: { params: Promise<Para
 
   const { prev, next } = getNeighbors(doc.slug)
   const outline = buildOutline(doc.content.blocks)
-  const showTracker = doc.grupo !== 'Fundamentos'
+  const showTracker = doc.grupo !== 'Fundamentos' && doc.grupo !== 'Formação e Acompanhamento'
   const marcos = doc.marcos.length ? doc.marcos : MARCOS.map((_, i) => i)
   const wide = doc.content.blocks.some(b => b.t === 'table' && (b.kind === 'resources' || b.rows[0]?.length >= 6))
 

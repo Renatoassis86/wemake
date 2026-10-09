@@ -1,0 +1,49 @@
+{
+  "slug": "registro-chamados",
+  "source": "a criar · Processo A4, Arquitetura de Processos 2027",
+  "titleText": "REGISTRO DE CHAMADOS",
+  "trio": [
+    { "k": "OBJETIVO", "v": "Registrar e cumprir prazo de resposta do suporte reativo" },
+    { "k": "QUEM VALIDA", "v": "Pedagógico We Make (PED)" },
+    { "k": "QUANDO", "v": "Sob demanda, durante todo o ano letivo (Fase 4)" }
+  ],
+  "lead": ["Toda solicitação por WhatsApp ou plataforma vira um registro com prazo — nenhum chamado fica só na conversa"],
+  "blocks": [
+    { "t": "minor", "x": "Finalidade" },
+    { "t": "p", "x": "Registrar todo chamado recebido pelo suporte reativo — por WhatsApp, pela plataforma ou por qualquer canal direto — com prazo de resposta e solução, para que o compromisso do sistema We Make de que a escola nunca fica sem retaguarda pedagógica seja verificável, não apenas prometido." },
+    { "t": "minor", "x": "Princípio" },
+    { "t": "p", "x": "O tempo de resposta já é indicador previsto no Documento Normativo, mas sem meta formal até este instrumento existir. As metas abaixo são ponto de partida e devem ser revistas com dados reais após o primeiro semestre." },
+
+    { "t": "sec", "x": "Prazo de resposta do suporte" },
+    { "t": "table", "rows": [
+      [{"b":[{"t":"p","x":"**Situação**"}]}, {"b":[{"t":"p","x":"**Primeira resposta**"}]}, {"b":[{"t":"p","x":"**Solução ou plano**"}]}],
+      [{"b":[{"t":"p","x":"**Problema que impede a aula da semana (acesso, material, montagem)**"}]}, {"b":[{"t":"p","x":"No mesmo dia útil"}]}, {"b":[{"t":"p","x":"Antes da aula"}]}],
+      [{"b":[{"t":"p","x":"**Dúvida pedagógica ou técnica sem urgência**"}]}, {"b":[{"t":"p","x":"Até 1 dia útil"}]}, {"b":[{"t":"p","x":"Até 3 dias úteis"}]}],
+      [{"b":[{"t":"p","x":"**Pedido institucional (direção, mantenedora)**"}]}, {"b":[{"t":"p","x":"Até 1 dia útil"}]}, {"b":[{"t":"p","x":"Agendamento em até 5 dias úteis"}]}]
+    ], "hdr": true },
+
+    { "t": "sub", "x": "Registro do chamado", "n": "1" },
+    { "t": "field", "x": "Escola" },
+    { "t": "field", "x": "Canal (WhatsApp, plataforma, e-mail, outro)" },
+    { "t": "field", "x": "Data e hora de abertura" },
+    { "t": "field", "x": "Quem abriu o chamado" },
+    { "t": "check", "x": "Problema que impede a aula da semana (acesso, material, montagem)" },
+    { "t": "check", "x": "Dúvida pedagógica ou técnica sem urgência" },
+    { "t": "check", "x": "Pedido institucional (direção, mantenedora)" },
+    { "t": "p", "x": "**Descrição do chamado**" },
+    { "t": "lines" },
+    { "t": "lines" },
+
+    { "t": "sub", "x": "Resposta e encerramento", "n": "2" },
+    { "t": "field", "x": "Data e hora da primeira resposta" },
+    { "t": "field", "x": "Responsável We Make" },
+    { "t": "p", "x": "**Solução ou plano registrado**" },
+    { "t": "lines" },
+    { "t": "field", "x": "Data da solução ou do agendamento" },
+    { "t": "check", "x": "Resolvido dentro do prazo-meta." },
+    { "t": "check", "x": "Resolvido fora do prazo-meta — justificar abaixo." },
+    { "t": "field", "x": "Justificativa, quando fora do prazo" },
+
+    { "t": "minor", "x": "GATE: CHAMADO COM RESPOSTA E SOLUÇÃO REGISTRADAS → ALIMENTA O INDICADOR DE TEMPO MÉDIO DE RESPOSTA" }
+  ]
+}

@@ -295,7 +295,7 @@ export async function criarTarefa(fd: FormData): Promise<Resultado> {
   const titulo = txt(fd.get('titulo'), 300)
   const lista = getLista(String(fd.get('lista') ?? ''))
   if (!titulo || !lista) return { ok: false, erro: 'Informe o título e a lista.' }
-  const { error } = await createAdminClient().from('academia_tarefas').insert({
+  const { data: nova, error } = await createAdminClient().from('academia_tarefas').insert({
     implantacao_id: txt(fd.get('implantacao_id'), 60),
     lista: lista.slug,
     marco: lista.marco,
@@ -307,10 +307,10 @@ export async function criarTarefa(fd: FormData): Promise<Resultado> {
     prazo: data(fd.get('prazo')),
     ordem: 9999,
     created_by: user.id,
-  })
+  }).select('id').single()
   if (error) return { ok: false, erro: msgErro(error) }
   await recalcularMarco(createAdminClient(), user, txt(fd.get('implantacao_id'), 60), lista.marco)
-  await auditar(user, 'INSERT', 'academia_tarefas', null, { titulo, lista: lista.slug })
+  await auditar(user, 'INSERT', 'academia_tarefas', nova?.id ?? null, { titulo, lista: lista.slug })
   refresh()
   return { ok: true }
 }
@@ -377,7 +377,7 @@ export async function criarEvento(fd: FormData): Promise<Resultado> {
   if (fim && !Number.isNaN(fim.getTime()) && fim <= inicio) return { ok: false, erro: 'O horário de término precisa ser depois do início.' }
   const db = createAdminClient()
   const implId = txt(fd.get('implantacao_id'), 60)
-  const { error } = await db.from('academia_eventos').insert({
+  const { data: novo, error } = await db.from('academia_eventos').insert({
     titulo,
     tipo: txt(fd.get('tipo'), 40) ?? 'Reunião',
     inicio: inicio.toISOString(),
@@ -387,7 +387,7 @@ export async function criarEvento(fd: FormData): Promise<Resultado> {
     notas: txt(fd.get('notas'), 1500),
     implantacao_id: implId,
     created_by: user.id,
-  })
+  }).select('id').single()
   if (error) return { ok: false, erro: msgErro(error) }
 
   // espelha na Agenda geral da plataforma, ligada à escola quando ela existe no cadastro comercial
@@ -409,8 +409,12 @@ export async function criarEvento(fd: FormData): Promise<Resultado> {
     escola_id: escolaId,
     criado_por: user.id,
   })
-  await auditar(user, 'INSERT', 'academia_eventos', null, { titulo, inicio: inicio.toISOString() })
+  await auditar(user, 'INSERT', 'academia_eventos', novo?.id ?? null, { titulo, inicio: inicio.toISOString() })
   refresh()
+  // A Agenda geral é uma rota separada (/agenda) — refresh() só revalida
+  // /academia/gestao, então sem isso o espelho acima só aparecia lá depois
+  // que o cache de /agenda expirasse sozinho.
+  revalidatePath('/agenda')
   return { ok: true }
 }
 
@@ -445,8 +449,17 @@ export async function trazerAssinadas(escolaIds?: string[]): Promise<Resultado> 
 export async function excluirEvento(id: string): Promise<Resultado> {
   const user = await autorizado()
   if (!user) return { ok: false, erro: 'Sessão expirada. Entre novamente.' }
-  const { error } = await createAdminClient().from('academia_eventos').delete().eq('id', id)
+  const db = createAdminClient()
+  const { data: antes } = await db.from('academia_eventos').select('titulo, inicio').eq('id', id).maybeSingle()
+  const { error } = await db.from('academia_eventos').delete().eq('id', id)
   if (error) return { ok: false, erro: msgErro(error) }
+  if (antes) {
+    // remove o espelho criado em criarEvento — sem isso ele fica órfão na
+    // Agenda geral, mostrando um compromisso que já foi apagado da Academia.
+    await db.from('agenda_eventos').delete().eq('titulo', `Academia · ${antes.titulo}`).eq('data_inicio', antes.inicio)
+    await auditar(user, 'DELETE', 'academia_eventos', id, null, antes)
+  }
   refresh()
+  revalidatePath('/agenda')
   return { ok: true }
 }

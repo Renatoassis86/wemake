@@ -5,17 +5,54 @@ import PageHeader from '@/components/layout/PageHeader'
 import { ROLE_OPTIONS } from '@/types/database'
 import { AdminActions } from './AdminActions'
 
-export default async function AdminpanelPage() {
+function formatarValor(v: unknown): string {
+  if (v === null || v === undefined) return '—'
+  if (typeof v === 'object') return JSON.stringify(v)
+  const s = String(v)
+  return s.length > 60 ? s.slice(0, 60) + '…' : s
+}
+
+/** Monta o resumo "campo: antigo → novo" a partir de old_data/new_data do audit_log. */
+function resumoAlteracao(log: { action: string; old_data: Record<string, unknown> | null; new_data: Record<string, unknown> | null }): string {
+  const antigo = log.old_data ?? {}
+  const novo = log.new_data ?? {}
+
+  if (log.action === 'DELETE') {
+    return Object.entries(antigo).map(([k, v]) => `${k}: ${formatarValor(v)}`).join(' · ') || '—'
+  }
+  if (log.action === 'INSERT') {
+    return Object.entries(novo).map(([k, v]) => `${k}: ${formatarValor(v)}`).join(' · ') || '—'
+  }
+  // UPDATE — só mostra os campos que de fato mudaram
+  const chaves = new Set([...Object.keys(antigo), ...Object.keys(novo)])
+  const partes: string[] = []
+  for (const k of chaves) {
+    const a = antigo[k]
+    const n = novo[k]
+    if (JSON.stringify(a) === JSON.stringify(n)) continue
+    partes.push(k in antigo ? `${k}: ${formatarValor(a)} → ${formatarValor(n)}` : `${k}: ${formatarValor(n)}`)
+  }
+  return partes.join(' · ') || '—'
+}
+
+const LOGS_POR_PAGINA = 50
+
+export default async function AdminpanelPage({ searchParams }: { searchParams: Promise<{ pagina?: string }> }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  const { pagina: paginaParam } = await searchParams
+  const pagina = Math.max(1, parseInt(paginaParam ?? '1', 10) || 1)
+  const de = (pagina - 1) * LOGS_POR_PAGINA
+  const ate = de + LOGS_POR_PAGINA - 1
+
   // Schema We Make: tabela é `usuarios` (não `profiles`). Mapeamos para o shape esperado pelo AdminActions.
   const admin = createAdminClient()
-  const [{ data: me }, { data: usuariosRaw }, { data: logs }] = await Promise.all([
+  const [{ data: me }, { data: usuariosRaw }, { data: logs, count: totalLogs }] = await Promise.all([
     admin.from('usuarios').select('role').eq('id', user.id).single(),
     admin.from('usuarios').select('*').order('nome_completo'),
-    admin.from('audit_log').select('*').order('created_at', { ascending: false }).limit(20),
+    admin.from('audit_log').select('*', { count: 'exact' }).order('created_at', { ascending: false }).range(de, ate),
   ])
 
   const profiles = (usuariosRaw ?? []).map((u: any) => ({
@@ -111,6 +148,7 @@ export default async function AdminpanelPage() {
                     <th style={{ padding: '.75rem 1.25rem', textAlign: 'left', fontSize: '.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Ação</th>
                     <th style={{ padding: '.75rem 1.25rem', textAlign: 'left', fontSize: '.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Tabela</th>
                     <th style={{ padding: '.75rem 1.25rem', textAlign: 'left', fontSize: '.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', fontFamily: 'var(--font-montserrat,sans-serif)' }}>ID do Registro</th>
+                    <th style={{ padding: '.75rem 1.25rem', textAlign: 'left', fontSize: '.65rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Alteração</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -123,8 +161,8 @@ export default async function AdminpanelPage() {
                         {log.user_email || 'Sistema'}
                       </td>
                       <td style={{ padding: '.85rem 1.25rem' }}>
-                        <span style={{ 
-                          fontSize: '.65rem', fontWeight: 800, 
+                        <span style={{
+                          fontSize: '.65rem', fontWeight: 800,
                           color: log.action === 'INSERT' ? '#16a34a' : log.action === 'UPDATE' ? '#2563eb' : '#dc2626',
                           background: log.action === 'INSERT' ? '#f0fdf4' : log.action === 'UPDATE' ? '#eff6ff' : '#fef2f2',
                           padding: '.2rem .5rem', borderRadius: 4, textTransform: 'uppercase'
@@ -138,16 +176,50 @@ export default async function AdminpanelPage() {
                       <td style={{ padding: '.85rem 1.25rem', fontSize: '.72rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
                         <code>{log.record_id?.slice(0, 8) || '—'}</code>
                       </td>
+                      <td style={{ padding: '.85rem 1.25rem', fontSize: '.72rem', color: '#334155', fontFamily: 'var(--font-inter,sans-serif)', maxWidth: 420 }} title={resumoAlteracao(log)}>
+                        {resumoAlteracao(log)}
+                      </td>
                     </tr>
                   ))}
                   {(!logs || logs.length === 0) && (
                     <tr>
-                      <td colSpan={5} style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8', fontSize: '.8rem' }}>Nenhuma atividade registrada.</td>
+                      <td colSpan={6} style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8', fontSize: '.8rem' }}>Nenhuma atividade registrada.</td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
+            {(totalLogs ?? 0) > LOGS_POR_PAGINA && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '.85rem 1.25rem', borderTop: '1px solid #f1f5f9' }}>
+                <span style={{ fontSize: '.72rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
+                  {de + 1}–{Math.min(ate + 1, totalLogs ?? 0)} de {totalLogs} registros
+                </span>
+                <div style={{ display: 'flex', gap: '.5rem' }}>
+                  <a
+                    href={`/adminpanel?pagina=${pagina - 1}`}
+                    aria-disabled={pagina <= 1}
+                    style={{
+                      padding: '.4rem .9rem', borderRadius: 8, border: '1.5px solid #e2e8f0', fontSize: '.72rem', fontWeight: 700,
+                      fontFamily: 'var(--font-montserrat,sans-serif)', color: pagina <= 1 ? '#cbd5e1' : '#475569',
+                      pointerEvents: pagina <= 1 ? 'none' : 'auto', textDecoration: 'none',
+                    }}
+                  >
+                    Anterior
+                  </a>
+                  <a
+                    href={`/adminpanel?pagina=${pagina + 1}`}
+                    aria-disabled={ate + 1 >= (totalLogs ?? 0)}
+                    style={{
+                      padding: '.4rem .9rem', borderRadius: 8, border: '1.5px solid #e2e8f0', fontSize: '.72rem', fontWeight: 700,
+                      fontFamily: 'var(--font-montserrat,sans-serif)', color: ate + 1 >= (totalLogs ?? 0) ? '#cbd5e1' : '#475569',
+                      pointerEvents: ate + 1 >= (totalLogs ?? 0) ? 'none' : 'auto', textDecoration: 'none',
+                    }}
+                  >
+                    Próxima
+                  </a>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

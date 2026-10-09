@@ -1,0 +1,95 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Ciclo Anual da Academia — cartões editáveis do cronograma de pós-venda,
+   agrupados nos 3 momentos (Conhecer/Explorar/Criar). O cartão clicado voa até
+   o centro e gira (mesma técnica do painel de saúde mental, cartao-giratorio.js,
+   portada para React com a Web Animations API) revelando o verso: descrição do
+   processo e, quando ligado a um marco do Painel Mestre, o kanban real de
+   escolas naquela fase.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.ca-page { padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 4vw, 3.5rem) 5rem; max-width: 1400px; margin: 0 auto; }
+.ca-head { margin-bottom: 2rem; }
+.ca-head h1 { font: 600 clamp(1.8rem, 4vw, 2.5rem)/1.1 var(--ac-serif); margin: 0 0 .5rem; }
+.ca-head p { font-size: .95rem; color: var(--ac-muted); max-width: 62ch; line-height: 1.6; margin: 0; }
+
+.ca-momento { margin-top: 2.75rem; }
+.ca-momento-head { display: flex; align-items: center; gap: .85rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.ca-dot { width: .85rem; height: .85rem; border-radius: 50%; flex: 0 0 auto; }
+.ca-momento-head h2 { font: 700 1.3rem/1.2 var(--ac-sans); margin: 0; }
+.ca-momento-head .ca-count { font-size: .78rem; color: var(--ac-muted); }
+.ca-momento[data-m="conhecer"] .ca-dot { background: var(--ac-cyan); }
+.ca-momento[data-m="explorar"] .ca-dot { background: #e0a100; }
+.ca-momento[data-m="criar"] .ca-dot { background: #1f9d55; }
+
+.ca-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+
+.ca-card { position: relative; background: var(--ac-paper); border: 1.5px solid var(--ac-line); border-radius: 14px; padding: 1.1rem 1.2rem; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: .5rem; min-height: 148px; transition: border-color .15s, box-shadow .15s, transform .15s; font-family: var(--ac-sans); }
+.ca-card:hover { border-color: var(--ac-cyan); box-shadow: 0 8px 22px rgba(3,43,54,.1); transform: translateY(-2px); }
+.ca-card:focus-visible { outline: 2px solid var(--ac-cyan); outline-offset: 2px; }
+.ca-card.ca-ghost { visibility: hidden; }
+
+.ca-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; }
+.ca-date { font: 700 .72rem/1 var(--ac-sans); font-variant-numeric: tabular-nums; padding: .28rem .55rem; border-radius: 6px; background: var(--ac-ivory); color: var(--ac-ink-3); white-space: nowrap; }
+.ca-card-actions { display: flex; gap: .3rem; flex: 0 0 auto; }
+.ca-icon-btn { width: 24px; height: 24px; border-radius: 6px; border: 1px solid transparent; background: transparent; color: var(--ac-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.ca-icon-btn:hover { background: var(--ac-ivory-2); color: var(--ac-ink); }
+
+.ca-card h3 { font: 700 .92rem/1.4 var(--ac-sans); margin: 0; color: var(--ac-ink); }
+.ca-card-foot { margin-top: auto; display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+.ca-tag { font: 800 .6rem/1 var(--ac-sans); letter-spacing: .04em; text-transform: uppercase; padding: .22rem .5rem; border-radius: 99px; }
+.ca-tag.dado { background: #eef2ff; color: #3744b0; }
+.ca-tag.sugerido { background: var(--ac-ivory-2); color: var(--ac-muted); }
+.ca-tag.decidido { background: #e6f5ec; color: #1f7d47; }
+.ca-tag.marco { background: var(--ac-cyan-soft); color: var(--ac-link); }
+
+.ca-novo { border: 1.5px dashed var(--ac-line-2); background: transparent; color: var(--ac-muted); font: 700 .85rem/1 var(--ac-sans); border-radius: 14px; min-height: 148px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.ca-novo:hover { border-color: var(--ac-cyan); color: var(--ac-link); }
+
+/* ── Formulário inline de novo/editar cartão ───────────────────────────── */
+.ca-form { background: var(--ac-paper); border: 1.5px solid var(--ac-cyan); border-radius: 14px; padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: .55rem; grid-column: span 1; }
+.ca-form input, .ca-form textarea, .ca-form select { width: 100%; padding: .5rem .65rem; font-size: .82rem; border: 1px solid var(--ac-line-2); border-radius: 7px; font-family: var(--ac-sans); background: #fff; color: var(--ac-ink); }
+.ca-form textarea { resize: vertical; min-height: 4.5rem; }
+.ca-form label { font: 700 .65rem/1 var(--ac-sans); text-transform: uppercase; letter-spacing: .05em; color: var(--ac-muted); display: block; margin-bottom: .25rem; }
+.ca-form-row { display: flex; gap: .5rem; }
+.ca-form-row > div { flex: 1; min-width: 0; }
+.ca-form-actions { display: flex; gap: .5rem; margin-top: .25rem; }
+.ca-btn { font: 700 .78rem/1 var(--ac-sans); padding: .5rem 1rem; border-radius: 8px; border: none; cursor: pointer; }
+.ca-btn.primario { background: var(--ac-ink); color: #fff; }
+.ca-btn.primario:hover { background: var(--ac-ink-2); }
+.ca-btn.secundario { background: transparent; border: 1px solid var(--ac-line-2); color: var(--ac-muted); }
+.ca-btn.secundario:hover { background: var(--ac-ivory-2); }
+
+/* ── Overlay: cartão voa até o centro e gira ───────────────────────────── */
+.ca-flip-fundo { position: fixed; inset: 0; z-index: 90; background: radial-gradient(circle at 50% 42%, rgba(3,43,54,.42), rgba(3,10,13,.8)); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+.ca-flip-cena { position: fixed; z-index: 91; perspective: 1700px; }
+.ca-flip-cartao { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; will-change: transform; }
+.ca-flip-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 16px; overflow: hidden; background: #fff; box-shadow: 0 34px 90px rgba(3,43,54,.45), 0 0 0 1px rgba(255,255,255,.4); }
+.ca-flip-frente { display: flex; flex-direction: column; justify-content: center; padding: 1.2rem 1.4rem; }
+.ca-flip-verso { transform: rotateY(180deg); display: flex; flex-direction: column; }
+
+.ca-flip-topo { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 1.1rem 1rem 1rem 1.3rem; background: var(--ac-ink); color: #fff; flex: 0 0 auto; }
+.ca-flip-topo h2 { margin: 0; font: 700 1.05rem/1.3 var(--ac-sans); color: #fff; }
+.ca-flip-topo .ca-date { background: rgba(255,255,255,.15); color: #fff; margin-top: .35rem; display: inline-block; }
+.ca-flip-x { width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255,255,255,.5); background: transparent; color: #fff; font-size: 1.4rem; line-height: 1; cursor: pointer; flex: 0 0 auto; }
+.ca-flip-x:hover { background: rgba(255,255,255,.15); }
+
+.ca-flip-corpo { flex: 1; overflow: auto; padding: 1.1rem 1.3rem 1.4rem; display: flex; flex-direction: column; gap: 1.1rem; }
+.ca-flip-corpo .ca-desc { font-size: .9rem; line-height: 1.6; color: var(--ac-text); }
+.ca-flip-corpo .ca-fonte { font-size: .76rem; color: var(--ac-muted); font-style: italic; }
+
+/* mini-kanban no verso */
+.ca-kanban-title { font: 800 .68rem/1 var(--ac-sans); letter-spacing: .07em; text-transform: uppercase; color: var(--ac-muted); margin: 0 0 .6rem; }
+.ca-kanban { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(150px, 1fr); gap: .7rem; overflow-x: auto; padding-bottom: .3rem; }
+.ca-kanban-col { background: var(--ac-ivory); border-radius: 10px; padding: .6rem .65rem; min-width: 0; }
+.ca-kanban-col h4 { font: 700 .66rem/1 var(--ac-sans); text-transform: uppercase; letter-spacing: .03em; color: var(--ac-ink-3); margin: 0 0 .5rem; display: flex; justify-content: space-between; }
+.ca-kanban-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .35rem; }
+.ca-kanban-col li { font-size: .74rem; background: #fff; border: 1px solid var(--ac-line); border-radius: 6px; padding: .35rem .5rem; color: var(--ac-text); overflow-wrap: anywhere; }
+.ca-kanban-vazio { font-size: .8rem; color: var(--ac-muted); font-style: italic; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ca-card { transition: none; }
+}
+@media (max-width: 640px) {
+  .ca-grid { grid-template-columns: 1fr; }
+  .ca-kanban { grid-auto-columns: minmax(130px, 1fr); }
+}

@@ -193,7 +193,7 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
         </dl>
         <p className="ac-hint">Quantidade a adquirir = quantidade recomendada − quantidade aproveitável. Os valores de referência são orientativos; a escola pode comprar itens equivalentes.</p>
         <div className="an-geral-g">
-          {([['geral.situacao', 'Situação geral do ambiente'], ['geral.reutilizaveis', 'Recursos reutilizáveis'], ['geral.consumiveis', 'Recursos consumíveis'], ['geral.memorial', 'Memorial arquitetônico'], ['geral.obs', 'Recomendações e observações finais da We Make']] as const).map(([k, rot]) => (
+          {([['geral.situacao', 'Situação geral do ambiente'], ['geral.reutilizaveis', 'Recursos reutilizáveis'], ...(INCLUI_CONSUMIVEIS ? [['geral.consumiveis', 'Recursos consumíveis'] as const] : []), ['geral.memorial', 'Memorial arquitetônico'], ['geral.obs', 'Recomendações e observações finais da We Make']] as const).map(([k, rot]) => (
             <label key={k} className="an-geral"><span>{rot}</span><textarea rows={2} value={p[k] ?? ''} onChange={e => set(k, e.target.value)} /></label>
           ))}
         </div>
@@ -203,12 +203,14 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
 }
 
 function Tabela({ id, titulo, itens, resp, p, set }: { id: string; titulo: string; itens: Recurso[]; resp: Respostas; p: Respostas; set: (k: string, v: string) => void }) {
-  /** Não aceita mais "aproveitável" do que a escola declarou (se declarou "Não", zero). */
+  /** Não aceita mais "aproveitável" do que a escola declarou (se declarou "Não", ou
+   * nem respondeu, zero — sem isso um item sem resposta nenhuma aceitava qualquer
+   * quantidade digitada aqui). */
   const limitarAproveitavel = (key: string, valor: string) => {
     const n = Number(valor.replace(',', '.'))
     if (!Number.isFinite(n)) return valor
     const declarado = Number((resp[key + '.q'] ?? '').replace(',', '.'))
-    const teto = resp[key + '.p'] === 'Não' ? 0 : resp[key + '.q'] && Number.isFinite(declarado) ? declarado : null
+    const teto = !resp[key + '.p'] || resp[key + '.p'] === 'Não' ? 0 : resp[key + '.q'] && Number.isFinite(declarado) ? declarado : null
     return teto !== null && n > teto ? String(teto) : valor
   }
   return (

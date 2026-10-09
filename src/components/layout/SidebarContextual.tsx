@@ -29,15 +29,7 @@ export function AcademiaNav({ pathname, diagnosticos }: { pathname: string; diag
       <Link href="/" className="sbc-voltar">← Todos os módulos</Link>
 
       <Item href="/academia" ativo={pathname === '/academia'}>Visão geral</Item>
-
-      {NAV_DOCS.map(g => (
-        <section key={g.grupo}>
-          <Rotulo>{g.grupo}</Rotulo>
-          {g.itens.map(d => (
-            <Item key={d.slug} href={`/academia/${d.slug}`} num={d.n} ativo={pathname === `/academia/${d.slug}`}>{d.nome}</Item>
-          ))}
-        </section>
-      ))}
+      <Item href="/academia/ciclo-anual" ativo={pathname === '/academia/ciclo-anual'}>Ciclo Anual</Item>
 
       <Rotulo>Gestão da implantação</Rotulo>
       {NAV_GESTAO.filter(i => !i.soDiagnosticos || diagnosticos).map(i => (
@@ -48,6 +40,15 @@ export function AcademiaNav({ pathname, diagnosticos }: { pathname: string; diag
         >
           {i.nome}
         </Item>
+      ))}
+
+      {NAV_DOCS.map(g => (
+        <section key={g.grupo}>
+          <Rotulo>{g.grupo}</Rotulo>
+          {g.itens.map(d => (
+            <Item key={d.slug} href={`/academia/${d.slug}`} num={d.n} ativo={pathname === `/academia/${d.slug}`}>{d.nome}</Item>
+          ))}
+        </section>
       ))}
     </>
   )

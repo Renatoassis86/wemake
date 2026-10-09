@@ -62,6 +62,8 @@ export function AnotacaoContatoInline({ escolaId, notas: notasIniciais }: { esco
       if (res.success) {
         setTexto('')
         router.refresh()
+      } else {
+        alert(res.error ?? 'Erro ao salvar anotação')
       }
     })
   }

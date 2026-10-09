@@ -12,6 +12,11 @@ import processoOnboarding from '@/content/academia/processo-de-onboarding-2026.j
 import relatorioOnboarding from '@/content/academia/relatorio-onboarding.json'
 import fichaGoLive from '@/content/academia/ficha-go-live.json'
 import painelMestre from '@/content/academia/painel-mestre.json'
+import fichaDiagnosticoEntradaDocente from '@/content/academia/ficha-diagnostico-entrada-docente.json'
+import roteiroReuniaoAcompanhamento from '@/content/academia/roteiro-reuniao-acompanhamento.json'
+import registroChamados from '@/content/academia/registro-chamados.json'
+import formularioMeioCiclo from '@/content/academia/formulario-meio-ciclo.json'
+import relatorioResultadosPrescricao from '@/content/academia/relatorio-resultados-prescricao.json'
 
 /* ─────────────────────────── Tipos do conteúdo ─────────────────────────── */
 
@@ -66,7 +71,7 @@ export const MACROETAPAS = [
   { n: 7, nome: 'Transição para a Academia', marcos: [8], gate: 'Responsável, cadência e pontos de atenção registrados.' },
 ] as const
 
-export type Grupo = 'Fundamentos' | 'Jornada de implantação' | 'Controle'
+export type Grupo = 'Fundamentos' | 'Jornada de implantação' | 'Formação e Acompanhamento' | 'Controle'
 
 export interface AcademiaDoc {
   slug: string
@@ -236,7 +241,42 @@ const BASE_DOCS: BaseDoc[] = [
     facts: [], content: c(fichaGoLive),
   },
   {
-    slug: 'painel-mestre', n: 14, grupo: 'Controle', etapa: 0, marcos: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+    slug: 'ficha-diagnostico-entrada-docente', n: 14, grupo: 'Formação e Acompanhamento', etapa: 0, marcos: [],
+    tipo: 'Formulário', kicker: 'Fase 2 · Diagnóstico de Entrada Docente',
+    title: 'Ficha de Diagnóstico de Entrada Docente', short: 'Diagnóstico de Entrada Docente',
+    deck: 'Confirma ou reclassifica o nível de acompanhamento (A, B ou C) nas primeiras semanas do ano letivo.',
+    facts: [], content: c(fichaDiagnosticoEntradaDocente),
+  },
+  {
+    slug: 'roteiro-reuniao-acompanhamento', n: 15, grupo: 'Formação e Acompanhamento', etapa: 0, marcos: [],
+    tipo: 'Roteiro', kicker: 'Fases 3 e 4 · Implantação Intensiva e Acompanhamento Contínuo',
+    title: 'Roteiro de Reunião de Acompanhamento', short: 'Roteiro de Reunião',
+    deck: 'Estrutura fixa de 40 minutos — Conhecer, Explorar e Criar — para toda reunião pedagógica do ano.',
+    facts: [], content: c(roteiroReuniaoAcompanhamento),
+  },
+  {
+    slug: 'registro-chamados', n: 16, grupo: 'Formação e Acompanhamento', etapa: 0, marcos: [],
+    tipo: 'Formulário', kicker: 'Fase 4 · Suporte reativo',
+    title: 'Registro de Chamados', short: 'Registro de Chamados',
+    deck: 'Todo chamado por WhatsApp ou plataforma vira um registro com prazo de resposta.',
+    facts: [], content: c(registroChamados),
+  },
+  {
+    slug: 'formulario-meio-ciclo', n: 17, grupo: 'Formação e Acompanhamento', etapa: 0, marcos: [],
+    tipo: 'Formulário', kicker: 'Fase 6 · Diagnóstico de Meio de Ciclo',
+    title: 'Formulário de Meio de Ciclo', short: 'Meio de Ciclo',
+    deck: 'Pesquisa de satisfação, indicadores de uso e ajustes do 2º semestre antes que o risco se acumule.',
+    facts: [], content: c(formularioMeioCiclo),
+  },
+  {
+    slug: 'relatorio-resultados-prescricao', n: 18, grupo: 'Formação e Acompanhamento', etapa: 0, marcos: [],
+    tipo: 'Formulário', kicker: 'Fase 7 · Prescrição de Resultados e Fechamento',
+    title: 'Relatório de Resultados e Prescrição', short: 'Resultados e Prescrição',
+    deck: 'Qualidade da implementação, evolução docente e prescrição de ações para o ciclo seguinte.',
+    facts: [], content: c(relatorioResultadosPrescricao),
+  },
+  {
+    slug: 'painel-mestre', n: 19, grupo: 'Controle', etapa: 0, marcos: [0, 1, 2, 3, 4, 5, 6, 7, 8],
     tipo: 'Planilha', kicker: 'Controle · Painel Mestre de Implantação 2027',
     title: 'Painel Mestre de Implantação', short: 'Painel Mestre',
     deck: 'Visão executiva das escolas parceiras: etapas, prazos, riscos e próximas ações.',
@@ -264,6 +304,11 @@ const EXTRA: Record<string, Pick<AcademiaDoc, 'origem' | 'oficialNo' | 'fonte'>>
   'processo-de-onboarding-2026': { origem: 'complementar', fonte: 'Processo_de_Onboarding_We_Make_2026.pdf' },
   'manual-do-formador': { origem: 'complementar', fonte: 'WeMake_Manual_do_Formador.pdf' },
   'material-do-multiplicador': { origem: 'complementar', fonte: 'WeMake_Material_do_Multiplicador.pdf' },
+  'ficha-diagnostico-entrada-docente': { origem: 'complementar', fonte: 'Rascunho a partir do Processo A1, Arquitetura de Processos 2027' },
+  'roteiro-reuniao-acompanhamento': { origem: 'complementar', fonte: 'Rascunho a partir dos Processos A2 e A3, Arquitetura de Processos 2027' },
+  'registro-chamados': { origem: 'complementar', fonte: 'Rascunho a partir do Processo A4, Arquitetura de Processos 2027' },
+  'formulario-meio-ciclo': { origem: 'complementar', fonte: 'Rascunho a partir do Processo A5, Arquitetura de Processos 2027' },
+  'relatorio-resultados-prescricao': { origem: 'complementar', fonte: 'Rascunho a partir do Processo A6, Arquitetura de Processos 2027' },
 }
 
 export const ACADEMIA_DOCS: AcademiaDoc[] = BASE_DOCS.map(d => ({ ...d, ...EXTRA[d.slug] }))
@@ -273,6 +318,7 @@ export const ORIGEM_LABEL = { denis: 'Documento oficial · Dênis', complementar
 export const GRUPOS: { nome: Grupo; texto: string }[] = [
   { nome: 'Fundamentos', texto: 'O que a Academia é, quem responde por ela e como as peças se encaixam.' },
   { nome: 'Jornada de implantação', texto: 'Da assinatura do contrato à transição para o acompanhamento anual, na ordem em que a escola percorre.' },
+  { nome: 'Formação e Acompanhamento', texto: 'Instrumentos dos momentos Explorar e Criar — do diagnóstico de entrada docente ao fechamento de ciclo. Ainda em elaboração, sem uso em produção.' },
   { nome: 'Controle', texto: 'Como a equipe enxerga todas as escolas ao mesmo tempo.' },
 ]
 

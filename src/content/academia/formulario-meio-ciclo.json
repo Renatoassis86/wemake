@@ -1,0 +1,55 @@
+{
+  "slug": "formulario-meio-ciclo",
+  "source": "a criar · Processo A5, Arquitetura de Processos 2027",
+  "titleText": "FORMULÁRIO DE MEIO DE CICLO",
+  "trio": [
+    { "k": "OBJETIVO", "v": "Diagnóstico intermediário de progresso e reclassificação de nível" },
+    { "k": "QUEM VALIDA", "v": "Pedagógico We Make (PED) e Dados (DAD)" },
+    { "k": "QUANDO", "v": "Junho e julho — final do 1º semestre letivo" }
+  ],
+  "lead": ["Diagnóstico de meio de ciclo (Fase 6): pesquisa de satisfação, indicadores de uso e ajustes antes que uma dificuldade comprometa o resultado do ano"],
+  "blocks": [
+    { "t": "minor", "x": "Finalidade" },
+    { "t": "p", "x": "Ao final do primeiro semestre letivo, consolidar um diagnóstico intermediário de progresso — pesquisa de satisfação pela plataforma tecnológica, indicadores de uso do currículo e da plataforma, e o registro das reuniões de acompanhamento do semestre — para ajustar o plano de acompanhamento do segundo semestre antes que uma dificuldade se acumule e comprometa o resultado do ano." },
+    { "t": "minor", "x": "Entradas" },
+    { "t": "p", "x": "Pesquisa de satisfação; dados de uso da plataforma; diário de bordo das reuniões de acompanhamento do semestre." },
+
+    { "t": "sec", "x": "Diagnóstico de Meio de Ciclo" },
+    { "t": "field", "x": "Escola" },
+    { "t": "field", "x": "Nível de acompanhamento no 1º semestre (A, B ou C)" },
+    { "t": "field", "x": "Responsável We Make (PED)" },
+    { "t": "field", "x": "Data do diagnóstico" },
+
+    { "t": "sub", "x": "Pesquisa de satisfação", "n": "1" },
+    { "t": "field", "x": "Resultado da pesquisa de satisfação (professor / coordenação)" },
+    { "t": "field", "x": "Principais elogios registrados" },
+    { "t": "field", "x": "Principais críticas ou dificuldades registradas" },
+
+    { "t": "sub", "x": "Indicadores de uso", "n": "2" },
+    { "t": "table", "rows": [
+      [{"b":[{"t":"p","x":"**Indicador**"}]}, {"b":[{"t":"p","x":"**Resultado**"}]}, {"b":[{"t":"p","x":"**Leitura**"}]}],
+      [{"b":[{"t":"p","x":"**Taxa de adoção da plataforma**"}]}, {"b":[]}, {"b":[]}],
+      [{"b":[{"t":"p","x":"**Progresso do currículo em relação ao planejado**"}]}, {"b":[]}, {"b":[]}],
+      [{"b":[{"t":"p","x":"**Regularidade do diário de bordo**"}]}, {"b":[]}, {"b":[]}],
+      [{"b":[{"t":"p","x":"**Chamados abertos no semestre e tempo médio de resposta**"}]}, {"b":[]}, {"b":[]}]
+    ], "hdr": true },
+
+    { "t": "sub", "x": "Reclassificação de nível", "n": "3" },
+    { "t": "check", "x": "Mantém o nível atual." },
+    { "t": "check", "x": "Reclassifica para A · Intensivo." },
+    { "t": "check", "x": "Reclassifica para B · Padrão." },
+    { "t": "check", "x": "Reclassifica para C · Autônomo." },
+    { "t": "field", "x": "Justificativa da reclassificação" },
+
+    { "t": "sub", "x": "Ajustes para o 2º semestre", "n": "4" },
+    { "t": "field", "x": "Principal ajuste no plano de acompanhamento" },
+    { "t": "field", "x": "Formação temática a priorizar (Fase 5)" },
+    { "t": "field", "x": "Pontos de atenção para o fechamento do ciclo (Fase 7)" },
+
+    { "t": "table", "rows": [
+      [{"b":[{"t":"p","x":"**VALIDAÇÃO PEDAGÓGICO WE MAKE**"}]}, {"b":[{"t":"p","x":"**CIÊNCIA DADOS (DAD)**"}]}],
+      [{"b":[{"t":"p","x":"Nome: __________________________\nData: ____/____/______"}]}, {"b":[{"t":"p","x":"Nome: __________________________\nData: ____/____/______"}]}]
+    ], "hdr": true },
+    { "t": "minor", "x": "GATE: MEIO DE CICLO REGISTRADO → PLANO DO 2º SEMESTRE AJUSTADO ANTES DO RISCO SE ACUMULAR" }
+  ]
+}

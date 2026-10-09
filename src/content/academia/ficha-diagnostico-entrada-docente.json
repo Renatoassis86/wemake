@@ -1,0 +1,56 @@
+{
+  "slug": "ficha-diagnostico-entrada-docente",
+  "source": "a criar · Processo A1, Arquitetura de Processos 2027",
+  "titleText": "FICHA DE DIAGNÓSTICO DE ENTRADA DOCENTE",
+  "trio": [
+    { "k": "OBJETIVO", "v": "Confirmar ou reclassificar o nível de acompanhamento" },
+    { "k": "QUEM VALIDA", "v": "Pedagógico We Make (PED)" },
+    { "k": "QUANDO", "v": "3 primeiras semanas letivas" }
+  ],
+  "lead": ["Levantamento do perfil da equipe docente que define a cadência de acompanhamento do ano"],
+  "blocks": [
+    { "t": "minor", "x": "Finalidade" },
+    { "t": "p", "x": "Levantar o perfil da equipe docente responsável pelo currículo We Make — experiência prévia com tecnologia, conforto com a metodologia maker e necessidades específicas de apoio — para confirmar ou reclassificar o nível de acompanhamento da escola (A, B ou C) nas primeiras semanas do ano letivo." },
+    { "t": "minor", "x": "Princípio" },
+    { "t": "p", "x": "Nível não é avaliação do professor: é calibragem de cadência. Toda escola nova entra com nível A (Intensivo) provisório já no Handoff, para que nenhuma escola fique sem acompanhamento definido antes deste diagnóstico. Esta ficha confirma o nível A ou reclassifica para B ou C, com base em evidência, não em suposição." },
+    { "t": "sec", "x": "Diagnóstico de Entrada Docente" },
+    { "t": "field", "x": "Escola" },
+    { "t": "field", "x": "Responsável We Make (PED)" },
+    { "t": "field", "x": "Data do diagnóstico" },
+    { "t": "field", "x": "Nível provisório atribuído no Handoff" },
+
+    { "t": "sub", "x": "Perfil da equipe docente", "n": "1" },
+    { "t": "table", "rows": [
+      [{"b":[{"t":"p","x":"**Professor**"}]}, {"b":[{"t":"p","x":"**Disciplina / trilha**"}]}, {"b":[{"t":"p","x":"**Experiência prévia com tecnologia**"}]}, {"b":[{"t":"p","x":"**Conforto com a metodologia maker**"}]}, {"b":[{"t":"p","x":"**Necessidade de apoio identificada**"}]}],
+      [{"b":[]}, {"b":[]}, {"b":[]}, {"b":[]}, {"b":[]}],
+      [{"b":[]}, {"b":[]}, {"b":[]}, {"b":[]}, {"b":[]}],
+      [{"b":[]}, {"b":[]}, {"b":[]}, {"b":[]}, {"b":[]}]
+    ], "hdr": true },
+
+    { "t": "sub", "x": "Critérios de nível", "n": "2" },
+    { "t": "p", "x": "Use como referência — a decisão final considera o conjunto da equipe, não um professor isolado." },
+    { "t": "table", "rows": [
+      [{"b":[{"t":"p","x":"**Nível**"}]}, {"b":[{"t":"p","x":"**Perfil típico**"}]}, {"b":[{"t":"p","x":"**Cadência**"}]}],
+      [{"b":[{"t":"p","x":"**A · Intensivo**"}]}, {"b":[{"t":"p","x":"Primeiro ano; professor sem experiência maker; troca recente de professor; adoção baixa"}]}, {"b":[{"t":"p","x":"Quinzenal no primeiro bimestre, mensal depois; suporte reativo prioritário"}]}],
+      [{"b":[{"t":"p","x":"**B · Padrão**"}]}, {"b":[{"t":"p","x":"Professor em ritmo, com dificuldades pontuais"}]}, {"b":[{"t":"p","x":"Mensal no primeiro bimestre, bimestral depois; reunião trimestral de feedback"}]}],
+      [{"b":[{"t":"p","x":"**C · Autônomo**"}]}, {"b":[{"t":"p","x":"Escola em Criar; professor Autônomo ou Multiplicador"}]}, {"b":[{"t":"p","x":"Trimestral; suporte reativo"}]}]
+    ], "hdr": true },
+
+    { "t": "sub", "x": "Decisão de nível", "n": "3" },
+    { "t": "check", "x": "Mantém nível A · Intensivo (confirma o provisório do Handoff)" },
+    { "t": "check", "x": "Ajusta para nível B · Padrão" },
+    { "t": "check", "x": "Ajusta para nível C · Autônomo" },
+    { "t": "field", "x": "Justificativa da decisão" },
+
+    { "t": "sub", "x": "Plano de acompanhamento do ano", "n": "4" },
+    { "t": "field", "x": "Cadência definida (datas de referência)" },
+    { "t": "field", "x": "Data da primeira reunião de acompanhamento (Fase 3)" },
+    { "t": "field", "x": "Pontos de atenção prioritários para o 1º bimestre" },
+
+    { "t": "table", "rows": [
+      [{"b":[{"t":"p","x":"**VALIDAÇÃO PEDAGÓGICO WE MAKE**"}]}, {"b":[{"t":"p","x":"**CIÊNCIA DA COORDENAÇÃO DA ESCOLA**"}]}],
+      [{"b":[{"t":"p","x":"Nome: __________________________\nData: ____/____/______"}]}, {"b":[{"t":"p","x":"Nome: __________________________\nData: ____/____/______"}]}]
+    ], "hdr": true },
+    { "t": "minor", "x": "GATE: NÍVEL CONFIRMADO OU RECLASSIFICADO → FASE 3 (IMPLANTAÇÃO INTENSIVA) SEGUE NA CADÊNCIA DEFINIDA" }
+  ]
+}

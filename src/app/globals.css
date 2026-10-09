@@ -88,7 +88,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "kern" 1, "liga" 1;
-  overflow-x: hidden;
+  /* Sem overflow-x aqui de propósito: html (acima) já corta qualquer
+     vazamento horizontal da página inteira. Ter overflow-x:hidden também no
+     body cria um segundo contexto de rolagem aninhado no do html — quem o
+     usuário realmente rola é o html, mas um position:sticky dentro do body
+     passa a ser calculado contra o scroll do body, que nunca se move. Era
+     por isso que a barra de etapas do diagnóstico (e qualquer sticky fora
+     do shell do dashboard) parava de grudar depois de rolar um pouco. */
 }
 
 /* Tabular numbers para dados/KPIs */
@@ -969,8 +975,9 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
     margin-left: 0 !important;
     padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
   }
-  /* impede scroll horizontal acidental na pagina inteira */
-  html, body { overflow-x: hidden; }
+  /* impede scroll horizontal acidental na pagina inteira — só no html; ver
+     nota em body{} acima sobre por que duplicar isso no body quebra sticky */
+  html { overflow-x: hidden; }
 }
 
 /* ── KPIs grid (comercial dashboard + adminpanel) ─────────── */

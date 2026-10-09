@@ -102,6 +102,7 @@ export function ContratoDocumentosPanel({ escolaId, escolaNome, arquivos: arquiv
     startTransition(async () => {
       const res = await adicionarNotaContrato(escolaId, texto)
       if (res.success) { setTexto(''); router.refresh() }
+      else alert(res.error ?? 'Erro ao salvar comentário')
     })
   }
 
