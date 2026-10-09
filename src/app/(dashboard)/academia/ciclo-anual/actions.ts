@@ -5,17 +5,9 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { moduloPermitido } from '@/lib/modulos'
 import { auditar } from '@/lib/auditoria'
+import { STATUS_TAGS, STATUS_EXECUCAO, type Resultado, type Momento, type StatusTag, type StatusExecucao } from './tipos'
 
-export type Resultado = { ok: true; id?: string } | { ok: false; erro: string }
-
-export type Momento = 'conhecer' | 'explorar' | 'criar'
-export const STATUS_TAGS = ['dado', 'sugerido', 'decidido'] as const
-export type StatusTag = (typeof STATUS_TAGS)[number]
-
-/** Status de execução de um cartão PARA UMA ESCOLA — diferente do status_tag
- * (que é sobre a confiança do dado no molde, não sobre o andamento real). */
-export const STATUS_EXECUCAO = ['Não iniciado', 'Em andamento', 'Aguardando escola', 'Aguardando We Make', 'Concluído', 'Bloqueado'] as const
-export type StatusExecucao = (typeof STATUS_EXECUCAO)[number]
+export type { Resultado, Momento, StatusTag, StatusExecucao }
 
 async function autorizado() {
   const supabase = await createClient()

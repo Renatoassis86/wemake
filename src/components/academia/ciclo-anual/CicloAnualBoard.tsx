@@ -3,10 +3,8 @@
 import { useEffect, useMemo, useState, useTransition } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
-import {
-  criarCartao, atualizarCartao, excluirCartao, salvarStatusCartao,
-  STATUS_TAGS, STATUS_EXECUCAO, type Momento, type StatusTag, type StatusExecucao,
-} from '@/app/(dashboard)/academia/ciclo-anual/actions'
+import { criarCartao, atualizarCartao, excluirCartao, salvarStatusCartao } from '@/app/(dashboard)/academia/ciclo-anual/actions'
+import { STATUS_TAGS, STATUS_EXECUCAO, type Momento, type StatusTag, type StatusExecucao } from '@/app/(dashboard)/academia/ciclo-anual/tipos'
 import { CapturadorDeErros, ErroBoundaryCicloAnual } from './ErroBoundary'
 
 export interface CronogramaCard {
