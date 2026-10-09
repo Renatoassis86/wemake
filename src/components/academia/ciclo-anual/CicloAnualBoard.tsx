@@ -48,7 +48,8 @@ export function CicloAnualBoard({ cards, kanbanData, marcos }: { cards: Cronogra
     <div className="ca-page">
       <div className="ca-head">
         <h1>Ciclo Anual da Academia</h1>
-        <p>Cronograma de pós-venda em cartões — editável direto aqui. Clique num cartão para ver o processo por trás dele e, quando ligado a um marco do Painel Mestre, o kanban real das escolas naquela fase.</p>
+        <p className="ca-lede">O cronograma de pós-venda da Academia We Make, do contrato assinado ao fechamento do ciclo, nos três momentos da jornada: Conhecer, Explorar e Criar.</p>
+        <p className="ca-hint">Cartões editáveis. Ligado a um marco do Painel Mestre, cada um revela no verso o andamento real das escolas naquela fase.</p>
       </div>
 
       {MOMENTOS.map(m => (

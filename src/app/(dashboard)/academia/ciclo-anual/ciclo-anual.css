@@ -8,9 +8,10 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .ca-page { padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 4vw, 3.5rem) 5rem; max-width: 1400px; margin: 0 auto; }
-.ca-head { margin-bottom: 2rem; }
-.ca-head h1 { font: 600 clamp(1.8rem, 4vw, 2.5rem)/1.1 var(--ac-serif); margin: 0 0 .5rem; }
-.ca-head p { font-size: .95rem; color: var(--ac-muted); max-width: 62ch; line-height: 1.6; margin: 0; }
+.ca-head { margin-bottom: 2.25rem; max-width: 62ch; }
+.ca-head h1 { font: 600 clamp(1.8rem, 4vw, 2.5rem)/1.1 var(--ac-serif); margin: 0 0 .65rem; letter-spacing: -.01em; }
+.ca-lede { font: italic 400 clamp(1.05rem, 1.6vw, 1.2rem)/1.55 var(--ac-serif); color: var(--ac-text); margin: 0 0 .65rem; }
+.ca-hint { font: 500 .8rem/1.6 var(--ac-sans); color: var(--ac-muted); margin: 0; }
 
 .ca-momento { margin-top: 2.75rem; }
 .ca-momento-head { display: flex; align-items: center; gap: .85rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
