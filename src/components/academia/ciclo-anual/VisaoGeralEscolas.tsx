@@ -26,7 +26,7 @@ export function VisaoGeralEscolas({ resumo, totalCards }: { resumo: ResumoEscola
   })
 
   if (!ordenado.length) {
-    return <p className="ca-vg-vazio">Nenhuma escola ativa cadastrada ainda.</p>
+    return <p className="ca-vg-vazio">Nenhuma escola ativa cadastrada.</p>
   }
 
   return (

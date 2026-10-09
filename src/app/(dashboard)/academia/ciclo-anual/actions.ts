@@ -130,6 +130,46 @@ export async function salvarStatusCartao(cardId: string, escolaId: string, patch
   return { ok: true }
 }
 
+/** Registra um anexo já enviado ao storage (o upload do arquivo em si acontece
+ * direto do navegador, no bucket "documentos-oficiais" — aqui só grava o
+ * registro, porque a tabela não libera INSERT pro client comum). */
+export async function registrarAnexo(cardId: string, escolaId: string, anexo: { nome: string; path: string; tipo: string; tamanho: number }): Promise<Resultado> {
+  const user = await autorizado()
+  if (!user) return { ok: false, erro: 'Sessão expirada. Entre novamente.' }
+  if (!escolaId) return { ok: false, erro: 'Selecione uma escola primeiro.' }
+
+  const db = createAdminClient()
+  const { data: novo, error } = await db.from('academia_cronograma_anexos').insert({
+    card_id: cardId, escola_id: escolaId,
+    nome: txt(anexo.nome, 300), path: anexo.path, tipo: txt(anexo.tipo, 120) || null, tamanho: anexo.tamanho,
+    created_by: user.id,
+  }).select('id').single()
+  if (error) return { ok: false, erro: error.message }
+
+  await auditar(user, 'INSERT', 'academia_cronograma_anexos', novo?.id ?? null, { cardId, nome: anexo.nome })
+  refresh()
+  return { ok: true, id: novo?.id }
+}
+
+export async function excluirAnexo(id: string): Promise<Resultado> {
+  const user = await autorizado()
+  if (!user) return { ok: false, erro: 'Sessão expirada. Entre novamente.' }
+
+  const db = createAdminClient()
+  const { data: anexo } = await db.from('academia_cronograma_anexos').select('path, nome').eq('id', id).maybeSingle()
+  if (!anexo) return { ok: false, erro: 'Anexo não encontrado.' }
+
+  const { error: eStorage } = await db.storage.from('documentos-oficiais').remove([anexo.path])
+  if (eStorage) return { ok: false, erro: eStorage.message }
+
+  const { error } = await db.from('academia_cronograma_anexos').delete().eq('id', id)
+  if (error) return { ok: false, erro: error.message }
+
+  await auditar(user, 'DELETE', 'academia_cronograma_anexos', id, null, anexo)
+  refresh()
+  return { ok: true }
+}
+
 /** Troca a ordem de dois cartões vizinhos do mesmo momento (mover para cima/baixo). */
 export async function reordenarCartao(id: string, direcao: 'cima' | 'baixo'): Promise<Resultado> {
   const user = await autorizado()

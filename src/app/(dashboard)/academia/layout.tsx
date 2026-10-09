@@ -23,7 +23,7 @@ export default function AcademiaLayout({ children }: { children: React.ReactNode
         <span className="ac-pin-text">
           <span className="ac-pin-eyebrow">Academia We Make</span>
           <span className="ac-pin-title">Ciclo Anual por Escolas</span>
-          <span className="ac-pin-sub">Veja o cronograma completo →</span>
+          <span className="ac-pin-sub">Consultar o cronograma completo →</span>
         </span>
       </Link>
       {children}

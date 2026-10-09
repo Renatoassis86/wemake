@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useState, useTransition } from 'react'
+import { useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
-import { criarCartao, atualizarCartao, excluirCartao, salvarStatusCartao } from '@/app/(dashboard)/academia/ciclo-anual/actions'
+import { criarCartao, atualizarCartao, excluirCartao, salvarStatusCartao, registrarAnexo, excluirAnexo } from '@/app/(dashboard)/academia/ciclo-anual/actions'
 import { STATUS_TAGS, STATUS_EXECUCAO, type Momento, type StatusTag, type StatusExecucao } from '@/app/(dashboard)/academia/ciclo-anual/tipos'
+import { createClient } from '@/lib/supabase/client'
 import { CapturadorDeErros, ErroBoundaryCicloAnual } from './ErroBoundary'
 
 export interface CronogramaCard {
@@ -27,6 +28,10 @@ export type KanbanData = Record<string, Record<string, string[]>>
 /** status de execução da escola selecionada, por cartão */
 export type StatusPorCard = Record<string, { status: string; prazo_data: string | null; anotacoes: string }>
 
+export interface Anexo { id: string; nome: string; url: string; tipo: string | null; tamanho: number | null; criadoEm: string }
+/** anexos (doc/pdf/foto/vídeo) da escola selecionada, por cartão */
+export type AnexosPorCard = Record<string, Anexo[]>
+
 const MOMENTOS: { slug: Momento; nome: string }[] = [
   { slug: 'conhecer', nome: 'Conhecer — Implantação' },
   { slug: 'explorar', nome: 'Explorar — Formação ao longo do ano' },
@@ -40,9 +45,9 @@ const EXEC_CURTO: Record<StatusExecucao, string> = {
   'Aguardando We Make': 'Aguard. We Make', 'Concluído': 'Concluído', 'Bloqueado': 'Bloqueado',
 }
 
-export function CicloAnualBoard({ cards, kanbanData, marcos, escolaId, escolaNome, statusPorCard, proximoVencerId }: {
+export function CicloAnualBoard({ cards, kanbanData, marcos, escolaId, escolaNome, statusPorCard, proximoVencerId, anexosPorCard }: {
   cards: CronogramaCard[]; kanbanData: KanbanData; marcos: string[]
-  escolaId: string; escolaNome: string; statusPorCard: StatusPorCard; proximoVencerId: string | null
+  escolaId: string; escolaNome: string; statusPorCard: StatusPorCard; proximoVencerId: string | null; anexosPorCard: AnexosPorCard
 }) {
   const porMomento = useMemo(() => {
     const m: Record<Momento, CronogramaCard[]> = { conhecer: [], explorar: [], criar: [] }
@@ -58,7 +63,7 @@ export function CicloAnualBoard({ cards, kanbanData, marcos, escolaId, escolaNom
       <CapturadorDeErros />
       <div className="ca-escola-head">
         <h2>{escolaNome}</h2>
-        <p>Clique num cartão para registrar o status, o prazo e anotações desta escola.</p>
+        <p>Cada cartão registra o status, o prazo e as anotações desta escola.</p>
       </div>
 
       {MOMENTOS.map(m => (
@@ -126,6 +131,7 @@ export function CicloAnualBoard({ cards, kanbanData, marcos, escolaId, escolaNom
             kanban={cartaoAberto.marco ? kanbanData[cartaoAberto.marco] : null}
             escolaId={escolaId}
             statusAtual={statusPorCard[cartaoAberto.id] ?? null}
+            anexos={anexosPorCard[cartaoAberto.id] ?? []}
             ehProximo={cartaoAberto.id === proximoVencerId}
             onFechar={() => setCartaoAberto(null)}
           />
@@ -162,7 +168,7 @@ function CartaoForm({ momento, marcos, onFechar }: { momento: Momento; marcos: s
       </div>
       <div><label htmlFor="novo-desc">Descrição</label><textarea id="novo-desc" name="descricao" maxLength={2000} /></div>
       <div><label htmlFor="novo-fonte">Fonte (opcional)</label><input id="novo-fonte" name="fonte" maxLength={300} /></div>
-      <div><label htmlFor="novo-marco">Marco do Painel Mestre (opcional — liga o kanban)</label>
+      <div><label htmlFor="novo-marco">Marco do Painel Mestre (campo opcional; associa o cartão ao kanban correspondente)</label>
         <select id="novo-marco" name="marco" defaultValue="">
           <option value="">— nenhum —</option>
           {marcos.map(m => <option key={m} value={m}>{m}</option>)}
@@ -213,11 +219,11 @@ function EditarOverlay({ cartao, marcos, onFechar }: { cartao: CronogramaCard; m
             </select>
           </div>
           <div className="ca-form-divisor">
-            <label htmlFor="ed-padrao">Status padrão — vale pra <b>todas as escolas</b></label>
+            <label htmlFor="ed-padrao">Status padrão, aplicável a <b>todas as escolas</b></label>
             <select id="ed-padrao" name="status_padrao" defaultValue={cartao.status_padrao}>
               {STATUS_EXECUCAO.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
-            <p className="ca-form-ajuda">Muda o status de quem ainda não tem exceção própria registrada — inclusive escolas que você ainda vai cadastrar. Use para marcar algo feito de uma vez para todo mundo, como "contratos enviados". Para ajustar só uma escola, abra o cartão por ela e mude o status no verso.</p>
+            <p className="ca-form-ajuda">Altera o status de toda escola sem exceção própria registrada, inclusive das que ainda serão cadastradas. Use este campo para registrar uma etapa concluída para o conjunto das escolas, como o envio dos contratos. Para alterar uma escola específica, abra o cartão correspondente e ajuste o status no verso.</p>
           </div>
           <div className="ca-form-actions">
             <button type="submit" className="ca-btn primario" disabled={pending}>{pending ? 'Salvando…' : 'Salvar'}</button>
@@ -237,14 +243,34 @@ function EditarOverlay({ cartao, marcos, onFechar }: { cartao: CronogramaCard; m
    manualmente: é um `<dialog>` comum, escala e gira só por transição CSS,
    disparada por uma classe que o React liga um instante depois do mount. */
 
-function FlipOverlay({ cartao, kanban, escolaId, statusAtual, ehProximo, onFechar }: {
+const TIPOS_ANEXO_ACEITOS = 'image/*,video/*,.pdf,.doc,.docx,.odt'
+
+function iconeAnexo(tipo: string | null) {
+  if (!tipo) return '📎'
+  if (tipo.startsWith('image/')) return '🖼️'
+  if (tipo.startsWith('video/')) return '🎬'
+  if (tipo === 'application/pdf') return '📄'
+  return '📝'
+}
+
+function tamanhoLegivel(bytes: number | null) {
+  if (!bytes) return ''
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function FlipOverlay({ cartao, kanban, escolaId, statusAtual, anexos, ehProximo, onFechar }: {
   cartao: CronogramaCard; kanban: Record<string, string[]> | null
   escolaId: string; statusAtual: { status: string; prazo_data: string | null; anotacoes: string } | null
-  ehProximo: boolean; onFechar: () => void
+  anexos: Anexo[]; ehProximo: boolean; onFechar: () => void
 }) {
   const router = useRouter()
   const [aberto, setAberto] = useState(false)
   const [fechando, setFechando] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [enviando, setEnviando] = useState(false)
+  const [erroAnexo, setErroAnexo] = useState('')
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setAberto(true))
@@ -279,6 +305,30 @@ function FlipOverlay({ cartao, kanban, escolaId, statusAtual, ehProximo, onFecha
     window.setTimeout(onFechar, 260) // acompanha a duração da transição CSS de fechar
   }
 
+  /** Envia direto do navegador pro storage (mesmo bucket dos outros anexos do
+   * Comercial) e só depois grava o registro — a tabela não libera INSERT pro
+   * client comum, então esse passo vai por server action. */
+  async function enviarAnexo(file: File) {
+    setErroAnexo('')
+    setEnviando(true)
+    const slug = `ciclo-anual/${cartao.id}/${escolaId}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`
+    const supabase = createClient()
+    const { error: upErr } = await supabase.storage.from('documentos-oficiais').upload(slug, file, { upsert: false, contentType: file.type })
+    if (upErr) { setErroAnexo(upErr.message); setEnviando(false); return }
+
+    const res = await registrarAnexo(cartao.id, escolaId, { nome: file.name, path: slug, tipo: file.type, tamanho: file.size })
+    setEnviando(false)
+    if (res.ok) router.refresh()
+    else setErroAnexo(res.erro)
+  }
+
+  async function removerAnexo(id: string) {
+    if (!confirm('Excluir este anexo?')) return
+    const res = await excluirAnexo(id)
+    if (res.ok) router.refresh()
+    else alert(res.erro)
+  }
+
   function teclas(e: React.KeyboardEvent) {
     if (e.key === 'Escape') { e.preventDefault(); fechar() }
   }
@@ -302,7 +352,7 @@ function FlipOverlay({ cartao, kanban, escolaId, statusAtual, ehProximo, onFecha
               <button type="button" className="ca-flip-x" onClick={fechar} aria-label="Fechar">&times;</button>
             </div>
             <div className="ca-flip-corpo">
-              {ehProximo ? <div className="ca-verso-alerta">⏰ Esta é a próxima etapa com prazo a vencer para esta escola.</div> : null}
+              {ehProximo ? <div className="ca-verso-alerta">Esta é a próxima etapa com prazo a vencer para esta escola.</div> : null}
 
               <section className="ca-verso-bloco">
                 <h4>Sobre esta etapa</h4>
@@ -341,10 +391,40 @@ function FlipOverlay({ cartao, kanban, escolaId, statusAtual, ehProximo, onFecha
                   value={anotacoes}
                   onChange={e => setAnotacoes(e.target.value)}
                   onBlur={salvarNotas}
-                  placeholder="Como está o andamento, pendências, combinados com a escola…"
+                  placeholder="Registre o andamento, as pendências e os combinados com a escola."
                   rows={4}
                 />
                 {salvandoNotas ? <span className="ca-salvando">Salvando…</span> : null}
+              </section>
+
+              <section className="ca-verso-bloco">
+                <h4>Documentos desta etapa</h4>
+                <p className="ca-anexo-hint">Documentos, fotografias e vídeos que registram a execução desta etapa nesta escola.</p>
+
+                {anexos.length ? (
+                  <ul className="ca-anexo-lista">
+                    {anexos.map(a => (
+                      <li key={a.id}>
+                        <span className="ca-anexo-icone" aria-hidden="true">{iconeAnexo(a.tipo)}</span>
+                        <a href={a.url} target="_blank" rel="noopener noreferrer" className="ca-anexo-nome">{a.nome}</a>
+                        <span className="ca-anexo-tamanho">{tamanhoLegivel(a.tamanho)}</span>
+                        <button type="button" className="ca-icon-btn" title="Excluir anexo" onClick={() => removerAnexo(a.id)}>🗑</button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={TIPOS_ANEXO_ACEITOS}
+                  style={{ display: 'none' }}
+                  onChange={e => { const f = e.target.files?.[0]; if (f) enviarAnexo(f); e.target.value = '' }}
+                />
+                <button type="button" className="ca-btn secundario ca-anexo-btn" onClick={() => fileInputRef.current?.click()} disabled={enviando}>
+                  {enviando ? 'Enviando…' : '+ Anexar documento'}
+                </button>
+                {erroAnexo ? <p className="ca-anexo-erro">{erroAnexo}</p> : null}
               </section>
 
               {cartao.marco ? (
@@ -360,7 +440,7 @@ function FlipOverlay({ cartao, kanban, escolaId, statusAtual, ehProximo, onFecha
                       ))}
                     </div>
                   ) : (
-                    <p className="ca-kanban-vazio">Nenhuma escola neste marco ainda.</p>
+                    <p className="ca-kanban-vazio">Nenhuma escola neste marco.</p>
                   )}
                 </section>
               ) : null}

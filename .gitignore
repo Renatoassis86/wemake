@@ -74,3 +74,5 @@ comercial_nextjs/
 cve_comercial/
 
 .vercel
+
+.env*

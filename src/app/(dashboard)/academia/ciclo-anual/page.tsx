@@ -5,7 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { moduloPermitido } from '@/lib/modulos'
 import { MARCOS } from '@/lib/academia'
 import { carregarAssinadas } from '@/lib/academia-comercial'
-import { CicloAnualBoard, type CronogramaCard, type KanbanData, type StatusPorCard } from '@/components/academia/ciclo-anual/CicloAnualBoard'
+import { CicloAnualBoard, type CronogramaCard, type KanbanData, type StatusPorCard, type AnexosPorCard } from '@/components/academia/ciclo-anual/CicloAnualBoard'
 import { VisaoGeralEscolas, type ResumoEscola } from '@/components/academia/ciclo-anual/VisaoGeralEscolas'
 import { EscolaPicker } from '@/components/academia/ciclo-anual/EscolaPicker'
 
@@ -19,7 +19,7 @@ export default async function CicloAnualPage({ searchParams }: { searchParams: P
   const { escola: escolaId } = await searchParams
 
   const admin = createAdminClient()
-  const [{ data: cards }, { data: implantacoes }, escolas, { data: statusTodas }] = await Promise.all([
+  const [{ data: cards }, { data: implantacoes }, escolas, { data: statusTodas }, { data: anexosRaw }] = await Promise.all([
     admin.from('academia_cronograma_cards').select('id, momento, ordem, titulo, data_label, status_tag, descricao, fonte, marco, status_padrao')
       .eq('ativo', true).order('momento').order('ordem'),
     admin.from('academia_implantacoes').select('escola_nome, marcos').eq('arquivada', false),
@@ -34,6 +34,11 @@ export default async function CicloAnualPage({ searchParams }: { searchParams: P
     // evita round-trip extra quando o usuário troca de escola). Uma linha
     // aqui é SEMPRE uma exceção: sem linha, vale o status_padrao do cartão.
     admin.from('academia_cronograma_status').select('card_id, escola_id, status, prazo_data, anotacoes'),
+    // anexos só da escola selecionada (não faz sentido trazer de todas de
+    // uma vez — cada escola só vê os dela no verso do próprio cartão).
+    escolaId
+      ? admin.from('academia_cronograma_anexos').select('id, card_id, nome, path, tipo, tamanho, created_at').eq('escola_id', escolaId).order('created_at')
+      : Promise.resolve({ data: null }),
   ])
 
   const todosCards = (cards ?? []) as CronogramaCard[]
@@ -96,12 +101,20 @@ export default async function CicloAnualPage({ searchParams }: { searchParams: P
 
   const escolaAtual = escolas.find(e => e.id === escolaId) ?? null
 
+  const anexosPorCard: AnexosPorCard = {}
+  for (const a of anexosRaw ?? []) {
+    const { data } = admin.storage.from('documentos-oficiais').getPublicUrl(a.path)
+    const lista = anexosPorCard[a.card_id] ?? []
+    lista.push({ id: a.id, nome: a.nome, url: data.publicUrl, tipo: a.tipo, tamanho: a.tamanho, criadoEm: a.created_at })
+    anexosPorCard[a.card_id] = lista
+  }
+
   return (
     <div className="ca-page">
       <div className="ca-head">
         <h1>Ciclo Anual por Escolas</h1>
-        <p className="ca-lede">O cronograma de pós-venda da Academia We Make, do contrato assinado ao fechamento do ciclo, nos três momentos da jornada: Conhecer, Explorar e Criar — agora por escola, com status, prazo e anotações próprios de cada uma.</p>
-        <p className="ca-hint">Escolha uma escola para ver e editar os cartões dela. Sem escola escolhida, veja o avanço de todas ao mesmo tempo. Para marcar uma etapa como feita para todas as escolas de uma vez — como "contratos enviados" — edite o cartão e mude o <b>status padrão</b>; só precisa editar escola por escola quando uma delas fugir da regra.</p>
+        <p className="ca-lede">O cronograma de pós-venda da Academia We Make acompanha a escola parceira do contrato assinado ao fechamento do ciclo, nos três momentos da jornada: Conhecer, Explorar e Criar. Cada escola possui status, prazo e anotações próprios.</p>
+        <p className="ca-hint">A seleção de uma escola abre os cartões correspondentes, editáveis individualmente. Sem escola selecionada, a tela apresenta o avanço de todas. Uma etapa aplicável ao conjunto das escolas, como o envio dos contratos, é registrada uma única vez: basta alterar o <b>status padrão</b> do cartão. A edição por escola fica reservada às exceções à regra geral.</p>
       </div>
 
       <EscolaPicker escolas={escolas} atualId={escolaId ?? ''} />
@@ -115,6 +128,7 @@ export default async function CicloAnualPage({ searchParams }: { searchParams: P
           escolaNome={escolaAtual.nome}
           statusPorCard={statusPorCard}
           proximoVencerId={proximoVencerId}
+          anexosPorCard={anexosPorCard}
         />
       ) : (
         <VisaoGeralEscolas resumo={[...resumoPorEscola.values()]} totalCards={totalCards} />
