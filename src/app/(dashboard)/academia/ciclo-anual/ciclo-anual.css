@@ -121,6 +121,14 @@
   .ca-flip-fundo, .ca-flip-cena, .ca-flip-cartao { transition: none; }
 }
 
+/* O modal é renderizado via createPortal direto em document.body — fora da
+   div .ac que envolve a página e onde as variáveis --ac-* (cor, fonte) são
+   definidas. Sem herdar essas variáveis, tudo no modal cai no branco/padrão
+   do navegador. Reaplica a classe .ac só pra reabrir as variáveis, e anula
+   aqui o min-height:100vh e o fundo sólido que .ac também define — não
+   fazem sentido num wrapper sem posicionamento próprio, no fim do body. */
+.ac.ca-portal-ac { min-height: 0; background: transparent; color: inherit; }
+
 .ca-erro-boundary { position: fixed; inset: 0; z-index: 95; background: var(--ac-paper); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem; text-align: center; padding: 2rem; }
 .ca-erro-boundary h2 { font: 700 1.2rem/1.3 var(--ac-sans); color: var(--ac-ink); margin: 0; }
 .ca-erro-boundary p { font-size: .88rem; color: var(--ac-muted); margin: 0; max-width: 46ch; }

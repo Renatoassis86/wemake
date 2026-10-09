@@ -192,7 +192,7 @@ function EditarOverlay({ cartao, marcos, onFechar }: { cartao: CronogramaCard; m
   }
 
   return createPortal(
-    <div className="ca-flip-fundo" onClick={onFechar} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div className="ac ca-portal-ac ca-flip-fundo" onClick={onFechar} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div onClick={e => e.stopPropagation()} style={{ width: 'min(480px, 92vw)' }}>
         <form className="ca-form" action={salvar} style={{ boxShadow: '0 24px 60px rgba(0,0,0,.35)' }}>
           <div><label htmlFor="ed-titulo">Título</label><input id="ed-titulo" name="titulo" required maxLength={200} defaultValue={cartao.titulo} /></div>
@@ -288,7 +288,7 @@ function FlipOverlay({ cartao, kanban, escolaId, statusAtual, ehProximo, onFecha
   const colunas = [...statusComEscolas, ...outrosStatus]
 
   return createPortal(
-    <div onKeyDown={teclas}>
+    <div className="ac ca-portal-ac" onKeyDown={teclas}>
       <div className={`ca-flip-fundo${aberto ? ' is-open' : ''}`} onClick={fechar} />
       <div className={`ca-flip-cena${aberto ? ' is-open' : ''}`} role="dialog" aria-modal="true" aria-label={cartao.titulo}>
         <div className="ca-flip-cartao">
