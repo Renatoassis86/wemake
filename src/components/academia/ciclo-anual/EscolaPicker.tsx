@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 
-export interface EscolaOpcao { id: string; nome: string; cidade: string | null; estado: string | null }
+export interface EscolaOpcao { id: string; nome: string; cidade_uf: string }
 
 export function EscolaPicker({ escolas, atualId }: { escolas: EscolaOpcao[]; atualId: string }) {
   const router = useRouter()
@@ -17,7 +17,7 @@ export function EscolaPicker({ escolas, atualId }: { escolas: EscolaOpcao[]; atu
       >
         <option value="">— Todas as escolas (visão geral) —</option>
         {escolas.map(e => (
-          <option key={e.id} value={e.id}>{e.nome}{e.cidade ? ` · ${e.cidade}${e.estado ? '/' + e.estado : ''}` : ''}</option>
+          <option key={e.id} value={e.id}>{e.nome}{e.cidade_uf ? ` · ${e.cidade_uf}` : ''}</option>
         ))}
       </select>
       {atualId ? (

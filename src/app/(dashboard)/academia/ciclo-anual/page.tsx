@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { moduloPermitido } from '@/lib/modulos'
 import { MARCOS } from '@/lib/academia'
+import { carregarAssinadas } from '@/lib/academia-comercial'
 import { CicloAnualBoard, type CronogramaCard, type KanbanData, type StatusPorCard } from '@/components/academia/ciclo-anual/CicloAnualBoard'
 import { VisaoGeralEscolas, type ResumoEscola } from '@/components/academia/ciclo-anual/VisaoGeralEscolas'
 import { EscolaPicker } from '@/components/academia/ciclo-anual/EscolaPicker'
@@ -18,11 +19,16 @@ export default async function CicloAnualPage({ searchParams }: { searchParams: P
   const { escola: escolaId } = await searchParams
 
   const admin = createAdminClient()
-  const [{ data: cards }, { data: implantacoes }, { data: escolas }, { data: statusTodas }] = await Promise.all([
+  const [{ data: cards }, { data: implantacoes }, escolas, { data: statusTodas }] = await Promise.all([
     admin.from('academia_cronograma_cards').select('id, momento, ordem, titulo, data_label, status_tag, descricao, fonte, marco, status_padrao')
       .eq('ativo', true).order('momento').order('ordem'),
     admin.from('academia_implantacoes').select('escola_nome, marcos').eq('arquivada', false),
-    admin.from('escolas').select('id, nome, cidade, estado').eq('ativa', true).order('nome'),
+    // As escolas da Academia são as que o Comercial marcou com contrato
+    // assinado (não declinado) no funil de contratação — mesma fonte já
+    // usada pelo "Trazer assinadas" do Painel Mestre. Não é a tabela
+    // `escolas` crua: essa tem lead/prospecção/duplicata que nunca virou
+    // parceria de verdade.
+    carregarAssinadas(),
     // busca o status de TODAS as escolas de uma vez — alimenta tanto a visão
     // geral (resumo por escola) quanto o detalhe (filtra por escolaId em JS,
     // evita round-trip extra quando o usuário troca de escola). Uma linha
@@ -55,8 +61,8 @@ export default async function CicloAnualPage({ searchParams }: { searchParams: P
   // Passa por TODO cartão (não só exceções), já que o padrão conta pra todo mundo.
   const hoje = new Date().toISOString().slice(0, 10)
   const resumoPorEscola = new Map<string, ResumoEscola>()
-  for (const e of escolas ?? []) {
-    const r: ResumoEscola = { escolaId: e.id, nome: e.nome, cidade: e.cidade, estado: e.estado, concluidos: 0, emAndamento: 0, bloqueados: 0, naoIniciados: 0, proximoPrazo: null, atrasado: false, momentoAtual: 'conhecer' }
+  for (const e of escolas) {
+    const r: ResumoEscola = { escolaId: e.id, nome: e.nome, cidadeUf: e.cidade_uf, concluidos: 0, emAndamento: 0, bloqueados: 0, naoIniciados: 0, proximoPrazo: null, atrasado: false, momentoAtual: 'conhecer' }
     for (const c of todosCards) {
       const exc = excecoes.get(`${e.id}:${c.id}`)
       const status = exc?.status ?? c.status_padrao
@@ -88,7 +94,7 @@ export default async function CicloAnualPage({ searchParams }: { searchParams: P
     }
   }
 
-  const escolaAtual = (escolas ?? []).find(e => e.id === escolaId) ?? null
+  const escolaAtual = escolas.find(e => e.id === escolaId) ?? null
 
   return (
     <div className="ca-page">
@@ -98,7 +104,7 @@ export default async function CicloAnualPage({ searchParams }: { searchParams: P
         <p className="ca-hint">Escolha uma escola para ver e editar os cartões dela. Sem escola escolhida, veja o avanço de todas ao mesmo tempo. Para marcar uma etapa como feita para todas as escolas de uma vez — como "contratos enviados" — edite o cartão e mude o <b>status padrão</b>; só precisa editar escola por escola quando uma delas fugir da regra.</p>
       </div>
 
-      <EscolaPicker escolas={escolas ?? []} atualId={escolaId ?? ''} />
+      <EscolaPicker escolas={escolas} atualId={escolaId ?? ''} />
 
       {escolaAtual ? (
         <CicloAnualBoard

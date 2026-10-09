@@ -1,8 +1,7 @@
 export interface ResumoEscola {
   escolaId: string
   nome: string
-  cidade: string | null
-  estado: string | null
+  cidadeUf: string
   concluidos: number
   emAndamento: number
   bloqueados: number
@@ -59,7 +58,7 @@ export function VisaoGeralEscolas({ resumo, totalCards }: { resumo: ResumoEscola
                 <tr key={r.escolaId} className={r.atrasado ? 'is-atrasado' : undefined}>
                   <td>
                     <div className="ca-vg-escola">{r.nome}</div>
-                    {r.cidade ? <div className="ca-vg-cidade">{r.cidade}{r.estado ? `/${r.estado}` : ''}</div> : null}
+                    {r.cidadeUf ? <div className="ca-vg-cidade">{r.cidadeUf}</div> : null}
                   </td>
                   <td><span className={`ca-vg-momento mm-${r.momentoAtual}`}>{MOMENTO_LABEL[r.momentoAtual]}</span></td>
                   <td>
