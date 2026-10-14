@@ -39,11 +39,9 @@ export function PinRevelado({ pin, token, escola, onFechar }: { pin: string; tok
 
 export interface EscolaAssinada { id: string; nome: string }
 
-/** Botão direto para uma escola com contrato assinado que ainda não tem diagnóstico. */
-export function GerarParaEscola({ escola }: { escola: EscolaAssinada }) {
-  const [revelado, setRevelado] = useState<{ pin: string; token: string } | null>(null)
+/** Botão de uma linha da lista — avisa o pai (que não some da tela) quando o PIN sai. */
+function BotaoGerar({ escola, onRevelado }: { escola: EscolaAssinada; onRevelado: (r: { pin: string; token: string; escola: string }) => void }) {
   const { pending, erro, run } = useRun()
-  if (revelado) return <PinRevelado {...revelado} escola={escola.nome} onFechar={() => setRevelado(null)} />
   return (
     <>
       <button
@@ -54,7 +52,7 @@ export function GerarParaEscola({ escola }: { escola: EscolaAssinada }) {
           const fd = new FormData()
           fd.set('escola_id', escola.id)
           const r = await criarDiagnostico(fd)
-          if (r.ok) { setRevelado({ pin: r.pin, token: r.token }); return { ok: true } }
+          if (r.ok) { onRevelado({ pin: r.pin, token: r.token, escola: escola.nome }); return { ok: true } }
           return r
         })}
       >
@@ -65,13 +63,52 @@ export function GerarParaEscola({ escola }: { escola: EscolaAssinada }) {
   )
 }
 
+/**
+ * Lista de escolas com contrato assinado e sem diagnóstico. O PIN revelado fica
+ * no estado DESTE componente, não do botão da linha — assim que o diagnóstico é
+ * criado, a escola sai da lista (revalidação do servidor) e aquela linha some,
+ * mas a caixa com o link/PIN continua na tela porque não depende mais dela.
+ * Some como modal fixo: evita o salto de layout que antes empurrava a caixa
+ * para baixo da tabela, de onde ninguém conseguia copiar a tempo.
+ */
+export function DiagnosticosPendentes({ escolas }: { escolas: EscolaAssinada[] }) {
+  const [revelado, setRevelado] = useState<{ pin: string; token: string; escola: string } | null>(null)
+  if (!escolas.length) return null
+  return (
+    <section aria-labelledby="pend-t" className="ac-pend">
+      <h3 id="pend-t" className="ac-minor">Contrato assinado, sem diagnóstico</h3>
+      <p className="ac-sec-lead" style={{ margin: '0 0 .8rem' }}>Escolas marcadas como contrato assinado no Comercial. Gere o PIN e o link para cada uma.</p>
+      <ul className="ac-pend-lista">
+        {escolas.map(a => (
+          <li key={a.id}><span>{a.nome}</span><BotaoGerar escola={a} onRevelado={setRevelado} /></li>
+        ))}
+      </ul>
+      {revelado && (
+        <div className="ac-modal-fundo" role="presentation" onClick={() => setRevelado(null)}>
+          <div className="ac-modal-caixa" onClick={e => e.stopPropagation()}>
+            <PinRevelado {...revelado} onFechar={() => setRevelado(null)} />
+          </div>
+        </div>
+      )}
+    </section>
+  )
+}
+
 export default function NovoDiagnosticoForm({ implantacoes, assinadas = [] }: { implantacoes: Implantacao[]; assinadas?: EscolaAssinada[] }) {
   const [aberto, setAberto] = useState(false)
   const [revelado, setRevelado] = useState<{ pin: string; token: string; escola: string } | null>(null)
   const { pending, erro, run } = useRun()
   const [impl, setImpl] = useState('')
 
-  if (revelado) return <PinRevelado {...revelado} onFechar={() => { setRevelado(null); setAberto(false) }} />
+  if (revelado) {
+    return (
+      <div className="ac-modal-fundo" role="presentation" onClick={() => { setRevelado(null); setAberto(false) }}>
+        <div className="ac-modal-caixa" onClick={e => e.stopPropagation()}>
+          <PinRevelado {...revelado} onFechar={() => { setRevelado(null); setAberto(false) }} />
+        </div>
+      </div>
+    )
+  }
   if (!aberto) return <button type="button" className="ac-btn" onClick={() => setAberto(true)}>+ Novo diagnóstico</button>
 
   return (
@@ -121,7 +158,15 @@ export default function NovoDiagnosticoForm({ implantacoes, assinadas = [] }: { 
 export function NovoPinBtn({ id, escola }: { id: string; escola: string }) {
   const [revelado, setRevelado] = useState<{ pin: string; token: string } | null>(null)
   const { pending, erro, run } = useRun()
-  if (revelado) return <PinRevelado pin={revelado.pin} token={revelado.token} escola={escola} onFechar={() => setRevelado(null)} />
+  if (revelado) {
+    return (
+      <div className="ac-modal-fundo" role="presentation" onClick={() => setRevelado(null)}>
+        <div className="ac-modal-caixa" onClick={e => e.stopPropagation()}>
+          <PinRevelado pin={revelado.pin} token={revelado.token} escola={escola} onFechar={() => setRevelado(null)} />
+        </div>
+      </div>
+    )
+  }
   return (
     <>
       <button

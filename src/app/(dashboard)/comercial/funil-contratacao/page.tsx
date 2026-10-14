@@ -15,6 +15,7 @@ import { PrioridadeInline } from '@/components/comercial/PrioridadeInline'
 import { AnotacaoContatoInline } from '@/components/comercial/AnotacaoContatoInline'
 import { AnexarPropostaPdf } from '@/components/comercial/AnexarPropostaPdf'
 import { ContratoDocumentosPanel } from '@/components/comercial/ContratoDocumentosPanel'
+import { DeleteEscolaBtn } from '@/components/comercial/DeleteEscolaBtn'
 import { STAGE_OPTIONS } from '@/types/database'
 
 export const dynamic = 'force-dynamic'
@@ -298,9 +299,14 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
             ) : (
               <AnexarPropostaPdf escolaId={l.escola_id} escolaNome={l.escola_nome} />
             )}
-            <Link href={`/comercial/escolas/${l.escola_id}`} style={{ fontSize: '.72rem', fontWeight: 700, color: '#4A7FDB', textDecoration: 'none', whiteSpace: 'nowrap' }}>
-              Editar →
+            <Link href={`/comercial/escolas/${l.escola_id}`} title={`Editar ${l.escola_nome}`} style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              width: 28, height: 28, borderRadius: 7, flexShrink: 0,
+              background: '#eff6ff', color: '#4A7FDB',
+            }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </Link>
+            <DeleteEscolaBtn escolaId={l.escola_id} escolaNome={l.escola_nome} variant="icon" />
           </div>
         </td>
       </tr>

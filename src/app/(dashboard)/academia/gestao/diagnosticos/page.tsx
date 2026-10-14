@@ -4,7 +4,7 @@ import { fmtData } from '@/lib/academia-gestao'
 import { INCLUI_CONSUMIVEIS, STATUS_DIAGNOSTICO, SCHEMA } from '@/lib/diagnostico'
 import { listarDiagnosticos, podeVerDiagnosticos } from '@/lib/diagnostico-staff'
 import { carregarAssinadas } from '@/lib/academia-comercial'
-import NovoDiagnosticoForm, { GerarParaEscola } from '@/components/academia/gestao/NovoDiagnosticoForm'
+import NovoDiagnosticoForm, { DiagnosticosPendentes } from '@/components/academia/gestao/NovoDiagnosticoForm'
 import ExcluirDiagnostico from '@/components/academia/gestao/ExcluirDiagnostico'
 import SetupNotice from '@/components/academia/gestao/SetupNotice'
 
@@ -53,17 +53,7 @@ export default async function DiagnosticosPage() {
         <NovoDiagnosticoForm implantacoes={g.implantacoes.filter(i => !i.arquivada)} assinadas={assinadas} />
       </div>
 
-      {assinadas.length ? (
-        <section aria-labelledby="pend-t" className="ac-pend">
-          <h3 id="pend-t" className="ac-minor">Contrato assinado, sem diagnóstico</h3>
-          <p className="ac-sec-lead" style={{ margin: '0 0 .8rem' }}>Escolas marcadas como contrato assinado no Comercial. Gere o PIN e o link para cada uma.</p>
-          <ul className="ac-pend-lista">
-            {assinadas.map(a => (
-              <li key={a.id}><span>{a.nome}</span><GerarParaEscola escola={a} /></li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+      <DiagnosticosPendentes escolas={assinadas} />
 
       {d.itens.length ? (
         <div className="ac-table-wrap" tabIndex={0} role="region" aria-label="Diagnósticos">
