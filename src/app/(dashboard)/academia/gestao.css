@@ -280,9 +280,13 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 .ac-sobre b { font-family: var(--ac-sans); color: var(--ac-ink); } .ac-sobre a { color: var(--ac-link); margin-left: .3rem; }
 
 .ac-link-valor { font: 600 .95rem/1.4 ui-monospace, Consolas, monospace; word-break: break-all; margin: 0; color: #fff; }
-.an-link { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .8rem; margin: .8rem 0 0; font: 500 .85rem/1.3 var(--ac-sans); }
-.an-link span { font: 600 .62rem/1 var(--ac-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--ac-muted); }
-.an-link code { background: #fff; border: 1px solid var(--ac-line); border-radius: 6px; padding: .35rem .6rem; font: 500 .78rem/1.3 ui-monospace, Consolas, monospace; word-break: break-all; }
+
+/* Caixa de acesso sempre visível no topo da página do diagnóstico (não é modal
+   aqui: fica fixa no fluxo, não precisa reabrir nem gerar PIN novo pra ver). */
+.an > .ac-pinbox { max-width: none; margin-bottom: 1.4rem; }
+.ac-pinbox.is-aviso { background: var(--ac-ivory); color: var(--ac-ink); border: 1px dashed var(--ac-line-2); }
+.ac-pinbox.is-aviso .ac-kicker { color: var(--ac-link); }
+.ac-pinbox.is-aviso .ac-hint { color: var(--ac-muted); }
 .ac-btn-excluir { display: inline-flex; align-items: center; justify-content: center; color: #b3261e; padding: .5rem .55rem; }
 .ac-btn-excluir:hover:not(:disabled) { background: #fdecea; border-color: #b3261e; }
 .ac-btn-excluir:disabled { opacity: .5; cursor: default; }

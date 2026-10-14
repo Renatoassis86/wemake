@@ -9,11 +9,15 @@ import { Aviso, useRun } from './ui'
 export const linkDaEscola = (token: string) =>
   `${typeof window !== 'undefined' ? window.location.origin : ''}/diagnostico/e/${token}`
 
-/** Mostra o link e o PIN, com a mensagem pronta para enviar à escola. O PIN só aparece aqui. */
+/** Mesmo texto em todo lugar que manda a mensagem pronta pra escola. */
+export const mensagemParaEscola = (escola: string, link: string, pin: string) =>
+  `Olá! Segue o acesso ao Diagnóstico do Espaço Maker de ${escola}.\n\nLink: ${link}\n\nAo abrir, digite o PIN: ${pin}\n\nSe o link não abrir, entre em ${link.split('/diagnostico/')[0]}/diagnostico e digite o mesmo PIN.\n\nO preenchimento é salvo automaticamente e pode ser retomado depois com o mesmo PIN. Tenha por perto uma trena, o celular para fotos e um vídeo curto da sala.`
+
+/** Mostra o link e o PIN, com a mensagem pronta para enviar à escola. */
 export function PinRevelado({ pin, token, escola, onFechar }: { pin: string; token: string; escola: string; onFechar: () => void }) {
   const [copiado, setCopiado] = useState('')
   const link = linkDaEscola(token)
-  const mensagem = `Olá! Segue o acesso ao Diagnóstico do Espaço Maker de ${escola}.\n\nLink: ${link}\n\nSe o link não abrir, entre em ${link.split('/diagnostico/')[0]}/diagnostico e digite o PIN: ${pin}\n\nO preenchimento é salvo automaticamente e pode ser retomado depois pelo mesmo link. Tenha por perto uma trena, o celular para fotos e um vídeo curto da sala.`
+  const mensagem = mensagemParaEscola(escola, link, pin)
 
   async function copiar(txt: string, quem: string) {
     try { await navigator.clipboard.writeText(txt); setCopiado(quem); setTimeout(() => setCopiado(''), 2000) } catch { /* sem permissão de área de transferência */ }
@@ -24,9 +28,9 @@ export function PinRevelado({ pin, token, escola, onFechar }: { pin: string; tok
       <p className="ac-kicker">Acesso de {escola}</p>
       <p className="ac-hint" style={{ margin: '0 0 .3rem' }}>Link para enviar à escola</p>
       <p className="ac-link-valor">{link}</p>
-      <p className="ac-hint" style={{ margin: '.8rem 0 .2rem' }}>PIN (alternativa ao link)</p>
+      <p className="ac-hint" style={{ margin: '.8rem 0 .2rem' }}>PIN (sempre exigido, mesmo com o link)</p>
       <p className="ac-pin-valor">{pin}</p>
-      <p className="ac-hint">O link pode ser copiado de novo a qualquer momento na página do diagnóstico. O PIN, por segurança, só aparece agora: depois é possível gerar um novo.</p>
+      <p className="ac-hint">Link e PIN continuam visíveis na página do diagnóstico depois de fechar esta janela — não é preciso gerar um PIN novo só pra reenviar.</p>
       <div className="ac-form-a">
         <button type="button" className="ac-btn" onClick={() => copiar(link, 'link')}>{copiado === 'link' ? 'Copiado' : 'Copiar link'}</button>
         <button type="button" className="ac-btn" onClick={() => copiar(mensagem, 'msg')}>{copiado === 'msg' ? 'Copiado' : 'Copiar mensagem para a escola'}</button>
@@ -145,7 +149,7 @@ export default function NovoDiagnosticoForm({ implantacoes, assinadas = [] }: { 
         </label>
         {!impl ? <label><span>Nome da escola</span><input name="escola_nome" maxLength={160} required /></label> : null}
       </div>
-      <p className="ac-hint">Ao criar, o sistema gera um PIN de 8 caracteres e um link. A escola entra pelo link, sem digitar nada, ou pelo PIN em <b>/diagnostico</b>.</p>
+      <p className="ac-hint">Ao criar, o sistema gera um PIN de 8 caracteres e um link. O link leva à tela de entrada; a escola sempre precisa digitar o PIN em <b>/diagnostico</b> para acessar.</p>
       <Aviso erro={erro} />
       <div className="ac-form-a">
         <button className="ac-btn" disabled={pending}>{pending ? 'Criando…' : 'Criar e gerar PIN'}</button>
@@ -177,6 +181,51 @@ export function NovoPinBtn({ id, escola }: { id: string; escola: string }) {
       </button>
       <Aviso erro={erro} />
     </>
+  )
+}
+
+/**
+ * Caixa fixa no topo da página do diagnóstico com o link, o PIN e a mensagem
+ * pronta pra copiar — sempre visível, sem precisar gerar um PIN novo só pra
+ * reenviar o acesso à escola. Quando não há PIN salvo ainda (diagnóstico
+ * criado antes dessa mudança, ou acesso encerrado), mostra o aviso com o
+ * atalho pra gerar um.
+ */
+export function AcessoAtual({ id, escola, token, pin }: { id: string; escola: string; token?: string; pin?: string | null }) {
+  const [copiado, setCopiado] = useState('')
+  async function copiar(txt: string, quem: string) {
+    try { await navigator.clipboard.writeText(txt); setCopiado(quem); setTimeout(() => setCopiado(''), 2000) } catch { /* sem permissão de área de transferência */ }
+  }
+
+  if (!token || !pin) {
+    return (
+      <div className="ac-pinbox is-aviso" role="status">
+        <p className="ac-kicker">Acesso de {escola}</p>
+        <p className="ac-hint" style={{ margin: 0 }}>
+          {token ? 'O acesso desta escola foi encerrado.' : 'Este diagnóstico ainda não tem PIN salvo em texto.'} Gere um PIN novo para ter o link e a mensagem prontos aqui.
+        </p>
+        <div className="ac-form-a" style={{ marginTop: '.6rem' }}>
+          <NovoPinBtn id={id} escola={escola} />
+        </div>
+      </div>
+    )
+  }
+
+  const link = linkDaEscola(token)
+  const mensagem = mensagemParaEscola(escola, link, pin)
+  return (
+    <div className="ac-pinbox" role="status">
+      <p className="ac-kicker">Acesso de {escola}</p>
+      <p className="ac-hint" style={{ margin: '0 0 .3rem' }}>Link para enviar à escola</p>
+      <p className="ac-link-valor">{link}</p>
+      <p className="ac-hint" style={{ margin: '.8rem 0 .2rem' }}>PIN (sempre exigido, mesmo com o link)</p>
+      <p className="ac-pin-valor">{pin}</p>
+      <div className="ac-form-a">
+        <button type="button" className="ac-btn" onClick={() => copiar(link, 'link')}>{copiado === 'link' ? 'Copiado' : 'Copiar link'}</button>
+        <button type="button" className="ac-btn" onClick={() => copiar(mensagem, 'msg')}>{copiado === 'msg' ? 'Copiado' : 'Copiar mensagem para a escola'}</button>
+      </div>
+      <pre className="ac-msg">{mensagem}</pre>
+    </div>
   )
 }
 

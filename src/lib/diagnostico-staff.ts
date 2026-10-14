@@ -22,6 +22,7 @@ export interface DiagnosticoLinha {
   expira_em: string
   created_at: string
   link_token?: string
+  pin_atual?: string | null
 }
 
 export interface ArquivoStaff {
@@ -65,7 +66,7 @@ export async function carregarDiagnostico(id: string) {
   const db = createAdminClient()
   const { data, error } = await db
     .from('academia_diagnosticos')
-    .select('id, implantacao_id, escola_nome, status, ultima_atividade, enviado_em, expira_em, created_at, link_token')
+    .select('id, implantacao_id, escola_nome, status, ultima_atividade, enviado_em, expira_em, created_at, link_token, pin_atual')
     .eq('id', id)
     .maybeSingle()
   if (error || !data) return null

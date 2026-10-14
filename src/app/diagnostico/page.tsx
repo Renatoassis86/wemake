@@ -41,7 +41,7 @@ export default async function DiagnosticoEntrada({ searchParams }: { searchParam
 
         <section className="dg-pin" aria-labelledby="pin-t">
           <h2 id="pin-t">Acesso da escola</h2>
-          <p>A We Make enviou um <b>link</b> para a pessoa responsável na escola: é só abri-lo. Se preferir, digite aqui o <b>PIN</b> que veio junto, no formato XXXX-XXXX.</p>
+          <p>A We Make enviou um <b>link</b> e um <b>PIN</b> para a pessoa responsável na escola. Abra o link e digite o PIN abaixo, no formato XXXX-XXXX.</p>
           {erro === 'link' ? <p role="alert" className="dg-erro" style={{ marginTop: 0 }}>Este link não é válido ou venceu. Peça um novo à We Make ou use o PIN.</p> : null}
           {erro === 'tentativas' ? <p role="alert" className="dg-erro" style={{ marginTop: 0 }}>Muitas tentativas seguidas. Aguarde 15 minutos e tente de novo.</p> : null}
           <PinForm />

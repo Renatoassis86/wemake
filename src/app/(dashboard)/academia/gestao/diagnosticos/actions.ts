@@ -21,7 +21,9 @@ const refresh = () => revalidatePath('/academia/gestao/diagnosticos', 'layout')
 
 export type CriarResultado = { ok: true; id: string; pin: string; token: string } | { ok: false; erro: string }
 
-/** Cria o diagnóstico e devolve o PIN em texto UMA vez: depois só existe o hash. */
+/** Cria o diagnóstico e devolve o PIN. Também fica salvo em texto puro (pin_atual),
+ *  pra mensagem com link + PIN continuar visível na tela depois — já vai em texto
+ *  puro pra escola mesmo, então não abre brecha nova guardar assim. */
 export async function criarDiagnostico(fd: FormData): Promise<CriarResultado> {
   const user = await autorizado()
   if (!user) return SEM_PERMISSAO
@@ -50,7 +52,7 @@ export async function criarDiagnostico(fd: FormData): Promise<CriarResultado> {
     const pin = gerarPin()
     const { data, error } = await db
       .from('academia_diagnosticos')
-      .insert({ implantacao_id: implId, escola_nome: nome, pin_hash: hashPin(pin), created_by: user.id })
+      .insert({ implantacao_id: implId, escola_nome: nome, pin_hash: hashPin(pin), pin_atual: pin, created_by: user.id })
       .select('id, link_token')
       .single()
     if (!error && data) { await auditar(user, 'INSERT', 'academia_diagnosticos', data.id, { escola: nome }); refresh(); return { ok: true, id: data.id, pin, token: data.link_token } }
@@ -66,7 +68,7 @@ export async function regenerarPin(id: string): Promise<CriarResultado> {
   for (let i = 0; i < 5; i++) {
     const pin = gerarPin()
     const { data, error } = await db.from('academia_diagnosticos')
-      .update({ pin_hash: hashPin(pin), link_token: randomBytes(18).toString('hex'), expira_em: new Date(Date.now() + 120 * 24 * 3600 * 1000).toISOString() })
+      .update({ pin_hash: hashPin(pin), pin_atual: pin, link_token: randomBytes(18).toString('hex'), expira_em: new Date(Date.now() + 120 * 24 * 3600 * 1000).toISOString() })
       .eq('id', id)
       .select('link_token')
       .single()
@@ -125,7 +127,7 @@ export async function revogarAcesso(id: string): Promise<{ ok: boolean; erro?: s
   if (!user) return SEM_PERMISSAO
   const { error } = await createAdminClient()
     .from('academia_diagnosticos')
-    .update({ expira_em: new Date().toISOString(), link_token: randomBytes(18).toString('hex') })
+    .update({ expira_em: new Date().toISOString(), link_token: randomBytes(18).toString('hex'), pin_atual: null })
     .eq('id', id)
   if (error) return { ok: false, erro: error.message }
   await auditar(user, 'UPDATE', 'academia_diagnosticos', id, { acao: 'acesso da escola encerrado' })
