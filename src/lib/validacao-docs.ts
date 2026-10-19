@@ -29,10 +29,14 @@ export function cpfValido(v: string | null | undefined): boolean {
   return d1 === Number(d[9]) && d2 === Number(d[10])
 }
 
-/** "R$ 1.234,56", "300,00", "300" → 1234.56, 300, 300. Devolve null se não for um valor em reais. */
+/** "R$ 1.234,56", "300,00", "300", "R$1700,00 (com material)" → 1234.56, 300, 300, 1700.
+ *  Lê só o número no começo do texto (ignora o que vier depois, tipo observações
+ *  digitadas junto); devolve null se não achar nada que pareça um valor em reais. */
 export function valorEmReais(v: string | null | undefined): number | null {
-  let t = (v ?? '').replace(/R\$/gi, '').replace(/\s/g, '')
-  if (!t || !/^[\d.,]+$/.test(t)) return null
+  const semPrefixo = (v ?? '').replace(/R\$/gi, '').replace(/\s/g, '')
+  const m = semPrefixo.match(/^[\d.,]+/)
+  if (!m) return null
+  let t = m[0]
   if (t.includes(',')) t = t.replace(/\./g, '').replace(',', '.')
   else if (/\.\d{3}(\.|$)/.test(t)) t = t.replace(/\./g, '')
   const n = Number(t)

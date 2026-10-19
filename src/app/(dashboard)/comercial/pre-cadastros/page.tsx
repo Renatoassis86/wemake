@@ -94,19 +94,13 @@ function totalAlunos(r: PreCadastro) {
     + (r.alunos_ensino_medio ?? 0)
 }
 
+// Manda só o id do pré-cadastro: a Calculadora herda os dados pelo MESMO
+// endpoint usado pelo seletor "Escolher escola que já enviou o formulário"
+// (/api/calculadora/precadastro/[id]). Antes esse link remontava os campos
+// na mão na URL (sem ticket médio nem situação Novo/Renovação), e por isso os
+// dois caminhos geravam propostas com valores diferentes para a mesma escola.
 function proposalHref(r: PreCadastro) {
-  const params = new URLSearchParams()
-  const nome = r.nome_fantasia || r.razao_social
-  if (nome) params.set('escola', nome)
-  if (r.email_institucional) params.set('email', r.email_institucional)
-  if (r.seg_infantil)       params.set('seg_infantil', '1')
-  if (r.seg_fundamental_1)  params.set('seg_fund1', '1')
-  if (r.seg_fundamental_2)  params.set('seg_fund2', '1')
-  if (r.seg_ensino_medio)   params.set('seg_medio', '1')
-  const total = totalAlunos(r)
-  if (total > 0) params.set('alunos', String(total))
-  if (r.maior_sala) params.set('maior_sala', String(r.maior_sala))
-  return `/calculadora?${params.toString()}`
+  return `/calculadora?precadastro=${r.id}`
 }
 
 function StatusBadge({ status }: { status: string | null }) {

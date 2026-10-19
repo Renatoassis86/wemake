@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import { enviarFormularioPublico } from '@/lib/actions'
+import { cnpjValido, cpfValido, valorEmReais } from '@/lib/validacao-docs'
 import { ChevronDown } from 'lucide-react'
 
 const ESTADOS_BR = [
@@ -65,27 +66,33 @@ function Row({ children }: { children: React.ReactNode }) {
   return <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>{children}</div>
 }
 
-function Field({ label, name, type = 'text', required, options, placeholder }: {
+function Field({ label, name, type = 'text', required, options, placeholder, hint, invalid }: {
   label: string; name: string; type?: string; required?: boolean; options?: string[]; placeholder?: string
+  // hint: texto curto sempre visível (não some ao digitar, ao contrário do placeholder) explicando
+  // o formato esperado — só vale a pena em campos onde o formato não é óbvio (CNPJ, CPF, telefone...).
+  // invalid: borda vermelha depois de uma tentativa de envio que apontou esse campo como problema.
+  hint?: string; invalid?: boolean
 }) {
+  const borderColor = invalid ? '#dc2626' : '#94a3b8'
   return (
     <div>
       <label style={{ display: 'block', fontSize: '.82rem', fontWeight: 600, color: '#4A5568', marginBottom: '.4rem' }}>
         {label}{required && ' *'}
       </label>
       {options ? (
-        <select name={name} required={required} autoComplete="off" style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: '1.5px solid #94a3b8', borderRadius: 8, background: '#fff', outline: 'none', transition: 'border-color .15s, box-shadow .15s' }} onFocus={e => { e.target.style.borderColor = '#4a8fe7'; e.target.style.boxShadow = '0 0 0 3px rgba(74,143,231,.15)' }} onBlur={e => { e.target.style.borderColor = '#94a3b8'; e.target.style.boxShadow = 'none' }}>
+        <select name={name} required={required} autoComplete="off" style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: `1.5px solid ${borderColor}`, borderRadius: 8, background: '#fff', outline: 'none', transition: 'border-color .15s, box-shadow .15s' }} onFocus={e => { e.target.style.borderColor = '#4a8fe7'; e.target.style.boxShadow = '0 0 0 3px rgba(74,143,231,.15)' }} onBlur={e => { e.target.style.borderColor = borderColor; e.target.style.boxShadow = 'none' }}>
           <option value="">Selecione...</option>
           {options.map(o => <option key={o} value={o}>{o}</option>)}
         </select>
       ) : type === 'textarea' ? (
-        <textarea name={name} rows={3} placeholder={placeholder} autoComplete="off" style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: '1.5px solid #94a3b8', borderRadius: 8, resize: 'vertical', outline: 'none', transition: 'border-color .15s, box-shadow .15s' }} onFocus={e => { e.target.style.borderColor = '#4a8fe7'; e.target.style.boxShadow = '0 0 0 3px rgba(74,143,231,.15)' }} onBlur={e => { e.target.style.borderColor = '#94a3b8'; e.target.style.boxShadow = 'none' }} />
+        <textarea name={name} rows={3} placeholder={placeholder} autoComplete="off" style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: `1.5px solid ${borderColor}`, borderRadius: 8, resize: 'vertical', outline: 'none', transition: 'border-color .15s, box-shadow .15s' }} onFocus={e => { e.target.style.borderColor = '#4a8fe7'; e.target.style.boxShadow = '0 0 0 3px rgba(74,143,231,.15)' }} onBlur={e => { e.target.style.borderColor = borderColor; e.target.style.boxShadow = 'none' }} />
       ) : (
         <input name={name} type={type} required={required} placeholder={placeholder} autoComplete="off"
-          style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: '1.5px solid #94a3b8', borderRadius: 8, outline: 'none', transition: 'border-color .15s, box-shadow .15s' }}
+          style={{ width: '100%', padding: '.65rem .85rem', fontSize: '.875rem', border: `1.5px solid ${borderColor}`, borderRadius: 8, outline: 'none', transition: 'border-color .15s, box-shadow .15s' }}
           onFocus={e => { e.target.style.borderColor = '#4a8fe7'; e.target.style.boxShadow = '0 0 0 3px rgba(74,143,231,.15)' }}
-          onBlur={e => { e.target.style.borderColor = '#94a3b8'; e.target.style.boxShadow = 'none' }} />
+          onBlur={e => { e.target.style.borderColor = borderColor; e.target.style.boxShadow = 'none' }} />
       )}
+      {hint && <div style={{ fontSize: '.7rem', color: invalid ? '#dc2626' : '#94a3b8', marginTop: '.3rem', lineHeight: 1.4 }}>{hint}</div>}
     </div>
   )
 }
@@ -132,10 +139,36 @@ const SERIES_MEDIO = [
   { name: 'medio_3s_qtd', label: '3ª série' },
 ]
 
+// Campos obrigatórios em branco já são barrados pelo próprio navegador (atributo
+// required) com a mensagem padrão apontando o campo — isso aqui cobre o que o
+// navegador não sabe checar: formato errado num campo PREENCHIDO (dígito
+// verificador do CNPJ/CPF, valor do ticket médio, datas fora de ordem). Antes só
+// descobria um problema de cada vez, depois do servidor recusar; agora aponta
+// todos de uma vez, antes de nem chamar o servidor.
+function validarCamposPreenchidos(fd: FormData): { campo: string; mensagem: string }[] {
+  const problemas: { campo: string; mensagem: string }[] = []
+
+  const cnpj = String(fd.get('cnpj') ?? '').trim()
+  if (cnpj && !cnpjValido(cnpj)) problemas.push({ campo: 'cnpj', mensagem: 'CNPJ: os números digitados não formam um CNPJ válido.' })
+
+  const cpf = String(fd.get('legal_cpf') ?? '').trim()
+  if (cpf && !cpfValido(cpf)) problemas.push({ campo: 'legal_cpf', mensagem: 'CPF do representante legal: os números digitados não formam um CPF válido.' })
+
+  const ticket = String(fd.get('ticket_medio') ?? '').trim()
+  if (ticket && valorEmReais(ticket) === null) problemas.push({ campo: 'ticket_medio', mensagem: 'Ticket médio: digite só o valor em reais, por exemplo 1200,00.' })
+
+  const inicio = String(fd.get('data_inicio_letivo') ?? '')
+  const fim = String(fd.get('data_fim_letivo') ?? '')
+  if (inicio && fim && fim <= inicio) problemas.push({ campo: 'data_fim_letivo', mensagem: 'Término do ano letivo: precisa ser depois do início do ano letivo.' })
+
+  return problemas
+}
+
 export default function FormularioPublico() {
   const [loading, setLoading] = useState(false)
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const [isFormDirty, setIsFormDirty] = useState(false)
+  const [invalidos, setInvalidos] = useState<Set<string>>(new Set())
   const feedbackRef = useRef<HTMLDivElement | null>(null)
   // depois de um envio bem-sucedido o rascunho local não pode voltar a ser gravado
   const enviadoRef = useRef(false)
@@ -238,12 +271,27 @@ export default function FormularioPublico() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    const formEl = e.currentTarget
+    const formData = new FormData(formEl)
+
+    // Confere formato ANTES de chamar o servidor — assim aponta todos os
+    // problemas de uma vez, em vez de descobrir um a cada tentativa.
+    const problemas = validarCamposPreenchidos(formData)
+    if (problemas.length > 0) {
+      setInvalidos(new Set(problemas.map(p => p.campo)))
+      setFeedback({
+        type: 'error',
+        message: `❌ Confira estes campos antes de enviar:\n${problemas.map(p => `• ${p.mensagem}`).join('\n')}`,
+      })
+      const primeiroCampo = formEl.querySelector<HTMLElement>(`[name="${problemas[0].campo}"]`)
+      primeiroCampo?.focus()
+      return
+    }
+    setInvalidos(new Set())
     setLoading(true)
     setFeedback(null)
 
     try {
-      const formData = new FormData(e.currentTarget)
-
       const result = await enviarFormularioPublico(formData)
 
       console.log('📤 Resultado do servidor:', result)
@@ -389,6 +437,8 @@ export default function FormularioPublico() {
               fontWeight: 700,
               fontFamily: 'var(--font-inter, sans-serif)',
               fontSize: '1rem',
+              whiteSpace: 'pre-line',
+              lineHeight: 1.6,
               boxShadow: feedback.type === 'success'
                 ? '0 10px 30px rgba(16,185,129,.3)'
                 : '0 10px 30px rgba(239,68,68,.3)',
@@ -443,7 +493,9 @@ export default function FormularioPublico() {
 
             <Section title="2. Dados da Escola" index={1}>
               <Row>
-                <Field label="CNPJ" name="cnpj" required placeholder="00.000.000/0000-00" />
+                <Field label="CNPJ" name="cnpj" required placeholder="00.000.000/0000-00"
+                  hint="14 números. Pode digitar com ou sem pontuação (ex.: 00.000.000/0000-00)."
+                  invalid={invalidos.has('cnpj')} />
                 <div style={{ gridColumn: 'span 1' }}><Field label="Razão Social" name="razao_social" required /></div>
               </Row>
               <Row>
@@ -455,7 +507,7 @@ export default function FormularioPublico() {
               </Row>
               <Row>
                 <Field label="Bairro" name="bairro" required />
-                <Field label="CEP" name="cep" required placeholder="00000-000" />
+                <Field label="CEP" name="cep" required placeholder="00000-000" hint="8 números, com ou sem traço." />
               </Row>
               <Row>
                 <Field label="Cidade" name="cidade" required />
@@ -503,7 +555,7 @@ export default function FormularioPublico() {
 
               <Row>
                 <Field label="Site do Colégio" name="site" placeholder="https://www.suaescola.com.br" />
-                <Field label="Telefone Institucional" name="telefone_institucional" placeholder="(00) 0000-0000" />
+                <Field label="Telefone Institucional" name="telefone_institucional" placeholder="(00) 0000-0000" hint="Com DDD, com ou sem parênteses/traço." />
               </Row>
               <Row>
                 <Field label="E-mail Institucional (Comunicação)" name="email_institucional" type="email" required placeholder="contato@escola.org" />
@@ -565,8 +617,8 @@ export default function FormularioPublico() {
               </div>
 
               <Row>
-                <Field label="Previsão de Início do Ano Letivo 2027" name="data_inicio_letivo" type="date" required />
-                <Field label="Previsão de Término do Ano Letivo 2027" name="data_fim_letivo" type="date" required />
+                <Field label="Previsão de Início do Ano Letivo 2027" name="data_inicio_letivo" type="date" required invalid={invalidos.has('data_inicio_letivo')} />
+                <Field label="Previsão de Término do Ano Letivo 2027" name="data_fim_letivo" type="date" required invalid={invalidos.has('data_fim_letivo')} />
               </Row>
               <Row>
                 <Field label="Formato do Ano Letivo" name="formato_ano_letivo" options={['Bimestre', 'Trimestre', 'Semestral']} required />
@@ -577,11 +629,13 @@ export default function FormularioPublico() {
             <Section title="4. Representante Legal" index={3}>
               <Row>
                 <div style={{ gridColumn: 'span 2' }}><Field label="Nome Completo" name="legal_nome" required /></div>
-                <Field label="CPF" name="legal_cpf" required placeholder="000.000.000-00" />
+                <Field label="CPF" name="legal_cpf" required placeholder="000.000.000-00"
+                  hint="11 números. Pode digitar com ou sem pontuação."
+                  invalid={invalidos.has('legal_cpf')} />
               </Row>
               <Row>
                 <Field label="E-mail (Assinatura)" name="legal_email" type="email" required />
-                <Field label="WhatsApp" name="legal_whatsapp" required placeholder="(00) 00000-0000" />
+                <Field label="WhatsApp" name="legal_whatsapp" required placeholder="(00) 00000-0000" hint="Com DDD, com ou sem parênteses/traço." />
               </Row>
               <Row>
                 <div style={{ gridColumn: 'span 2' }}><Field label="Rua" name="legal_rua" required /></div>
@@ -594,7 +648,7 @@ export default function FormularioPublico() {
               <Row>
                 <Field label="Cidade" name="legal_cidade" required />
                 <Field label="Estado (UF)" name="legal_estado" options={ESTADOS_BR} required />
-                <Field label="CEP" name="legal_cep" required placeholder="00000-000" />
+                <Field label="CEP" name="legal_cep" required placeholder="00000-000" hint="8 números, com ou sem traço." />
               </Row>
             </Section>
 
@@ -603,7 +657,9 @@ export default function FormularioPublico() {
                 <Field label="E-mail (Cobrança e Envio de NF)" name="fin_email_cobranca" type="email" required placeholder="financeiro@escola.org" />
               </Row>
               <Row>
-                <Field label="Valor do Ticket Médio da Escola" name="ticket_medio" type="text" required placeholder="R$ 0,00" />
+                <Field label="Valor do Ticket Médio da Escola" name="ticket_medio" type="text" required placeholder="R$ 0,00"
+                  hint="Só o valor da mensalidade, em reais. Use vírgula para os centavos (ex.: 1200,00) — não precisa do R$."
+                  invalid={invalidos.has('ticket_medio')} />
               </Row>
             </Section>
 

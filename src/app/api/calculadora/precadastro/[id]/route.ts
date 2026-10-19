@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { normalizarNomeEscola } from '@/lib/utils'
+import { valorEmReais } from '@/lib/validacao-docs'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,9 +40,12 @@ export async function GET(_req: Request, { params }: Props) {
 
   const alunos = somaGranular > 0 ? somaGranular : somaAgregada
 
-  const ticket = p.ticket_medio
-    ? parseFloat(String(p.ticket_medio).replace(/[^\d,.-]/g, '').replace(',', '.')) || null
-    : null
+  // valorEmReais trata tanto "1.200,00" (separador de milhar + decimal) quanto
+  // "1.200" (só separador de milhar, sem decimal) — o parser antigo (regex solto
+  // + um só replace de vírgula) lia "1.200,00" e "3.500" como 1,2 e 3,5: achava
+  // que o ponto de milhar era separador decimal. Ver histórico de pré-cadastros
+  // com ticket salvo nesse formato para contexto.
+  const ticket = valorEmReais(p.ticket_medio)
 
   // Melhor esforço: tenta achar a escola correspondente no CRM só para saber
   // se já é parceira (Renovação) — não bloqueia o restante se não achar.

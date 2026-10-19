@@ -475,31 +475,15 @@ function CalculadoraInner() {
   }
 
   // ── Pré-preenchimento vindo do botão "Gerar proposta" de um pré-cadastro ──
+  // Usa o MESMO handleEscolaHerdada do seletor manual (mesmo fetch, mesmos
+  // campos) — assim os dois caminhos para gerar a proposta de uma escola
+  // sempre convergem para os mesmos valores, por construção.
   const [cameFromPrecadastro, setCameFromPrecadastro] = useState(false)
 
   useEffect(() => {
-    const nome = searchParams.get('escola')
-    if (!nome) return
-
-    const email        = searchParams.get('email') ?? ''
-    const alunosParam   = Number(searchParams.get('alunos'))
-    const maiorSalaParam = Number(searchParams.get('maior_sala'))
-    const inf = searchParams.get('seg_infantil') === '1'
-    const f1  = searchParams.get('seg_fund1') === '1'
-    const f2  = searchParams.get('seg_fund2') === '1'
-    const med = searchParams.get('seg_medio') === '1'
-
-    if (alunosParam > 0)    setAlunos(alunosParam)
-    if (maiorSalaParam > 0) setMaiorSala(maiorSalaParam)
-    setSegInfantil(inf)
-    setSegFund1(f1)
-    setSegFund2(f2)
-    setSegMedio(med)
-    const qtdSegs = [inf, f1, f2, med].filter(Boolean).length
-    if (qtdSegs > 0) setSegs(Math.min(3, qtdSegs))
-
-    setPrefillEscola({ nome, email })
-    setCameFromPrecadastro(true)
+    const precadastroId = searchParams.get('precadastro')
+    if (!precadastroId) return
+    handleEscolaHerdada(precadastroId).then(() => setCameFromPrecadastro(true))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
