@@ -47,13 +47,16 @@ Amber (reservado, pouco usado hoje):      #ffcc00
 
 ## Logo
 
-Fonte única: `/public/proposta/logo-white.png` (fundo escuro) e
-`/public/proposta/logo-color.png` (fundo claro). É a logo usada em todo o
-shell interno (sidebar, topbar, menu mobile), telas de login e na família
-Academia. Não usar `/images/we-make-1.png` nem `/academia/brand/logo-*.png`
-em código novo — são versões antigas mantidas no disco só por precaução
-(podem ter outro consumidor fora do código, como e-mail/PDF), mas sem
-nenhuma referência ativa em `src/`.
+Fonte única, confirmada contra os manuais diagramados da implantação 2027
+(`Academia_wemake/Docs Diagramados/*.pdf`): o pelicano dentro do "W" ciano,
+em `/public/academia/brand/logo-white.png` (fundo escuro) e
+`/public/academia/brand/logo-color.png` (fundo claro) — real 640×148px.
+É a logo usada em todo o shell interno (sidebar, topbar, menu mobile),
+telas de login, família Academia e `/proposta`. Ao usar `next/image`,
+declare `width={640} height={148}` (as dimensões reais do arquivo) pra
+não distorcer — o tamanho exibido se controla por `style`, não pelas
+props. Os arquivos antigos (`images/we-make-1.png`, `proposta/logo-*.png`,
+`logo-we-make.svg`) foram apagados do projeto; não recriar.
 
 ## Padrões visuais do "hero" de acesso
 
