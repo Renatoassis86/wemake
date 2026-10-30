@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { formatCurrency } from '@/lib/utils'
-import { SCHEMA, qtdAAdquirir, resumoParecer, type Recurso, type Respostas } from '@/lib/diagnostico'
+import { SCHEMA, briefingVisivel, qtdAAdquirir, resumoParecer, type Recurso, type Respostas } from '@/lib/diagnostico'
 import { sairDoPortal, sessaoPortal } from '../actions'
 import './painel.css'
 
@@ -40,7 +40,7 @@ export default async function PainelPage() {
     )
   }
 
-  const { parecer } = sessao
+  const { parecer, respostas } = sessao
   const db = createAdminClient()
   const { data: comprasRaw } = await db
     .from('academia_diag_compras')
@@ -59,6 +59,8 @@ export default async function PainelPage() {
 
         {parecer['geral.situacao'] ? <p className="pt-situacao">{parecer['geral.situacao']}</p> : null}
         {parecer['geral.obs'] ? <p className="pt-resumo">{parecer['geral.obs']}</p> : null}
+
+        <OQueContaram respostas={respostas} />
 
         <section className="pt-sec">
           <h2>Parecer técnico por dimensão</h2>
@@ -116,6 +118,33 @@ function PtHeader({ escola }: { escola: string }) {
       <span className="pt-header-escola">{escola}</span>
       <form action={sairDoPortal}><button type="submit" className="pt-sair">Sair</button></form>
     </header>
+  )
+}
+
+const GRUPOS_BRIEFING = ['2.2 Climatização', '2.3 Mobiliário']
+
+function OQueContaram({ respostas: resp }: { respostas: Respostas }) {
+  const ambiente = SCHEMA.ambiente.filter(q => resp[q.key] || resp[q.key + '.d'])
+  const briefing = GRUPOS_BRIEFING.flatMap(g => SCHEMA.briefing.filter(b => b.grupo === g && briefingVisivel(b, resp) && resp[b.key]))
+  if (!ambiente.length && !briefing.length) return null
+  return (
+    <section className="pt-sec">
+      <h2>O que vocês nos contaram</h2>
+      <dl className="pt-dl">
+        {ambiente.map(q => (
+          <div key={q.key}>
+            <dt>{q.pergunta}</dt>
+            <dd>{resp[q.key]}{resp[q.key + '.d'] ? <span className="pt-det"> — {resp[q.key + '.d']}</span> : null}</dd>
+          </div>
+        ))}
+        {briefing.map(b => (
+          <div key={b.key}>
+            <dt>{b.pergunta}</dt>
+            <dd style={{ whiteSpace: 'pre-wrap' }}>{resp[b.key]}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   )
 }
 
