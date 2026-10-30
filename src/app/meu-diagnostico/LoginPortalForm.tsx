@@ -56,15 +56,10 @@ export default function LoginPortalForm() {
       <div style={{ position: 'absolute', top: -160, left: '50%', transform: 'translateX(-50%)', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(76,138,222,0.18) 0%, transparent 70%)', pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', bottom: -120, right: -120, width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(118,243,205,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-      <div style={{
+      <div className="surface-glass" style={{
         position: 'relative', zIndex: 2,
         width: '100%', maxWidth: 420,
-        background: 'rgba(255,255,255,0.04)',
-        backdropFilter: 'blur(24px)',
-        border: '1px solid rgba(255,255,255,0.1)',
-        borderRadius: 24,
         padding: 'clamp(28px, 5vw, 48px)',
-        boxShadow: '0 32px 80px rgba(0,0,0,0.5)',
       }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 32 }}>
           <Image src="/proposta/logo-white.png" alt="We Make" width={140} height={36} style={{ objectFit: 'contain', height: 'auto' }} />
@@ -155,17 +150,8 @@ export default function LoginPortalForm() {
 
           <button
             type="submit"
+            className="btn-primary"
             disabled={pendente || !email || senhaCompleta.length < 6}
-            style={{
-              width: '100%', padding: '15px', borderRadius: 999, border: 'none',
-              cursor: pendente || !email || senhaCompleta.length < 6 ? 'not-allowed' : 'pointer',
-              background: email && senhaCompleta.length === 6 && !pendente
-                ? 'radial-gradient(120% 140% at 50% -20%, #fff 0%, #cfe2ff 45%, #9fc1f5 100%)'
-                : 'rgba(255,255,255,0.08)',
-              color: email && senhaCompleta.length === 6 && !pendente ? C.navy : 'rgba(255,255,255,0.3)',
-              fontFamily: "'Geist', sans-serif", fontSize: '0.9rem', fontWeight: 700,
-              boxShadow: email && senhaCompleta.length === 6 && !pendente ? '0 8px 32px rgba(96,165,250,0.4)' : 'none',
-            }}
           >
             {pendente ? 'Verificando...' : 'Entrar →'}
           </button>

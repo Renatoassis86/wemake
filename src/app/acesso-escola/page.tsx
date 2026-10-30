@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
+import { BrandLoginStyles } from '@/components/brand/BrandLoginStyles'
 
 // We Make brand colors
 // Royal Blue: #4c8ade | Mint: #76f3cd | Navy: #0b1f44 | Amber: #ffcc00 | Deep Blue: #2a69ba
@@ -92,6 +93,8 @@ export default function AcessoEscolaPage() {
   const pinFilled = pin.every(d => d !== '')
 
   return (
+    <>
+    <BrandLoginStyles />
     <div style={{
       minHeight: '100vh',
       display: 'flex',
@@ -467,5 +470,6 @@ export default function AcessoEscolaPage() {
         input::placeholder { color: #c0cce0 !important; }
       `}</style>
     </div>
+    </>
   )
 }
