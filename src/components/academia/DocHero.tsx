@@ -18,7 +18,7 @@ export default function DocHero({ crumbs, eyebrow, title, deck, tipo, facts, var
       <div className="ac-hero-top">
         <Link href="/academia" aria-label="Academia We Make — início">
           <Image
-            src="/academia/brand/logo-white.png"
+            src="/proposta/logo-white.png"
             alt="We Make"
             width={640}
             height={148}

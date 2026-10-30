@@ -27,7 +27,7 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        background: 'rgba(15,23,42,.92)',
+        background: 'rgba(11,31,68,.92)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(255,255,255,.06)',
@@ -36,7 +36,7 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
         {/* Logo */}
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', minHeight: 56 }}>
           <Image
-            src="/images/we-make-1.png"
+            src="/proposta/logo-white.png"
             alt="We Make"
             width={120}
             height={32}
@@ -51,7 +51,7 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
           style={{
             background: 'transparent',
             border: 'none',
-            color: '#5FE3D0',
+            color: '#76f3cd',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -98,7 +98,7 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
           left: 0,
           bottom: 0,
           width: 'min(86vw, 320px)',
-          background: '#0f172a',
+          background: '#0b1f44',
           borderRight: '1px solid rgba(255,255,255,.06)',
           zIndex: 46,
           display: 'flex',
@@ -122,7 +122,7 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
           marginBottom: '0.5rem',
         }}>
           <Image
-            src="/images/we-make-1.png"
+            src="/proposta/logo-white.png"
             alt="We Make"
             width={120}
             height={32}
@@ -166,8 +166,8 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
                 fontFamily: 'var(--font-montserrat, sans-serif)',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.background = 'rgba(95,227,208,.1)'
-                e.currentTarget.style.color = '#5FE3D0'
+                e.currentTarget.style.background = 'rgba(118,243,205,.1)'
+                e.currentTarget.style.color = '#76f3cd'
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.background = 'transparent'
@@ -190,7 +190,7 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
                 justifyContent: 'center',
                 minHeight: 52,
                 padding: '0 1.25rem',
-                background: 'linear-gradient(135deg, #5FE3D0, #4A7FDB)',
+                background: 'linear-gradient(135deg, #76f3cd, #4c8ade)',
                 color: '#fff',
                 textDecoration: 'none',
                 borderRadius: '9999px',
@@ -199,7 +199,7 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
                 textAlign: 'center',
                 transition: 'transform .2s, box-shadow .2s',
                 fontFamily: 'var(--font-montserrat, sans-serif)',
-                boxShadow: '0 6px 20px rgba(95,227,208,.4)',
+                boxShadow: '0 6px 20px rgba(118,243,205,.4)',
                 letterSpacing: '.02em',
               }}
               onClick={() => setMobileMenuOpen(false)}

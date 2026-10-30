@@ -27,7 +27,7 @@ export default function DashboardTopbar() {
 
       <div className="dashboard-topbar-logo">
         <Image
-          src="/images/we-make-1.png"
+          src="/proposta/logo-white.png"
           alt="We Make"
           width={112}
           height={28}
@@ -55,7 +55,7 @@ export default function DashboardTopbar() {
             height: 56px;
             padding: 0 .5rem;
             padding-top: env(safe-area-inset-top);
-            background: rgba(15,23,42,.92);
+            background: rgba(11,31,68,.92);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255,255,255,.08);

@@ -109,7 +109,7 @@ function NavItem({ href, label, icon: Icon, active, badge, external, wip }: NavI
     letterSpacing: '.005em',
     position: 'relative',
     background: active
-      ? 'linear-gradient(135deg, rgba(95,227,208,.85), rgba(74,143,231,.85))'
+      ? 'linear-gradient(135deg, rgba(118,243,205,.85), rgba(74,143,231,.85))'
       : 'transparent',
     boxShadow: active ? '0 2px 10px rgba(74,143,231,.3)' : 'none',
     opacity: wip ? .4 : 1,
@@ -134,7 +134,7 @@ function NavItem({ href, label, icon: Icon, active, badge, external, wip }: NavI
 
       {badge !== undefined && (
         <span style={{
-          marginLeft: 'auto', background: active ? 'rgba(255,255,255,.25)' : '#4A7FDB',
+          marginLeft: 'auto', background: active ? 'rgba(255,255,255,.25)' : '#4c8ade',
           color: '#fff', fontSize: '.58rem', fontWeight: 800, padding: '.1rem .4rem',
           borderRadius: 99, minWidth: 18, textAlign: 'center',
         }}>
@@ -243,7 +243,7 @@ export default function Sidebar({ profile, modulos = [], diagnosticos = false }:
       className={mobileOpen ? 'mobile-open' : ''}
       style={{
         width: 'var(--sidebar-w)', minHeight: '100vh',
-        background: emModulo ? '#032b36' : 'linear-gradient(180deg, #0f172a 0%, #111827 100%)',
+        background: 'linear-gradient(180deg, #0b1f44 0%, #0a1830 100%)',
         position: 'fixed', top: 0, left: 0, bottom: 0,
         zIndex: 100, display: 'flex', flexDirection: 'column',
         borderRight: '1px solid rgba(255,255,255,.05)',
@@ -274,10 +274,10 @@ export default function Sidebar({ profile, modulos = [], diagnosticos = false }:
         borderBottom: '1px solid rgba(255,255,255,.05)',
       }}>
         {emModulo ? (
-          <Image src="/academia/brand/logo-white.png" alt="We Make" width={640} height={148} style={{ height: 28, width: 'auto' }} />
+          <Image src="/proposta/logo-white.png" alt="We Make" width={640} height={148} style={{ height: 28, width: 'auto' }} />
         ) : (
           <Image
-            src="/images/we-make-1.png"
+            src="/proposta/logo-white.png"
             alt="We Make"
             width={144}
             height={36}
@@ -287,12 +287,12 @@ export default function Sidebar({ profile, modulos = [], diagnosticos = false }:
         <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', marginTop: '.55rem' }}>
           <span style={{
             display: 'inline-block',
-            width: 6, height: 6, borderRadius: '50%', background: emModulo ? '#00c8ff' : '#5FE3D0', flexShrink: 0,
+            width: 6, height: 6, borderRadius: '50%', background: '#76f3cd', flexShrink: 0,
           }} />
           <span style={{
             fontSize: '.6rem', fontWeight: 700, letterSpacing: '.1em',
-            textTransform: 'uppercase', color: emModulo ? '#00c8ff' : 'rgba(95,227,208,.85)',
-            fontFamily: emModulo ? 'var(--font-inter, sans-serif)' : 'var(--font-montserrat, sans-serif)',
+            textTransform: 'uppercase', color: 'rgba(118,243,205,.85)',
+            fontFamily: 'var(--font-montserrat, sans-serif)',
           }}>
             {infoModulo ? infoModulo.nome : 'Gestão Comercial'}
           </span>
@@ -406,7 +406,7 @@ export default function Sidebar({ profile, modulos = [], diagnosticos = false }:
             {/* Avatar */}
             <div style={{
               width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
-              background: 'linear-gradient(135deg, #5FE3D0, #4A7FDB)',
+              background: 'linear-gradient(135deg, #76f3cd, #4c8ade)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: '#fff', fontSize: '.72rem', fontWeight: 700,
               overflow: 'hidden', boxShadow: '0 0 0 2px rgba(74,143,231,.25)',

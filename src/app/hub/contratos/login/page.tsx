@@ -44,17 +44,17 @@ export default function ContratoLoginPage() {
     <div style={{
       minHeight: '100vh', display: 'flex', flexDirection: 'column',
       fontFamily: 'var(--font-inter, var(--font-montserrat), system-ui, sans-serif)',
-      background: '#0f172a',
+      background: '#0b1f44',
     }}>
 
       <header style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
         padding: '1rem 2rem',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        background: 'linear-gradient(to bottom, rgba(15,23,42,.9) 0%, transparent 100%)',
+        background: 'linear-gradient(to bottom, rgba(11,31,68,.9) 0%, transparent 100%)',
       }}>
         <Image
-          src="/images/we-make-1.png"
+          src="/proposta/logo-white.png"
           alt="We Make"
           width={160} height={44}
           style={{ objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: .92 }}
@@ -106,7 +106,7 @@ export default function ContratoLoginPage() {
           right: 0,
           height: '20%',
           zIndex: 1,
-          background: 'linear-gradient(to bottom, rgba(15,23,42,.95), transparent)',
+          background: 'linear-gradient(to bottom, rgba(11,31,68,.95), transparent)',
         }} />
         <div style={{
           position: 'absolute',
@@ -115,12 +115,12 @@ export default function ContratoLoginPage() {
           right: 0,
           height: '20%',
           zIndex: 1,
-          background: 'linear-gradient(to top, rgba(15,23,42,.95), transparent)',
+          background: 'linear-gradient(to top, rgba(11,31,68,.95), transparent)',
         }} />
 
         <div style={{
           position: 'absolute', inset: 0, zIndex: 1,
-          background: 'linear-gradient(110deg, rgba(15,23,42,.95) 0%, rgba(15,23,42,.8) 45%, rgba(15,23,42,.6) 100%)',
+          background: 'linear-gradient(110deg, rgba(11,31,68,.95) 0%, rgba(11,31,68,.8) 45%, rgba(11,31,68,.6) 100%)',
         }} />
 
         <div className="hero-grid" style={{
@@ -137,7 +137,7 @@ export default function ContratoLoginPage() {
           <div>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-              background: 'rgba(15,23,42,.7)',
+              background: 'rgba(11,31,68,.7)',
               border: '1px solid rgba(22,163,74,.4)',
               backdropFilter: 'blur(8px)',
               borderRadius: 9999, padding: '.3rem .9rem',
@@ -232,7 +232,7 @@ export default function ContratoLoginPage() {
           </div>
 
           <div style={{
-            background: 'rgba(15,23,42,.85)',
+            background: 'rgba(11,31,68,.85)',
             backdropFilter: 'blur(20px)',
             border: '1px solid rgba(255,255,255,.08)',
             borderRadius: 20,
@@ -389,7 +389,7 @@ export default function ContratoLoginPage() {
 
             <div>
               <Image
-                src="/images/we-make-1.png"
+                src="/proposta/logo-white.png"
                 alt="We Make"
                 width={160} height={44}
                 style={{ objectFit: 'contain', objectPosition: 'left', filter: 'brightness(0) invert(1)', opacity: .85, marginBottom: '1rem' }}

@@ -39,7 +39,7 @@ export default async function ModuloPage({ params, searchParams }: { params: Pro
         <div className="md-hero-in">
           <div className="md-topo">
             <Link href="/" aria-label="We Make — página inicial">
-              <Image src="/academia/brand/logo-white.png" alt="We Make" width={640} height={148} priority style={{ height: 30, width: 'auto' }} />
+              <Image src="/proposta/logo-white.png" alt="We Make" width={640} height={148} priority style={{ height: 30, width: 'auto' }} />
             </Link>
             <nav className="md-outros" aria-label="Outros módulos">
               {MODULOS.map(o => (
