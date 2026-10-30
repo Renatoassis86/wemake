@@ -109,7 +109,7 @@ export default function AcessoPropostaPage() {
 
         {/* Logo */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 32 }}>
-          <Image src="/proposta/logo-white.png" alt="We Make" width={140} height={36} style={{ objectFit: 'contain', height: 'auto' }} />
+          <Image src="/academia/brand/logo-white.png" alt="We Make" width={640} height={148} style={{ objectFit: 'contain', height: 36, width: 'auto' }} />
         </div>
 
         {/* Eyebrow */}

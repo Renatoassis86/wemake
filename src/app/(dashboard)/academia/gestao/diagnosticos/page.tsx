@@ -5,6 +5,7 @@ import { INCLUI_CONSUMIVEIS, STATUS_DIAGNOSTICO, SCHEMA } from '@/lib/diagnostic
 import { listarDiagnosticos, podeVerDiagnosticos } from '@/lib/diagnostico-staff'
 import { carregarAssinadas } from '@/lib/academia-comercial'
 import NovoDiagnosticoForm, { DiagnosticosPendentes } from '@/components/academia/gestao/NovoDiagnosticoForm'
+import AcessoPortalLinha from '@/components/academia/gestao/AcessoPortalLinha'
 import ExcluirDiagnostico from '@/components/academia/gestao/ExcluirDiagnostico'
 import SetupNotice from '@/components/academia/gestao/SetupNotice'
 
@@ -59,7 +60,7 @@ export default async function DiagnosticosPage() {
         <div className="ac-table-wrap" tabIndex={0} role="region" aria-label="Diagnósticos">
           <table className="ac-table">
             <thead>
-              <tr><th scope="col">Escola</th><th scope="col">Situação</th><th scope="col">Respondido</th><th scope="col">Enviado em</th><th scope="col">Última atividade</th><th scope="col">PIN vale até</th><th scope="col"><span className="sr-only">Ações</span></th></tr>
+              <tr><th scope="col">Escola</th><th scope="col">Situação</th><th scope="col">Respondido</th><th scope="col">Enviado em</th><th scope="col">Última atividade</th><th scope="col">PIN vale até</th><th scope="col">Acesso ao portal</th><th scope="col"><span className="sr-only">Ações</span></th></tr>
             </thead>
             <tbody>
               {d.itens.map(i => (
@@ -70,6 +71,7 @@ export default async function DiagnosticosPage() {
                   <td>{dataHora(i.enviado_em)}</td>
                   <td>{dataHora(i.ultima_atividade)}</td>
                   <td>{fmtData(i.expira_em)}</td>
+                  <td><AcessoPortalLinha id={i.id} emailAtual={i.portal_email ?? null} senhaAtual={i.portal_senha_atual ?? null} /></td>
                   <td><Link href={`/academia/gestao/diagnosticos/${i.id}`} className="ac-btn-sm">Abrir</Link><ExcluirDiagnostico id={i.id} escola={i.escola_nome} /></td>
                 </tr>
               ))}

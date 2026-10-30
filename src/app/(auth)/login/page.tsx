@@ -105,10 +105,10 @@ export default function LoginPage() {
       }} className="desktop-header">
         <Link href="/" aria-label="Voltar à página inicial" style={{ display: 'inline-flex', alignItems: 'center' }}>
           <Image
-            src="/proposta/logo-white.png"
+            src="/academia/brand/logo-white.png"
             alt="We Make"
-            width={160}
-            height={44}
+            width={640}
+            height={148}
             style={{ objectFit: 'contain', opacity: 0.92, width: 'auto', height: 'auto', cursor: 'pointer' }}
             priority
           />

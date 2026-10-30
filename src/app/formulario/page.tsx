@@ -341,10 +341,10 @@ export default function FormularioPublico() {
       {/* Logo + Botão de voltar */}
       <div style={{ maxWidth: 1200, margin: '0 auto', marginBottom: 'clamp(1.5rem, 4vw, 2rem)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <Image
-          src="/proposta/logo-color.png"
+          src="/academia/brand/logo-color.png"
           alt="We Make"
-          width={120}
-          height={32}
+          width={640}
+          height={148}
           style={{ objectFit: 'contain', width: 'auto', height: 'auto', maxHeight: 32 }}
           priority
         />

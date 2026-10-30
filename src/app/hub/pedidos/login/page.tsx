@@ -54,9 +54,9 @@ export default function PedidosLoginPage() {
         background: 'linear-gradient(to bottom, rgba(11,31,68,.9) 0%, transparent 100%)',
       }}>
         <Image
-          src="/proposta/logo-white.png"
+          src="/academia/brand/logo-white.png"
           alt="We Make"
-          width={160} height={44}
+          width={640} height={148}
           style={{ objectFit: 'contain', filter: 'brightness(0) invert(1)', opacity: .92 }}
           priority
         />
@@ -389,9 +389,9 @@ export default function PedidosLoginPage() {
 
             <div>
               <Image
-                src="/proposta/logo-white.png"
+                src="/academia/brand/logo-white.png"
                 alt="We Make"
-                width={160} height={44}
+                width={640} height={148}
                 style={{ objectFit: 'contain', objectPosition: 'left', filter: 'brightness(0) invert(1)', opacity: .85, marginBottom: '1rem' }}
               />
               <p style={{

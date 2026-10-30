@@ -207,10 +207,10 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
           borderTop: '1px solid rgba(255,255,255,.05)',
         }}>
           <Image
-            src="/proposta/logo-white.png"
+            src="/academia/brand/logo-white.png"
             alt="We Make"
-            width={120}
-            height={36}
+            width={640}
+            height={148}
             style={{ objectFit: 'contain', height: 'auto', opacity: 0.85 }}
           />
         </div>

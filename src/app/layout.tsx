@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   title: 'We Make — Gestão Comercial para Educação',
   description: 'Plataforma de gestão comercial e inteligência para educação',
   openGraph: {
-    images: [{ url: '/proposta/logo-color.png', width: 800, height: 600, alt: 'We Make' }],
+    images: [{ url: '/academia/brand/logo-color.png', width: 640, height: 148, alt: 'We Make' }],
   },
 }
 

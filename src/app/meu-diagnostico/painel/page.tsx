@@ -112,7 +112,7 @@ export default async function PainelPage() {
 function PtHeader({ escola }: { escola: string }) {
   return (
     <header className="pt-header">
-      <Image src="/proposta/logo-white.png" alt="We Make" width={120} height={31} style={{ objectFit: 'contain', height: 'auto' }} />
+      <Image src="/academia/brand/logo-white.png" alt="We Make" width={640} height={148} style={{ objectFit: 'contain', height: 31, width: 'auto' }} />
       <span className="pt-header-escola">{escola}</span>
       <form action={sairDoPortal}><button type="submit" className="pt-sair">Sair</button></form>
     </header>

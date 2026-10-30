@@ -12,7 +12,7 @@ export default async function DiagnosticoEntrada({ searchParams }: { searchParam
   return (
     <main className="dg-entrada">
       <header className="dg-topo">
-        <Image src="/proposta/logo-white.png" alt="We Make" width={640} height={148} priority style={{ height: 32, width: 'auto' }} />
+        <Image src="/academia/brand/logo-white.png" alt="We Make" width={640} height={148} priority style={{ height: 32, width: 'auto' }} />
       </header>
 
       <div className="dg-entrada-grid">

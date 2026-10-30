@@ -274,13 +274,13 @@ export default function Sidebar({ profile, modulos = [], diagnosticos = false }:
         borderBottom: '1px solid rgba(255,255,255,.05)',
       }}>
         {emModulo ? (
-          <Image src="/proposta/logo-white.png" alt="We Make" width={640} height={148} style={{ height: 28, width: 'auto' }} />
+          <Image src="/academia/brand/logo-white.png" alt="We Make" width={640} height={148} style={{ height: 28, width: 'auto' }} />
         ) : (
           <Image
-            src="/proposta/logo-white.png"
+            src="/academia/brand/logo-white.png"
             alt="We Make"
-            width={144}
-            height={36}
+            width={640}
+            height={148}
             style={{ objectFit: 'contain', objectPosition: 'left', opacity: .88, width: 'auto', height: 'auto' }}
           />
         )}

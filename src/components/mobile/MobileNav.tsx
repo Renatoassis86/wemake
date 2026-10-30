@@ -36,10 +36,10 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
         {/* Logo */}
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', minHeight: 56 }}>
           <Image
-            src="/proposta/logo-white.png"
+            src="/academia/brand/logo-white.png"
             alt="We Make"
-            width={120}
-            height={32}
+            width={640}
+            height={148}
             style={{ objectFit: 'contain', width: 'auto', height: 'auto', maxHeight: '30px' }}
             priority
           />
@@ -122,10 +122,10 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
           marginBottom: '0.5rem',
         }}>
           <Image
-            src="/proposta/logo-white.png"
+            src="/academia/brand/logo-white.png"
             alt="We Make"
-            width={120}
-            height={32}
+            width={640}
+            height={148}
             style={{ objectFit: 'contain', width: 'auto', height: 'auto', maxHeight: '30px', opacity: 0.95 }}
           />
           <button

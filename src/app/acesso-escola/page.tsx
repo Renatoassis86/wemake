@@ -151,10 +151,10 @@ export default function AcessoEscolaPage() {
           {/* Logo */}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
             <Image
-              src="/proposta/logo-color.png"
+              src="/academia/brand/logo-color.png"
               alt="We Make"
-              width={160}
-              height={44}
+              width={640}
+              height={148}
               style={{ objectFit: 'contain', width: 'auto', height: 'auto', maxHeight: 44 }}
               priority
             />

@@ -15,7 +15,7 @@ export default async function PreencherPage() {
       <header className="dg-hero">
         <div className="dg-hero-in">
           <div className="dg-topo">
-            <Image src="/proposta/logo-white.png" alt="We Make" width={640} height={148} priority style={{ height: 30, width: 'auto' }} />
+            <Image src="/academia/brand/logo-white.png" alt="We Make" width={640} height={148} priority style={{ height: 30, width: 'auto' }} />
             <form action={sair}><button type="submit" className="dg-sair">Sair</button></form>
           </div>
           <p className="ac-eyebrow">Diagnóstico do Espaço Maker</p>

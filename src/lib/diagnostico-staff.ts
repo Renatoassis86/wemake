@@ -44,7 +44,7 @@ export async function listarDiagnosticos(): Promise<{ setup: boolean; erro?: str
   const db = createAdminClient()
   const { data, error } = await db
     .from('academia_diagnosticos')
-    .select('id, implantacao_id, escola_nome, status, ultima_atividade, enviado_em, expira_em, created_at, link_token')
+    .select('id, implantacao_id, escola_nome, status, ultima_atividade, enviado_em, expira_em, created_at, link_token, portal_email, portal_senha_atual')
     .order('created_at', { ascending: false })
   if (FALTA_TABELA(error)) return { setup: true, itens: [] }
   if (error) return { setup: false, erro: error.message, itens: [] }

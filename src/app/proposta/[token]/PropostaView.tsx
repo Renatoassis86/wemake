@@ -445,7 +445,7 @@ export default function PropostaView({ proposta: p, isExpired, imprimir }: { pro
   // ── expired ──
   if (isExpired) return (
     <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: C.navy, gap: 20, padding: 40, textAlign: 'center' }}>
-      <img src="/proposta/logo-white.png" alt="We Make" style={{ height: 40, marginBottom: 8 }} />
+      <img src="/academia/brand/logo-white.png" alt="We Make" style={{ height: 40, marginBottom: 8 }} />
       <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--text-3xl)', color: C.white, fontWeight: 300 }}>Proposta expirada</h1>
       <p style={{ textAlign: 'justify', fontFamily: 'Geist, sans-serif', color: 'rgba(255,255,255,.45)', maxWidth: 380, lineHeight: 1.7 }}>
         Esta proposta não está mais disponível. Entre em contato para renovar.
@@ -530,7 +530,7 @@ export default function PropostaView({ proposta: p, isExpired, imprimir }: { pro
                 que dependiam de não colidir por acaso, agora dividem o mesmo
                 espaço com justify-content/gap reais). */}
             <div className="pv-hero-bottom-bar" style={{ position: 'absolute', bottom: 28, left: 'var(--gutter)', right: 'var(--gutter)', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16 }}>
-              <img src="/proposta/logo-white.png" alt="We Make" style={{ height: 36, objectFit: 'contain', flexShrink: 0 }} />
+              <img src="/academia/brand/logo-white.png" alt="We Make" style={{ height: 36, objectFit: 'contain', flexShrink: 0 }} />
 
               <div className="pv-hero-countdown" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 12 }}>
                 <div style={{ background: 'rgba(255,204,0,0.1)', border: '1px solid rgba(255,204,0,0.3)', borderRadius: 12, padding: '8px 14px', textAlign: 'right' }}>
@@ -1658,7 +1658,7 @@ export default function PropostaView({ proposta: p, isExpired, imprimir }: { pro
 
           <div style={{ position: 'relative', zIndex: 2, maxWidth: 580, width: '100%' }}>
             <Reveal>
-              <img src="/proposta/logo-white.png" alt="We Make" style={{ height: 44, marginBottom: 40, objectFit: 'contain' }} />
+              <img src="/academia/brand/logo-white.png" alt="We Make" style={{ height: 44, marginBottom: 40, objectFit: 'contain' }} />
               <h2 style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 300, fontSize: 'var(--text-5xl)', color: C.white, lineHeight: 1.1, marginBottom: 14, letterSpacing: '-0.025em' }}>
                 Quer conversar conosco?
               </h2>

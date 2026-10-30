@@ -19,7 +19,7 @@ export default function BemVindo({ escola }: { escola: string }) {
       <div className="bv-orb bv-orb-a" />
       <div className="bv-orb bv-orb-b" />
       <div className="bv-card">
-        <Image src="/proposta/logo-white.png" alt="We Make" width={120} height={31} className="bv-logo" style={{ objectFit: 'contain', height: 'auto' }} />
+        <Image src="/academia/brand/logo-white.png" alt="We Make" width={640} height={148} className="bv-logo" style={{ objectFit: 'contain', height: 32, width: 'auto' }} />
 
         <span className="bv-check" aria-hidden="true">
           <svg viewBox="0 0 52 52" width="52" height="52">

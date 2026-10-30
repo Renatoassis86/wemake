@@ -37,7 +37,7 @@ export default function HubLanding() {
       <header className={`hub-top desktop-header${scrolled ? ' is-scrolled' : ''}`}>
         <div className="hub-top-in">
           <Link href="/" className="hub-logo" aria-label="We Make — início">
-            <Image src="/proposta/logo-white.png" alt="We Make" width={640} height={148} priority style={{ height: 34, width: 'auto' }} />
+            <Image src="/academia/brand/logo-white.png" alt="We Make" width={640} height={148} priority style={{ height: 34, width: 'auto' }} />
           </Link>
           <nav className="hub-nav" aria-label="Seções">
             {NAV.map(n => (
@@ -100,7 +100,7 @@ export default function HubLanding() {
       {/* FOOTER */}
       <footer className="hub-foot desktop-footer">
         <div className="hub-wrap hub-foot-in">
-          <Image src="/proposta/logo-white.png" alt="We Make" width={640} height={148} style={{ height: 32, width: 'auto' }} />
+          <Image src="/academia/brand/logo-white.png" alt="We Make" width={640} height={148} style={{ height: 32, width: 'auto' }} />
           <p>© {new Date().getFullYear()} We Make Educação Tecnológica · Gestão geral</p>
           <div>
             <a href="mailto:contato@wemake.tec.br">contato@wemake.tec.br</a>

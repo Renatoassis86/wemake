@@ -27,10 +27,10 @@ export default function DashboardTopbar() {
 
       <div className="dashboard-topbar-logo">
         <Image
-          src="/proposta/logo-white.png"
+          src="/academia/brand/logo-white.png"
           alt="We Make"
-          width={112}
-          height={28}
+          width={640}
+          height={148}
           priority
           style={{ height: 28, width: 'auto', objectFit: 'contain' }}
         />

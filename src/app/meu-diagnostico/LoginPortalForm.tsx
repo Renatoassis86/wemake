@@ -62,7 +62,7 @@ export default function LoginPortalForm() {
         padding: 'clamp(28px, 5vw, 48px)',
       }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 32 }}>
-          <Image src="/proposta/logo-white.png" alt="We Make" width={140} height={36} style={{ objectFit: 'contain', height: 'auto' }} />
+          <Image src="/academia/brand/logo-white.png" alt="We Make" width={640} height={148} style={{ objectFit: 'contain', height: 36, width: 'auto' }} />
         </div>
 
         <p style={{ textAlign: 'center', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.mint, marginBottom: 10 }}>
