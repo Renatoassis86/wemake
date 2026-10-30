@@ -22,9 +22,12 @@ const dataHora = (iso: string | null) =>
 
 const tamanho = (b: number | null) => (!b ? '' : b < 1048576 ? `${Math.max(1, Math.round(b / 1024))} KB` : `${(b / 1048576).toFixed(1).replace('.', ',')} MB`)
 
+const ehImagem = (mime: string | null) => !!mime && mime.startsWith('image/')
+
 export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnostico: DiagnosticoLinha; arquivos: ArquivoStaff[] }) {
   const resp = diagnostico.respostas as Respostas
   const [p, setP] = useState<Respostas>(diagnostico.parecer as Respostas)
+  const [foto, setFoto] = useState<ArquivoStaff | null>(null)
   const semParecer = SCHEMA.reutilizaveis.some(i => !((diagnostico.parecer as Respostas)[i.key + '.pc'] || p[i.key + '.pc']))
 
   const [status, setStatus] = useState<StatusDiagnostico>(diagnostico.status)
@@ -142,12 +145,17 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
               <li key={e.key}>
                 <b>{e.nome}</b>
                 {f.length ? (
-                  <ul>{f.map(a => (
-                    <li key={a.id}>
-                      {a.url ? <a href={a.url} target="_blank" rel="noopener noreferrer">{a.nome}</a> : a.nome}
-                      <small>{tamanho(a.tamanho)}</small>
-                    </li>
-                  ))}</ul>
+                  <div className="an-fotos">
+                    {f.map(a => ehImagem(a.mime) && a.url ? (
+                      <button key={a.id} type="button" className="an-foto-min" onClick={() => setFoto(a)} title={a.nome}>
+                        <img src={a.url} alt={a.nome} loading="lazy" />
+                      </button>
+                    ) : (
+                      <a key={a.id} className="an-arq-outro" href={a.url ?? undefined} target="_blank" rel="noopener noreferrer">
+                        {a.nome}<small>{tamanho(a.tamanho)}</small>
+                      </a>
+                    ))}
+                  </div>
                 ) : <em className="an-vazio">nenhum arquivo enviado</em>}
                 {resp[e.key + '.o'] ? <p className="an-det">Observação da escola: {resp[e.key + '.o']}</p> : null}
               </li>
@@ -206,6 +214,14 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
           ))}
         </div>
       </section>
+
+      {foto ? (
+        <div className="an-lightbox" role="dialog" aria-modal="true" aria-label={foto.nome} onClick={() => setFoto(null)}>
+          <button type="button" className="an-lightbox-x" onClick={() => setFoto(null)} aria-label="Fechar">✕</button>
+          <img src={foto.url ?? undefined} alt={foto.nome} onClick={e => e.stopPropagation()} />
+          <p className="an-lightbox-legenda" onClick={e => e.stopPropagation()}>{foto.nome}</p>
+        </div>
+      ) : null}
     </div>
   )
 }
