@@ -74,7 +74,7 @@ export async function entrarComPortal(_anterior: { erro?: string } | undefined, 
     path: '/meu-diagnostico',
     maxAge: SESSAO_PORTAL_HORAS * 3600,
   })
-  redirect('/meu-diagnostico/painel')
+  redirect('/meu-diagnostico/bem-vindo')
 }
 
 export async function sairDoPortal() {
