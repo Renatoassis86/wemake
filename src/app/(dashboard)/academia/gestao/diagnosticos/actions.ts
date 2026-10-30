@@ -120,6 +120,23 @@ export async function definirSenhaPortal(id: string): Promise<SenhaPortalResulta
   return { ok: true, senha }
 }
 
+/** Recalcula o hash da senha ATUAL (sem trocar a senha) a partir do segredo
+ *  deste servidor — corrige acessos criados por um script local cuja chave
+ *  de ambiente divergiu da de produção, sem precisar avisar a escola de novo. */
+export async function corrigirHashPortal(id: string): Promise<{ ok: boolean; erro?: string }> {
+  const user = await autorizado()
+  if (!user) return SEM_PERMISSAO
+  const db = createAdminClient()
+  const { data, error: e0 } = await db.from('academia_diagnosticos').select('portal_senha_atual').eq('id', id).maybeSingle()
+  if (e0) return { ok: false, erro: e0.message }
+  if (!data?.portal_senha_atual) return { ok: false, erro: 'Nenhuma senha salva pra recalcular.' }
+  const { error } = await db.from('academia_diagnosticos').update({ portal_senha_hash: hashSenha(data.portal_senha_atual) }).eq('id', id)
+  if (error) return { ok: false, erro: error.message }
+  await auditar(user, 'UPDATE', 'academia_diagnosticos', id, { acao: 'hash da senha do portal recalculado' })
+  refresh()
+  return { ok: true }
+}
+
 export async function definirEmailPortal(id: string, email: string): Promise<{ ok: boolean; erro?: string }> {
   const user = await autorizado()
   if (!user) return SEM_PERMISSAO

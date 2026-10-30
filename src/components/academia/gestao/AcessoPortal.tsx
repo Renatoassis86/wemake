@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { definirEmailPortal, definirSenhaPortal } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
+import { corrigirHashPortal, definirEmailPortal, definirSenhaPortal } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
 import { Aviso, useRun } from './ui'
 
 /**
@@ -14,6 +14,7 @@ export default function AcessoPortal({ id, escola, emailAtual, senhaAtual }: { i
   const [copiado, setCopiado] = useState('')
   const emailRun = useRun()
   const senhaRun = useRun()
+  const corrigirRun = useRun()
 
   async function copiar(txt: string) {
     try { await navigator.clipboard.writeText(txt); setCopiado(txt); setTimeout(() => setCopiado(''), 2000) } catch { /* sem permissão de área de transferência */ }
@@ -52,6 +53,22 @@ export default function AcessoPortal({ id, escola, emailAtual, senhaAtual }: { i
         </button>
       </div>
       <Aviso erro={senhaRun.erro} />
+
+      {senhaAtual ? (
+        <>
+          <button
+            type="button" className="ac-btn-sm" disabled={corrigirRun.pending} style={{ marginTop: '.6rem' }}
+            onClick={() => corrigirRun.run(async () => {
+              const r = await corrigirHashPortal(id)
+              return r.ok ? { ok: true as const, msg: 'Login corrigido — a senha continua a mesma.' } : { ok: false as const, erro: r.erro ?? 'Erro ao corrigir.' }
+            })}
+          >
+            {corrigirRun.pending ? 'Corrigindo…' : 'Escola não consegue entrar? Corrigir login'}
+          </button>
+          <Aviso erro={corrigirRun.erro} msg={corrigirRun.msg} />
+        </>
+      ) : null}
+
       <p className="ac-hint" style={{ marginTop: '.6rem' }}>
         A escola entra em <b>/meu-diagnostico</b> com este e-mail e esta senha. Funciona só depois que o diagnóstico está "Concluído".
       </p>

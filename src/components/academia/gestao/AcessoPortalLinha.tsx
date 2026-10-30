@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { definirEmailPortal, definirSenhaPortal } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
+import { corrigirHashPortal, definirEmailPortal, definirSenhaPortal } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
 import { Aviso, useRun } from './ui'
 
 /**
@@ -16,6 +16,7 @@ export default function AcessoPortalLinha({ id, emailAtual, senhaAtual }: { id: 
   const [copiado, setCopiado] = useState(false)
   const emailRun = useRun()
   const senhaRun = useRun()
+  const corrigirRun = useRun()
 
   async function copiar() {
     if (!emailAtual || !senhaAtual) return
@@ -53,27 +54,36 @@ export default function AcessoPortalLinha({ id, emailAtual, senhaAtual }: { id: 
     )
   }
 
+  function gerarSenha() {
+    if (senhaAtual && !confirm('Gerar uma nova senha? A senha atual deixa de funcionar.')) return
+    senhaRun.run(async () => {
+      const r = await definirSenhaPortal(id)
+      return r.ok ? { ok: true as const } : { ok: false as const, erro: r.erro }
+    })
+  }
+
   return (
     <div className="ac-portal-linha">
       <span className="ac-portal-email">{emailAtual}</span>
+      {senhaAtual ? <span className="ac-portal-senha">{senhaAtual}</span> : null}
+      {senhaAtual ? <button type="button" className="ac-btn-sm" onClick={copiar}>{copiado ? 'Copiado' : 'Copiar'}</button> : null}
+      <button type="button" className="ac-btn-sm" disabled={senhaRun.pending} onClick={gerarSenha}>
+        {senhaRun.pending ? 'Gerando…' : senhaAtual ? 'Trocar senha' : 'Gerar senha'}
+      </button>
+      <button type="button" className="ac-btn-sm" onClick={() => setEditando(true)}>Editar e-mail</button>
       {senhaAtual ? (
-        <>
-          <span className="ac-portal-senha">{senhaAtual}</span>
-          <button type="button" className="ac-btn-sm" onClick={copiar}>{copiado ? 'Copiado' : 'Copiar'}</button>
-        </>
-      ) : (
         <button
-          type="button" className="ac-btn-sm" disabled={senhaRun.pending}
-          onClick={() => senhaRun.run(async () => {
-            const r = await definirSenhaPortal(id)
-            return r.ok ? { ok: true as const } : { ok: false as const, erro: r.erro }
+          type="button" className="ac-btn-sm" disabled={corrigirRun.pending}
+          onClick={() => corrigirRun.run(async () => {
+            const r = await corrigirHashPortal(id)
+            return r.ok ? { ok: true as const, msg: 'Corrigido' } : { ok: false as const, erro: r.erro ?? 'Erro ao corrigir.' }
           })}
+          title="Recalcula o login sem trocar a senha — use se a escola disser que a senha não funciona"
         >
-          {senhaRun.pending ? 'Gerando…' : 'Gerar senha'}
+          {corrigirRun.pending ? 'Corrigindo…' : 'Corrigir login'}
         </button>
-      )}
-      <button type="button" className="ac-btn-sm" onClick={() => setEditando(true)}>Editar</button>
-      <Aviso erro={senhaRun.erro} />
+      ) : null}
+      <Aviso erro={senhaRun.erro ?? corrigirRun.erro} msg={corrigirRun.msg} />
     </div>
   )
 }
