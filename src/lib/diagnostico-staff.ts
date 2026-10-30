@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { emailsAutorizados } from '@/lib/diagnostico-auth'
-import { BUCKET, mapaDePareceres, mapaDeRespostas, type ParecerBanco, type Respostas, type RespostaBanco, type StatusDiagnostico } from '@/lib/diagnostico'
+import { BUCKET, mapaDeCompras, mapaDePareceres, mapaDeRespostas, type CompraBanco, type ParecerBanco, type Respostas, type RespostaBanco, type StatusDiagnostico } from '@/lib/diagnostico'
 
 /** O usuário logado pode ver os diagnósticos? (lista em ACADEMIA_DIAGNOSTICO_EMAILS) */
 export async function podeVerDiagnosticos() {
@@ -17,12 +17,15 @@ export interface DiagnosticoLinha {
   status: StatusDiagnostico
   respostas: Respostas
   parecer: Respostas
+  compras: Respostas
   ultima_atividade: string | null
   enviado_em: string | null
   expira_em: string
   created_at: string
   link_token?: string
   pin_atual?: string | null
+  portal_email?: string | null
+  portal_senha_atual?: string | null
 }
 
 export interface ArquivoStaff {
@@ -58,7 +61,7 @@ export async function listarDiagnosticos(): Promise<{ setup: boolean; erro?: str
   }
   return {
     setup: false,
-    itens: (data ?? []).map(d => ({ ...d, respostas: porDiag.get(d.id) ?? {}, parecer: {} })) as DiagnosticoLinha[],
+    itens: (data ?? []).map(d => ({ ...d, respostas: porDiag.get(d.id) ?? {}, parecer: {}, compras: {} })) as DiagnosticoLinha[],
   }
 }
 
@@ -66,13 +69,14 @@ export async function carregarDiagnostico(id: string) {
   const db = createAdminClient()
   const { data, error } = await db
     .from('academia_diagnosticos')
-    .select('id, implantacao_id, escola_nome, status, ultima_atividade, enviado_em, expira_em, created_at, link_token, pin_atual')
+    .select('id, implantacao_id, escola_nome, status, ultima_atividade, enviado_em, expira_em, created_at, link_token, pin_atual, portal_email, portal_senha_atual')
     .eq('id', id)
     .maybeSingle()
   if (error || !data) return null
-  const [{ data: resp }, { data: par }] = await Promise.all([
+  const [{ data: resp }, { data: par }, { data: compras }] = await Promise.all([
     db.from('academia_diag_respostas').select('item_key, resposta, detalhe, anexo_link, observacao, possui, qtd_existente, marca_obs').eq('diagnostico_id', id),
     db.from('academia_diag_pareceres').select('item_key, status_parecer, observacao, qtd_aproveitavel, acao, texto').eq('diagnostico_id', id),
+    db.from('academia_diag_compras').select('item_key, situacao, melhor_loja, melhor_produto, melhor_item_exato, melhor_preco, melhor_link, ml_preco, ml_link, amazon_preco, amazon_link, link_original_loja, link_original_situacao, link_original_preco, link_original_url').eq('diagnostico_id', id),
   ])
 
   const { data: arqs } = await db
@@ -87,7 +91,12 @@ export async function carregarDiagnostico(id: string) {
     id: a.id, evidencia_key: a.evidencia_key, nome: a.nome, mime: a.mime, tamanho: a.tamanho, url: porPath.get(a.path) ?? null,
   }))
   return {
-    diagnostico: { ...data, respostas: mapaDeRespostas((resp ?? []) as RespostaBanco[]), parecer: mapaDePareceres((par ?? []) as ParecerBanco[]) } as DiagnosticoLinha,
+    diagnostico: {
+      ...data,
+      respostas: mapaDeRespostas((resp ?? []) as RespostaBanco[]),
+      parecer: mapaDePareceres((par ?? []) as ParecerBanco[]),
+      compras: mapaDeCompras((compras ?? []) as CompraBanco[]),
+    } as DiagnosticoLinha,
     arquivos,
   }
 }

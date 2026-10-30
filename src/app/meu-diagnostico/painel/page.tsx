@@ -1,0 +1,157 @@
+import { redirect } from 'next/navigation'
+import Image from 'next/image'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { formatCurrency } from '@/lib/utils'
+import { SCHEMA, qtdAAdquirir, resumoParecer, type Recurso, type Respostas } from '@/lib/diagnostico'
+import { sairDoPortal, sessaoPortal } from '../actions'
+import './painel.css'
+
+interface CompraLinha {
+  item_key: string
+  situacao: string | null
+  melhor_loja: string | null
+  melhor_link: string | null
+  melhor_preco: number | null
+  ml_link: string | null
+  amazon_link: string | null
+  link_original_url: string | null
+}
+
+function melhorLink(c: CompraLinha | undefined) {
+  return c?.melhor_link || c?.ml_link || c?.amazon_link || c?.link_original_url || null
+}
+
+export default async function PainelPage() {
+  const sessao = await sessaoPortal()
+  if (!sessao) redirect('/meu-diagnostico')
+
+  if (sessao.status !== 'concluido') {
+    return (
+      <div className="pt">
+        <PtHeader escola={sessao.escola_nome} />
+        <main className="pt-main">
+          <div className="pt-aguardando">
+            <p className="pt-kicker">Diagnóstico do Espaço Maker</p>
+            <h1>Seu diagnóstico ainda está em análise</h1>
+            <p>A equipe We Make está preparando a devolutiva. Avisamos assim que estiver pronta.</p>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
+  const { parecer } = sessao
+  const db = createAdminClient()
+  const { data: comprasRaw } = await db
+    .from('academia_diag_compras')
+    .select('item_key, situacao, melhor_loja, melhor_link, melhor_preco, ml_link, amazon_link, link_original_url')
+    .eq('diagnostico_id', sessao.id)
+  const compras = new Map<string, CompraLinha>((comprasRaw ?? []).map(c => [c.item_key, c as CompraLinha]))
+
+  const resumo = resumoParecer(parecer)
+
+  return (
+    <div className="pt">
+      <PtHeader escola={sessao.escola_nome} />
+      <main className="pt-main">
+        <p className="pt-kicker">Diagnóstico do Espaço Maker</p>
+        <h1 className="pt-h1">{sessao.escola_nome}</h1>
+
+        {parecer['geral.situacao'] ? <p className="pt-situacao">{parecer['geral.situacao']}</p> : null}
+        {parecer['geral.obs'] ? <p className="pt-resumo">{parecer['geral.obs']}</p> : null}
+
+        <section className="pt-sec">
+          <h2>Parecer técnico por dimensão</h2>
+          <div className="pt-table-wrap">
+            <table className="pt-table">
+              <thead><tr><th>Dimensão</th><th>Status</th><th>Observação</th></tr></thead>
+              <tbody>
+                {SCHEMA.parecerAmbiente.map(i => (
+                  (parecer[i.key + '.s'] || parecer[i.key + '.o']) ? (
+                    <tr key={i.key}>
+                      <td>{i.item}</td>
+                      <td><span className="pt-status">{parecer[i.key + '.s'] || '—'}</span></td>
+                      <td>{parecer[i.key + '.o'] || ''}</td>
+                    </tr>
+                  ) : null
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="pt-sec">
+          <h2>Resumo do investimento</h2>
+          <dl className="pt-kpis">
+            <div><dt>Itens reutilizáveis a comprar</dt><dd>{resumo.reu.comAquisicao}<small> de {resumo.reu.cadastrados}</small></dd></div>
+            <div><dt>Itens consumíveis a comprar</dt><dd>{resumo.con.comAquisicao}<small> de {resumo.con.cadastrados}</small></dd></div>
+            <div><dt>Custo total estimado</dt><dd className="pt-kpi-m">{formatCurrency(resumo.total)}</dd></div>
+          </dl>
+          <p className="pt-hint">Valores de referência, pesquisados pela We Make. Confira preço e disponibilidade no link antes de comprar — eles mudam com frequência. Vocês podem comprar itens equivalentes, respeitando a especificação técnica.</p>
+        </section>
+
+        <TabelaRecursos titulo="Itens reutilizáveis (permanentes)" itens={SCHEMA.reutilizaveis} parecer={parecer} compras={compras} />
+        <TabelaRecursos titulo="Itens consumíveis (compra inicial)" itens={SCHEMA.consumiveis} parecer={parecer} compras={compras} />
+
+        {parecer['geral.arquitetura'] ? (
+          <section className="pt-sec">
+            <h2>Encaminhamento arquitetônico</h2>
+            <p className="pt-resumo">{parecer['geral.arquitetura']}</p>
+          </section>
+        ) : null}
+
+        <footer className="pt-rodape">
+          <p>Dúvidas sobre o diagnóstico ou a lista de compras? Fale com a equipe We Make.</p>
+          <a href="https://wa.me/5583982301530" target="_blank" rel="noopener noreferrer">WhatsApp da We Make</a>
+        </footer>
+      </main>
+    </div>
+  )
+}
+
+function PtHeader({ escola }: { escola: string }) {
+  return (
+    <header className="pt-header">
+      <Image src="/proposta/logo-white.png" alt="We Make" width={120} height={31} style={{ objectFit: 'contain', height: 'auto' }} />
+      <span className="pt-header-escola">{escola}</span>
+      <form action={sairDoPortal}><button type="submit" className="pt-sair">Sair</button></form>
+    </header>
+  )
+}
+
+function TabelaRecursos({ titulo, itens, parecer, compras }: { titulo: string; itens: Recurso[]; parecer: Respostas; compras: Map<string, CompraLinha> }) {
+  const comItem = itens.filter(i => parecer[i.key + '.pc'] || parecer[i.key + '.qa'] !== undefined || compras.has(i.key))
+  if (!comItem.length) return null
+  return (
+    <section className="pt-sec">
+      <h2>{titulo}</h2>
+      <div className="pt-table-wrap">
+        <table className="pt-table pt-table-rec">
+          <thead>
+            <tr><th>Item</th><th>Qtd. a comprar</th><th>Custo</th><th>Situação</th><th>Onde comprar</th></tr>
+          </thead>
+          <tbody>
+            {itens.map(i => {
+              const adq = qtdAAdquirir(i, parecer)
+              const c = compras.get(i.key)
+              const link = melhorLink(c)
+              return (
+                <tr key={i.key}>
+                  <td><b>{i.item}</b><span className="pt-spec">{i.spec}</span></td>
+                  <td className="pt-num">{adq > 0 ? adq.toLocaleString('pt-BR') : <em className="pt-tem">já tem</em>}</td>
+                  <td className="pt-num">{adq > 0 ? formatCurrency(adq * i.valor) : '—'}</td>
+                  <td>{c?.situacao || (adq > 0 ? 'Comprar' : 'Pronto para uso')}{c?.melhor_loja ? ` · ${c.melhor_loja}` : ''}</td>
+                  <td>
+                    {adq > 0 && link ? (
+                      <a className="pt-link" href={link} target="_blank" rel="noopener noreferrer nofollow">Abrir ↗</a>
+                    ) : adq > 0 ? <em className="pt-tem">link em definição</em> : '—'}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  )
+}

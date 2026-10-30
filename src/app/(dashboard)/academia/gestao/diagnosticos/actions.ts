@@ -5,8 +5,9 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { randomBytes } from 'crypto'
 import { emailsAutorizados, gerarPin, hashPin } from '@/lib/diagnostico-auth'
+import { gerarSenhaNumerica, hashSenha } from '@/lib/diagnostico-portal-auth'
 import { auditar } from '@/lib/auditoria'
-import { BUCKET, CHAVES_PARECER, STATUS_DIAGNOSTICO, limparPatch, patchParaLinhasParecer, type StatusDiagnostico } from '@/lib/diagnostico'
+import { BUCKET, CHAVES_COMPRAS, CHAVES_PARECER, STATUS_DIAGNOSTICO, limparPatch, patchParaLinhasCompras, patchParaLinhasParecer, type StatusDiagnostico } from '@/lib/diagnostico'
 
 /** Só quem está na lista (Renato e Dênis, a princípio) mexe nos diagnósticos e vê as respostas. */
 async function autorizado() {
@@ -87,6 +88,51 @@ export async function salvarParecer(id: string, patch: Record<string, unknown>):
   if (error) return { ok: false, erro: error.message }
   if (data) await auditar(user, 'UPDATE', 'academia_diag_pareceres', id, { campos: Object.keys(limpo) })
   return data ? { ok: true } : { ok: false, erro: 'Diagnóstico não encontrado.' }
+}
+
+export async function salvarCompras(id: string, patch: Record<string, unknown>): Promise<{ ok: boolean; erro?: string }> {
+  const user = await autorizado()
+  if (!user) return SEM_PERMISSAO
+  const limpo = limparPatch(patch, CHAVES_COMPRAS)
+  if (!Object.keys(limpo).length) return { ok: true }
+  const { data, error } = await createAdminClient().rpc('academia_salvar_compras', { p_id: id, p_rows: patchParaLinhasCompras(limpo) })
+  if (error) return { ok: false, erro: error.message }
+  if (data) await auditar(user, 'UPDATE', 'academia_diag_compras', id, { campos: Object.keys(limpo) })
+  return data ? { ok: true } : { ok: false, erro: 'Diagnóstico não encontrado.' }
+}
+
+export type SenhaPortalResultado = { ok: true; senha: string } | { ok: false; erro: string }
+
+/** Gera uma nova senha numérica do portal da escola. Fica salva também em texto puro
+ *  (portal_senha_atual), pelo mesmo motivo do pin_atual: já vai em texto puro pra
+ *  escola, então reaparecer na tela do staff sem gerar outra não abre brecha nova. */
+export async function definirSenhaPortal(id: string): Promise<SenhaPortalResultado> {
+  const user = await autorizado()
+  if (!user) return { ok: false, erro: SEM_PERMISSAO.erro }
+  const senha = gerarSenhaNumerica()
+  const { error } = await createAdminClient()
+    .from('academia_diagnosticos')
+    .update({ portal_senha_hash: hashSenha(senha), portal_senha_atual: senha, portal_senha_definida_em: new Date().toISOString() })
+    .eq('id', id)
+  if (error) return { ok: false, erro: error.message }
+  await auditar(user, 'UPDATE', 'academia_diagnosticos', id, { acao: 'nova senha do portal gerada' })
+  refresh()
+  return { ok: true, senha }
+}
+
+export async function definirEmailPortal(id: string, email: string): Promise<{ ok: boolean; erro?: string }> {
+  const user = await autorizado()
+  if (!user) return SEM_PERMISSAO
+  const limpo = email.trim().toLowerCase()
+  if (limpo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(limpo)) return { ok: false, erro: 'E-mail inválido.' }
+  const { error } = await createAdminClient()
+    .from('academia_diagnosticos')
+    .update({ portal_email: limpo || null })
+    .eq('id', id)
+  if (error) return { ok: false, erro: error.code === '23505' ? 'Já existe um acesso com este e-mail.' : error.message }
+  await auditar(user, 'UPDATE', 'academia_diagnosticos', id, { acao: 'e-mail do portal atualizado' })
+  refresh()
+  return { ok: true }
 }
 
 export async function definirStatus(id: string, status: string): Promise<{ ok: boolean; erro?: string }> {

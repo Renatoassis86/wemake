@@ -175,6 +175,31 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 .ac-prio { font-weight: 700; color: #b34700; } .ac-prio[data-p='Crítica'] { color: #b3261e; }
 .ac-card-mv { margin-top: .55rem; width: 100%; font: 500 .7rem/1.2 var(--ac-sans); color: var(--ac-muted); background: var(--ac-ivory); border: 0; border-radius: 6px; padding: .35rem .4rem; }
 
+/* jornada: um cartão por escola, nove etapas + concluído */
+.ac-board--jornada { grid-template-columns: repeat(10, minmax(222px, 1fr)); }
+.ac-col--jornada { border-top-color: var(--ac-cyan); cursor: default; }
+.ac-col--jornada.is-concluido { border-top-color: var(--st-4-dot); }
+.ac-col-alerta { color: #b3261e; }
+.ac-col-vazio { margin: 0; padding: .4rem .3rem; font: 500 .74rem/1.3 var(--ac-sans); color: var(--ac-muted); }
+.ac-card--jornada { cursor: default; }
+.ac-card--jornada.is-saving { opacity: .6; }
+.ac-card-t a { color: inherit; text-decoration: none; }
+.ac-card-t a:hover { text-decoration: underline; }
+.ac-card-cidade { font: 500 .68rem/1.2 var(--ac-sans); color: var(--ac-muted); margin-top: .1rem !important; }
+.ac-mini-prog { display: flex; gap: .2rem; list-style: none; margin: .55rem 0 0 !important; padding: 0; }
+.ac-mini-prog li { width: .5rem; height: .5rem; border-radius: 2px; background: var(--st-0-dot); }
+.ac-mini-prog li[data-s='Em andamento'] { background: var(--st-1-dot); }
+.ac-mini-prog li[data-s='Aguardando escola'] { background: var(--st-2-dot); }
+.ac-mini-prog li[data-s='Aguardando We Make'] { background: var(--st-3-dot); }
+.ac-mini-prog li[data-s='Concluído'] { background: var(--st-4-dot); }
+.ac-mini-prog li[data-s='Bloqueado'] { background: var(--st-5-dot); }
+.ac-card-pct { margin-top: .4rem !important; font: 600 .68rem/1 var(--ac-sans); color: var(--ac-muted); }
+.ac-card-acao { margin-top: .5rem !important; font: 500 .74rem/1.4 var(--ac-serif); color: var(--ac-ink); }
+.ac-card-resp { margin-top: .25rem !important; font: 500 .68rem/1.3 var(--ac-sans); color: var(--ac-muted); }
+.ac-card-bloqueio { margin-top: .3rem !important; font: 600 .68rem/1.35 var(--ac-sans); color: #7a1212; }
+.ac-card-ok { margin-top: .55rem !important; font: 600 .72rem/1.2 var(--ac-sans); color: var(--st-4-ink); }
+.ac-sem-prazo { color: var(--ac-muted); font-weight: 500; }
+
 /* calendário */
 .ac-cal-h { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: .4rem; }
 .ac-cal-nav { display: flex; gap: .4rem; } .ac-cal-nav a { font: 700 .8rem/1 var(--ac-sans); text-decoration: none; color: var(--ac-ink); border: 1px solid var(--ac-line-2); border-radius: 8px; padding: .6rem .85rem; background: #fff; }
@@ -258,8 +283,14 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 .an-evid { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ac-ink); } .an-evid > li { padding: .8rem 0; border-bottom: 1px solid var(--ac-line); }
 .an-evid b { font: 600 .92rem/1.3 var(--ac-sans); color: var(--ac-ink); display: block; margin-bottom: .3rem; } .an-evid ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .25rem; }
 .an-evid a { color: var(--ac-link); } .an-evid small { margin-left: .6rem; color: var(--ac-muted); font-family: var(--ac-sans); }
-.an-rec { min-width: 1250px; } .an-rec td { vertical-align: top; } .an-spec { display: block; font: 400 .78rem/1.4 var(--ac-serif); color: var(--ac-muted); margin-top: .2rem; }
-.an-num { max-width: 5.5rem; } .an-calc { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+.an-rec { min-width: 1900px; } .an-rec td { vertical-align: top; } .an-spec { display: block; font: 400 .78rem/1.4 var(--ac-serif); color: var(--ac-muted); margin-top: .2rem; }
+.an-num { min-width: 5.5rem; max-width: 7rem; text-align: right; font-variant-numeric: tabular-nums; }
+.an-calc { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+.an-link-cell { display: flex; align-items: center; gap: .3rem; }
+.ac-cell-in.is-link { min-width: 13rem; font: 500 .78rem/1.3 ui-monospace, Consolas, monospace; text-overflow: ellipsis; }
+.ac-cell-in.is-link:focus { text-overflow: clip; }
+.an-link-open { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 1.7rem; height: 1.7rem; border-radius: 6px; color: var(--ac-link); text-decoration: none; font-size: .9rem; }
+.an-link-open:hover { background: var(--ac-cyan-soft); }
 .an-kpis dd small { font-size: 1rem; color: var(--ac-muted); letter-spacing: 0; }
 .an-geral { display: block; margin-top: 1.1rem; } .an-geral span { display: block; font: 600 .62rem/1.2 var(--ac-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--ac-muted); margin-bottom: .4rem; }
 .an-geral textarea { width: 100%; font: 500 .92rem/1.45 var(--ac-sans); border: 1px solid var(--ac-line-2); border-radius: 8px; padding: .7rem; background: #fff; }
@@ -325,6 +356,7 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
   .ac-bar { width: 4.5rem; }
   .ac-grid-wrap { max-height: 75vh; -webkit-overflow-scrolling: touch; }
   .ac-board { grid-template-columns: repeat(6, minmax(78vw, 78vw)); scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; margin-inline: -1.25rem; padding-inline: 1.25rem; scroll-padding-inline: 1.25rem; }
+  .ac-board--jornada { grid-template-columns: repeat(10, minmax(78vw, 78vw)); }
   .ac-col { scroll-snap-align: start; min-height: 180px; }
   .ac-cal-w { padding: .5rem .2rem; font-size: .55rem; letter-spacing: .04em; text-align: center; }
   .ac-cal-d { min-height: 64px; padding: .25rem .2rem; }
@@ -366,6 +398,7 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 @media (min-width: 641px) and (max-width: 1100px) {
   /* quadro: rolagem horizontal com encaixe, colunas de largura fixa legível */
   .ac-board { grid-template-columns: repeat(6, 272px); scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+  .ac-board--jornada { grid-template-columns: repeat(10, 250px); }
   .ac-col { scroll-snap-align: start; }
   .ac-card-mv { padding: .65rem .5rem; font-size: .8rem; }
   /* alvos de toque (>= 40px) */

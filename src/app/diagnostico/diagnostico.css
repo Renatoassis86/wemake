@@ -37,6 +37,11 @@
 .dg-erro { color: #b3261e; font: 600 .85rem/1.4 var(--ac-sans); margin: .7rem 0 0; }
 .dg-nota { font: 500 .8rem/1.5 var(--ac-sans); color: var(--ac-muted); margin: 1.2rem 0 0 !important; }
 
+.dg-ja-tem { margin: 1.4rem 0 0; padding-top: 1.2rem; border-top: 1px solid var(--ac-line); }
+.dg-ja-tem p { margin: 0 0 .7rem; color: var(--ac-muted); font-size: .88rem; line-height: 1.5; }
+.dg-ja-tem a { display: flex; align-items: center; justify-content: center; gap: .5rem; width: 100%; padding: .9rem 1rem; border: 2px solid var(--ac-ink); border-radius: 12px; color: var(--ac-ink); font: 700 .88rem/1 var(--ac-sans); text-decoration: none; transition: background .15s, color .15s; }
+.dg-ja-tem a:hover { background: var(--ac-ink); color: #fff; }
+
 /* ═════════════ Formulário ═════════════ */
 .dg-hero { background: var(--ac-ink); color: #fff; padding: 1.25rem var(--dg-pad) clamp(2rem, 4vw, 3rem); position: relative; overflow: hidden; isolation: isolate; }
 .dg-hero::after { content: ''; position: absolute; right: -36px; bottom: -48px; width: clamp(120px, 14vw, 190px); aspect-ratio: 560 / 411; background: url('/academia/brand/mark-cyan.png') center / contain no-repeat; opacity: .95; z-index: -1; }

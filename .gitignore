@@ -66,6 +66,10 @@ yarn-error.log*
 .vercel/
 .turbo/
 
+# Exportações de dados (dados pessoais — nunca versionar)
+/exportação_leads/
+/diagnostico_escolas/
+
 # App comercial education (reference only)
 app_comercial_education/
 app_gestao_contratos/

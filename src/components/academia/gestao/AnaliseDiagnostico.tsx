@@ -8,7 +8,14 @@ import {
 import type { ArquivoStaff, DiagnosticoLinha } from '@/lib/diagnostico-staff'
 import { definirStatus, salvarParecer } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
 import { AcessoAtual, NovoPinBtn, RevogarAcessoBtn } from './NovoDiagnosticoForm'
+import AcessoPortal from './AcessoPortal'
+import TabelaCompras from './TabelaCompras'
 import { Aviso, useRun } from './ui'
+
+/** Vocabulário do status por dimensão do ambiente — diferente do parecer por item
+ *  (SCHEMA.listas.parecer é "Compatível/Inadequado…", para reu-XX/con-XX). Esse é o
+ *  que a legenda da tabela "Parecer técnico por dimensão" já usa nos relatórios. */
+const STATUS_DIMENSAO = ['Adequado', 'Adequar', 'Requer intervenção', 'Verificar']
 
 const dataHora = (iso: string | null) =>
   iso ? new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }) : '—'
@@ -71,10 +78,11 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
       </header>
 
       <AcessoAtual id={diagnostico.id} escola={diagnostico.escola_nome} token={diagnostico.link_token} pin={diagnostico.pin_atual} />
+      <AcessoPortal id={diagnostico.id} escola={diagnostico.escola_nome} emailAtual={diagnostico.portal_email} senhaAtual={diagnostico.portal_senha_atual} />
 
       <nav className="an-nav" aria-label="Seções">
         <a href="#an-ambiente">Ambiente</a><a href="#an-medidas">Medidas</a><a href="#an-evidencias">Evidências</a>
-        <a href="#an-reu">Reutilizáveis</a>{INCLUI_CONSUMIVEIS ? <a href="#an-con">Consumíveis</a> : null}<a href="#an-parecer">Parecer</a><a href="#an-resumo">Resumo</a>
+        <a href="#an-reu">Reutilizáveis</a>{INCLUI_CONSUMIVEIS ? <a href="#an-con">Consumíveis</a> : null}<a href="#an-compras">Compras</a><a href="#an-parecer">Parecer</a><a href="#an-resumo">Resumo</a>
         <span className="an-salvo" data-e={salvo}>{salvo === 'salvando' ? 'Salvando parecer…' : salvo === 'erro' ? 'Erro ao salvar. Tentando de novo.' : 'Parecer salvo'}</span>
       </nav>
 
@@ -151,6 +159,12 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
       <Tabela id="an-reu" titulo="4. Recursos reutilizáveis" itens={SCHEMA.reutilizaveis} resp={resp} p={p} set={set} />
       {INCLUI_CONSUMIVEIS ? <Tabela id="an-con" titulo="5. Recursos consumíveis" itens={SCHEMA.consumiveis} resp={resp} p={p} set={set} /> : null}
 
+      {/* Onde comprar cada item — aparece na devolutiva que a escola vê em /meu-diagnostico,
+          mesmo com INCLUI_CONSUMIVEIS desligado aqui (essa flag só tira consumíveis desta
+          tela de formulário/análise; a devolutiva já entregue às escolas sempre teve as duas). */}
+      <TabelaCompras id={diagnostico.id} anchorId="an-compras" titulo="Onde comprar — reutilizáveis" itens={SCHEMA.reutilizaveis} inicial={diagnostico.compras} />
+      <TabelaCompras id={diagnostico.id} anchorId="an-compras-con" titulo="Onde comprar — consumíveis" itens={SCHEMA.consumiveis} inicial={diagnostico.compras} />
+
       {/* ── parecer do ambiente ── */}
       <section id="an-parecer" className="an-sec">
         <h3 className="ac-h3">{INCLUI_CONSUMIVEIS ? 6 : 5}. Parecer técnico do ambiente <small>preenchimento da We Make</small></h3>
@@ -163,7 +177,7 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
                   <td>{i.item}</td>
                   <td>
                     <select className="ac-cell-in" value={p[i.key + '.s'] ?? ''} onChange={e => set(i.key + '.s', e.target.value)} aria-label={`Status: ${i.item}`}>
-                      <option value="">—</option>{SCHEMA.listas.parecer.map(o => <option key={o}>{o}</option>)}
+                      <option value="">—</option>{STATUS_DIMENSAO.map(o => <option key={o}>{o}</option>)}
                     </select>
                   </td>
                   <td><input className="ac-cell-in" value={p[i.key + '.o'] ?? ''} onChange={e => set(i.key + '.o', e.target.value)} aria-label={`Observação: ${i.item}`} /></td>

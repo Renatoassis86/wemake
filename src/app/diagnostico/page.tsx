@@ -48,6 +48,11 @@ export default async function DiagnosticoEntrada({ searchParams }: { searchParam
           <p className="dg-nota">
             Seu preenchimento é salvo automaticamente. Você pode parar e voltar depois com o mesmo PIN.
           </p>
+
+          <div className="dg-ja-tem">
+            <p>Sua escola já preencheu e a We Make já devolveu o diagnóstico?</p>
+            <a href="/meu-diagnostico">Ver o diagnóstico da minha escola →</a>
+          </div>
         </section>
       </div>
     </main>

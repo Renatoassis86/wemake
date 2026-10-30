@@ -1,0 +1,154 @@
+.pt {
+  --navy: #0b1f44;
+  --royal: #4c8ade;
+  --mint: #76f3cd;
+  --ink: #15272d;
+  --muted: #56676d;
+  --line: #e2e6ea;
+  --paper: #fbfaf8;
+  min-height: 100dvh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Geist', 'Inter', system-ui, sans-serif;
+}
+
+.pt-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem clamp(1rem, 4vw, 2.5rem);
+  background: var(--navy);
+}
+.pt-header-escola {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.pt-sair {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.75);
+  border-radius: 999px;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pt-sair:hover { color: #fff; border-color: rgba(255, 255, 255, 0.3); }
+
+.pt-main {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2.5rem) 4rem;
+}
+
+.pt-kicker {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--royal);
+  margin: 0 0 0.5rem;
+}
+.pt-h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: clamp(1.6rem, 4vw, 2.3rem);
+  margin: 0 0 1.25rem;
+  color: var(--navy);
+}
+
+.pt-situacao {
+  display: inline-block;
+  background: rgba(118, 243, 205, 0.18);
+  border: 1px solid rgba(76, 138, 222, 0.25);
+  color: var(--navy);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.25rem;
+}
+.pt-resumo {
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: var(--ink);
+  margin: 0 0 1.5rem;
+  white-space: pre-wrap;
+}
+
+.pt-sec { margin: 2.5rem 0; }
+.pt-sec h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin: 0 0 0.9rem;
+}
+
+.pt-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+.pt-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.pt-table th {
+  text-align: left;
+  background: #f1f3f5;
+  color: var(--muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.pt-table td {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.pt-table tr:last-child td { border-bottom: none; }
+.pt-spec { display: block; color: var(--muted); font-size: 0.78rem; margin-top: 0.15rem; }
+.pt-num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pt-tem { color: var(--muted); font-style: normal; }
+.pt-status { font-weight: 600; }
+.pt-link {
+  display: inline-block;
+  background: var(--navy);
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.pt-link:hover { background: var(--royal); }
+
+.pt-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin: 0 0 0.9rem;
+}
+.pt-kpis dt { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.3rem; }
+.pt-kpis dd { font-size: 1.3rem; font-weight: 700; color: var(--navy); margin: 0; }
+.pt-kpis dd small { font-size: 0.8rem; font-weight: 500; color: var(--muted); }
+.pt-kpi-m { font-family: 'Fraunces', serif; }
+.pt-hint { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+
+.pt-aguardando { text-align: center; padding: 4rem 1rem; }
+.pt-aguardando h1 { font-family: 'Fraunces', serif; font-size: 1.6rem; margin: 0.5rem 0; color: var(--navy); }
+.pt-aguardando p { color: var(--muted); }
+
+.pt-rodape {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.pt-rodape a { color: var(--royal); font-weight: 600; text-decoration: none; }
+
+@media (max-width: 640px) {
+  .pt-table-rec th:nth-child(3), .pt-table-rec td:nth-child(3) { display: none; }
+}

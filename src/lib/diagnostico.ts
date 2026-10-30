@@ -172,6 +172,52 @@ export function patchParaLinhasParecer(patch: Respostas): LinhaBanco[] {
   })
 }
 
+/* ═══════════════════════ Comparação de compras (por escola) ═══════════════════════ */
+
+/** Campos editáveis de academia_diag_compras — mesma whitelist do RPC academia_salvar_compras. */
+export const CAMPOS_COMPRAS = [
+  'situacao', 'melhor_loja', 'melhor_produto', 'melhor_item_exato', 'melhor_preco', 'melhor_link',
+  'ml_preco', 'ml_link', 'amazon_preco', 'amazon_link',
+  'link_original_loja', 'link_original_situacao', 'link_original_preco', 'link_original_url',
+] as const
+export type CampoCompras = (typeof CAMPOS_COMPRAS)[number]
+
+export const CHAVES_COMPRAS: Set<string> = (() => {
+  const k = new Set<string>()
+  ;[...SCHEMA.reutilizaveis, ...SCHEMA.consumiveis].forEach(r => CAMPOS_COMPRAS.forEach(c => k.add(r.key + '.' + c)))
+  return k
+})()
+
+/** 'reu-01.melhor_link' → { item_key: 'reu-01', campo: 'melhor_link' } */
+export function patchParaLinhasCompras(patch: Respostas): LinhaBanco[] {
+  return Object.entries(patch).flatMap(([k, valor]) => {
+    const i = k.lastIndexOf('.')
+    if (i < 0) return []
+    const item_key = k.slice(0, i)
+    const campo = k.slice(i + 1)
+    return (CAMPOS_COMPRAS as readonly string[]).includes(campo) ? [{ item_key, campo, valor }] : []
+  })
+}
+
+export interface CompraBanco {
+  item_key: string
+  situacao: string | null; melhor_loja: string | null; melhor_produto: string | null; melhor_item_exato: string | null
+  melhor_preco: number | null; melhor_link: string | null
+  ml_preco: number | null; ml_link: string | null; amazon_preco: number | null; amazon_link: string | null
+  link_original_loja: string | null; link_original_situacao: string | null; link_original_preco: number | null; link_original_url: string | null
+}
+
+export function mapaDeCompras(rows: CompraBanco[]): Respostas {
+  const m: Respostas = {}
+  for (const r of rows) {
+    for (const campo of CAMPOS_COMPRAS) {
+      const v = r[campo]
+      if (v !== null && v !== undefined) m[r.item_key + '.' + campo] = emTexto(v) ?? ''
+    }
+  }
+  return m
+}
+
 export interface RespostaBanco {
   item_key: string
   resposta: string | null; detalhe: string | null; anexo_link: string | null; observacao: string | null

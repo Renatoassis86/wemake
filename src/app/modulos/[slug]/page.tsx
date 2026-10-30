@@ -6,6 +6,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { MODULOS, getModulo, moduloPermitido } from '@/lib/modulos'
 import LoginModulo from './LoginModulo'
+import SairModulo from './SairModulo'
 
 export const dynamic = 'force-dynamic'
 
@@ -86,12 +87,14 @@ export default async function ModuloPage({ params, searchParams }: { params: Pro
               <h2 id="login-t">Você já está logado</h2>
               <p>{user?.email}</p>
               <Link href={m.home} className="md-botao">Abrir {m.nome}</Link>
+              <SairModulo />
             </>
           ) : (
             <>
               <h2 id="login-t">Sem acesso a este módulo</h2>
               <p role="alert">A conta {user?.email} não tem acesso a {m.nome}. Entre com outra conta ou fale com a direção da We Make.</p>
               <Link href="/comercial" className="md-botao md-botao--clara">Ir para a Gestão Comercial</Link>
+              <SairModulo />
             </>
           )}
           {m.slug === 'comercial' ? (
