@@ -13,6 +13,7 @@ export interface SessaoPortal {
   id: string
   escola_nome: string
   status: StatusDiagnostico
+  num_alunos: number | null
   respostas: Respostas
   parecer: Respostas
 }
@@ -28,11 +29,11 @@ export async function sessaoPortal(): Promise<SessaoPortal | null> {
   const id = lerSessaoPortal(jar.get(COOKIE_PORTAL)?.value)
   if (!id) return null
   const db = createAdminClient()
-  const { data } = await db.from('academia_diagnosticos').select('id, escola_nome, status').eq('id', id).maybeSingle()
+  const { data } = await db.from('academia_diagnosticos').select('id, escola_nome, status, num_alunos').eq('id', id).maybeSingle()
   if (!data) return null
   const [{ data: resp }, { data: par }] = await Promise.all([
     db.from('academia_diag_respostas').select('item_key, resposta, detalhe, anexo_link, observacao, possui, qtd_existente, marca_obs').eq('diagnostico_id', id),
-    db.from('academia_diag_pareceres').select('item_key, status_parecer, observacao, qtd_aproveitavel, acao, texto').eq('diagnostico_id', id),
+    db.from('academia_diag_pareceres').select('item_key, status_parecer, observacao, qtd_aproveitavel, acao, texto, qtd_recomendada').eq('diagnostico_id', id),
   ])
   return {
     ...(data as Omit<SessaoPortal, 'respostas' | 'parecer'>),

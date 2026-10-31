@@ -152,6 +152,18 @@ export async function definirEmailPortal(id: string, email: string): Promise<{ o
   return { ok: true }
 }
 
+/** Nº de alunos da escola (matrícula total, do cadastro comercial) — só alimenta a
+ *  sugestão de quantidade por item do modelo; nunca é inventado automaticamente. */
+export async function definirNumAlunos(id: string, numAlunos: number | null): Promise<{ ok: boolean; erro?: string }> {
+  const user = await autorizado()
+  if (!user) return SEM_PERMISSAO
+  const { error } = await createAdminClient().from('academia_diagnosticos').update({ num_alunos: numAlunos }).eq('id', id)
+  if (error) return { ok: false, erro: error.message }
+  await auditar(user, 'UPDATE', 'academia_diagnosticos', id, { acao: 'número de alunos atualizado', num_alunos: numAlunos })
+  refresh()
+  return { ok: true }
+}
+
 export async function definirStatus(id: string, status: string): Promise<{ ok: boolean; erro?: string }> {
   const user = await autorizado()
   if (!user) return SEM_PERMISSAO

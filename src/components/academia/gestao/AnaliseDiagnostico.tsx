@@ -3,10 +3,10 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { formatCurrency } from '@/lib/utils'
 import {
-  INCLUI_CONSUMIVEIS, SCHEMA, STATUS_DIAGNOSTICO, briefingVisivel, qtdAAdquirir, resumoParecer, type Recurso, type Respostas, type StatusDiagnostico,
+  INCLUI_CONSUMIVEIS, SCHEMA, STATUS_DIAGNOSTICO, briefingVisivel, qtdAAdquirir, qtdSugerida, resumoParecer, type Recurso, type Respostas, type StatusDiagnostico,
 } from '@/lib/diagnostico'
 import type { ArquivoStaff, DiagnosticoLinha } from '@/lib/diagnostico-staff'
-import { definirStatus, salvarParecer } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
+import { definirNumAlunos, definirStatus, salvarParecer } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
 import { AcessoAtual, NovoPinBtn, RevogarAcessoBtn } from './NovoDiagnosticoForm'
 import AcessoPortal from './AcessoPortal'
 import TabelaCompras from './TabelaCompras'
@@ -53,9 +53,19 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
     timer.current = setTimeout(descarregar, 900)
   }
 
-  const resumo = useMemo(() => resumoParecer(p), [p])
+  const [numAlunos, setNumAlunos] = useState<string>(diagnostico.num_alunos != null ? String(diagnostico.num_alunos) : '')
+  const alunosRun = useRun()
+  const numAlunosNum = numAlunos.trim() ? Number(numAlunos) : null
+
+  const resumo = useMemo(() => resumoParecer(p, numAlunosNum), [p, numAlunosNum])
   const porEvidencia = (key: string) => arquivos.filter(a => a.evidencia_key === key)
   const mudarStatus = (novo: StatusDiagnostico) => st.run(async () => { const r = await definirStatus(diagnostico.id, novo); if (r.ok) setStatus(novo); return r.ok ? { ok: true as const } : { ok: false as const, erro: r.erro ?? 'Erro' } })
+  const salvarNumAlunos = () => alunosRun.run(async () => {
+    const n = numAlunos.trim() ? Number(numAlunos) : null
+    if (n !== null && (!Number.isFinite(n) || n < 0)) return { ok: false as const, erro: 'Número de alunos inválido.' }
+    const r = await definirNumAlunos(diagnostico.id, n)
+    return r.ok ? { ok: true as const } : { ok: false as const, erro: r.erro ?? 'Erro ao salvar.' }
+  })
 
   return (
     <div className="an">
@@ -82,6 +92,25 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
 
       <AcessoAtual id={diagnostico.id} escola={diagnostico.escola_nome} token={diagnostico.link_token} pin={diagnostico.pin_atual} />
       <AcessoPortal id={diagnostico.id} escola={diagnostico.escola_nome} emailAtual={diagnostico.portal_email} senhaAtual={diagnostico.portal_senha_atual} />
+
+      <div className="ac-pinbox" role="status">
+        <p className="ac-kicker">Nº de alunos da escola</p>
+        <p className="ac-hint" style={{ margin: '0 0 .5rem' }}>
+          Vem do cadastro comercial (matrícula total, não só quem usa a sala). Usado só pra sugerir a
+          quantidade recomendada de cada item reutilizável/consumível — sempre ajustável item a item ali embaixo.
+        </p>
+        <div className="ac-form-a">
+          <input
+            className="ac-cell-in an-num" style={{ width: 100 }} inputMode="numeric" value={numAlunos}
+            onChange={e => setNumAlunos(e.target.value.replace(/[^\d]/g, ''))} onBlur={salvarNumAlunos}
+            placeholder="ex.: 180" aria-label="Número de alunos da escola"
+          />
+          <button type="button" className="ac-btn-sm" disabled={alunosRun.pending} onClick={salvarNumAlunos}>
+            {alunosRun.pending ? 'Salvando…' : 'Salvar'}
+          </button>
+        </div>
+        <Aviso erro={alunosRun.erro} msg={alunosRun.msg} />
+      </div>
 
       <nav className="an-nav" aria-label="Seções">
         <a href="#an-ambiente">Ambiente</a><a href="#an-medidas">Medidas</a><a href="#an-evidencias">Evidências</a>
@@ -164,8 +193,8 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
         </ul>
       </section>
 
-      <Tabela id="an-reu" titulo="4. Recursos reutilizáveis" itens={SCHEMA.reutilizaveis} resp={resp} p={p} set={set} />
-      {INCLUI_CONSUMIVEIS ? <Tabela id="an-con" titulo="5. Recursos consumíveis" itens={SCHEMA.consumiveis} resp={resp} p={p} set={set} /> : null}
+      <Tabela id="an-reu" titulo="4. Recursos reutilizáveis" itens={SCHEMA.reutilizaveis} resp={resp} p={p} set={set} numAlunos={numAlunosNum} />
+      {INCLUI_CONSUMIVEIS ? <Tabela id="an-con" titulo="5. Recursos consumíveis" itens={SCHEMA.consumiveis} resp={resp} p={p} set={set} numAlunos={numAlunosNum} /> : null}
 
       {/* Onde comprar cada item — aparece na devolutiva que a escola vê em /meu-diagnostico,
           mesmo com INCLUI_CONSUMIVEIS desligado aqui (essa flag só tira consumíveis desta
@@ -226,7 +255,7 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
   )
 }
 
-function Tabela({ id, titulo, itens, resp, p, set }: { id: string; titulo: string; itens: Recurso[]; resp: Respostas; p: Respostas; set: (k: string, v: string) => void }) {
+function Tabela({ id, titulo, itens, resp, p, set, numAlunos }: { id: string; titulo: string; itens: Recurso[]; resp: Respostas; p: Respostas; set: (k: string, v: string) => void; numAlunos: number | null }) {
   /** Não aceita mais "aproveitável" do que a escola declarou (se declarou "Não", ou
    * nem respondeu, zero — sem isso um item sem resposta nenhuma aceitava qualquer
    * quantidade digitada aqui). */
@@ -250,11 +279,20 @@ function Tabela({ id, titulo, itens, resp, p, set }: { id: string; titulo: strin
           </thead>
           <tbody>
             {itens.map(i => {
-              const adq = qtdAAdquirir(i, p)
+              const adq = qtdAAdquirir(i, p, numAlunos)
+              const sugerido = qtdSugerida(i, numAlunos)
               return (
                 <tr key={i.key}>
                   <td><b>{i.item}</b><span className="an-spec">{i.spec}</span></td>
-                  <td>{i.qtd.toLocaleString('pt-BR')} {i.qtd > 1 && i.unid && !/s$/i.test(i.unid) ? i.unid + 's' : i.unid}</td>
+                  <td>
+                    <input
+                      className="ac-cell-in an-num" style={{ width: 64 }} inputMode="decimal"
+                      value={p[i.key + '.qr'] ?? ''} placeholder={sugerido.toLocaleString('pt-BR')}
+                      onChange={e => set(i.key + '.qr', e.target.value.replace(/[^\d.,]/g, ''))}
+                      aria-label={`Quantidade recomendada: ${i.item}`}
+                      title={p[i.key + '.qr'] ? 'Ajustado manualmente' : numAlunos ? 'Sugestão do modelo (por nº de alunos)' : 'Padrão do catálogo — informe o nº de alunos acima pra sugestão por tamanho de escola'}
+                    />{' '}{i.unid}
+                  </td>
                   <td>{resp[i.key + '.p'] || <em className="an-vazio">—</em>}</td>
                   <td>{resp[i.key + '.q'] || ''}</td>
                   <td>{resp[i.key + '.m'] || ''}</td>

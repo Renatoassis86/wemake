@@ -15,6 +15,7 @@ export interface DiagnosticoLinha {
   implantacao_id: string | null
   escola_nome: string
   status: StatusDiagnostico
+  num_alunos: number | null
   respostas: Respostas
   parecer: Respostas
   compras: Respostas
@@ -44,7 +45,7 @@ export async function listarDiagnosticos(): Promise<{ setup: boolean; erro?: str
   const db = createAdminClient()
   const { data, error } = await db
     .from('academia_diagnosticos')
-    .select('id, implantacao_id, escola_nome, status, ultima_atividade, enviado_em, expira_em, created_at, link_token, portal_email, portal_senha_atual')
+    .select('id, implantacao_id, escola_nome, status, num_alunos, ultima_atividade, enviado_em, expira_em, created_at, link_token, portal_email, portal_senha_atual')
     .order('created_at', { ascending: false })
   if (FALTA_TABELA(error)) return { setup: true, itens: [] }
   if (error) return { setup: false, erro: error.message, itens: [] }
@@ -69,13 +70,13 @@ export async function carregarDiagnostico(id: string) {
   const db = createAdminClient()
   const { data, error } = await db
     .from('academia_diagnosticos')
-    .select('id, implantacao_id, escola_nome, status, ultima_atividade, enviado_em, expira_em, created_at, link_token, pin_atual, portal_email, portal_senha_atual')
+    .select('id, implantacao_id, escola_nome, status, num_alunos, ultima_atividade, enviado_em, expira_em, created_at, link_token, pin_atual, portal_email, portal_senha_atual')
     .eq('id', id)
     .maybeSingle()
   if (error || !data) return null
   const [{ data: resp }, { data: par }, { data: compras }] = await Promise.all([
     db.from('academia_diag_respostas').select('item_key, resposta, detalhe, anexo_link, observacao, possui, qtd_existente, marca_obs').eq('diagnostico_id', id),
-    db.from('academia_diag_pareceres').select('item_key, status_parecer, observacao, qtd_aproveitavel, acao, texto').eq('diagnostico_id', id),
+    db.from('academia_diag_pareceres').select('item_key, status_parecer, observacao, qtd_aproveitavel, acao, texto, qtd_recomendada').eq('diagnostico_id', id),
     db.from('academia_diag_compras').select('item_key, situacao, melhor_loja, melhor_produto, melhor_item_exato, melhor_preco, melhor_link, ml_preco, ml_link, amazon_preco, amazon_link, link_original_loja, link_original_situacao, link_original_preco, link_original_url').eq('diagnostico_id', id),
   ])
 

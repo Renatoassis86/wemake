@@ -1,0 +1,486 @@
+{
+  "con-01": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 66.7,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.0064
+  },
+  "con-02": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-04": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-06": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 60.6,
+    "minimo_observado": 2.0,
+    "razao_por_aluno": 0.02773
+  },
+  "con-07": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 66.7,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.0064
+  },
+  "con-09": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 25.6,
+    "minimo_observado": 2.0,
+    "razao_por_aluno": 0.032
+  },
+  "con-10": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-11": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 47.8,
+    "minimo_observado": 3.0,
+    "razao_por_aluno": 0.04436
+  },
+  "con-12": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 71.7,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.02773
+  },
+  "con-13": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-14": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-15": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 60.6,
+    "minimo_observado": 2.0,
+    "razao_por_aluno": 0.02773
+  },
+  "con-16": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 29.4,
+    "minimo_observado": 4.0,
+    "razao_por_aluno": 0.04959
+  },
+  "con-17": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 52.5,
+    "minimo_observado": 4.0,
+    "razao_por_aluno": 0.05546
+  },
+  "con-18": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-20": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 91.1,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.0064
+  },
+  "con-21": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 44.4,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.01664
+  },
+  "con-25": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 29.7,
+    "minimo_observado": 4.0,
+    "razao_por_aluno": 0.05592
+  },
+  "con-26": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 38.1,
+    "minimo_observado": 3.0,
+    "razao_por_aluno": 0.03517
+  },
+  "con-27": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 50.0,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.01109
+  },
+  "con-29": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 60.8,
+    "minimo_observado": 4.0,
+    "razao_por_aluno": 0.05546
+  },
+  "con-30": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 50.0,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.01109
+  },
+  "con-31": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 91.7,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.01109
+  },
+  "con-32": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-33": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 50.0,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.01109
+  },
+  "con-34": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 77.8,
+    "minimo_observado": 3.0,
+    "razao_por_aluno": 0.03327
+  },
+  "con-35": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 38.9,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.01118
+  },
+  "con-36": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-37": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 66.7,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.0064
+  },
+  "con-38": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 259.8,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.01507
+  },
+  "con-39": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 245.6,
+    "minimo_observado": 2.0,
+    "razao_por_aluno": 0.03014
+  },
+  "con-40": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-41": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-42": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-43": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-45": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-46": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-47": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-48": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-49": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-50": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 71.4,
+    "minimo_observado": 40.0,
+    "razao_por_aluno": 1.1091
+  },
+  "con-51": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 43.3,
+    "minimo_observado": 10.0,
+    "razao_por_aluno": 0.11091
+  },
+  "con-52": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 43.3,
+    "minimo_observado": 10.0,
+    "razao_por_aluno": 0.11091
+  },
+  "con-53": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 44.4,
+    "minimo_observado": 2.0,
+    "razao_por_aluno": 0.01664
+  },
+  "con-54": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-55": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 62.1,
+    "minimo_observado": 8.0,
+    "razao_por_aluno": 0.11183
+  },
+  "con-56": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-57": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 66.7,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.0064
+  },
+  "con-59": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-60": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-61": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 48.8,
+    "minimo_observado": 100.0,
+    "razao_por_aluno": 1.38638
+  },
+  "con-62": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 48.8,
+    "minimo_observado": 100.0,
+    "razao_por_aluno": 1.38638
+  },
+  "con-63": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 48.8,
+    "minimo_observado": 100.0,
+    "razao_por_aluno": 1.38638
+  },
+  "con-64": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 48.8,
+    "minimo_observado": 100.0,
+    "razao_por_aluno": 1.38638
+  },
+  "con-65": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 48.8,
+    "minimo_observado": 100.0,
+    "razao_por_aluno": 1.38638
+  },
+  "con-66": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 115.8,
+    "minimo_observado": 2.0,
+    "razao_por_aluno": 0.05546
+  },
+  "con-69": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "con-70": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 104.4,
+    "minimo_observado": 5.0,
+    "razao_por_aluno": 0.11091
+  },
+  "con-71": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 106.2,
+    "minimo_observado": 2.0,
+    "razao_por_aluno": 0.04436
+  },
+  "con-72": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 108.3,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.02218
+  },
+  "con-73": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 108.3,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.02218
+  },
+  "con-74": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 56.9,
+    "minimo_observado": 2.0,
+    "razao_por_aluno": 0.01664
+  },
+  "reu-01": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 60.0,
+    "minimo_observado": 0.0,
+    "razao_por_aluno": 0.0064
+  },
+  "reu-03": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "reu-04": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "reu-05": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "reu-06": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "reu-07": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 116.7,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.00943
+  },
+  "reu-08": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "reu-10": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "reu-12": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 102.8,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.01426
+  },
+  "reu-13": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 83.3,
+    "minimo_observado": 2.0,
+    "razao_por_aluno": 0.0287
+  },
+  "reu-14": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 86.1,
+    "minimo_observado": 2.0,
+    "razao_por_aluno": 0.0287
+  },
+  "reu-15": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 75.3,
+    "minimo_observado": 4.0,
+    "razao_por_aluno": 0.06225
+  },
+  "reu-16": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 120.8,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.0287
+  },
+  "reu-18": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "reu-19": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 83.3,
+    "minimo_observado": 2.0,
+    "razao_por_aluno": 0.0287
+  },
+  "reu-20": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "reu-22": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 99.9,
+    "minimo_observado": 3.0,
+    "razao_por_aluno": 0.05739
+  },
+  "reu-23": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 83.3,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.00957
+  },
+  "reu-24": {
+    "grupo": "confiavel",
+    "mape_validacao_pct": 20.8,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.02161
+  },
+  "reu-28": {
+    "grupo": "fixo",
+    "valor_fixo": 1.0
+  },
+  "reu-29": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 79.4,
+    "minimo_observado": 2.0,
+    "razao_por_aluno": 0.02391
+  },
+  "reu-31": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 60.4,
+    "minimo_observado": 4.0,
+    "razao_por_aluno": 0.0415
+  },
+  "reu-32": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 319.6,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.03774
+  },
+  "reu-33": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 285.8,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.07867
+  },
+  "reu-34": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 83.3,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.00957
+  },
+  "reu-35": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 75.0,
+    "minimo_observado": 2.0,
+    "razao_por_aluno": 0.01913
+  },
+  "reu-36": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 75.0,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.00555
+  },
+  "reu-38": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 57.2,
+    "minimo_observado": 4.0,
+    "razao_por_aluno": 0.06225
+  },
+  "reu-40": {
+    "grupo": "incerto",
+    "mape_validacao_pct": 1045.3,
+    "minimo_observado": 1.0,
+    "razao_por_aluno": 0.14152
+  }
+}

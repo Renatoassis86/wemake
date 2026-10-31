@@ -484,3 +484,66 @@ on conflict (item_key) do update set
   secao = excluded.secao, categoria = excluded.categoria, titulo = excluded.titulo,
   especificacao = excluded.especificacao, qtd_recomendada = excluded.qtd_recomendada,
   unidade = excluded.unidade, referencia = excluded.referencia, valor_ref = excluded.valor_ref, ordem = excluded.ordem;
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- Modelo de quantidade recomendada por nº de alunos (2026-10) — idempotente.
+--   academia_diagnosticos.num_alunos       nº de alunos da escola (cadastro comercial),
+--                                          editável pela equipe; alimenta a sugestão.
+--   academia_diag_pareceres.qtd_recomendada  ajuste manual da quantidade recomendada por
+--                                          item/escola (sobrepõe a sugestão do modelo, que
+--                                          vive no app em src/content/academia/modelo-quantidades.json).
+-- ════════════════════════════════════════════════════════════════════════════
+
+alter table public.academia_diagnosticos
+  add column if not exists num_alunos integer check (num_alunos is null or num_alunos >= 0);
+
+alter table public.academia_diag_pareceres
+  add column if not exists qtd_recomendada numeric;
+
+create or replace function public.academia_salvar_pareceres(p_id uuid, p_rows jsonb)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  r      jsonb;
+  v_key  text;
+  v_cmp  text;
+  v_val  text;
+  v_num  numeric;
+begin
+  if not exists (select 1 from public.academia_diagnosticos where id = p_id) then
+    return false;
+  end if;
+
+  for r in select * from jsonb_array_elements(p_rows) loop
+    v_key := r->>'item_key';
+    v_cmp := r->>'campo';
+    v_val := nullif(r->>'valor', '');
+    if v_cmp not in ('status_parecer', 'observacao', 'qtd_aproveitavel', 'acao', 'texto', 'qtd_recomendada') then
+      continue;
+    end if;
+    if not exists (select 1 from public.academia_diag_itens
+                    where item_key = v_key and secao in ('parecer_ambiente', 'reutilizavel', 'consumivel', 'geral')) then
+      continue;
+    end if;
+
+    if v_cmp in ('qtd_aproveitavel', 'qtd_recomendada') then
+      v_num := case when v_val ~ '^\d+([.,]\d+)?$' then replace(v_val, ',', '.')::numeric else null end;
+      execute format(
+        'insert into public.academia_diag_pareceres (diagnostico_id, item_key, %1$I) values ($1, $2, $3) '
+        'on conflict (diagnostico_id, item_key) do update set %1$I = excluded.%1$I, atualizado_em = now()', v_cmp)
+      using p_id, v_key, v_num;
+    else
+      execute format(
+        'insert into public.academia_diag_pareceres (diagnostico_id, item_key, %1$I) values ($1, $2, $3) '
+        'on conflict (diagnostico_id, item_key) do update set %1$I = excluded.%1$I, atualizado_em = now()', v_cmp)
+      using p_id, v_key, v_val;
+    end if;
+  end loop;
+  return true;
+end $$;
+
+revoke all on function public.academia_salvar_pareceres(uuid, jsonb) from public, anon, authenticated;
+grant execute on function public.academia_salvar_pareceres(uuid, jsonb) to service_role;

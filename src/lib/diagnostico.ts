@@ -1,4 +1,5 @@
 import schemaJson from '@/content/academia/diagnostico-schema.json'
+import modeloQuantidadesJson from '@/content/academia/modelo-quantidades.json'
 
 /* ═══════════════════ Estrutura do Diagnóstico (da planilha oficial) ═══════════════════ */
 
@@ -31,6 +32,37 @@ export const SCHEMA = schemaJson as DiagnosticoSchema
 /** Seção "Materiais de consumo" (item 5): fora do diagnóstico por decisão da We Make. Os dados continuam no catálogo, caso volte. */
 export const INCLUI_CONSUMIVEIS = false
 
+/* ═════════════ Modelo de quantidade recomendada por nº de alunos ═════════════
+ * Treinado com as 6 escolas que já têm planilha de recursos real + nº de alunos
+ * no contrato comercial (ver relatório de validação). Três grupos por item:
+ *  - fixo: mesma quantidade em toda escola, independente do tamanho (ferramentas/
+ *    máquinas — "um por sala"). Usa valor_fixo.
+ *  - confiavel: quantidade escala com o nº de alunos, validado por leave-one-out
+ *    com erro ≤ 50%. Usa razao_por_aluno (mediana) com piso minimo_observado.
+ *  - incerto: variou entre as escolas sem acompanhar o nº de alunos de forma
+ *    confiável — não tem fórmula; mantém a quantidade do catálogo. */
+export interface ModeloItem {
+  grupo: 'fixo' | 'confiavel' | 'incerto'
+  valor_fixo?: number
+  razao_por_aluno?: number
+  minimo_observado?: number
+  mape_validacao_pct?: number | null
+}
+export const MODELO_QUANTIDADES = modeloQuantidadesJson as Record<string, ModeloItem>
+
+/** Quantidade sugerida pra um item, a partir do modelo e do nº de alunos da escola.
+ *  Sem modelo pro item, ou sem nº de alunos informado pros itens que dependem dele,
+ *  cai no valor fixo do catálogo (rec.qtd) — nunca inventa um número. */
+export function qtdSugerida(rec: Recurso, numAlunos: number | null): number {
+  const m = MODELO_QUANTIDADES[rec.key]
+  if (!m) return rec.qtd
+  if (m.grupo === 'fixo') return m.valor_fixo ?? rec.qtd
+  if (m.grupo === 'confiavel' && numAlunos && numAlunos > 0 && m.razao_por_aluno !== undefined) {
+    return Math.max(m.minimo_observado ?? 0, Math.ceil(m.razao_por_aluno * numAlunos))
+  }
+  return rec.qtd
+}
+
 /** Bucket privado (criado em academia_diagnostico.sql). */
 export const BUCKET = 'academia-diagnosticos'
 
@@ -61,7 +93,7 @@ export const CHAVES_ESCOLA: Set<string> = (() => {
 export const CHAVES_PARECER: Set<string> = (() => {
   const k = new Set<string>()
   SCHEMA.parecerAmbiente.forEach(p => { k.add(p.key + '.s'); k.add(p.key + '.o') })
-  ;[...SCHEMA.reutilizaveis, ...SCHEMA.consumiveis].forEach(r => { k.add(r.key + '.pc'); k.add(r.key + '.qa'); k.add(r.key + '.ac') })
+  ;[...SCHEMA.reutilizaveis, ...SCHEMA.consumiveis].forEach(r => { k.add(r.key + '.pc'); k.add(r.key + '.qa'); k.add(r.key + '.ac'); k.add(r.key + '.qr') })
   ;['geral.situacao', 'geral.reutilizaveis', 'geral.consumiveis', 'geral.memorial', 'geral.obs', 'geral.arquitetura'].forEach(x => k.add(x))
   return k
 })()
@@ -126,16 +158,24 @@ const num = (v: string | undefined) => {
   return Number.isFinite(n) ? n : 0
 }
 
-export function qtdAAdquirir(rec: Recurso, parecer: Respostas) {
-  return Math.max(0, rec.qtd - num(parecer[rec.key + '.qa']))
+/** Quantidade recomendada efetiva pra um item: o que a equipe ajustou manualmente
+ *  (parecer['xxx.qr']), senão a sugestão do modelo. É o número que entra na conta
+ *  de "quantidade a adquirir" — nunca o rec.qtd do catálogo direto. */
+export function qtdRecomendada(rec: Recurso, parecer: Respostas, numAlunos: number | null) {
+  const ajuste = parecer[rec.key + '.qr']
+  return ajuste !== undefined && ajuste !== '' ? num(ajuste) : qtdSugerida(rec, numAlunos)
 }
 
-export function resumoParecer(parecer: Respostas) {
+export function qtdAAdquirir(rec: Recurso, parecer: Respostas, numAlunos: number | null) {
+  return Math.max(0, qtdRecomendada(rec, parecer, numAlunos) - num(parecer[rec.key + '.qa']))
+}
+
+export function resumoParecer(parecer: Respostas, numAlunos: number | null) {
   const calc = (itens: Recurso[]) => {
     let comAquisicao = 0
     let custo = 0
     for (const r of itens) {
-      const q = qtdAAdquirir(r, parecer)
+      const q = qtdAAdquirir(r, parecer, numAlunos)
       if (q > 0) comAquisicao++
       custo += q * r.valor
     }
@@ -151,7 +191,7 @@ export function resumoParecer(parecer: Respostas) {
 export interface LinhaBanco { item_key: string; campo: string; valor: string }
 
 const COLUNA_ESCOLA: Record<string, string> = { '': 'resposta', d: 'detalhe', l: 'anexo_link', o: 'observacao', p: 'possui', q: 'qtd_existente', m: 'marca_obs' }
-const COLUNA_PARECER: Record<string, string> = { s: 'status_parecer', pc: 'status_parecer', o: 'observacao', qa: 'qtd_aproveitavel', ac: 'acao' }
+const COLUNA_PARECER: Record<string, string> = { s: 'status_parecer', pc: 'status_parecer', o: 'observacao', qa: 'qtd_aproveitavel', ac: 'acao', qr: 'qtd_recomendada' }
 
 /** 'reu-01.p' → { item_key: 'reu-01', campo: 'possui' } */
 export function patchParaLinhasEscola(patch: Respostas): LinhaBanco[] {
@@ -226,6 +266,7 @@ export interface RespostaBanco {
 export interface ParecerBanco {
   item_key: string
   status_parecer: string | null; observacao: string | null; qtd_aproveitavel: number | null; acao: string | null; texto: string | null
+  qtd_recomendada: number | null
 }
 
 const emTexto = (v: unknown) => (v === null || v === undefined ? null : String(v).replace('.', ','))
@@ -254,6 +295,7 @@ export function mapaDePareceres(rows: ParecerBanco[]): Respostas {
     if (r.observacao) m[k + '.o'] = r.observacao
     if (r.qtd_aproveitavel !== null && r.qtd_aproveitavel !== undefined) m[k + '.qa'] = emTexto(r.qtd_aproveitavel) ?? ''
     if (r.acao) m[k + '.ac'] = r.acao
+    if (r.qtd_recomendada !== null && r.qtd_recomendada !== undefined) m[k + '.qr'] = emTexto(r.qtd_recomendada) ?? ''
   }
   return m
 }

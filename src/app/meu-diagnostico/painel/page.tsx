@@ -40,7 +40,7 @@ export default async function PainelPage() {
     )
   }
 
-  const { parecer, respostas } = sessao
+  const { parecer, respostas, num_alunos } = sessao
   const db = createAdminClient()
   const { data: comprasRaw } = await db
     .from('academia_diag_compras')
@@ -48,7 +48,7 @@ export default async function PainelPage() {
     .eq('diagnostico_id', sessao.id)
   const compras = new Map<string, CompraLinha>((comprasRaw ?? []).map(c => [c.item_key, c as CompraLinha]))
 
-  const resumo = resumoParecer(parecer)
+  const resumo = resumoParecer(parecer, num_alunos)
 
   return (
     <div className="pt">
@@ -92,8 +92,8 @@ export default async function PainelPage() {
           <p className="pt-hint">Valores de referência, pesquisados pela We Make. Confira preço e disponibilidade no link antes de comprar — eles mudam com frequência. Vocês podem comprar itens equivalentes, respeitando a especificação técnica.</p>
         </section>
 
-        <TabelaRecursos titulo="Itens reutilizáveis (permanentes)" itens={SCHEMA.reutilizaveis} parecer={parecer} compras={compras} />
-        <TabelaRecursos titulo="Itens consumíveis (compra inicial)" itens={SCHEMA.consumiveis} parecer={parecer} compras={compras} />
+        <TabelaRecursos titulo="Itens reutilizáveis (permanentes)" itens={SCHEMA.reutilizaveis} parecer={parecer} compras={compras} numAlunos={num_alunos} />
+        <TabelaRecursos titulo="Itens consumíveis (compra inicial)" itens={SCHEMA.consumiveis} parecer={parecer} compras={compras} numAlunos={num_alunos} />
 
         {parecer['geral.arquitetura'] ? (
           <section className="pt-sec">
@@ -148,7 +148,7 @@ function OQueContaram({ respostas: resp }: { respostas: Respostas }) {
   )
 }
 
-function TabelaRecursos({ titulo, itens, parecer, compras }: { titulo: string; itens: Recurso[]; parecer: Respostas; compras: Map<string, CompraLinha> }) {
+function TabelaRecursos({ titulo, itens, parecer, compras, numAlunos }: { titulo: string; itens: Recurso[]; parecer: Respostas; compras: Map<string, CompraLinha>; numAlunos: number | null }) {
   const comItem = itens.filter(i => parecer[i.key + '.pc'] || parecer[i.key + '.qa'] !== undefined || compras.has(i.key))
   if (!comItem.length) return null
   return (
@@ -161,7 +161,7 @@ function TabelaRecursos({ titulo, itens, parecer, compras }: { titulo: string; i
           </thead>
           <tbody>
             {itens.map(i => {
-              const adq = qtdAAdquirir(i, parecer)
+              const adq = qtdAAdquirir(i, parecer, numAlunos)
               const c = compras.get(i.key)
               const link = melhorLink(c)
               return (
