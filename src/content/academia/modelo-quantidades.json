@@ -459,12 +459,6 @@
     "minimo_observado": 1.0,
     "razao_por_aluno": 0.00957
   },
-  "reu-35": {
-    "grupo": "incerto",
-    "mape_validacao_pct": 75.0,
-    "minimo_observado": 2.0,
-    "razao_por_aluno": 0.01913
-  },
   "reu-36": {
     "grupo": "incerto",
     "mape_validacao_pct": 75.0,
