@@ -2,8 +2,9 @@ import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { formatCurrency } from '@/lib/utils'
-import { SCHEMA, briefingVisivel, qtdAAdquirir, resumoParecer, type Recurso, type Respostas } from '@/lib/diagnostico'
+import { BUCKET, SCHEMA, briefingVisivel, qtdAAdquirir, resumoParecer, type Recurso, type Respostas } from '@/lib/diagnostico'
 import { sairDoPortal, sessaoPortal } from '../actions'
+import FotosEnviadas, { type ArquivoPortal, type GrupoFotos } from './FotosEnviadas'
 import './painel.css'
 
 interface CompraLinha {
@@ -48,6 +49,29 @@ export default async function PainelPage() {
     .eq('diagnostico_id', sessao.id)
   const compras = new Map<string, CompraLinha>((comprasRaw ?? []).map(c => [c.item_key, c as CompraLinha]))
 
+  const { data: arqsRaw } = await db
+    .from('academia_diagnostico_arquivos')
+    .select('id, evidencia_key, nome, mime, tamanho, path')
+    .eq('diagnostico_id', sessao.id)
+    .order('created_at')
+  const listaArqs = arqsRaw ?? []
+  const assinadas = listaArqs.length
+    ? await db.storage.from(BUCKET).createSignedUrls(listaArqs.map(a => a.path), 3600)
+    : { data: [] as { path: string | null; signedUrl: string }[] }
+  const urlPorPath = new Map((assinadas.data ?? []).map(u => [u.path, u.signedUrl]))
+  const arquivosPorChave = new Map<string, ArquivoPortal[]>()
+  for (const a of listaArqs) {
+    const item: ArquivoPortal = { id: a.id, nome: a.nome, mime: a.mime, tamanho: a.tamanho, url: urlPorPath.get(a.path) ?? null }
+    arquivosPorChave.set(a.evidencia_key, [...(arquivosPorChave.get(a.evidencia_key) ?? []), item])
+  }
+  const labelPorChave = new Map<string, string>([
+    ...SCHEMA.evidencias.map(e => [e.key, e.nome] as const),
+    ...SCHEMA.medidas.map(m => [m.key, `${m.categoria} — ${m.info}`] as const),
+  ])
+  const gruposFotos: GrupoFotos[] = [...labelPorChave.keys()]
+    .filter(chave => arquivosPorChave.has(chave))
+    .map(chave => ({ chave, label: labelPorChave.get(chave) ?? chave, arquivos: arquivosPorChave.get(chave) ?? [] }))
+
   const resumo = resumoParecer(parecer, num_alunos)
 
   return (
@@ -61,6 +85,7 @@ export default async function PainelPage() {
         {parecer['geral.obs'] ? <p className="pt-resumo">{parecer['geral.obs']}</p> : null}
 
         <OQueContaram respostas={respostas} />
+        <FotosEnviadas grupos={gruposFotos} />
 
         <section className="pt-sec">
           <h2>Parecer técnico por dimensão</h2>
