@@ -64,25 +64,34 @@ export default function AcessoPortalLinha({ id, emailAtual, senhaAtual }: { id: 
 
   return (
     <div className="ac-portal-linha">
-      <span className="ac-portal-email">{emailAtual}</span>
-      {senhaAtual ? <span className="ac-portal-senha">{senhaAtual}</span> : null}
-      {senhaAtual ? <button type="button" className="ac-btn-sm" onClick={copiar}>{copiado ? 'Copiado' : 'Copiar'}</button> : null}
-      <button type="button" className="ac-btn-sm" disabled={senhaRun.pending} onClick={gerarSenha}>
-        {senhaRun.pending ? 'Gerando…' : senhaAtual ? 'Trocar senha' : 'Gerar senha'}
-      </button>
-      <button type="button" className="ac-btn-sm" onClick={() => setEditando(true)}>Editar e-mail</button>
-      {senhaAtual ? (
-        <button
-          type="button" className="ac-btn-sm" disabled={corrigirRun.pending}
-          onClick={() => corrigirRun.run(async () => {
-            const r = await corrigirHashPortal(id)
-            return r.ok ? { ok: true as const, msg: 'Corrigido' } : { ok: false as const, erro: r.erro ?? 'Erro ao corrigir.' }
-          })}
-          title="Recalcula o login sem trocar a senha — use se a escola disser que a senha não funciona"
-        >
-          {corrigirRun.pending ? 'Corrigindo…' : 'Corrigir login'}
-        </button>
-      ) : null}
+      <div className="ac-portal-cred">
+        <span className="ac-portal-email" title={emailAtual}>{emailAtual}</span>
+        {senhaAtual ? <span className="ac-portal-senha">{senhaAtual}</span> : null}
+      </div>
+      <div className="ac-portal-acoes">
+        {senhaAtual ? <button type="button" className="ac-btn-sm" onClick={copiar}>{copiado ? 'Copiado' : 'Copiar'}</button> : null}
+        <details className="ac-portal-mais">
+          <summary className="ac-btn-sm" aria-label="Mais ações de acesso">⋯</summary>
+          <div className="ac-portal-mais-painel">
+            <button type="button" className="ac-btn-sm" disabled={senhaRun.pending} onClick={gerarSenha}>
+              {senhaRun.pending ? 'Gerando…' : senhaAtual ? 'Trocar senha' : 'Gerar senha'}
+            </button>
+            <button type="button" className="ac-btn-sm" onClick={() => setEditando(true)}>Editar e-mail</button>
+            {senhaAtual ? (
+              <button
+                type="button" className="ac-btn-sm" disabled={corrigirRun.pending}
+                onClick={() => corrigirRun.run(async () => {
+                  const r = await corrigirHashPortal(id)
+                  return r.ok ? { ok: true as const, msg: 'Corrigido' } : { ok: false as const, erro: r.erro ?? 'Erro ao corrigir.' }
+                })}
+                title="Recalcula o login sem trocar a senha — use se a escola disser que a senha não funciona"
+              >
+                {corrigirRun.pending ? 'Corrigindo…' : 'Corrigir login'}
+              </button>
+            ) : null}
+          </div>
+        </details>
+      </div>
       <Aviso erro={senhaRun.erro ?? corrigirRun.erro} msg={corrigirRun.msg} />
     </div>
   )

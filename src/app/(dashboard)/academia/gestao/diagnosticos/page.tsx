@@ -60,16 +60,20 @@ export default async function DiagnosticosPage() {
         <div className="ac-table-wrap" tabIndex={0} role="region" aria-label="Diagnósticos">
           <table className="ac-table">
             <thead>
-              <tr><th scope="col">Escola</th><th scope="col">Situação</th><th scope="col">Respondido</th><th scope="col">Enviado em</th><th scope="col">Última atividade</th><th scope="col">PIN vale até</th><th scope="col">Acesso ao portal</th><th scope="col"><span className="sr-only">Ações</span></th></tr>
+              <tr><th scope="col">Escola</th><th scope="col">Situação</th><th scope="col">Atividade</th><th scope="col">PIN vale até</th><th scope="col">Acesso ao portal</th><th scope="col"><span className="sr-only">Ações</span></th></tr>
             </thead>
             <tbody>
               {d.itens.map(i => (
                 <tr key={i.id}>
                   <td>{i.escola_nome}</td>
-                  <td><span className="ac-chip" data-s={i.status === 'concluido' ? 'Concluído' : i.status === 'enviado' ? 'Aguardando We Make' : i.status === 'em_analise' ? 'Em andamento' : 'Aguardando escola'}>{STATUS_DIAGNOSTICO[i.status]}</span></td>
-                  <td>{feitos(i.respostas)} de {total}</td>
-                  <td>{dataHora(i.enviado_em)}</td>
-                  <td>{dataHora(i.ultima_atividade)}</td>
+                  <td>
+                    <span className="ac-chip" data-s={i.status === 'concluido' ? 'Concluído' : i.status === 'enviado' ? 'Aguardando We Make' : i.status === 'em_analise' ? 'Em andamento' : 'Aguardando escola'}>{STATUS_DIAGNOSTICO[i.status]}</span>
+                    <div className="ac-sub-dado">{feitos(i.respostas)} de {total} respondidas</div>
+                  </td>
+                  <td>
+                    <div className="ac-sub-dado">{i.ultima_atividade ? <>Última: {dataHora(i.ultima_atividade)}</> : '—'}</div>
+                    {i.enviado_em ? <div className="ac-sub-dado">Enviado: {dataHora(i.enviado_em)}</div> : null}
+                  </td>
                   <td>{fmtData(i.expira_em)}</td>
                   <td><AcessoPortalLinha id={i.id} emailAtual={i.portal_email ?? null} senhaAtual={i.portal_senha_atual ?? null} /></td>
                   <td><Link href={`/academia/gestao/diagnosticos/${i.id}`} className="ac-btn-sm">Abrir</Link><ExcluirDiagnostico id={i.id} escola={i.escola_nome} /></td>
