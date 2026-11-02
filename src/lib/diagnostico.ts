@@ -221,6 +221,9 @@ export const CAMPOS_COMPRAS = [
   'link_original_loja', 'link_original_situacao', 'link_original_preco', 'link_original_url',
 ] as const
 export type CampoCompras = (typeof CAMPOS_COMPRAS)[number]
+/** Só esses 4 são numéricos no banco — o resto (loja, situação, link) é texto puro
+ * e não pode passar pela troca de ponto por vírgula feita pra exibir preço. */
+const CAMPOS_COMPRAS_NUM = new Set<CampoCompras>(['melhor_preco', 'ml_preco', 'amazon_preco', 'link_original_preco'])
 
 export const CHAVES_COMPRAS: Set<string> = (() => {
   const k = new Set<string>()
@@ -252,7 +255,8 @@ export function mapaDeCompras(rows: CompraBanco[]): Respostas {
   for (const r of rows) {
     for (const campo of CAMPOS_COMPRAS) {
       const v = r[campo]
-      if (v !== null && v !== undefined) m[r.item_key + '.' + campo] = emTexto(v) ?? ''
+      if (v === null || v === undefined) continue
+      m[r.item_key + '.' + campo] = CAMPOS_COMPRAS_NUM.has(campo) ? emTexto(v) ?? '' : String(v)
     }
   }
   return m
