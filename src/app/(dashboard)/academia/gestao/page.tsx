@@ -5,14 +5,16 @@ import { fmtData, marcoAtual, percentual, prazoVencido, resumo, RISCO_AJUDA, STA
 import ImplantacaoGrid from '@/components/academia/gestao/ImplantacaoGrid'
 import NovaEscolaForm from '@/components/academia/gestao/NovaEscolaForm'
 import AssinadasPendentes from '@/components/academia/gestao/AssinadasPendentes'
+import DiagnosticosRecebidos from '@/components/academia/gestao/DiagnosticosRecebidos'
 import { carregarAssinadas } from '@/lib/academia-comercial'
 import SetupNotice from '@/components/academia/gestao/SetupNotice'
 import { Chip } from '@/components/academia/gestao/ui'
+import { listarDiagnosticos, podeVerDiagnosticos } from '@/lib/diagnostico-staff'
 
 export const dynamic = 'force-dynamic'
 
 export default async function PainelPage() {
-  const [d, assinadas] = await Promise.all([carregarGestao({ escolas: true }), carregarAssinadas()])
+  const [d, assinadas, podeDiag] = await Promise.all([carregarGestao({ escolas: true }), carregarAssinadas(), podeVerDiagnosticos()])
   if (d.setup || d.erro) return <SetupNotice erro={d.erro} />
 
   const ativas = d.implantacoes.filter(i => !i.arquivada)
@@ -21,8 +23,14 @@ export default async function PainelPage() {
   const noPainel = new Set(d.implantacoes.map(i => i.escola_id).filter(Boolean))
   const foraDoPainel = assinadas.filter(a => !noPainel.has(a.id))
 
+  const recebidos = podeDiag ? await listarDiagnosticos() : null
+  const diagnosticosRecebidos = (recebidos && !recebidos.setup && !recebidos.erro ? recebidos.itens : [])
+    .filter(i => i.status === 'enviado')
+    .sort((a, b) => (b.enviado_em ?? '').localeCompare(a.enviado_em ?? ''))
+
   return (
     <>
+      <DiagnosticosRecebidos itens={diagnosticosRecebidos} />
       <section aria-label="Indicadores">
         <dl className="ac-kpis">
           <div><dt>Escolas no painel</dt><dd>{r.escolas}</dd></div>

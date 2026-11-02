@@ -486,6 +486,18 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 .ac-ficha-link:hover { text-decoration: underline; }
 .ac-pend-lista small { font-weight: 500; color: var(--ac-muted); }
 
+/* Painel: "Diagnóstico recebido, aguardando análise" — mesmo padrão de .ac-nota--alerta
+   (cartão âmbar com barra à esquerda), pra ficar em evidência assim que a escola envia. */
+.ac-pend.is-urgente { border-left: 4px solid var(--ac-amber-line); background: var(--ac-amber-bg); border-radius: 0 12px 12px 0; padding: 1.3rem 1.5rem; }
+.ac-pend.is-urgente .ac-h3, .ac-pend.is-urgente .ac-sec-lead { color: var(--ac-amber-ink); }
+.ac-receb-lista { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ac-amber-line); }
+.ac-receb-lista li { padding: .9rem 0; border-bottom: 1px solid var(--ac-amber-line); }
+.ac-receb-lista li:last-child { padding-bottom: 0; }
+.ac-receb-cab { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .4rem 1rem; }
+.ac-receb-nome { font: 700 .98rem/1.3 var(--ac-sans); color: var(--ac-ink); }
+.ac-receb-data { font: 500 .78rem/1.3 var(--ac-sans); color: var(--ac-muted); }
+.ac-receb-acoes { display: flex; flex-wrap: wrap; align-items: flex-start; gap: .7rem; margin-top: .6rem; }
+
 .ac-ficha { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 2.5rem; margin-top: 1rem; }
 @media (max-width: 900px) { .ac-ficha { grid-template-columns: 1fr; } }
 .ac-ficha-dl { margin: 0; border-top: 1px solid var(--ac-line); }
