@@ -298,7 +298,28 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 .an-lightbox-legenda { color: #fff; font: 500 .85rem/1.4 var(--ac-sans); text-align: center; max-width: 90vw; cursor: default; }
 .an-lightbox-x { position: absolute; top: 1.2rem; right: 1.2rem; width: 2.4rem; height: 2.4rem; border-radius: 50%; border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.08); color: #fff; font-size: 1.1rem; cursor: pointer; }
 .an-lightbox-x:hover { background: rgba(255,255,255,.18); }
-.an-rec { min-width: 1900px; } .an-rec td { vertical-align: top; } .an-spec { display: block; font: 400 .78rem/1.4 var(--ac-serif); color: var(--ac-muted); margin-top: .2rem; }
+.an-rec { min-width: 1900px; }
+.an-rec td { vertical-align: top; }
+.an-spec { display: block; font: 400 .78rem/1.4 var(--ac-serif); color: var(--ac-muted); margin-top: .2rem; overflow-wrap: anywhere; }
+.an-rec select.ac-cell-in { white-space: normal; }
+/* larguras fixas por coluna, só na tabela de itens (Recomendado/Possui/Parecer/Ação) —
+   evita que o texto de um select (ex.: "Compatível parcialmente") fique cortado dentro
+   da caixa quando a coluna foi medida antes de a equipe escolher a opção. A tabela de
+   compras (TabelaCompras) também usa a classe an-rec, mas tem colunas diferentes —
+   por isso essas larguras ficam numa classe à parte. */
+.an-rec-itens { table-layout: fixed; }
+.an-rec-itens th:nth-child(1), .an-rec-itens td:nth-child(1) { width: 19rem; overflow-wrap: anywhere; }
+.an-rec-itens th:nth-child(2), .an-rec-itens td:nth-child(2) { width: 8rem; }
+.an-rec-itens th:nth-child(3), .an-rec-itens td:nth-child(3) { width: 6rem; }
+.an-rec-itens th:nth-child(4), .an-rec-itens td:nth-child(4) { width: 7.5rem; overflow-wrap: anywhere; }
+.an-rec-itens th:nth-child(5), .an-rec-itens td:nth-child(5) { width: 14rem; overflow-wrap: anywhere; }
+.an-rec-itens th:nth-child(6), .an-rec-itens td:nth-child(6) { width: 14.5rem; }
+.an-rec-itens th:nth-child(7), .an-rec-itens td:nth-child(7) { width: 7.5rem; }
+.an-rec-itens th:nth-child(8), .an-rec-itens td:nth-child(8) { width: 11rem; }
+.an-rec-itens th:nth-child(9), .an-rec-itens td:nth-child(9) { width: 7.5rem; }
+.an-rec-itens th:nth-child(10), .an-rec-itens td:nth-child(10) { width: 8rem; }
+.an-rec-itens td:nth-child(9), .an-rec-itens td:nth-child(10), .an-rec-itens th:nth-child(9), .an-rec-itens th:nth-child(10) { background: color-mix(in srgb, var(--ac-cyan-soft) 55%, #fff) !important; }
+.an-rec-itens thead th:nth-child(9), .an-rec-itens thead th:nth-child(10) { background: var(--ac-ink); }
 .an-num { min-width: 5.5rem; max-width: 7rem; text-align: right; font-variant-numeric: tabular-nums; }
 .an-calc { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
 .an-link-cell { display: flex; align-items: center; gap: .3rem; }

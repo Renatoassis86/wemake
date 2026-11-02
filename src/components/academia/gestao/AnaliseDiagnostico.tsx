@@ -270,7 +270,7 @@ function Tabela({ id, titulo, itens, resp, p, set, numAlunos }: { id: string; ti
     <section id={id} className="an-sec">
       <h3 className="ac-h3">{titulo} <small>escola informa · We Make analisa</small></h3>
       <div className="ac-table-wrap is-wide" tabIndex={0} role="region" aria-label={titulo}>
-        <table className="ac-table an-rec">
+        <table className="ac-table an-rec an-rec-itens">
           <thead>
             <tr>
               <th scope="col">Item</th><th scope="col">Recomendado</th><th scope="col">Possui?</th><th scope="col">Qtd. existente</th><th scope="col">Marca / modelo / obs.</th>
@@ -294,8 +294,8 @@ function Tabela({ id, titulo, itens, resp, p, set, numAlunos }: { id: string; ti
                     />{' '}{i.unid}
                   </td>
                   <td>{resp[i.key + '.p'] || <em className="an-vazio">—</em>}</td>
-                  <td>{resp[i.key + '.q'] || ''}</td>
-                  <td>{resp[i.key + '.m'] || ''}</td>
+                  <td>{resp[i.key + '.q'] || <em className="an-vazio">—</em>}</td>
+                  <td>{resp[i.key + '.m'] || <em className="an-vazio">—</em>}</td>
                   <td>
                     <select className="ac-cell-in" value={p[i.key + '.pc'] ?? ''} onChange={e => set(i.key + '.pc', e.target.value)} aria-label={`Parecer: ${i.item}`}>
                       <option value="">—</option>{SCHEMA.listas.parecer.map(o => <option key={o}>{o}</option>)}
