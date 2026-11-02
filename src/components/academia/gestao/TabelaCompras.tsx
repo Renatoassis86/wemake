@@ -52,10 +52,14 @@ export default function TabelaCompras({ id, anchorId, titulo, itens, inicial }: 
 
   const campoLink = (k: string, label: string) => {
     const v = c[k] ?? ''
+    const trim = v.trim()
+    /* O campo aceita link colado sem "http(s)://" na frente — sem isso o navegador
+     * trata como caminho relativo do próprio site e o ícone "abrir" não sai daqui. */
+    const href = trim && !/^https?:\/\//i.test(trim) ? `https://${trim}` : trim
     return (
       <div className="an-link-cell">
         <input className="ac-cell-in is-link" value={v} onChange={e => set(k, e.target.value)} placeholder="https://…" aria-label={label} spellCheck={false} />
-        {v ? <a className="an-link-open" href={v} target="_blank" rel="noopener noreferrer" title="Abrir link para conferir" aria-label={`Abrir ${label}`}>↗</a> : null}
+        {trim ? <a className="an-link-open" href={href} target="_blank" rel="noopener noreferrer" title="Abrir link para conferir" aria-label={`Abrir ${label}`}>↗</a> : null}
       </div>
     )
   }
@@ -67,7 +71,7 @@ export default function TabelaCompras({ id, anchorId, titulo, itens, inicial }: 
         {salvo === 'salvando' ? 'Salvando…' : salvo === 'erro' ? 'Erro ao salvar. Tentando de novo.' : 'Salvo'}
       </span>
       <div className="ac-table-wrap is-wide" tabIndex={0} role="region" aria-label={titulo}>
-        <table className="ac-table an-rec">
+        <table className="ac-table an-rec an-rec-compras">
           <thead>
             <tr>
               <th scope="col">Item</th>

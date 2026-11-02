@@ -322,11 +322,30 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 .an-rec-itens thead th:nth-child(9), .an-rec-itens thead th:nth-child(10) { background: var(--ac-ink); }
 .an-num { min-width: 5.5rem; max-width: 7rem; text-align: right; font-variant-numeric: tabular-nums; }
 .an-calc { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+/* larguras fixas por coluna, só na tabela "Onde comprar" (Situação/Melhor opção/Preço/
+   Link × 3 lojas) — mesmo motivo da an-rec-itens: sem isso o texto digitado (ex.
+   "Comprar novo" em Situação) pode nascer maior que a coluna medida com o campo vazio
+   e ficar cortado dentro da caixa. */
+.an-rec-compras { table-layout: fixed; }
+.an-rec-compras th:nth-child(1), .an-rec-compras td:nth-child(1) { width: 15rem; overflow-wrap: anywhere; }
+.an-rec-compras th:nth-child(2), .an-rec-compras td:nth-child(2) { width: 10rem; }
+.an-rec-compras th:nth-child(3), .an-rec-compras td:nth-child(3) { width: 10rem; }
+.an-rec-compras th:nth-child(4), .an-rec-compras td:nth-child(4) { width: 6.5rem; }
+.an-rec-compras th:nth-child(5), .an-rec-compras td:nth-child(5) { width: 14rem; }
+.an-rec-compras th:nth-child(6), .an-rec-compras td:nth-child(6) { width: 6.5rem; }
+.an-rec-compras th:nth-child(7), .an-rec-compras td:nth-child(7) { width: 14rem; }
+.an-rec-compras th:nth-child(8), .an-rec-compras td:nth-child(8) { width: 6.5rem; }
+.an-rec-compras th:nth-child(9), .an-rec-compras td:nth-child(9) { width: 14rem; }
+.an-rec-compras th:nth-child(10), .an-rec-compras td:nth-child(10) { width: 14rem; }
 .an-link-cell { display: flex; align-items: center; gap: .3rem; }
-.ac-cell-in.is-link { min-width: 13rem; font: 500 .78rem/1.3 ui-monospace, Consolas, monospace; text-overflow: ellipsis; }
+.ac-cell-in.is-link { min-width: 0; font: 500 .78rem/1.3 ui-monospace, Consolas, monospace; text-overflow: ellipsis; }
 .ac-cell-in.is-link:focus { text-overflow: clip; }
-.an-link-open { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 1.7rem; height: 1.7rem; border-radius: 6px; color: var(--ac-link); text-decoration: none; font-size: .9rem; }
-.an-link-open:hover { background: var(--ac-cyan-soft); }
+.an-link-open {
+  flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+  width: 1.9rem; height: 1.9rem; border-radius: 6px; color: var(--ac-link); text-decoration: none;
+  font-size: 1rem; font-weight: 700; border: 1px solid var(--ac-cyan-soft); background: var(--ac-cyan-soft);
+}
+.an-link-open:hover, .an-link-open:focus-visible { background: var(--ac-cyan); color: #fff; border-color: var(--ac-cyan); }
 
 .ac-portal-linha { display: flex; flex-direction: column; gap: .4rem; min-width: 13rem; max-width: 15rem; }
 .ac-portal-email { font: 500 .8rem/1.3 var(--ac-sans); color: var(--ac-text); overflow-wrap: anywhere; }
