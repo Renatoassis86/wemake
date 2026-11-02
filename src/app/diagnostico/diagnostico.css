@@ -4,9 +4,11 @@
 .dg button { font-family: var(--ac-sans); }
 .dg ::selection { background: var(--ac-cyan-soft); }
 
-.dg-topo { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.dg-topo { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; row-gap: .6rem; }
 .dg-sair { background: none; border: 1px solid rgba(255, 255, 255, .35); color: #fff; font: 600 .76rem/1 var(--ac-sans); border-radius: 999px; padding: .6rem 1.1rem; cursor: pointer; transition: border-color .15s, background .15s; }
 .dg-sair:hover { border-color: var(--ac-cyan); background: rgba(255, 255, 255, .06); }
+.dg-topo .dg-topo-link { background: none; border: 1px solid rgba(255, 255, 255, .35); color: #fff; font: 600 .76rem/1 var(--ac-sans); border-radius: 999px; padding: .6rem 1.1rem; text-decoration: none; white-space: nowrap; transition: border-color .15s, background .15s; }
+.dg-topo .dg-topo-link:hover { border-color: var(--ac-cyan); background: rgba(255, 255, 255, .06); }
 
 /* ═════════════ Entrada (link ou PIN) ═════════════ */
 .dg-entrada > .dg-topo { background: var(--ac-ink); padding: 1.25rem max(var(--dg-pad), calc((100% - 1120px) / 2 + var(--dg-pad))); }
@@ -154,7 +156,7 @@
 /* Mobile (retrato) */
 @media (max-width: 640px) {
   .dg-entrada > .dg-topo { padding-left: max(var(--dg-pad), env(safe-area-inset-left)); padding-right: max(var(--dg-pad), env(safe-area-inset-right)); }
-  .dg-sair { min-height: 44px; }
+  .dg-sair, .dg-topo-link { min-height: 44px; display: inline-flex; align-items: center; }
   .dg-hero { padding-left: max(var(--dg-pad), env(safe-area-inset-left)); padding-right: max(var(--dg-pad), env(safe-area-inset-right)); }
   .dg-hero::after { width: 96px; right: -24px; bottom: -32px; opacity: .5; }
   .dg-steps-in { padding-left: max(var(--dg-pad), env(safe-area-inset-left)); padding-right: max(var(--dg-pad), env(safe-area-inset-right)); gap: 0; }
@@ -188,7 +190,7 @@
   .dg-hero { padding-bottom: 1.25rem; }
   .dg-entrada-grid { padding-top: 1.5rem; padding-bottom: 2rem; }
   .dg-steps a { min-height: 44px; align-items: center; padding-top: .5rem; padding-bottom: .5rem; }
-  .dg-sair { min-height: 44px; }
+  .dg-sair, .dg-topo-link { min-height: 44px; display: inline-flex; align-items: center; }
   .dg-entrada > .dg-topo, .dg-hero, .dg-steps-in, .dg-main { padding-left: max(var(--dg-pad), env(safe-area-inset-left)); padding-right: max(var(--dg-pad), env(safe-area-inset-right)); }
   .dg input:not([type='radio']):not([type='checkbox']):not([type='file']), .dg textarea, .dg select { font-size: 16px; }
 }
@@ -208,7 +210,7 @@
   .dg-arqs button { padding: .7rem .8rem; }
   .dg-check { min-height: 2.75rem; }
   .dg-check input { width: 1.4rem; height: 1.4rem; }
-  .dg-sair { padding: .8rem 1.2rem; }
+  .dg-sair, .dg-topo-link { padding: .8rem 1.2rem; }
 }
 
 /* briefing (2.1 a 2.3) */

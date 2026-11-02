@@ -13,6 +13,7 @@ export default async function DiagnosticoEntrada({ searchParams }: { searchParam
     <main className="dg-entrada">
       <header className="dg-topo">
         <Image src="/academia/brand/logo-white.png" alt="We Make" width={640} height={148} priority style={{ height: 32, width: 'auto' }} />
+        <a href="/meu-diagnostico" className="dg-topo-link">Já preenchi · ver diagnóstico</a>
       </header>
 
       <div className="dg-entrada-grid">
