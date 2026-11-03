@@ -21,8 +21,12 @@ interface CompraLinha {
   adquirido: boolean
 }
 
-function melhorLink(c: CompraLinha | undefined) {
-  return c?.melhor_link || c?.ml_link || c?.amazon_link || c?.link_original_url || null
+/** Prioriza o link específico que o staff pesquisou pra essa escola; sem isso,
+ *  cai pro link de referência do catálogo (já pesquisado pra todo mundo) —
+ *  sem esse fallback, qualquer item que o staff não copiou manualmente pra
+ *  essa escola aparecia "link em definição" mesmo já tendo um link bom. */
+function melhorLink(c: CompraLinha | undefined, ref: string) {
+  return c?.melhor_link || c?.ml_link || c?.amazon_link || c?.link_original_url || ref || null
 }
 
 export default async function PainelPage() {
@@ -201,7 +205,7 @@ function TabelaRecursos({ titulo, itens, parecer, compras, numAlunos }: { titulo
             {itens.map(i => {
               const adq = qtdAAdquirir(i, parecer, numAlunos)
               const c = compras.get(i.key)
-              const link = melhorLink(c)
+              const link = melhorLink(c, i.ref)
               return (
                 <tr key={i.key}>
                   <td><b>{i.item}</b><span className="pt-spec">{i.spec}</span></td>
