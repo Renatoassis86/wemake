@@ -38,9 +38,11 @@ export const NAV_DOCS: { grupo: string; itens: ItemNav[] }[] = [
 export const NAV_GESTAO: { href: string; nome: string; soDiagnosticos?: boolean }[] = [
   { href: '/academia/gestao', nome: 'Painel' },
   { href: '/academia/gestao/lista', nome: 'Lista' },
+  { href: '/academia/gestao/jornada', nome: 'Jornada' },
   { href: '/academia/gestao/quadro', nome: 'Quadro' },
   { href: '/academia/gestao/calendario', nome: 'Calendário' },
   { href: '/academia/gestao/agenda', nome: 'Agenda' },
   { href: '/academia/gestao/workspace', nome: 'Workspace' },
   { href: '/academia/gestao/diagnosticos', nome: 'Diagnósticos', soDiagnosticos: true },
+  { href: '/academia/gestao/arquitetura', nome: 'Arquitetura', soDiagnosticos: true },
 ]

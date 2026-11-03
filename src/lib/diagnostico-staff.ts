@@ -46,6 +46,17 @@ export interface AnotacaoStaff {
   id: string
   texto: string
   criado_em: string
+  autor: 'escola' | 'equipe'
+}
+
+export interface ArquivoEquipeStaff {
+  id: string
+  nome: string
+  mime: string | null
+  tamanho: number | null
+  criado_em: string
+  enviado_por: string | null
+  url: string | null
 }
 
 const FALTA_TABELA = (e: { code?: string; message?: string } | null) =>
@@ -106,6 +117,76 @@ export async function listarDiagnosticos(): Promise<{ setup: boolean; erro?: str
   }
 }
 
+export interface DiagnosticoArquitetura {
+  id: string
+  escola_nome: string
+  status: StatusDiagnostico
+  cidade_uf: string | null
+  encaminhamento: string | null
+  anotacoes: AnotacaoStaff[]
+  arquivosEquipe: ArquivoEquipeStaff[]
+}
+
+/** Área da Gabi (arquitetura): um card por escola com o encaminhamento, o diário e os arquivos — sem precisar abrir cada diagnóstico. */
+export async function listarParaArquitetura(): Promise<{ setup: boolean; erro?: string; itens: DiagnosticoArquitetura[] }> {
+  const db = createAdminClient()
+  const { data, error } = await db
+    .from('academia_diagnosticos')
+    .select('id, implantacao_id, escola_nome, status')
+    .order('created_at', { ascending: false })
+  if (FALTA_TABELA(error)) return { setup: true, itens: [] }
+  if (error) return { setup: false, erro: error.message, itens: [] }
+  const base = data ?? []
+  const ids = base.map(d => d.id)
+  if (!ids.length) return { setup: false, itens: [] }
+
+  const implantacaoIds = [...new Set(base.map(d => d.implantacao_id).filter(Boolean) as string[])]
+  const porImplantacao = new Map<string, string | null>()
+  if (implantacaoIds.length) {
+    const { data: implant } = await db.from('academia_implantacoes').select('id, cidade_uf').in('id', implantacaoIds)
+    for (const i of (implant ?? []) as { id: string; cidade_uf: string | null }[]) porImplantacao.set(i.id, i.cidade_uf)
+  }
+
+  const [{ data: pareceres }, { data: anotacoesRaw }, { data: arquivosRaw }] = await Promise.all([
+    db.from('academia_diag_pareceres').select('diagnostico_id, texto').eq('item_key', 'geral.arquitetura').in('diagnostico_id', ids),
+    db.from('academia_diag_anotacoes').select('id, diagnostico_id, texto, criado_em, autor').in('diagnostico_id', ids).order('criado_em', { ascending: false }),
+    db.from('academia_diag_arquivos_equipe').select('id, diagnostico_id, nome, mime, tamanho, path, criado_em, enviado_por').in('diagnostico_id', ids).order('criado_em', { ascending: false }),
+  ])
+
+  const encaminhamentoPorDiag = new Map((pareceres ?? []).map(p => [p.diagnostico_id as string, p.texto as string | null]))
+  const anotacoesPorDiag = new Map<string, AnotacaoStaff[]>()
+  for (const a of (anotacoesRaw ?? []) as (AnotacaoStaff & { diagnostico_id: string })[]) {
+    const l = anotacoesPorDiag.get(a.diagnostico_id) ?? []
+    l.push(a)
+    anotacoesPorDiag.set(a.diagnostico_id, l)
+  }
+
+  const listaArquivos = (arquivosRaw ?? []) as { id: string; diagnostico_id: string; nome: string; mime: string | null; tamanho: number | null; path: string; criado_em: string; enviado_por: string | null }[]
+  const urls = listaArquivos.length
+    ? await db.storage.from(BUCKET).createSignedUrls(listaArquivos.map(a => a.path), 3600)
+    : { data: [] as { path: string | null; signedUrl: string }[] }
+  const porPath = new Map((urls.data ?? []).map(u => [u.path, u.signedUrl]))
+  const arquivosPorDiag = new Map<string, ArquivoEquipeStaff[]>()
+  for (const a of listaArquivos) {
+    const l = arquivosPorDiag.get(a.diagnostico_id) ?? []
+    l.push({ id: a.id, nome: a.nome, mime: a.mime, tamanho: a.tamanho, criado_em: a.criado_em, enviado_por: a.enviado_por, url: porPath.get(a.path) ?? null })
+    arquivosPorDiag.set(a.diagnostico_id, l)
+  }
+
+  return {
+    setup: false,
+    itens: base.map(d => ({
+      id: d.id,
+      escola_nome: d.escola_nome,
+      status: d.status as StatusDiagnostico,
+      cidade_uf: d.implantacao_id ? (porImplantacao.get(d.implantacao_id) ?? null) : null,
+      encaminhamento: encaminhamentoPorDiag.get(d.id) ?? null,
+      anotacoes: anotacoesPorDiag.get(d.id) ?? [],
+      arquivosEquipe: arquivosPorDiag.get(d.id) ?? [],
+    })),
+  }
+}
+
 export async function carregarDiagnostico(id: string) {
   const db = createAdminClient()
   const { data, error } = await db
@@ -129,7 +210,7 @@ export async function carregarDiagnostico(id: string) {
 
   const { data: anotacoesRaw } = await db
     .from('academia_diag_anotacoes')
-    .select('id, texto, criado_em')
+    .select('id, texto, criado_em, autor')
     .eq('diagnostico_id', id)
     .order('criado_em', { ascending: false })
   const anotacoes = (anotacoesRaw ?? []) as AnotacaoStaff[]
@@ -138,6 +219,21 @@ export async function carregarDiagnostico(id: string) {
   const arquivos: ArquivoStaff[] = lista.map(a => ({
     id: a.id, evidencia_key: a.evidencia_key, nome: a.nome, mime: a.mime, tamanho: a.tamanho, url: porPath.get(a.path) ?? null,
   }))
+
+  const { data: arqsEquipeRaw } = await db
+    .from('academia_diag_arquivos_equipe')
+    .select('id, nome, mime, tamanho, path, criado_em, enviado_por')
+    .eq('diagnostico_id', id)
+    .order('criado_em', { ascending: false })
+  const listaEquipe = arqsEquipeRaw ?? []
+  const urlsEquipe = listaEquipe.length
+    ? await db.storage.from(BUCKET).createSignedUrls(listaEquipe.map(a => a.path), 3600)
+    : { data: [] as { path: string | null; signedUrl: string }[] }
+  const porPathEquipe = new Map((urlsEquipe.data ?? []).map(u => [u.path, u.signedUrl]))
+  const arquivosEquipe: ArquivoEquipeStaff[] = listaEquipe.map(a => ({
+    id: a.id, nome: a.nome, mime: a.mime, tamanho: a.tamanho, criado_em: a.criado_em, enviado_por: a.enviado_por, url: porPathEquipe.get(a.path) ?? null,
+  }))
+
   return {
     diagnostico: {
       ...data,
@@ -147,5 +243,6 @@ export async function carregarDiagnostico(id: string) {
     } as DiagnosticoLinha,
     arquivos,
     anotacoes,
+    arquivosEquipe,
   }
 }

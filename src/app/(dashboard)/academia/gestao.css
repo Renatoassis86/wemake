@@ -285,6 +285,15 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 .an-diario-lista li:last-child { border-bottom: none; }
 .an-diario-data { display: block; font: 700 .72rem/1 var(--ac-sans); letter-spacing: .04em; color: var(--ac-link); margin-bottom: .35rem; }
 .an-diario-lista p { margin: 0; font: 500 .9rem/1.55 var(--ac-sans); color: var(--ac-text); white-space: pre-wrap; }
+.an-diario-autor { font: 700 .62rem/1 var(--ac-sans); letter-spacing: .06em; text-transform: uppercase; font-style: normal; margin-left: .5rem; padding: .18rem .5rem; border-radius: 999px; color: var(--ac-muted); background: var(--ac-ivory); }
+.an-diario-autor[data-a="equipe"] { color: var(--ac-link); background: var(--ac-cyan-soft); }
+.an-diario-form { display: flex; flex-wrap: wrap; align-items: flex-start; gap: .6rem; margin: .9rem 0 1.3rem; }
+.an-diario-form textarea.ac-cell-in { flex: 1 1 18rem; min-width: 0; border: 1px solid var(--ac-line-2); background: #fff; resize: vertical; }
+
+.an-arq-equipe-lista { list-style: none; margin: .8rem 0 0; padding: 0; display: grid; gap: .4rem; }
+.an-arq-equipe-lista li { display: flex; align-items: center; gap: .6rem; padding: .5rem 0; border-bottom: 1px solid var(--ac-line); }
+.an-arq-equipe-lista a { color: var(--ac-link); font-weight: 600; }
+.an-arq-equipe-lista small { color: var(--ac-muted); margin-left: auto; white-space: nowrap; }
 .an-dl { margin: 0; border-top: 2px solid var(--ac-ink); } .an-dl > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 1rem; padding: .8rem 0; border-bottom: 1px solid var(--ac-line); }
 .an-dl dt { font: 600 .9rem/1.4 var(--ac-sans); color: var(--ac-ink); } .an-dl dd { margin: 0; line-height: 1.5; } .an-det { color: var(--ac-muted); }
 .an-vazio, .an-dl em { color: var(--ac-muted); font-style: italic; }

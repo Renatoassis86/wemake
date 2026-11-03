@@ -182,7 +182,7 @@ export function resumoParecer(parecer: Respostas, numAlunos: number | null) {
     return { cadastrados: itens.length, comAquisicao, custo }
   }
   const reu = calc(SCHEMA.reutilizaveis)
-  const con = calc(INCLUI_CONSUMIVEIS ? SCHEMA.consumiveis : [])
+  const con = calc(SCHEMA.consumiveis)
   return { reu, con, total: reu.custo + con.custo }
 }
 

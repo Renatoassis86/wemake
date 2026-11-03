@@ -61,6 +61,6 @@ export function lerSessao(token: string | undefined): string | null {
 /** Quem pode ver respostas, arquivos e parecer dos diagnósticos. Configurável por ACADEMIA_DIAGNOSTICO_EMAILS. */
 export function emailsAutorizados(): string[] {
   const env = process.env.ACADEMIA_DIAGNOSTICO_EMAILS
-  const lista = env ? env.split(',') : ['contato@wemake.tec.br', 'renato086@gmail.com']
+  const lista = env ? env.split(',') : ['contato@wemake.tec.br', 'renato086@gmail.com', 'gabi@wemake.tec.br']
   return lista.map(e => e.trim().toLowerCase()).filter(Boolean)
 }

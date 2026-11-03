@@ -56,6 +56,7 @@ export default async function PainelPage() {
     .from('academia_diag_anotacoes')
     .select('id, texto, criado_em')
     .eq('diagnostico_id', sessao.id)
+    .eq('autor', 'escola')
     .order('criado_em', { ascending: false })
   const anotacoes = (anotacoesRaw ?? []) as Anotacao[]
 

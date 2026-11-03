@@ -484,7 +484,7 @@
 }
 
 @media print {
-  .ac-trackbar, .ac-toc, .ac-toc-m, .ac-pager { display: none !important; }
+  .ac-trackbar, .ac-toc, .ac-toc-m, .ac-pager, .ac-pin-ciclo { display: none !important; }
   .ac-hero::after { display: none; }
   .ac-hero { background: #fff; color: #000; }
   .ac-hero h1, .ac-deck, .ac-facts dd { color: #000; }

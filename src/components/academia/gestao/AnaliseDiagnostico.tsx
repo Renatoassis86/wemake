@@ -3,13 +3,15 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { formatCurrency } from '@/lib/utils'
 import {
-  INCLUI_CONSUMIVEIS, SCHEMA, STATUS_DIAGNOSTICO, briefingVisivel, qtdAAdquirir, qtdSugerida, resumoParecer, type Recurso, type Respostas, type StatusDiagnostico,
+  SCHEMA, STATUS_DIAGNOSTICO, briefingVisivel, qtdAAdquirir, qtdSugerida, resumoParecer, type Recurso, type Respostas, type StatusDiagnostico,
 } from '@/lib/diagnostico'
-import type { AnotacaoStaff, ArquivoStaff, DiagnosticoLinha } from '@/lib/diagnostico-staff'
+import type { AnotacaoStaff, ArquivoEquipeStaff, ArquivoStaff, DiagnosticoLinha } from '@/lib/diagnostico-staff'
 import { definirNumAlunos, definirStatus, salvarParecer } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
 import { AcessoAtual, NovoPinBtn, RevogarAcessoBtn } from './NovoDiagnosticoForm'
 import AcessoPortal from './AcessoPortal'
 import TabelaCompras from './TabelaCompras'
+import DiarioEquipe from './DiarioEquipe'
+import ArquivosEquipe from './ArquivosEquipe'
 import { Aviso, useRun } from './ui'
 
 /** Vocabulário do status por dimensão do ambiente — diferente do parecer por item
@@ -24,7 +26,7 @@ const tamanho = (b: number | null) => (!b ? '' : b < 1048576 ? `${Math.max(1, Ma
 
 const ehImagem = (mime: string | null) => !!mime && mime.startsWith('image/')
 
-export default function AnaliseDiagnostico({ diagnostico, arquivos, anotacoes }: { diagnostico: DiagnosticoLinha; arquivos: ArquivoStaff[]; anotacoes: AnotacaoStaff[] }) {
+export default function AnaliseDiagnostico({ diagnostico, arquivos, anotacoes, arquivosEquipe }: { diagnostico: DiagnosticoLinha; arquivos: ArquivoStaff[]; anotacoes: AnotacaoStaff[]; arquivosEquipe: ArquivoEquipeStaff[] }) {
   const resp = diagnostico.respostas as Respostas
   const [p, setP] = useState<Respostas>(diagnostico.parecer as Respostas)
   const [foto, setFoto] = useState<ArquivoStaff | null>(null)
@@ -90,19 +92,7 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos, anotacoes }:
         </div>
       </header>
 
-      {anotacoes.length ? (
-        <section id="an-diario" className="an-sec">
-          <h3 className="ac-h3">Diário de anotações da escola <small>observações informais sobre a jornada e os materiais</small></h3>
-          <ul className="an-diario-lista">
-            {anotacoes.map(a => (
-              <li key={a.id}>
-                <span className="an-diario-data">{dataHora(a.criado_em)}</span>
-                <p>{a.texto}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+      <DiarioEquipe id={diagnostico.id} anotacoes={anotacoes} />
 
       <AcessoAtual id={diagnostico.id} escola={diagnostico.escola_nome} token={diagnostico.link_token} pin={diagnostico.pin_atual} />
       <AcessoPortal id={diagnostico.id} escola={diagnostico.escola_nome} emailAtual={diagnostico.portal_email} senhaAtual={diagnostico.portal_senha_atual} />
@@ -127,9 +117,9 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos, anotacoes }:
       </div>
 
       <nav className="an-nav" aria-label="Seções">
-        {anotacoes.length ? <a href="#an-diario">Diário</a> : null}
+        <a href="#an-diario">Diário</a>
         <a href="#an-ambiente">Ambiente</a><a href="#an-medidas">Medidas</a><a href="#an-evidencias">Evidências</a>
-        <a href="#an-reu">Reutilizáveis</a>{INCLUI_CONSUMIVEIS ? <a href="#an-con">Consumíveis</a> : null}<a href="#an-compras">Compras</a><a href="#an-parecer">Parecer</a><a href="#an-resumo">Resumo</a>
+        <a href="#an-reu">Reutilizáveis</a><a href="#an-con">Consumíveis</a><a href="#an-compras">Compras</a><a href="#an-parecer">Parecer</a><a href="#an-resumo">Resumo</a>
         <span className="an-salvo" data-e={salvo}>{salvo === 'salvando' ? 'Salvando parecer…' : salvo === 'erro' ? 'Erro ao salvar. Tentando de novo.' : 'Parecer salvo'}</span>
       </nav>
 
@@ -209,17 +199,15 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos, anotacoes }:
       </section>
 
       <Tabela id="an-reu" titulo="4. Recursos reutilizáveis" itens={SCHEMA.reutilizaveis} resp={resp} p={p} set={set} numAlunos={numAlunosNum} />
-      {INCLUI_CONSUMIVEIS ? <Tabela id="an-con" titulo="5. Recursos consumíveis" itens={SCHEMA.consumiveis} resp={resp} p={p} set={set} numAlunos={numAlunosNum} /> : null}
+      <Tabela id="an-con" titulo="5. Recursos consumíveis" itens={SCHEMA.consumiveis} resp={resp} p={p} set={set} numAlunos={numAlunosNum} />
 
-      {/* Onde comprar cada item — aparece na devolutiva que a escola vê em /meu-diagnostico,
-          mesmo com INCLUI_CONSUMIVEIS desligado aqui (essa flag só tira consumíveis desta
-          tela de formulário/análise; a devolutiva já entregue às escolas sempre teve as duas). */}
+      {/* Onde comprar cada item — aparece na devolutiva que a escola vê em /meu-diagnostico. */}
       <TabelaCompras id={diagnostico.id} anchorId="an-compras" titulo="Onde comprar — reutilizáveis" itens={SCHEMA.reutilizaveis} inicial={diagnostico.compras} />
       <TabelaCompras id={diagnostico.id} anchorId="an-compras-con" titulo="Onde comprar — consumíveis" itens={SCHEMA.consumiveis} inicial={diagnostico.compras} />
 
       {/* ── parecer do ambiente ── */}
       <section id="an-parecer" className="an-sec">
-        <h3 className="ac-h3">{INCLUI_CONSUMIVEIS ? 6 : 5}. Parecer técnico do ambiente <small>preenchimento da We Make</small></h3>
+        <h3 className="ac-h3">6. Parecer técnico do ambiente <small>preenchimento da We Make</small></h3>
         <div className="ac-table-wrap" tabIndex={0} role="region" aria-label="Parecer do ambiente">
           <table className="ac-table">
             <thead><tr><th scope="col">Item avaliado</th><th scope="col">Status</th><th scope="col">Observação / adequação recomendada</th></tr></thead>
@@ -241,19 +229,23 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos, anotacoes }:
         <label className="an-geral"><span>Encaminhamento ao estúdio de arquitetura</span>
           <textarea rows={2} value={p['geral.arquitetura'] ?? ''} onChange={e => set('geral.arquitetura', e.target.value)} />
         </label>
+        <div className="an-geral" style={{ marginTop: '1rem' }}>
+          <span>Arquivos da arquitetura <small>plantas, memoriais e pareceres da Gabi e de outros</small></span>
+          <ArquivosEquipe id={diagnostico.id} inicial={arquivosEquipe} />
+        </div>
       </section>
 
       <section id="an-resumo" className="an-sec">
-        <h3 className="ac-h3">{INCLUI_CONSUMIVEIS ? 7 : 6}. Resumo We Make</h3>
+        <h3 className="ac-h3">7. Resumo We Make</h3>
         <dl className="ac-kpis an-kpis">
           <div><dt>Reutilizáveis com aquisição</dt><dd>{resumo.reu.comAquisicao}<small> de {resumo.reu.cadastrados}</small></dd></div>
-          {INCLUI_CONSUMIVEIS ? <div><dt>Consumíveis com aquisição</dt><dd>{resumo.con.comAquisicao}<small> de {resumo.con.cadastrados}</small></dd></div> : null}
+          <div><dt>Consumíveis com aquisição</dt><dd>{resumo.con.comAquisicao}<small> de {resumo.con.cadastrados}</small></dd></div>
           <div><dt>Custo estimado, reutilizáveis</dt><dd className="ac-kpi-m">{formatCurrency(resumo.reu.custo)}</dd></div>
           <div><dt>Custo total estimado{semParecer ? ' (preliminar: há itens sem parecer)' : ''}</dt><dd className="ac-kpi-m">{formatCurrency(resumo.total)}</dd></div>
         </dl>
         <p className="ac-hint">Quantidade a adquirir = quantidade recomendada − quantidade aproveitável. Os valores de referência são orientativos; a escola pode comprar itens equivalentes.</p>
         <div className="an-geral-g">
-          {([['geral.situacao', 'Situação geral do ambiente'], ['geral.reutilizaveis', 'Recursos reutilizáveis'], ...(INCLUI_CONSUMIVEIS ? [['geral.consumiveis', 'Recursos consumíveis'] as const] : []), ['geral.memorial', 'Memorial arquitetônico'], ['geral.obs', 'Recomendações e observações finais da We Make']] as const).map(([k, rot]) => (
+          {([['geral.situacao', 'Situação geral do ambiente'], ['geral.reutilizaveis', 'Recursos reutilizáveis'], ['geral.consumiveis', 'Recursos consumíveis'], ['geral.memorial', 'Memorial arquitetônico'], ['geral.obs', 'Recomendações e observações finais da We Make']] as const).map(([k, rot]) => (
             <label key={k} className="an-geral"><span>{rot}</span><textarea rows={2} value={p[k] ?? ''} onChange={e => set(k, e.target.value)} /></label>
           ))}
         </div>

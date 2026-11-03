@@ -30,8 +30,8 @@ export interface Modulo {
 
 /** Direção: Dênis (contato@wemake.tec.br) e Renato. */
 const DIRECAO = ['contato@wemake.tec.br', 'renato086@gmail.com']
-/** Academia: direção + Emanuel. */
-const ACADEMIA = [...DIRECAO, 'epcri1966@gmail.com']
+/** Academia: direção + Emanuel + Gabi (arquiteta). */
+const ACADEMIA = [...DIRECAO, 'epcri1966@gmail.com', 'gabi@wemake.tec.br']
 
 /** Lista de e-mails de cada módulo. `todos` = qualquer usuário ativo. Sobrescreve por env ACESSO_<MODULO>=a@x,b@y */
 const PADRAO: Record<ModuloSlug, string[] | 'todos'> = {
