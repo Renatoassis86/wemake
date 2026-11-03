@@ -103,7 +103,7 @@ export async function criarImplantacao(fd: FormData): Promise<Resultado> {
       data_assinatura: data(fd.get('data_assinatura')),
       data_onboarding: data(fd.get('data_onboarding')),
       data_inicio_aulas: data(fd.get('data_inicio_aulas')),
-      proxima_acao: 'Preencher a Ficha de Handoff Comercial → Implantação',
+      proxima_acao: 'Preencher a Ficha de Passagem de Bastão Comercial → Implantação',
       created_by: user.id,
     })
     .select('id')
@@ -437,7 +437,7 @@ export async function trazerAssinadas(escolaIds?: string[]): Promise<Resultado> 
     escola_nome: a.nome,
     cidade_uf: a.cidade_uf || null,
     responsavel: equipe.has(a.responsavel_comercial) ? a.responsavel_comercial : null,
-    proxima_acao: 'Preencher a Ficha de Handoff Comercial → Implantação',
+    proxima_acao: 'Preencher a Ficha de Passagem de Bastão Comercial → Implantação',
     created_by: user.id,
   })))
   if (error) return { ok: false, erro: msgErro(error) }

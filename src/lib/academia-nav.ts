@@ -17,7 +17,7 @@ export const NAV_DOCS: { grupo: string; itens: ItemNav[] }[] = [
     grupo: 'Jornada de implantação',
     itens: [
       { slug: 'manual-operacional', n: 3, nome: 'Manual Operacional' },
-      { slug: 'handoff', n: 4, nome: 'Handoff Comercial' },
+      { slug: 'handoff', n: 4, nome: 'Passagem de Bastão Comercial' },
       { slug: 'procedimento-diagnostico', n: 5, nome: 'Procedimento de Diagnóstico' },
       { slug: 'planilha-diagnostico', n: 6, nome: 'Planilha de Diagnóstico' },
       { slug: 'registro-ativacao-comercial', n: 7, nome: 'Ativação Comercial' },

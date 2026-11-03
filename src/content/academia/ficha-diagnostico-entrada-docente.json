@@ -12,12 +12,12 @@
     { "t": "minor", "x": "Finalidade" },
     { "t": "p", "x": "Levantar o perfil da equipe docente responsável pelo currículo We Make — experiência prévia com tecnologia, conforto com a metodologia maker e necessidades específicas de apoio — para confirmar ou reclassificar o nível de acompanhamento da escola (A, B ou C) nas primeiras semanas do ano letivo." },
     { "t": "minor", "x": "Princípio" },
-    { "t": "p", "x": "Nível não é avaliação do professor: é calibragem de cadência. Toda escola nova entra com nível A (Intensivo) provisório já no Handoff, para que nenhuma escola fique sem acompanhamento definido antes deste diagnóstico. Esta ficha confirma o nível A ou reclassifica para B ou C, com base em evidência, não em suposição." },
+    { "t": "p", "x": "Nível não é avaliação do professor: é calibragem de cadência. Toda escola nova entra com nível A (Intensivo) provisório já no Passagem de Bastão, para que nenhuma escola fique sem acompanhamento definido antes deste diagnóstico. Esta ficha confirma o nível A ou reclassifica para B ou C, com base em evidência, não em suposição." },
     { "t": "sec", "x": "Diagnóstico de Entrada Docente" },
     { "t": "field", "x": "Escola" },
     { "t": "field", "x": "Responsável We Make (PED)" },
     { "t": "field", "x": "Data do diagnóstico" },
-    { "t": "field", "x": "Nível provisório atribuído no Handoff" },
+    { "t": "field", "x": "Nível provisório atribuído no Passagem de Bastão" },
 
     { "t": "sub", "x": "Perfil da equipe docente", "n": "1" },
     { "t": "table", "rows": [
@@ -37,7 +37,7 @@
     ], "hdr": true },
 
     { "t": "sub", "x": "Decisão de nível", "n": "3" },
-    { "t": "check", "x": "Mantém nível A · Intensivo (confirma o provisório do Handoff)" },
+    { "t": "check", "x": "Mantém nível A · Intensivo (confirma o provisório do Passagem de Bastão)" },
     { "t": "check", "x": "Ajusta para nível B · Padrão" },
     { "t": "check", "x": "Ajusta para nível C · Autônomo" },
     { "t": "field", "x": "Justificativa da decisão" },
