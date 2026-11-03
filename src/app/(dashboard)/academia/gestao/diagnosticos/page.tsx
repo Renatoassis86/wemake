@@ -65,7 +65,12 @@ export default async function DiagnosticosPage() {
             <tbody>
               {d.itens.map(i => (
                 <tr key={i.id}>
-                  <td>{i.escola_nome}</td>
+                  <td>
+                    {i.escola_nome}
+                    <div className="ac-sub-dado">
+                      {[i.cidade_uf, i.alunos_contrato ? `${i.alunos_contrato} alunos no contrato` : null].filter(Boolean).join(' · ') || '—'}
+                    </div>
+                  </td>
                   <td>
                     <span className="ac-chip" data-s={i.status === 'concluido' ? 'Concluído' : i.status === 'enviado' ? 'Aguardando We Make' : i.status === 'em_analise' ? 'Em andamento' : 'Aguardando escola'}>{STATUS_DIAGNOSTICO[i.status]}</span>
                     <div className="ac-sub-dado">{feitos(i.respostas)} de {total} respondidas</div>

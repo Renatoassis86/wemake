@@ -5,12 +5,17 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .ac {
-  --ac-ink: #032b36;
-  --ac-ink-2: #0b3f4d;
-  --ac-ink-3: #14566a;
-  --ac-cyan: #00c8ff;
-  --ac-cyan-soft: #bff0ff;
-  --ac-link: #006b8f;
+  /* Evita que o navegador force um modo escuro heurístico sobre botões e campos —
+     essa página é sempre clara, com cores definidas explicitamente em cada elemento. */
+  color-scheme: light;
+
+  /* Identidade We Make (mesma da proposta comercial): navy + royal + mint */
+  --ac-ink: #0b1f44;
+  --ac-ink-2: #16305c;
+  --ac-ink-3: #2a69ba;
+  --ac-cyan: #2a69ba;
+  --ac-cyan-soft: #dce9ff;
+  --ac-link: #2a69ba;
   --ac-ivory: #f2f0ea;
   --ac-ivory-2: #e9e6dc;
   --ac-paper: #fbfaf6;
@@ -22,8 +27,8 @@
   --ac-amber-line: #e3b84f;
   --ac-amber-ink: #5c4208;
 
-  --ac-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
-  --ac-serif: var(--font-source-serif), 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --ac-sans: var(--font-inter), 'Geist', system-ui, sans-serif;
+  --ac-serif: var(--font-source-serif), 'Fraunces', Georgia, 'Times New Roman', serif;
 
   background: var(--ac-paper);
   color: var(--ac-text);

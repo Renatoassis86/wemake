@@ -7,6 +7,9 @@ export interface DiagnosticoRecebido {
   enviado_em: string | null
   portal_email?: string | null
   portal_senha_atual?: string | null
+  cidade_uf?: string | null
+  num_alunos?: number | null
+  alunos_contrato?: number | null
 }
 
 const dataHora = (iso: string | null) =>
@@ -32,6 +35,11 @@ export default function DiagnosticosRecebidos({ itens }: { itens: DiagnosticoRec
             <div className="ac-receb-cab">
               <span className="ac-receb-nome">{i.escola_nome}</span>
               <span className="ac-receb-data">Enviado em {dataHora(i.enviado_em)}</span>
+            </div>
+            <div className="ac-receb-escola">
+              {i.cidade_uf ? <span>{i.cidade_uf}</span> : null}
+              {i.alunos_contrato ? <span>{i.alunos_contrato} alunos no contrato</span> : null}
+              {i.num_alunos ? <span>{i.num_alunos} alunos informados no diagnóstico</span> : null}
             </div>
             <div className="ac-receb-acoes">
               <Link href={`/academia/gestao/diagnosticos/${i.id}`} className="ac-btn">Abrir análise</Link>
