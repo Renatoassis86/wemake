@@ -73,8 +73,10 @@ export async function entrarComPin(_anterior: { erro?: string } | undefined, fd:
   if ((count ?? 0) >= 8) return { erro: 'Muitas tentativas seguidas. Aguarde 15 minutos e tente de novo.' }
 
   const { data } = await db.from('academia_diagnosticos').select('id, expira_em, status').eq('pin_hash', hashPin(pin)).maybeSingle()
-  const ok = !!data && new Date(data.expira_em) > new Date() && data.status !== 'concluido'
+  const concluido = !!data && data.status === 'concluido'
+  const ok = !!data && new Date(data.expira_em) > new Date() && !concluido
   await db.from('academia_pin_tentativas').insert({ ip_hash: ip, sucesso: ok })
+  if (concluido) return { erro: 'Este diagnóstico já foi concluído pela We Make. Acesse o portal da escola (/meu-diagnostico), com o e-mail e a senha enviados, para ver o resultado.' }
   if (!ok || !data) return { erro: 'PIN não encontrado ou vencido. Confira o código que a We Make enviou.' }
 
   const jar = await cookies()
