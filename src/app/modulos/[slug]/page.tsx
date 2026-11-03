@@ -111,7 +111,7 @@ export default async function ModuloPage({ params, searchParams }: { params: Pro
               <p>Para as escolas parceiras. Informe o PIN que a We Make enviou: o formulário da sua escola abre em seguida.</p>
               <Link href="/diagnostico" className="md-botao md-botao--clara">Preencher o diagnóstico da escola</Link>
               <p style={{ marginTop: '1.1rem' }}>Já enviou o diagnóstico? Veja a devolutiva e a lista de compras no portal da escola.</p>
-              <Link href="/meu-diagnostico" className="md-botao md-botao--clara">Ver o resultado do diagnóstico</Link>
+              <Link href="/meu-diagnostico" className="md-botao">Ver o resultado do diagnóstico</Link>
             </div>
           ) : null}
         </aside>
