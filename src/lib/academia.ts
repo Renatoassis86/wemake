@@ -49,7 +49,7 @@ export interface DocContent {
 
 /** Os nove marcos do Painel Mestre (Ecologia Formativa desdobrada em três). */
 export const MARCOS = [
-  'Passagem de Bastão',
+  'Transição Comercial-Implantação',
   'Diagnóstico',
   'Arquitetura',
   'Recursos',
@@ -62,7 +62,7 @@ export const MARCOS = [
 
 /** As sete macroetapas do Manual Operacional. */
 export const MACROETAPAS = [
-  { n: 1, nome: 'Passagem de Bastão Comercial', marcos: [0], gate: 'Ficha revisada pelo Comercial e aceita pela Implantação.' },
+  { n: 1, nome: 'Transição Comercial-Implantação', marcos: [0], gate: 'Ficha revisada pelo Comercial e aceita pela Implantação.' },
   { n: 2, nome: 'Ecologia Formativa', marcos: [1, 2, 3], gate: 'Diagnóstico, adequações e lista de recursos definidos.' },
   { n: 3, nome: 'Ativação Comercial', marcos: [4], gate: 'Equipe da escola apta a apresentar a proposta.' },
   { n: 4, nome: 'Pré-Onboarding', marcos: [5], gate: 'Pré-Onboarding validado → formação confirmada.' },
@@ -142,9 +142,9 @@ const BASE_DOCS: BaseDoc[] = [
   },
   {
     slug: 'handoff', n: 4, grupo: 'Jornada de implantação', etapa: 1, marcos: [0],
-    tipo: 'Formulário', kicker: 'Macroetapa 1 de 7 · Passagem de Bastão Comercial',
-    title: 'Passagem de Bastão Comercial → Implantação', short: 'Passagem de Bastão',
-    deck: 'Ficha padrão de passagem de bastão após fechamento do contrato.',
+    tipo: 'Formulário', kicker: 'Macroetapa 1 de 7 · Transição Comercial-Implantação',
+    title: 'Transição Comercial-Implantação', short: 'Transição Comercial-Implantação',
+    deck: 'Ficha padrão de transição entre Comercial e Implantação após fechamento do contrato.',
     facts: [], content: c(handoff),
   },
   {
@@ -188,7 +188,7 @@ const BASE_DOCS: BaseDoc[] = [
       { k: 'Papel na trilha', v: 'Material do formador, que forma o multiplicador' },
       { k: 'Uso', v: 'Documento interno · equipe de formadores We Make' },
       { k: 'Data', v: 'Setembro de 2026' },
-      { k: 'Prazo da trilha', v: 'Até 30 dias corridos após a Passagem de Bastão' },
+      { k: 'Prazo da trilha', v: 'Até 30 dias corridos após a Transição Comercial-Implantação' },
       { k: 'Estrutura', v: '15 partes · 5 encontros de formação' },
     ],
     content: c(manualFormador),
@@ -282,7 +282,7 @@ const BASE_DOCS: BaseDoc[] = [
     deck: 'Visão executiva das escolas parceiras: etapas, prazos, riscos e próximas ações.',
     facts: [
       { k: 'Regra básica', v: 'Uma linha por escola' },
-      { k: 'Marcos', v: '9 marcos, da Passagem de Bastão à Transição para a Academia' },
+      { k: 'Marcos', v: '9 marcos, da Transição Comercial-Implantação à Transição para a Academia' },
       { k: 'Abas', v: 'Painel · Implantacao · Listas · Como usar · Matriz documentos' },
     ],
     content: c(painelMestre),

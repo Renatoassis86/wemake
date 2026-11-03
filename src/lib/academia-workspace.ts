@@ -41,14 +41,14 @@ export const WORKSPACE_NOME = 'Academia We Make · Implantação 2027'
 
 export const PASTAS: PastaModelo[] = [
   {
-    slug: 'handoff', nome: 'Passagem de Bastão Comercial', etapa: 1,
+    slug: 'handoff', nome: 'Transição Comercial-Implantação', etapa: 1,
     gate: 'Ficha revisada pelo Comercial e aceita pela Implantação; responsável definido; escola cadastrada no Painel Mestre com próxima ação registrada.',
     listas: [{
-      slug: 'handoff', nome: 'Passagem de Bastão', marco: 0, doc: 'handoff',
+      slug: 'handoff', nome: 'Transição Comercial-Implantação', marco: 0, doc: 'handoff',
       tarefas: [
-        { titulo: 'Preencher a Ficha de Passagem de Bastão Comercial → Implantação', descricao: 'Quem preenche: responsável pelo fechamento comercial.', quando: { ref: 'assinatura', dias: 2, uteis: true, nota: 'até 2 dias úteis após a assinatura' }, prioridade: 'Alta', origem: 'Passagem de Bastão · Manual Operacional, macroetapa 1' },
+        { titulo: 'Preencher a Ficha de Transição Comercial-Implantação', descricao: 'Quem preenche: responsável pelo fechamento comercial.', quando: { ref: 'assinatura', dias: 2, uteis: true, nota: 'até 2 dias úteis após a assinatura' }, prioridade: 'Alta', origem: 'Transição Comercial-Implantação · Manual Operacional, macroetapa 1' },
         { titulo: 'Registrar escopo contratado, calendário, pessoas-chave, acordos e exceções, contexto da decisão, situação do Espaço Maker, pendências e alertas', quando: { ref: 'assinatura', dias: 2, uteis: true }, origem: 'Manual Operacional, macroetapa 1' },
-        { titulo: 'Realizar a reunião interna de passagem de bastão entre Comercial e Implantação', quando: { ref: 'handoff', dias: 0 }, origem: 'Manual Operacional, macroetapa 1' },
+        { titulo: 'Realizar a reunião interna de transição entre Comercial e Implantação', quando: { ref: 'handoff', dias: 0 }, origem: 'Manual Operacional, macroetapa 1' },
         { titulo: 'Definir o responsável We Make pela implantação e a próxima ação', quando: { ref: 'handoff', dias: 0 }, origem: 'Manual Operacional, macroetapa 1' },
         { titulo: 'Kickoff com a escola e registro de calendário e marcos (quando necessário)', origem: 'Manual Operacional, macroetapa 1' },
         { titulo: 'Cadastrar a escola no Painel Mestre com a próxima ação registrada', quando: { ref: 'handoff', dias: 0 }, origem: 'Painel Mestre · Como usar' },
@@ -93,7 +93,7 @@ export const PASTAS: PastaModelo[] = [
     listas: [{
       slug: 'ativacao-comercial', nome: 'Ativação Comercial', marco: 4, doc: 'registro-ativacao-comercial',
       tarefas: [
-        { titulo: 'Encontro 1 · 90 min · Quem é a We Make, fundamentação teológica e dado do Nobel', descricao: 'Momento Conhecer.', quando: { ref: 'handoff', dias: 30, nota: 'a trilha conclui em até 30 dias corridos após a Passagem de Bastão' }, origem: 'Manual do Formador · cronograma-modelo' },
+        { titulo: 'Encontro 1 · 90 min · Quem é a We Make, fundamentação teológica e dado do Nobel', descricao: 'Momento Conhecer.', quando: { ref: 'handoff', dias: 30, nota: 'a trilha conclui em até 30 dias corridos após a Transição Comercial-Implantação' }, origem: 'Manual do Formador · cronograma-modelo' },
         { titulo: 'Encontro 2 · 90 min · Posicionamento “soma, não substitui” e mapa de temas por área', descricao: 'Momentos Conhecer e Explorar.', quando: { ref: 'handoff', dias: 30 }, origem: 'Manual do Formador · cronograma-modelo' },
         { titulo: 'Encontro 3 · 120 min · Fluxo curricular por segmento e portfólio de produtos e serviços', descricao: 'Momento Explorar.', quando: { ref: 'handoff', dias: 30 }, origem: 'Manual do Formador · cronograma-modelo' },
         { titulo: 'Encontro 4 · 90 min · Script comercial, roteiro de deslumbramento e discurso de 60 segundos', descricao: 'Momentos Explorar e Criar.', quando: { ref: 'handoff', dias: 30 }, origem: 'Manual do Formador · cronograma-modelo' },
