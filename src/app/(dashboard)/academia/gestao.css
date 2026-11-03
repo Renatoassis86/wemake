@@ -280,6 +280,11 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 .an-nav a { color: var(--ac-ink); text-decoration: none; padding: .3rem 0; } .an-nav a:hover { color: var(--ac-link); }
 .an-salvo { margin-left: auto; color: var(--ac-muted); font-weight: 500; } .an-salvo[data-e="erro"] { color: #b3261e; }
 .an-sec { margin-bottom: 3rem; scroll-margin-top: 7rem; } .an-sec .ac-h3 small { font: 500 .72rem/1 var(--ac-sans); letter-spacing: .06em; text-transform: uppercase; color: var(--ac-muted); margin-left: .6rem; }
+.an-diario-lista { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ac-ink); }
+.an-diario-lista li { padding: .9rem 0; border-bottom: 1px solid var(--ac-line); }
+.an-diario-lista li:last-child { border-bottom: none; }
+.an-diario-data { display: block; font: 700 .72rem/1 var(--ac-sans); letter-spacing: .04em; color: var(--ac-link); margin-bottom: .35rem; }
+.an-diario-lista p { margin: 0; font: 500 .9rem/1.55 var(--ac-sans); color: var(--ac-text); white-space: pre-wrap; }
 .an-dl { margin: 0; border-top: 2px solid var(--ac-ink); } .an-dl > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 1rem; padding: .8rem 0; border-bottom: 1px solid var(--ac-line); }
 .an-dl dt { font: 600 .9rem/1.4 var(--ac-sans); color: var(--ac-ink); } .an-dl dd { margin: 0; line-height: 1.5; } .an-det { color: var(--ac-muted); }
 .an-vazio, .an-dl em { color: var(--ac-muted); font-style: italic; }

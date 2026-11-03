@@ -2,6 +2,7 @@
 
 import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { hashIp } from '@/lib/diagnostico-auth'
 import {
@@ -82,4 +83,40 @@ export async function sairDoPortal() {
   const jar = await cookies()
   jar.delete({ name: COOKIE_PORTAL, path: '/meu-diagnostico' })
   redirect('/meu-diagnostico')
+}
+
+async function diagnosticoDaSessao() {
+  const jar = await cookies()
+  return lerSessaoPortal(jar.get(COOKIE_PORTAL)?.value)
+}
+
+export interface Anotacao { id: string; texto: string; criado_em: string }
+
+/** A escola marca/desmarca um item como já adquirido — controle próprio, não mexe no parecer do staff. */
+export async function marcarAdquirido(itemKey: string, adquirido: boolean): Promise<{ ok: boolean; erro?: string }> {
+  const id = await diagnosticoDaSessao()
+  if (!id) return { ok: false, erro: 'Sessão expirada. Entre novamente.' }
+  const db = createAdminClient()
+  const { error } = await db
+    .from('academia_diag_compras')
+    .upsert(
+      { diagnostico_id: id, item_key: itemKey, adquirido, adquirido_em: adquirido ? new Date().toISOString() : null },
+      { onConflict: 'diagnostico_id,item_key' },
+    )
+  if (error) return { ok: false, erro: error.message }
+  revalidatePath('/meu-diagnostico/painel')
+  return { ok: true }
+}
+
+/** Diário de anotações da escola — observações sobre a jornada de implantação e os materiais, pra We Make acompanhar. */
+export async function adicionarAnotacao(texto: string): Promise<{ ok: boolean; erro?: string }> {
+  const id = await diagnosticoDaSessao()
+  if (!id) return { ok: false, erro: 'Sessão expirada. Entre novamente.' }
+  const t = texto.trim().slice(0, 2000)
+  if (!t) return { ok: false, erro: 'Escreva algo antes de salvar.' }
+  const db = createAdminClient()
+  const { error } = await db.from('academia_diag_anotacoes').insert({ diagnostico_id: id, texto: t })
+  if (error) return { ok: false, erro: error.message }
+  revalidatePath('/meu-diagnostico/painel')
+  return { ok: true }
 }

@@ -5,7 +5,7 @@ import { formatCurrency } from '@/lib/utils'
 import {
   INCLUI_CONSUMIVEIS, SCHEMA, STATUS_DIAGNOSTICO, briefingVisivel, qtdAAdquirir, qtdSugerida, resumoParecer, type Recurso, type Respostas, type StatusDiagnostico,
 } from '@/lib/diagnostico'
-import type { ArquivoStaff, DiagnosticoLinha } from '@/lib/diagnostico-staff'
+import type { AnotacaoStaff, ArquivoStaff, DiagnosticoLinha } from '@/lib/diagnostico-staff'
 import { definirNumAlunos, definirStatus, salvarParecer } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
 import { AcessoAtual, NovoPinBtn, RevogarAcessoBtn } from './NovoDiagnosticoForm'
 import AcessoPortal from './AcessoPortal'
@@ -24,7 +24,7 @@ const tamanho = (b: number | null) => (!b ? '' : b < 1048576 ? `${Math.max(1, Ma
 
 const ehImagem = (mime: string | null) => !!mime && mime.startsWith('image/')
 
-export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnostico: DiagnosticoLinha; arquivos: ArquivoStaff[] }) {
+export default function AnaliseDiagnostico({ diagnostico, arquivos, anotacoes }: { diagnostico: DiagnosticoLinha; arquivos: ArquivoStaff[]; anotacoes: AnotacaoStaff[] }) {
   const resp = diagnostico.respostas as Respostas
   const [p, setP] = useState<Respostas>(diagnostico.parecer as Respostas)
   const [foto, setFoto] = useState<ArquivoStaff | null>(null)
@@ -90,6 +90,20 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
         </div>
       </header>
 
+      {anotacoes.length ? (
+        <section id="an-diario" className="an-sec">
+          <h3 className="ac-h3">Diário de anotações da escola <small>observações informais sobre a jornada e os materiais</small></h3>
+          <ul className="an-diario-lista">
+            {anotacoes.map(a => (
+              <li key={a.id}>
+                <span className="an-diario-data">{dataHora(a.criado_em)}</span>
+                <p>{a.texto}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <AcessoAtual id={diagnostico.id} escola={diagnostico.escola_nome} token={diagnostico.link_token} pin={diagnostico.pin_atual} />
       <AcessoPortal id={diagnostico.id} escola={diagnostico.escola_nome} emailAtual={diagnostico.portal_email} senhaAtual={diagnostico.portal_senha_atual} />
 
@@ -113,6 +127,7 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos }: { diagnost
       </div>
 
       <nav className="an-nav" aria-label="Seções">
+        {anotacoes.length ? <a href="#an-diario">Diário</a> : null}
         <a href="#an-ambiente">Ambiente</a><a href="#an-medidas">Medidas</a><a href="#an-evidencias">Evidências</a>
         <a href="#an-reu">Reutilizáveis</a>{INCLUI_CONSUMIVEIS ? <a href="#an-con">Consumíveis</a> : null}<a href="#an-compras">Compras</a><a href="#an-parecer">Parecer</a><a href="#an-resumo">Resumo</a>
         <span className="an-salvo" data-e={salvo}>{salvo === 'salvando' ? 'Salvando parecer…' : salvo === 'erro' ? 'Erro ao salvar. Tentando de novo.' : 'Parecer salvo'}</span>

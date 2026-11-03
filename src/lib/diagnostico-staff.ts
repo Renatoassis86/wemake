@@ -42,6 +42,12 @@ export interface ArquivoStaff {
   url: string | null
 }
 
+export interface AnotacaoStaff {
+  id: string
+  texto: string
+  criado_em: string
+}
+
 const FALTA_TABELA = (e: { code?: string; message?: string } | null) =>
   !!e && (e.code === 'PGRST205' || e.code === '42P01' || /does not exist|schema cache|Could not find the table/i.test(e.message ?? ''))
 
@@ -120,6 +126,13 @@ export async function carregarDiagnostico(id: string) {
     .eq('diagnostico_id', id)
     .order('created_at')
   const lista = arqs ?? []
+
+  const { data: anotacoesRaw } = await db
+    .from('academia_diag_anotacoes')
+    .select('id, texto, criado_em')
+    .eq('diagnostico_id', id)
+    .order('criado_em', { ascending: false })
+  const anotacoes = (anotacoesRaw ?? []) as AnotacaoStaff[]
   const urls = lista.length ? await db.storage.from(BUCKET).createSignedUrls(lista.map(a => a.path), 3600) : { data: [] as { path: string | null; signedUrl: string }[] }
   const porPath = new Map((urls.data ?? []).map(u => [u.path, u.signedUrl]))
   const arquivos: ArquivoStaff[] = lista.map(a => ({
@@ -133,5 +146,6 @@ export async function carregarDiagnostico(id: string) {
       compras: mapaDeCompras((compras ?? []) as CompraBanco[]),
     } as DiagnosticoLinha,
     arquivos,
+    anotacoes,
   }
 }

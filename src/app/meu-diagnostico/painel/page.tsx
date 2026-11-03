@@ -3,8 +3,10 @@ import Image from 'next/image'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { formatCurrency } from '@/lib/utils'
 import { BUCKET, SCHEMA, briefingVisivel, qtdAAdquirir, resumoParecer, type Recurso, type Respostas } from '@/lib/diagnostico'
-import { sairDoPortal, sessaoPortal } from '../actions'
+import { sairDoPortal, sessaoPortal, type Anotacao } from '../actions'
 import FotosEnviadas, { type ArquivoPortal, type GrupoFotos } from './FotosEnviadas'
+import AdquiridoCheckbox from './AdquiridoCheckbox'
+import DiarioAnotacoes from './DiarioAnotacoes'
 import './painel.css'
 
 interface CompraLinha {
@@ -16,6 +18,7 @@ interface CompraLinha {
   ml_link: string | null
   amazon_link: string | null
   link_original_url: string | null
+  adquirido: boolean
 }
 
 function melhorLink(c: CompraLinha | undefined) {
@@ -45,9 +48,16 @@ export default async function PainelPage() {
   const db = createAdminClient()
   const { data: comprasRaw } = await db
     .from('academia_diag_compras')
-    .select('item_key, situacao, melhor_loja, melhor_link, melhor_preco, ml_link, amazon_link, link_original_url')
+    .select('item_key, situacao, melhor_loja, melhor_link, melhor_preco, ml_link, amazon_link, link_original_url, adquirido')
     .eq('diagnostico_id', sessao.id)
   const compras = new Map<string, CompraLinha>((comprasRaw ?? []).map(c => [c.item_key, c as CompraLinha]))
+
+  const { data: anotacoesRaw } = await db
+    .from('academia_diag_anotacoes')
+    .select('id, texto, criado_em')
+    .eq('diagnostico_id', sessao.id)
+    .order('criado_em', { ascending: false })
+  const anotacoes = (anotacoesRaw ?? []) as Anotacao[]
 
   const { data: arqsRaw } = await db
     .from('academia_diagnostico_arquivos')
@@ -127,6 +137,8 @@ export default async function PainelPage() {
           </section>
         ) : null}
 
+        <DiarioAnotacoes anotacoes={anotacoes} />
+
         <footer className="pt-rodape">
           <p>Dúvidas sobre o diagnóstico ou a lista de compras? Fale com a equipe We Make.</p>
           <a href="https://wa.me/5583982301530" target="_blank" rel="noopener noreferrer">WhatsApp da We Make</a>
@@ -182,7 +194,7 @@ function TabelaRecursos({ titulo, itens, parecer, compras, numAlunos }: { titulo
       <div className="pt-table-wrap">
         <table className="pt-table pt-table-rec">
           <thead>
-            <tr><th>Item</th><th>Qtd. a comprar</th><th>Custo</th><th>Situação</th><th>Onde comprar</th></tr>
+            <tr><th>Item</th><th>Qtd. a comprar</th><th>Custo</th><th>Situação</th><th>Onde comprar</th><th>Adquirido</th></tr>
           </thead>
           <tbody>
             {itens.map(i => {
@@ -200,6 +212,7 @@ function TabelaRecursos({ titulo, itens, parecer, compras, numAlunos }: { titulo
                       <a className="pt-link" href={link} target="_blank" rel="noopener noreferrer nofollow">Abrir ↗</a>
                     ) : adq > 0 ? <em className="pt-tem">link em definição</em> : '—'}
                   </td>
+                  <td>{adq > 0 ? <AdquiridoCheckbox itemKey={i.key} inicial={c?.adquirido ?? false} /> : '—'}</td>
                 </tr>
               )
             })}

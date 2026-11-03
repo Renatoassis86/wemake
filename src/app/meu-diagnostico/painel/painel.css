@@ -176,3 +176,40 @@
 @media (max-width: 640px) {
   .pt-table-rec th:nth-child(3), .pt-table-rec td:nth-child(3) { display: none; }
 }
+
+.pt-adquirido { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; font-weight: 600; color: var(--muted); white-space: nowrap; cursor: pointer; }
+.pt-adquirido input { width: 1.05rem; height: 1.05rem; accent-color: var(--navy); cursor: pointer; }
+
+.pt-diario-form { display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 1.5rem; }
+.pt-diario-form textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 0.92rem;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  resize: vertical;
+}
+.pt-diario-form textarea:focus { outline: 2px solid var(--royal); outline-offset: 1px; }
+.pt-botao {
+  align-self: flex-start;
+  background: var(--navy);
+  color: #fff;
+  border: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.6rem 1.3rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.pt-botao:hover { background: var(--royal); }
+.pt-botao:disabled { opacity: 0.6; cursor: default; }
+.pt-erro { color: #b3261e; font-size: 0.82rem; margin: 0; }
+
+.pt-diario-lista { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.pt-diario-lista li { padding: 0.9rem 0; border-bottom: 1px solid var(--line); }
+.pt-diario-lista li:last-child { border-bottom: none; }
+.pt-diario-data { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.03em; color: var(--royal); margin-bottom: 0.3rem; }
+.pt-diario-lista p { margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--ink); white-space: pre-wrap; }
