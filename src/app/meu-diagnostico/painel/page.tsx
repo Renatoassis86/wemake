@@ -187,7 +187,7 @@ function OQueContaram({ respostas: resp }: { respostas: Respostas }) {
 }
 
 function TabelaRecursos({ titulo, itens, parecer, compras, numAlunos }: { titulo: string; itens: Recurso[]; parecer: Respostas; compras: Map<string, CompraLinha>; numAlunos: number | null }) {
-  const comItem = itens.filter(i => parecer[i.key + '.pc'] || parecer[i.key + '.qa'] !== undefined || compras.has(i.key))
+  const comItem = itens.filter(i => parecer[i.key + '.pc'] || parecer[i.key + '.qa'] !== undefined || compras.has(i.key) || qtdAAdquirir(i, parecer, numAlunos) > 0)
   if (!comItem.length) return null
   return (
     <section className="pt-sec">
@@ -205,9 +205,17 @@ function TabelaRecursos({ titulo, itens, parecer, compras, numAlunos }: { titulo
               return (
                 <tr key={i.key}>
                   <td><b>{i.item}</b><span className="pt-spec">{i.spec}</span></td>
-                  <td className="pt-num">{adq > 0 ? adq.toLocaleString('pt-BR') : <em className="pt-tem">já tem</em>}</td>
+                  <td className="pt-num">
+                    {adq > 0
+                      ? adq.toLocaleString('pt-BR')
+                      : <em className="pt-tem">{parecer[i.key + '.ac'] === 'Desconsiderar' ? 'não precisa' : 'já tem'}</em>}
+                  </td>
                   <td className="pt-num">{adq > 0 ? formatCurrency(adq * i.valor) : '—'}</td>
-                  <td>{c?.situacao || (adq > 0 ? 'Comprar' : 'Pronto para uso')}{c?.melhor_loja ? ` · ${c.melhor_loja}` : ''}</td>
+                  <td>
+                    {adq > 0
+                      ? <>{c?.situacao || 'Comprar'}{c?.melhor_loja ? ` · ${c.melhor_loja}` : ''}</>
+                      : parecer[i.key + '.ac'] === 'Desconsiderar' ? 'Não aplicável' : 'Pronto para uso'}
+                  </td>
                   <td>
                     {adq > 0 && link ? (
                       <a className="pt-link" href={link} target="_blank" rel="noopener noreferrer nofollow">Abrir ↗</a>
