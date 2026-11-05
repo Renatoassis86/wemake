@@ -166,7 +166,12 @@ export function qtdRecomendada(rec: Recurso, parecer: Respostas, numAlunos: numb
   return ajuste !== undefined && ajuste !== '' ? num(ajuste) : qtdSugerida(rec, numAlunos)
 }
 
+/** "Desconsiderar" (parecer['xxx.ac']) zera a quantidade a comprar, mesmo que
+ *  recomendado/aproveitável ainda apontem pra um número positivo — sem isso,
+ *  marcar um item como "Desconsiderar" não tirava ele da lista de compras da
+ *  escola nem do Resumo, porque a ação nunca entrava nessa conta. */
 export function qtdAAdquirir(rec: Recurso, parecer: Respostas, numAlunos: number | null) {
+  if (parecer[rec.key + '.ac'] === 'Desconsiderar') return 0
   return Math.max(0, qtdRecomendada(rec, parecer, numAlunos) - num(parecer[rec.key + '.qa']))
 }
 
