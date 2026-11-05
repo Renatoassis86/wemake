@@ -249,7 +249,15 @@ grant execute on function public.academia_salvar_respostas(uuid, jsonb) to servi
 grant execute on function public.academia_salvar_pareceres(uuid, jsonb) to service_role;
 
 -- ── Views de consulta (mesmas contas da planilha) ───────────────────────────
--- qtd a adquirir = máx(0, quantidade recomendada − quantidade aproveitável)
+-- Mesma regra de src/lib/diagnostico.ts (qtdRecomendada/qtdAAdquirir), com uma
+-- diferença conhecida: a sugestão por nº de alunos (modelo-quantidades.json)
+-- só existe no código da aplicação, não no banco — aqui a base é o catálogo
+-- (i.qtd_recomendada), ajustado pelo override manual do parecer quando existe
+-- (p.qtd_recomendada). Views sem consumidor na aplicação hoje (revogadas de
+-- anon/authenticated); mantidas corretas para quem rodar SQL direto.
+-- "Desconsiderar" zera a quantidade a comprar, mesmo com recomendado/aproveitável
+-- positivos — sem isso, marcar um item como "Desconsiderar" não saía da conta.
+-- qtd a adquirir = acao = 'Desconsiderar' ? 0 : máx(0, recomendado − aproveitável)
 -- custo estimado = qtd a adquirir × valor de referência
 create or replace view public.academia_diag_consolidado with (security_invoker = true) as
 select
@@ -270,8 +278,12 @@ select
   p.status_parecer,
   p.qtd_aproveitavel,
   p.acao,
-  greatest(0, coalesce(i.qtd_recomendada, 0) - coalesce(p.qtd_aproveitavel, 0))                         as qtd_a_adquirir,
-  greatest(0, coalesce(i.qtd_recomendada, 0) - coalesce(p.qtd_aproveitavel, 0)) * coalesce(i.valor_ref, 0) as custo_estimado
+  case when p.acao = 'Desconsiderar' then 0
+       else greatest(0, coalesce(p.qtd_recomendada, i.qtd_recomendada, 0) - coalesce(p.qtd_aproveitavel, 0))
+  end                                                                                as qtd_a_adquirir,
+  (case when p.acao = 'Desconsiderar' then 0
+        else greatest(0, coalesce(p.qtd_recomendada, i.qtd_recomendada, 0) - coalesce(p.qtd_aproveitavel, 0))
+   end) * coalesce(i.valor_ref, 0)                                                   as custo_estimado
 from public.academia_diagnosticos d
 cross join public.academia_diag_itens i
 left join public.academia_diag_respostas r on r.diagnostico_id = d.id and r.item_key = i.item_key
