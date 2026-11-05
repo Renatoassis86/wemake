@@ -330,7 +330,7 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 .an-rec-itens th:nth-child(5), .an-rec-itens td:nth-child(5) { width: 14rem; overflow-wrap: anywhere; }
 .an-rec-itens th:nth-child(6), .an-rec-itens td:nth-child(6) { width: 14.5rem; }
 .an-rec-itens th:nth-child(7), .an-rec-itens td:nth-child(7) { width: 7.5rem; }
-.an-rec-itens th:nth-child(8), .an-rec-itens td:nth-child(8) { width: 11rem; }
+.an-rec-itens th:nth-child(8), .an-rec-itens td:nth-child(8) { width: 13rem; }
 .an-rec-itens th:nth-child(9), .an-rec-itens td:nth-child(9) { width: 7.5rem; }
 .an-rec-itens th:nth-child(10), .an-rec-itens td:nth-child(10) { width: 8rem; }
 .an-rec-itens td:nth-child(9), .an-rec-itens td:nth-child(10), .an-rec-itens th:nth-child(9), .an-rec-itens th:nth-child(10) { background: color-mix(in srgb, var(--ac-cyan-soft) 55%, #fff) !important; }

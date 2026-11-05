@@ -1,32 +1,51 @@
 import type { Metadata } from 'next'
 import type { Viewport } from 'next'
-import { Geist, Fraunces } from 'next/font/google'
+import localFont from 'next/font/local'
 import './globals.css'
 
-// Identidade We Make atual (a mesma da proposta comercial): Fraunces para
-// títulos/display, Geist para UI e corpo de texto. Os nomes das variáveis
-// CSS (--font-inter, --font-cormorant, --font-montserrat) ficam os mesmos
-// de propósito — o app inteiro já referencia essas variáveis, não os nomes
-// das fontes, então a troca se propaga sem precisar tocar em cada arquivo.
-const geistBody = Geist({
-  subsets: ['latin'],
+// Identidade We Make oficial (identidade_visual_nova.zip): Satoshi é a única
+// fonte da marca — não tem par serifado nenhum no kit, então as 3 variáveis
+// (antes Fraunces pro display + Geist pro resto) agora são todas Satoshi, só
+// em pesos diferentes por papel. Os nomes das variáveis CSS (--font-inter,
+// --font-cormorant, --font-montserrat) ficam os mesmos de propósito — o app
+// inteiro já referencia essas variáveis, não os nomes das fontes, então a
+// troca se propaga sem precisar tocar em cada arquivo.
+// O carregador de fonte do Next exige os valores escritos literais na própria
+// chamada (análise estática em tempo de build) — não aceita ler de uma
+// constante à parte, por isso os 3 arrays abaixo se repetem.
+const satoshiBody = localFont({
+  src: [
+    { path: '../../public/fonts/satoshi/Satoshi-Regular.woff2', weight: '400', style: 'normal' },
+    { path: '../../public/fonts/satoshi/Satoshi-Italic.woff2',  weight: '400', style: 'italic' },
+    { path: '../../public/fonts/satoshi/Satoshi-Medium.woff2',  weight: '500', style: 'normal' },
+    { path: '../../public/fonts/satoshi/Satoshi-Bold.woff2',    weight: '700', style: 'normal' },
+    { path: '../../public/fonts/satoshi/Satoshi-Black.woff2',   weight: '900', style: 'normal' },
+  ],
   variable: '--font-inter',
-  weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
 })
 
-const fraunces = Fraunces({
-  subsets: ['latin'],
+const satoshiDisplay = localFont({
+  src: [
+    { path: '../../public/fonts/satoshi/Satoshi-Regular.woff2', weight: '400', style: 'normal' },
+    { path: '../../public/fonts/satoshi/Satoshi-Italic.woff2',  weight: '400', style: 'italic' },
+    { path: '../../public/fonts/satoshi/Satoshi-Medium.woff2',  weight: '500', style: 'normal' },
+    { path: '../../public/fonts/satoshi/Satoshi-Bold.woff2',    weight: '700', style: 'normal' },
+    { path: '../../public/fonts/satoshi/Satoshi-Black.woff2',   weight: '900', style: 'normal' },
+  ],
   variable: '--font-cormorant',
-  weight: ['300', '400', '500', '600', '700'],
-  style: ['normal', 'italic'],
   display: 'swap',
 })
 
-const geistUI = Geist({
-  subsets: ['latin'],
+const satoshiUI = localFont({
+  src: [
+    { path: '../../public/fonts/satoshi/Satoshi-Regular.woff2', weight: '400', style: 'normal' },
+    { path: '../../public/fonts/satoshi/Satoshi-Italic.woff2',  weight: '400', style: 'italic' },
+    { path: '../../public/fonts/satoshi/Satoshi-Medium.woff2',  weight: '500', style: 'normal' },
+    { path: '../../public/fonts/satoshi/Satoshi-Bold.woff2',    weight: '700', style: 'normal' },
+    { path: '../../public/fonts/satoshi/Satoshi-Black.woff2',   weight: '900', style: 'normal' },
+  ],
   variable: '--font-montserrat',
-  weight: ['400', '500', '600', '700', '800'],
   display: 'swap',
 })
 
@@ -34,7 +53,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: '#0b1f44',
+  themeColor: '#002933',
 }
 
 export const metadata: Metadata = {
@@ -53,7 +72,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={`${geistBody.variable} ${fraunces.variable} ${geistUI.variable} h-full antialiased`}>
+    <html lang="pt-BR" className={`${satoshiBody.variable} ${satoshiDisplay.variable} ${satoshiUI.variable} h-full antialiased`}>
       <body className="min-h-full">{children}</body>
     </html>
   )
