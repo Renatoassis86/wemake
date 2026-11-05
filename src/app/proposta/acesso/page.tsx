@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { BrandLoginStyles } from '@/components/brand/BrandLoginStyles'
 
 export default function AcessoPropostaPage() {
   const router = useRouter()
@@ -70,10 +71,10 @@ export default function AcessoPropostaPage() {
   }
 
   const C = {
-    navy:  '#0b1f44',
-    royal: '#4c8ade',
-    mint:  '#76f3cd',
-    amber: '#ffcc00',
+    navy:  '#002933',
+    royal: '#00ceff',
+    mint:  '#00ceff',
+    amber: '#f4f3ee',
     white: '#ffffff',
   }
 
@@ -88,12 +89,13 @@ export default function AcessoPropostaPage() {
       padding: '2rem 1.5rem',
       position: 'relative',
       overflow: 'hidden',
-      fontFamily: "'Geist', 'Inter', sans-serif",
+      fontFamily: "'Satoshi', sans-serif",
     }}>
+      <BrandLoginStyles />
 
       {/* Glow orbs decorativos */}
-      <div style={{ position: 'absolute', top: -160, left: '50%', transform: 'translateX(-50%)', width: 600, height: 600, borderRadius: '50%', background: `radial-gradient(circle, rgba(76,138,222,0.18) 0%, transparent 70%)`, pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: -120, right: -120, width: 400, height: 400, borderRadius: '50%', background: `radial-gradient(circle, rgba(118,243,205,0.12) 0%, transparent 70%)`, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: -160, left: '50%', transform: 'translateX(-50%)', width: 600, height: 600, borderRadius: '50%', background: `radial-gradient(circle, rgba(0,206,255,0.18) 0%, transparent 70%)`, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: -120, right: -120, width: 400, height: 400, borderRadius: '50%', background: `radial-gradient(circle, rgba(0,206,255,0.12) 0%, transparent 70%)`, pointerEvents: 'none' }} />
 
       {/* Card */}
       <div style={{
@@ -119,9 +121,8 @@ export default function AcessoPropostaPage() {
 
         {/* Título */}
         <h1 style={{
-          fontFamily: "'Fraunces', serif",
-          fontWeight: 300,
-          fontStyle: 'italic',
+          fontFamily: "'Satoshi', sans-serif",
+          fontWeight: 900,
           fontSize: 'clamp(1.6rem, 4vw, 2.2rem)',
           color: C.white,
           textAlign: 'center',
@@ -156,19 +157,19 @@ export default function AcessoPropostaPage() {
                   textAlign: 'center',
                   fontSize: 'clamp(1.15rem, 5.5vw, 1.6rem)',
                   fontWeight: 700,
-                  fontFamily: "'Fraunces', serif",
-                  background: d ? 'rgba(76,138,222,0.12)' : 'rgba(255,255,255,0.05)',
-                  border: `2px solid ${d ? 'rgba(76,138,222,0.5)' : 'rgba(255,255,255,0.12)'}`,
+                  fontFamily: "'Satoshi', sans-serif",
+                  background: d ? 'rgba(0,206,255,0.12)' : 'rgba(255,255,255,0.05)',
+                  border: `2px solid ${d ? 'rgba(0,206,255,0.5)' : 'rgba(255,255,255,0.12)'}`,
                   borderRadius: 12,
                   color: C.white,
                   outline: 'none',
                   transition: 'all 0.15s',
                   caretColor: C.mint,
                 }}
-                onFocus={e => { e.currentTarget.style.borderColor = C.mint; e.currentTarget.style.background = 'rgba(118,243,205,0.08)' }}
+                onFocus={e => { e.currentTarget.style.borderColor = C.mint; e.currentTarget.style.background = 'rgba(0,206,255,0.08)' }}
                 onBlur={e => {
-                  e.currentTarget.style.borderColor = pin[i] ? 'rgba(76,138,222,0.5)' : 'rgba(255,255,255,0.12)'
-                  e.currentTarget.style.background = pin[i] ? 'rgba(76,138,222,0.12)' : 'rgba(255,255,255,0.05)'
+                  e.currentTarget.style.borderColor = pin[i] ? 'rgba(0,206,255,0.5)' : 'rgba(255,255,255,0.12)'
+                  e.currentTarget.style.background = pin[i] ? 'rgba(0,206,255,0.12)' : 'rgba(255,255,255,0.05)'
                 }}
               />
             ))}
@@ -183,7 +184,7 @@ export default function AcessoPropostaPage() {
 
           {/* Sucesso */}
           {success && (
-            <div style={{ marginBottom: 16, padding: '10px 14px', borderRadius: 10, background: 'rgba(118,243,205,0.1)', border: '1px solid rgba(118,243,205,0.3)', color: C.mint, fontSize: '0.78rem', textAlign: 'center' }}>
+            <div style={{ marginBottom: 16, padding: '10px 14px', borderRadius: 10, background: 'rgba(0,206,255,0.1)', border: '1px solid rgba(0,206,255,0.3)', color: C.mint, fontSize: '0.78rem', textAlign: 'center' }}>
               {success}
             </div>
           )}
@@ -199,14 +200,14 @@ export default function AcessoPropostaPage() {
               border: 'none',
               cursor: loading || pin.join('').length < 6 ? 'not-allowed' : 'pointer',
               background: pin.join('').length === 6 && !loading
-                ? 'radial-gradient(120% 140% at 50% -20%, #fff 0%, #cfe2ff 45%, #9fc1f5 100%)'
+                ? 'radial-gradient(120% 140% at 50% -20%, #fff 0%, #d6f5ff 45%, #7fe6ff 100%)'
                 : 'rgba(255,255,255,0.08)',
               color: pin.join('').length === 6 && !loading ? C.navy : 'rgba(255,255,255,0.3)',
-              fontFamily: "'Geist', sans-serif",
+              fontFamily: "'Satoshi', sans-serif",
               fontSize: '0.9rem',
               fontWeight: 700,
               transition: 'all 0.2s',
-              boxShadow: pin.join('').length === 6 && !loading ? '0 8px 32px rgba(96,165,250,0.4)' : 'none',
+              boxShadow: pin.join('').length === 6 && !loading ? '0 8px 32px rgba(0,206,255,0.4)' : 'none',
             }}
           >
             {loading ? 'Verificando...' : 'Acessar proposta →'}

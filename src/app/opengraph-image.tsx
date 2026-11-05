@@ -6,22 +6,20 @@ export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
 const SITE_URL = 'https://gestao.wemake.tec.br'
-const C = { navy: '#0b1f44', royal: '#4c8ade', mint: '#76f3cd' }
+// Cores oficiais do kit de marca (identidade_visual_nova.zip), medidas direto
+// nos PNGs: preto-petróleo, ciano, marfim. Nada de navy/royal/mint antigos.
+const C = { navy: '#002933', royal: '#00ceff', mint: '#00ceff' }
 
-// Carrega só os glifos usados (mesmo padrão de proposta/[token]/opengraph-image.tsx)
-async function carregarFraunces(texto: string) {
-  const cssUrl = `https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&text=${encodeURIComponent(texto)}`
-  const css = await (await fetch(cssUrl)).text()
-  const match = css.match(/src: url\(([^)]+)\) format\('(?:opentype|truetype)'\)/)
-  if (!match) return null
-  const fontRes = await fetch(match[1])
+// Satoshi (fonte oficial, auto-hospedada) — OTF porque o Satori só aceita
+// opentype/truetype, não woff2.
+async function carregarSatoshi() {
+  const fontRes = await fetch(`${SITE_URL}/fonts/satoshi/Satoshi-Black.otf`)
   if (!fontRes.ok) return null
   return await fontRes.arrayBuffer()
 }
 
 export default async function Image() {
-  const texto = 'we make Gestão que responde a Deus verdade nos números bondade com as escolas beleza no que se entrega'
-  const fontData = await carregarFraunces(texto).catch(() => null)
+  const fontData = await carregarSatoshi().catch(() => null)
 
   return new ImageResponse(
     (
@@ -36,9 +34,9 @@ export default async function Image() {
         <div style={{
           display: 'flex', flexDirection: 'column', justifyContent: 'center',
           width: '100%', height: '100%', padding: '0 64px',
-          backgroundImage: `linear-gradient(100deg, ${C.navy} 0%, rgba(11,31,68,0.93) 46%, rgba(11,31,68,0.35) 82%, rgba(11,31,68,0.12) 100%)`,
+          backgroundImage: `linear-gradient(100deg, ${C.navy} 0%, rgba(0,41,51,0.93) 46%, rgba(0,41,51,0.35) 82%, rgba(0,41,51,0.12) 100%)`,
         }}>
-          <div style={{ display: 'flex', fontFamily: fontData ? 'Fraunces' : undefined, fontWeight: 700, fontSize: 26, color: '#fff', marginBottom: 30 }}>
+          <div style={{ display: 'flex', fontFamily: fontData ? 'Satoshi' : undefined, fontWeight: 700, fontSize: 26, color: '#fff', marginBottom: 30 }}>
             we<span style={{ color: C.mint }}>make</span>
           </div>
 
@@ -47,7 +45,7 @@ export default async function Image() {
           </div>
 
           <div style={{
-            display: 'flex', flexWrap: 'wrap', fontFamily: fontData ? 'Fraunces' : undefined, fontWeight: 700,
+            display: 'flex', flexWrap: 'wrap', fontFamily: fontData ? 'Satoshi' : undefined, fontWeight: 700,
             fontSize: 46, lineHeight: 1.22, color: '#fff', maxWidth: 840,
           }}>
             <span>Gestão que responde a Deus:&nbsp;</span>
@@ -58,7 +56,7 @@ export default async function Image() {
     ),
     {
       ...size,
-      fonts: fontData ? [{ name: 'Fraunces', data: fontData, weight: 700, style: 'normal' }] : undefined,
+      fonts: fontData ? [{ name: 'Satoshi', data: fontData, weight: 700, style: 'normal' }] : undefined,
     }
   )
 }

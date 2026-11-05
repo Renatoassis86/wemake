@@ -5,9 +5,9 @@ import Image from 'next/image'
 import { entrarComPortal } from './actions'
 
 const C = {
-  navy:  '#0b1f44',
-  royal: '#4c8ade',
-  mint:  '#76f3cd',
+  navy:  '#002933',
+  royal: '#00ceff',
+  mint:  '#00ceff',
   white: '#ffffff',
 }
 
@@ -51,10 +51,10 @@ export default function LoginPortalForm() {
       padding: '2rem 1.5rem',
       position: 'relative',
       overflow: 'hidden',
-      fontFamily: "'Geist', 'Inter', sans-serif",
+      fontFamily: "'Satoshi', sans-serif",
     }}>
-      <div style={{ position: 'absolute', top: -160, left: '50%', transform: 'translateX(-50%)', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(76,138,222,0.18) 0%, transparent 70%)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: -120, right: -120, width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(118,243,205,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: -160, left: '50%', transform: 'translateX(-50%)', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,206,255,0.18) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: -120, right: -120, width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,206,255,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
       <div className="surface-glass" style={{
         position: 'relative', zIndex: 2,
@@ -70,9 +70,8 @@ export default function LoginPortalForm() {
         </p>
 
         <h1 style={{
-          fontFamily: "'Fraunces', serif",
-          fontWeight: 300,
-          fontStyle: 'italic',
+          fontFamily: "'Satoshi', sans-serif",
+          fontWeight: 900,
           fontSize: 'clamp(1.6rem, 4vw, 2.2rem)',
           color: C.white,
           textAlign: 'center',
@@ -104,7 +103,7 @@ export default function LoginPortalForm() {
             style={{
               width: '100%', padding: '.8rem 1rem', marginBottom: '1.4rem',
               background: 'rgba(255,255,255,.06)', border: '1.5px solid rgba(255,255,255,.12)', borderRadius: 10,
-              outline: 'none', color: C.white, fontSize: '.9rem', fontFamily: "'Geist', sans-serif",
+              outline: 'none', color: C.white, fontSize: '.9rem', fontFamily: "'Satoshi', sans-serif",
             }}
           />
 
@@ -130,9 +129,9 @@ export default function LoginPortalForm() {
                   textAlign: 'center',
                   fontSize: 'clamp(1.15rem, 5.5vw, 1.6rem)',
                   fontWeight: 700,
-                  fontFamily: "'Fraunces', serif",
-                  background: d ? 'rgba(76,138,222,0.12)' : 'rgba(255,255,255,0.05)',
-                  border: `2px solid ${d ? 'rgba(76,138,222,0.5)' : 'rgba(255,255,255,0.12)'}`,
+                  fontFamily: "'Satoshi', sans-serif",
+                  background: d ? 'rgba(0,206,255,0.12)' : 'rgba(255,255,255,0.05)',
+                  border: `2px solid ${d ? 'rgba(0,206,255,0.5)' : 'rgba(255,255,255,0.12)'}`,
                   borderRadius: 12,
                   color: C.white,
                   outline: 'none',

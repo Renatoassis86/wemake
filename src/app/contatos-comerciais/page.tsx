@@ -5,7 +5,8 @@ import { useState, useRef, useEffect } from 'react'
 import { enviarContatosComerciais } from './actions'
 import { AREAS_CONTATO_COMERCIAL, type PessoaContatoComercial } from './schema'
 
-const C = { navy: '#0b1f44', royal: '#4c8ade', mint: '#76f3cd', white: '#ffffff' }
+// Fonte (Satoshi) e tokens vêm de BrandLoginStyles, injetado pelo layout.tsx desta rota.
+const C = { navy: '#002933', royal: '#00ceff', mint: '#00ceff', white: '#ffffff' }
 
 const ESTADOS_BR = [
   'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG',
@@ -16,12 +17,12 @@ const PESSOA_VAZIA: PessoaContatoComercial = { nome: '', area: '', email: '', te
 
 const rotuloStyle: React.CSSProperties = {
   display: 'block', fontSize: '.68rem', fontWeight: 700, color: 'rgba(255,255,255,.45)',
-  marginBottom: '.4rem', textTransform: 'uppercase', letterSpacing: '.08em', fontFamily: "'Geist', sans-serif",
+  marginBottom: '.4rem', textTransform: 'uppercase', letterSpacing: '.08em', fontFamily: "'Satoshi', sans-serif",
 }
 const campoStyle: React.CSSProperties = {
   width: '100%', padding: '.75rem .9rem', background: 'rgba(255,255,255,.06)',
   border: '1.5px solid rgba(255,255,255,.12)', borderRadius: 10, outline: 'none',
-  color: C.white, fontSize: '.88rem', fontFamily: "'Geist', sans-serif", colorScheme: 'dark',
+  color: C.white, fontSize: '.88rem', fontFamily: "'Satoshi', sans-serif", colorScheme: 'dark',
 }
 
 /** Dropdown próprio, não o <select> nativo: testamos estilizar o menu nativo
@@ -62,7 +63,7 @@ function SelectCustom({ label, value, onChange, options, required }: {
       {open && (
         <div role="listbox" style={{
           position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, zIndex: 30,
-          background: '#0e2554', border: '1px solid rgba(255,255,255,.15)', borderRadius: 10,
+          background: '#003a47', border: '1px solid rgba(255,255,255,.15)', borderRadius: 10,
           boxShadow: '0 20px 48px rgba(0,0,0,.55)', maxHeight: 220, overflowY: 'auto', padding: 6,
         }}>
           {options.map(o => (
@@ -72,8 +73,8 @@ function SelectCustom({ label, value, onChange, options, required }: {
               aria-selected={o === value}
               onClick={() => { onChange(o); setOpen(false) }}
               style={{
-                padding: '.55rem .75rem', borderRadius: 7, fontSize: '.85rem', fontFamily: "'Geist', sans-serif",
-                color: C.white, cursor: 'pointer', background: o === value ? 'rgba(76,138,222,.25)' : 'transparent',
+                padding: '.55rem .75rem', borderRadius: 7, fontSize: '.85rem', fontFamily: "'Satoshi', sans-serif",
+                color: C.white, cursor: 'pointer', background: o === value ? 'rgba(0,206,255,.25)' : 'transparent',
               }}
               onMouseEnter={e => { if (o !== value) e.currentTarget.style.background = 'rgba(255,255,255,.08)' }}
               onMouseLeave={e => { if (o !== value) e.currentTarget.style.background = 'transparent' }}
@@ -144,10 +145,10 @@ export default function ContatosComerciaisPage() {
     <div style={{
       minHeight: '100dvh', background: C.navy, display: 'flex', flexDirection: 'column',
       alignItems: 'center', padding: 'clamp(2rem, 5vw, 3.5rem) 1.5rem', position: 'relative',
-      overflow: 'hidden', fontFamily: "'Geist', 'Inter', sans-serif",
+      overflow: 'hidden', fontFamily: "'Satoshi', sans-serif",
     }}>
-      <div style={{ position: 'absolute', top: -160, left: '50%', transform: 'translateX(-50%)', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(76,138,222,0.18) 0%, transparent 70%)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: -120, right: -120, width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(118,243,205,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: -160, left: '50%', transform: 'translateX(-50%)', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,206,255,0.18) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: -120, right: -120, width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,206,255,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
       <div style={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: 780 }}>
 
@@ -160,7 +161,7 @@ export default function ContatosComerciaisPage() {
         </p>
 
         <h1 style={{
-          fontFamily: "'Fraunces', serif", fontWeight: 300, fontStyle: 'italic',
+          fontFamily: "'Satoshi', sans-serif", fontWeight: 900,
           fontSize: 'clamp(1.7rem, 4.5vw, 2.5rem)', color: C.white, textAlign: 'center',
           lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: 14,
         }}>
@@ -176,8 +177,8 @@ export default function ContatosComerciaisPage() {
         {feedback && (
           <div ref={feedbackRef} role="status" aria-live="polite" style={{
             marginBottom: '1.5rem', padding: '1rem 1.3rem', borderRadius: 12,
-            background: feedback.type === 'success' ? 'rgba(118,243,205,0.1)' : 'rgba(239,68,68,0.1)',
-            border: `1px solid ${feedback.type === 'success' ? 'rgba(118,243,205,0.3)' : 'rgba(239,68,68,0.25)'}`,
+            background: feedback.type === 'success' ? 'rgba(0,206,255,0.1)' : 'rgba(239,68,68,0.1)',
+            border: `1px solid ${feedback.type === 'success' ? 'rgba(0,206,255,0.3)' : 'rgba(239,68,68,0.25)'}`,
             color: feedback.type === 'success' ? C.mint : '#fca5a5',
             fontWeight: 600, fontSize: '.84rem', lineHeight: 1.6,
           }}>
@@ -212,10 +213,10 @@ export default function ContatosComerciaisPage() {
             {pessoas.map((p, i) => (
               <div key={i} style={{ padding: '1.1rem', background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.08)', borderRadius: 14, marginBottom: '.9rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.85rem' }}>
-                  <span style={{ fontSize: '.78rem', fontWeight: 700, color: C.white, fontFamily: "'Geist', sans-serif" }}>Pessoa {i + 1}</span>
+                  <span style={{ fontSize: '.78rem', fontWeight: 700, color: C.white, fontFamily: "'Satoshi', sans-serif" }}>Pessoa {i + 1}</span>
                   {pessoas.length > 1 && (
                     <button type="button" onClick={() => setPessoas(ps => ps.filter((_, idx) => idx !== i))}
-                      style={{ background: 'none', border: 'none', color: '#fca5a5', fontSize: '.76rem', fontWeight: 600, cursor: 'pointer', fontFamily: "'Geist', sans-serif" }}>
+                      style={{ background: 'none', border: 'none', color: '#fca5a5', fontSize: '.76rem', fontWeight: 600, cursor: 'pointer', fontFamily: "'Satoshi', sans-serif" }}>
                       Remover
                     </button>
                   )}
@@ -233,7 +234,7 @@ export default function ContatosComerciaisPage() {
               style={{
                 width: '100%', padding: '.75rem', marginBottom: '1.75rem',
                 background: 'transparent', border: '1.5px dashed rgba(255,255,255,.2)', borderRadius: 10,
-                color: C.mint, fontWeight: 700, fontSize: '.82rem', cursor: 'pointer', fontFamily: "'Geist', sans-serif",
+                color: C.mint, fontWeight: 700, fontSize: '.82rem', cursor: 'pointer', fontFamily: "'Satoshi', sans-serif",
               }}>
               + Adicionar outra pessoa
             </button>
