@@ -98,12 +98,20 @@ export default async function ModuloPage({ params, searchParams }: { params: Pro
             </>
           )}
           {m.slug === 'comercial' ? (
-            <div className="md-escola">
-              <h2>Formulário de cadastro da escola</h2>
-              <p>Envie este link à escola. Ela informa os dados cadastrais e os alunos por série, e a escola entra no Funil de Contratação para montarmos a proposta.</p>
-              <Link href="/formulario" className="md-botao md-botao--clara">Abrir o formulário da escola</Link>
-              <p className="md-link-copia">{origem}/formulario</p>
-            </div>
+            <>
+              <div className="md-escola">
+                <h2>Formulário de cadastro da escola</h2>
+                <p>Envie este link à escola. Ela informa os dados cadastrais e os alunos por série, e a escola entra no Funil de Contratação para montarmos a proposta.</p>
+                <Link href="/formulario" className="md-botao md-botao--clara">Abrir o formulário da escola</Link>
+                <p className="md-link-copia">{origem}/formulario</p>
+              </div>
+              <div className="md-escola" style={{ marginTop: '1.1rem' }}>
+                <h2>Contatos para o material comercial</h2>
+                <p>Envie este link à escola. Ela aponta quem (coordenação, matrículas, marketing, comercial ou direção) deve receber o treinamento de ativação comercial e o manual de marca da We Make.</p>
+                <Link href="/contatos-comerciais" className="md-botao md-botao--clara">Abrir o formulário de contatos</Link>
+                <p className="md-link-copia">{origem}/contatos-comerciais</p>
+              </div>
+            </>
           ) : null}
           {m.slug === 'academia' ? (
             <div className="md-escola">

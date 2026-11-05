@@ -213,7 +213,9 @@ export default function Sidebar({ profile, modulos = [], diagnosticos = false }:
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    router.push('/login')
+    // Volta pra página inicial da plataforma (lista todas as sessões/módulos),
+    // não pro /login — cada módulo já tem seu próprio formulário de entrada ali.
+    router.push('/')
     router.refresh()
   }
 
