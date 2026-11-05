@@ -23,6 +23,21 @@ const campoStyle: React.CSSProperties = {
   border: '1.5px solid rgba(255,255,255,.12)', borderRadius: 10, outline: 'none',
   color: C.white, fontSize: '.88rem', fontFamily: "'Geist', sans-serif", colorScheme: 'dark',
 }
+// <select> próprio, mais enxuto que campoStyle: no Chrome/Windows o padding do
+// <select> também é aplicado a cada <option> do menu nativo — um padding grande
+// como o de campoStyle infla a lista inteira (menu gigante, quase em branco).
+// appearance:none + seta própria porque a seta nativa não respeita o padding menor.
+const selectStyle: React.CSSProperties = {
+  ...campoStyle,
+  padding: '.6rem 2.1rem .6rem .85rem',
+  appearance: 'none', WebkitAppearance: 'none', MozAppearance: 'none',
+  backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='white' stroke-width='1.6'%3E%3Cpath d='M5 7l5 5 5-5'/%3E%3C/svg%3E\")",
+  backgroundRepeat: 'no-repeat', backgroundPosition: 'right .75rem center', backgroundSize: '14px',
+  cursor: 'pointer',
+}
+// Chrome honra cor/fundo do <option> no menu nativo (Windows); sem isso o menu
+// abre branco, fora da identidade escura da página.
+const opcaoStyle: React.CSSProperties = { backgroundColor: C.navy, color: C.white }
 
 function Campo({ label, value, onChange, type = 'text', required, placeholder, options }: {
   label: string; value: string; onChange: (v: string) => void; type?: string
@@ -32,9 +47,9 @@ function Campo({ label, value, onChange, type = 'text', required, placeholder, o
     <div>
       <label style={rotuloStyle}>{label}{required && ' *'}</label>
       {options ? (
-        <select value={value} onChange={e => onChange(e.target.value)} required={required} style={{ ...campoStyle, cursor: 'pointer' }}>
-          <option value="">Selecione...</option>
-          {options.map(o => <option key={o} value={o}>{o}</option>)}
+        <select value={value} onChange={e => onChange(e.target.value)} required={required} style={selectStyle}>
+          <option value="" style={opcaoStyle}>Selecione...</option>
+          {options.map(o => <option key={o} value={o} style={opcaoStyle}>{o}</option>)}
         </select>
       ) : (
         <input value={value} onChange={e => onChange(e.target.value)} type={type} required={required} placeholder={placeholder} autoComplete="off" style={campoStyle} />
