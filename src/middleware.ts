@@ -23,7 +23,14 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/contatos-comerciais') ||
     pathname.startsWith('/modulos') ||
     pathname === '/favicon.ico' ||
-    pathname === '/icon.png'
+    pathname === '/icon.png' ||
+    // Rotas de imagem de preview (convenção do Next: opengraph-image/
+    // twitter-image, na raiz ou em qualquer segmento dinâmico, tipo
+    // /proposta/[token]/opengraph-image) — sem isso o rastreador do
+    // WhatsApp/Slack/Twitter cai no /login ao buscar a imagem, e o link
+    // some sem card nenhum, mesmo a rota em si sendo pública.
+    pathname.includes('/opengraph-image') ||
+    pathname.includes('/twitter-image')
 
   // Rotas públicas (exceto /login, que precisa saber se o usuário já está
   // logado pra redirecionar pro Hub) não dependem do Supabase Auth — evita

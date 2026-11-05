@@ -23,37 +23,79 @@ const campoStyle: React.CSSProperties = {
   border: '1.5px solid rgba(255,255,255,.12)', borderRadius: 10, outline: 'none',
   color: C.white, fontSize: '.88rem', fontFamily: "'Geist', sans-serif", colorScheme: 'dark',
 }
-// <select> próprio, mais enxuto que campoStyle: no Chrome/Windows o padding do
-// <select> também é aplicado a cada <option> do menu nativo — um padding grande
-// como o de campoStyle infla a lista inteira (menu gigante, quase em branco).
-// appearance:none + seta própria porque a seta nativa não respeita o padding menor.
-const selectStyle: React.CSSProperties = {
-  ...campoStyle,
-  padding: '.6rem 2.1rem .6rem .85rem',
-  appearance: 'none', WebkitAppearance: 'none', MozAppearance: 'none',
-  backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='white' stroke-width='1.6'%3E%3Cpath d='M5 7l5 5 5-5'/%3E%3C/svg%3E\")",
-  backgroundRepeat: 'no-repeat', backgroundPosition: 'right .75rem center', backgroundSize: '14px',
-  cursor: 'pointer',
+
+/** Dropdown próprio, não o <select> nativo: testamos estilizar o menu nativo
+ *  (padding menor, cor por <option>) e ainda assim ele abre como caixa branca
+ *  com texto branco em cima — o menu do <select> é desenhado pelo sistema
+ *  operacional, não pela página, e o Chrome no Windows não dá controle
+ *  confiável sobre ele. Isso aqui é 100% nosso, mesma cara em qualquer navegador. */
+function SelectCustom({ label, value, onChange, options, required }: {
+  label: string; value: string; onChange: (v: string) => void; options: readonly string[]; required?: boolean
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function aoClicarFora(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', aoClicarFora)
+    return () => document.removeEventListener('mousedown', aoClicarFora)
+  }, [])
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <label style={rotuloStyle}>{label}{required && ' *'}</label>
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        style={{ ...campoStyle, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, cursor: 'pointer', textAlign: 'left' }}
+      >
+        <span style={{ color: value ? C.white : 'rgba(255,255,255,.4)' }}>{value || 'Selecione...'}</span>
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="rgba(255,255,255,.6)" strokeWidth="1.8"
+          style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .15s', flexShrink: 0 }}>
+          <path d="M5 7l5 5 5-5" />
+        </svg>
+      </button>
+      {open && (
+        <div role="listbox" style={{
+          position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, zIndex: 30,
+          background: '#0e2554', border: '1px solid rgba(255,255,255,.15)', borderRadius: 10,
+          boxShadow: '0 20px 48px rgba(0,0,0,.55)', maxHeight: 220, overflowY: 'auto', padding: 6,
+        }}>
+          {options.map(o => (
+            <div
+              key={o}
+              role="option"
+              aria-selected={o === value}
+              onClick={() => { onChange(o); setOpen(false) }}
+              style={{
+                padding: '.55rem .75rem', borderRadius: 7, fontSize: '.85rem', fontFamily: "'Geist', sans-serif",
+                color: C.white, cursor: 'pointer', background: o === value ? 'rgba(76,138,222,.25)' : 'transparent',
+              }}
+              onMouseEnter={e => { if (o !== value) e.currentTarget.style.background = 'rgba(255,255,255,.08)' }}
+              onMouseLeave={e => { if (o !== value) e.currentTarget.style.background = 'transparent' }}
+            >
+              {o}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
-// Chrome honra cor/fundo do <option> no menu nativo (Windows); sem isso o menu
-// abre branco, fora da identidade escura da página.
-const opcaoStyle: React.CSSProperties = { backgroundColor: C.navy, color: C.white }
 
 function Campo({ label, value, onChange, type = 'text', required, placeholder, options }: {
   label: string; value: string; onChange: (v: string) => void; type?: string
   required?: boolean; placeholder?: string; options?: readonly string[]
 }) {
+  if (options) return <SelectCustom label={label} value={value} onChange={onChange} options={options} required={required} />
   return (
     <div>
       <label style={rotuloStyle}>{label}{required && ' *'}</label>
-      {options ? (
-        <select value={value} onChange={e => onChange(e.target.value)} required={required} style={selectStyle}>
-          <option value="" style={opcaoStyle}>Selecione...</option>
-          {options.map(o => <option key={o} value={o} style={opcaoStyle}>{o}</option>)}
-        </select>
-      ) : (
-        <input value={value} onChange={e => onChange(e.target.value)} type={type} required={required} placeholder={placeholder} autoComplete="off" style={campoStyle} />
-      )}
+      <input value={value} onChange={e => onChange(e.target.value)} type={type} required={required} placeholder={placeholder} autoComplete="off" style={campoStyle} />
     </div>
   )
 }

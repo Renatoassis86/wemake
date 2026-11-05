@@ -38,11 +38,17 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
+  // Base pros links relativos (og:image, canonical etc.) virarem absolutos nos
+  // metadados — sem isso o Next cai pra localhost:3000 em produção (warning de
+  // build) e o preview de link quebra silenciosamente em quem compartilha.
+  // /proposta tem seu próprio metadataBase (comercial.wemake.tec.br) e continua
+  // valendo só ali, por cima deste.
+  metadataBase: new URL('https://gestao.wemake.tec.br'),
   title: 'We Make — Gestão Comercial para Educação',
   description: 'Plataforma de gestão comercial e inteligência para educação',
-  openGraph: {
-    images: [{ url: '/academia/brand/logo-color.png', width: 640, height: 148, alt: 'We Make' }],
-  },
+  // A imagem em si vem do arquivo opengraph-image.tsx (convenção de rota do
+  // Next) — ele já injeta og:image automaticamente; não repetir aqui.
+  twitter: { card: 'summary_large_image' },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
