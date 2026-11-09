@@ -1289,22 +1289,32 @@ export async function enviarFormularioPublico(formData: FormData): Promise<Actio
       status: 'pendente',
     }
 
-    // Bloquear reenvio: mesma escola (CNPJ) já submeteu o formulário
+    // Reenvio da mesma escola (CNPJ já cadastrado) atualiza o pré-cadastro
+    // existente em vez de recusar — antes bloqueava qualquer correção ou
+    // reenvio (ex.: escola Farol tentando atualizar dados), mesmo quando o
+    // pedido era legítimo. Mantém uma linha só por CNPJ.
+    let precadastroExistenteId: string | null = null
     if (cnpj) {
-      const { count } = await supabase
+      const { data: existente } = await supabase
         .from('form_precadastro_wemake')
-        .select('id', { count: 'exact', head: true })
+        .select('id')
         .eq('cnpj', cnpj)
-      if ((count ?? 0) > 0) {
-        return { success: false, error: 'Sua escola já realizou o pré-cadastro. Nossa equipe comercial entrará em contato em breve.' }
-      }
+        .maybeSingle()
+      precadastroExistenteId = existente?.id ?? null
     }
 
-    const { data: inserted, error } = await supabase
-      .from('form_precadastro_wemake')
-      .insert(payload)
-      .select('id')
-      .single()
+    const { data: inserted, error } = precadastroExistenteId
+      ? await supabase
+          .from('form_precadastro_wemake')
+          .update(payload)
+          .eq('id', precadastroExistenteId)
+          .select('id')
+          .single()
+      : await supabase
+          .from('form_precadastro_wemake')
+          .insert(payload)
+          .select('id')
+          .single()
 
     if (error) {
       console.error('[enviarFormularioPublico] INSERT failed:', error)
