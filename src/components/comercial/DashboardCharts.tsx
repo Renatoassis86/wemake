@@ -96,7 +96,7 @@ export function KpiCard({
         </div>
       </div>
       <div>
-        <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '2.2rem', fontWeight: 800, lineHeight: 1, color: '#0f172a' }}>
+        <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '2.2rem', fontWeight: 800, lineHeight: 1, color: '#002933' }}>
           {valor}
         </div>
         {meta !== undefined && (

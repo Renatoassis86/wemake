@@ -9,7 +9,7 @@ const CLASSIF_RANK: Record<string, number> = { quente: 3, morno: 2, frio: 1 }
 
 const CLASSIF_STYLE: Record<string, { bg: string; text: string; border: string; dot: string }> = {
   quente: { bg: '#fef2f2', text: '#dc2626', border: '#fca5a5', dot: '#dc2626' },
-  morno:  { bg: '#fffbeb', text: '#4c8ade', border: '#fcd34d', dot: '#f59e0b' },
+  morno:  { bg: '#fffbeb', text: '#00889e', border: '#fcd34d', dot: '#f59e0b' },
   frio:   { bg: '#eff6ff', text: '#2563eb', border: '#93c5fd', dot: '#60a5fa' },
 }
 
@@ -73,9 +73,9 @@ export default async function TabelaPage() {
         actions={
           <Link href="/comercial/escolas/nova" style={{
             display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-            padding: '.45rem 1rem', borderRadius: 9999, background: '#4c8ade',
+            padding: '.45rem 1rem', borderRadius: 9999, background: '#00889e',
             color: '#fff', textDecoration: 'none', fontSize: '.78rem', fontWeight: 700,
-            fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 12px rgba(76,138,222,.3)',
+            fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 12px rgba(0,137,158,.3)',
           }}>
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Nova Escola
@@ -88,21 +88,21 @@ export default async function TabelaPage() {
         {/* ── KPIs ──────────────────────────────────────────────── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,minmax(0,1fr))', gap: '.85rem', marginBottom: '1.5rem' }}>
           {[
-            { label: 'Total Escolas',   value: rows.length,                  cor: '#4c8ade', bg: '#fffbeb', border: '#fcd34d' },
+            { label: 'Total Escolas',   value: rows.length,                  cor: '#00889e', bg: '#fffbeb', border: '#fcd34d' },
             { label: 'Leads Quentes',   value: totalQuentes,                 cor: '#dc2626', bg: '#fef2f2', border: '#fca5a5' },
-            { label: 'Leads Mornos',    value: totalMornos,                  cor: '#4c8ade', bg: '#fffbeb', border: '#fcd34d' },
+            { label: 'Leads Mornos',    value: totalMornos,                  cor: '#00889e', bg: '#fffbeb', border: '#fcd34d' },
             { label: 'Leads Frios',     value: totalFrios,                   cor: '#2563eb', bg: '#eff6ff', border: '#93c5fd' },
             { label: 'Potencial Total', value: formatCurrency(potencialTotal), cor: '#16a34a', bg: '#f0fdf4', border: '#86efac' },
           ].map(k => (
-            <div key={k.label} style={{ background: k.bg, border: `1.5px solid ${k.border}`, borderTop: `3px solid ${k.cor}`, borderRadius: 14, padding: '.9rem 1rem', boxShadow: '0 1px 4px rgba(11,31,68,.04)', minWidth: 0 }}>
+            <div key={k.label} style={{ background: k.bg, border: `1.5px solid ${k.border}`, borderTop: `3px solid ${k.cor}`, borderRadius: 14, padding: '.9rem 1rem', boxShadow: '0 1px 4px rgba(0,41,51,.04)', minWidth: 0 }}>
               <div style={{ fontSize: '.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: k.cor, fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.25rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{k.label}</div>
-              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#0b1f44', lineHeight: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{k.value}</div>
+              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#002933', lineHeight: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{k.value}</div>
             </div>
           ))}
         </div>
 
         {/* ── Tabela rankeada ───────────────────────────────────── */}
-        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 8px rgba(11,31,68,.05)' }}>
+        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,41,51,.05)' }}>
 
           {/* Legenda de ranking */}
           <div style={{ padding: '.85rem 1.5rem', background: '#fafafa', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
@@ -111,7 +111,7 @@ export default async function TabelaPage() {
             </span>
             {[
               { label: 'Quentes', cor: '#dc2626', n: totalQuentes },
-              { label: 'Mornos',  cor: '#4c8ade', n: totalMornos  },
+              { label: 'Mornos',  cor: '#00889e', n: totalMornos  },
               { label: 'Frios',   cor: '#2563eb', n: totalFrios   },
             ].map(r => (
               <div key={r.label} style={{ display: 'flex', alignItems: 'center', gap: '.35rem', fontSize: '.75rem', fontFamily: 'var(--font-inter,sans-serif)', color: '#64748b' }}>
@@ -128,7 +128,7 @@ export default async function TabelaPage() {
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 1200 }}>
                 <thead>
-                  <tr style={{ background: '#0b1f44' }}>
+                  <tr style={{ background: '#002933' }}>
                     {['#', 'Escola', 'Localidade', 'Contato', 'Alunos', 'Potencial', 'Classificação', 'Prob.', 'Prontidão', 'Interações', 'Último Contato', 'Último Resumo', 'Ações'].map(col => (
                       <th key={col} style={{ padding: '.65rem .9rem', textAlign: col === 'Alunos' || col === 'Potencial' || col === 'Prob.' || col === '#' ? 'center' : 'left', fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: 'rgba(255,255,255,.6)', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                         {col}
@@ -154,7 +154,7 @@ export default async function TabelaPage() {
                         <td style={{ padding: '.8rem .9rem', textAlign: 'center', verticalAlign: 'middle' }}>
                           <div style={{
                             width: 28, height: 28, borderRadius: '50%', margin: '0 auto',
-                            background: idx < 3 ? (idx === 0 ? '#fbbf24' : idx === 1 ? '#94a3b8' : '#4c8ade') : '#f1f5f9',
+                            background: idx < 3 ? (idx === 0 ? '#fbbf24' : idx === 1 ? '#94a3b8' : '#00889e') : '#f1f5f9',
                             color: idx < 3 ? '#fff' : '#64748b',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             fontSize: '.72rem', fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)',
@@ -165,7 +165,7 @@ export default async function TabelaPage() {
 
                         {/* Nome */}
                         <td style={{ padding: '.8rem .9rem', verticalAlign: 'middle' }}>
-                          <Link href={`/comercial/escolas/${r.id}`} style={{ fontWeight: 700, fontSize: '.82rem', color: '#0b1f44', textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap', display: 'block', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <Link href={`/comercial/escolas/${r.id}`} style={{ fontWeight: 700, fontSize: '.82rem', color: '#002933', textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap', display: 'block', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {r.nome}
                           </Link>
                           {r.escola_paideia && (
@@ -183,7 +183,7 @@ export default async function TabelaPage() {
                           {r.contato_nome || r.telefone || r.email ? (
                             <div>
                               {r.contato_nome && (
-                                <div style={{ fontSize: '.78rem', fontWeight: 600, color: '#0b1f44', fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap' }}>{r.contato_nome}</div>
+                                <div style={{ fontSize: '.78rem', fontWeight: 600, color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap' }}>{r.contato_nome}</div>
                               )}
                               <div style={{ fontSize: '.68rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', whiteSpace: 'nowrap' }}>{r.telefone || '—'}</div>
                               <div style={{ fontSize: '.68rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 170 }}>{r.email || '—'}</div>
@@ -193,7 +193,7 @@ export default async function TabelaPage() {
 
                         {/* Alunos */}
                         <td style={{ padding: '.8rem .9rem', verticalAlign: 'middle', textAlign: 'center' }}>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#0b1f44' }}>{r.total_alunos ?? 0}</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#002933' }}>{r.total_alunos ?? 0}</div>
                         </td>
 
                         {/* Potencial */}
@@ -228,7 +228,7 @@ export default async function TabelaPage() {
 
                         {/* Interações */}
                         <td style={{ padding: '.8rem .9rem', verticalAlign: 'middle', textAlign: 'center' }}>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: r.totalInteracoes > 0 ? '#0b1f44' : '#cbd5e1' }}>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: r.totalInteracoes > 0 ? '#002933' : '#cbd5e1' }}>
                             {r.totalInteracoes}
                           </div>
                         </td>
@@ -254,7 +254,7 @@ export default async function TabelaPage() {
                             {/* + Registro */}
                             <Link href={`/comercial/registros/novo?escola=${r.id}`}
                               title="Novo registro"
-                              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 7, background: '#4c8ade', color: '#fff', textDecoration: 'none', flexShrink: 0 }}>
+                              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 7, background: '#00889e', color: '#fff', textDecoration: 'none', flexShrink: 0 }}>
                               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                             </Link>
                             {/* Ver ficha */}
@@ -282,11 +282,11 @@ export default async function TabelaPage() {
               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block', margin: '0 auto .75rem' }}>
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
               </svg>
-              <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', color: '#0b1f44', marginBottom: '.4rem' }}>Nenhuma escola cadastrada</h3>
+              <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', color: '#002933', marginBottom: '.4rem' }}>Nenhuma escola cadastrada</h3>
               <p style={{ fontSize: '.85rem', color: '#475569', marginBottom: '1.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
                 Cadastre a primeira escola para começar a rankear seus leads.
               </p>
-              <Link href="/comercial/escolas/nova" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: '#4c8ade', color: '#fff', padding: '.55rem 1.25rem', borderRadius: 9999, textDecoration: 'none', fontSize: '.85rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+              <Link href="/comercial/escolas/nova" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: '#00889e', color: '#fff', padding: '.55rem 1.25rem', borderRadius: 9999, textDecoration: 'none', fontSize: '.85rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Cadastrar Escola
               </Link>
@@ -297,9 +297,9 @@ export default async function TabelaPage() {
           {rows.length > 0 && (
             <div style={{ padding: '.85rem 1.5rem', borderTop: '1px solid #f1f5f9', background: '#fafafa', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '.5rem' }}>
               <div style={{ fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                <strong style={{ color: '#0b1f44' }}>{rows.length}</strong> escolas ·{' '}
+                <strong style={{ color: '#002933' }}>{rows.length}</strong> escolas ·{' '}
                 <strong style={{ color: '#dc2626' }}>{totalQuentes}</strong> quentes ·{' '}
-                <strong style={{ color: '#4c8ade' }}>{totalMornos}</strong> mornos ·{' '}
+                <strong style={{ color: '#00889e' }}>{totalMornos}</strong> mornos ·{' '}
                 <strong style={{ color: '#2563eb' }}>{totalFrios}</strong> frios
               </div>
               <div style={{ fontSize: '.72rem', fontWeight: 700, color: '#16a34a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>

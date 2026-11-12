@@ -13,7 +13,7 @@ const STAGES = [
 
 const CORES_TAG = [
   '#dc2626','#f59e0b','#16a34a','#0ea5e9','#6366f1',
-  '#8b5cf6','#db2777','#f97316','#0f172a','#64748b',
+  '#8b5cf6','#db2777','#f97316','#002933','#64748b',
 ]
 
 interface Comentario   { id: string; texto: string; autor_id: string; criado_em: string }
@@ -262,11 +262,11 @@ export function PipelinePropostaBoard({ cards: cardsIniciais }: Props) {
                     <div key={card.precadastro_id}
                       draggable onDragStart={() => onDragStart(card.precadastro_id)}
                       onClick={() => { setModal(card); setNovoComent(''); setShowTagForm(false); setUploadErr('') }}
-                      style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 10, padding: '.65rem .8rem', cursor: 'grab', boxShadow: '0 1px 4px rgba(15,23,42,.06)', transition: 'box-shadow .15s', borderLeft: `3px solid ${stage.cor}` }}
-                      onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(15,23,42,.12)' }}
-                      onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 1px 4px rgba(15,23,42,.06)' }}
+                      style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 10, padding: '.65rem .8rem', cursor: 'grab', boxShadow: '0 1px 4px rgba(0,41,51,.06)', transition: 'box-shadow .15s', borderLeft: `3px solid ${stage.cor}` }}
+                      onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,41,51,.12)' }}
+                      onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,41,51,.06)' }}
                     >
-                      <div style={{ fontWeight: 700, fontSize: '.78rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{card.escola_nome}</div>
+                      <div style={{ fontWeight: 700, fontSize: '.78rem', color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{card.escola_nome}</div>
                       {(card.cidade || card.estado) && (
                         <div style={{ fontSize: '.63rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '.3rem' }}>
                           {[card.cidade, card.estado].filter(Boolean).join(' · ')}
@@ -283,14 +283,14 @@ export function PipelinePropostaBoard({ cards: cardsIniciais }: Props) {
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '.2rem' }}>
                         <div style={{ display: 'flex', gap: '.2rem', alignItems: 'center' }}>
                           {badge && <span style={{ background: badge.bg, color: badge.fg, padding: '.1rem .4rem', borderRadius: 99, fontSize: '.58rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>{badge.label}</span>}
-                          {card.pipeline_comentarios.length > 0 && <span style={{ fontSize: '.6rem', color: '#4A7FDB', fontWeight: 700 }}>💬{card.pipeline_comentarios.length}</span>}
+                          {card.pipeline_comentarios.length > 0 && <span style={{ fontSize: '.6rem', color: '#00889e', fontWeight: 700 }}>💬{card.pipeline_comentarios.length}</span>}
                           {card.pipeline_anexos.length > 0 && <span style={{ fontSize: '.6rem', color: '#64748b' }}>📎{card.pipeline_anexos.length}</span>}
                         </div>
                         {/* Avatares responsáveis */}
                         {card.pipeline_responsaveis.length > 0 && (
                           <div style={{ display: 'flex' }}>
                             {card.pipeline_responsaveis.slice(0,3).map((uid,i) => (
-                              <div key={uid} style={{ width: 18, height: 18, borderRadius: '50%', background: '#4A7FDB', border: '1.5px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.5rem', fontWeight: 800, color: '#fff', marginLeft: i === 0 ? 0 : -4 }}>
+                              <div key={uid} style={{ width: 18, height: 18, borderRadius: '50%', background: '#00889e', border: '1.5px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.5rem', fontWeight: 800, color: '#fff', marginLeft: i === 0 ? 0 : -4 }}>
                                 {uid.slice(0,1).toUpperCase()}
                               </div>
                             ))}
@@ -313,9 +313,9 @@ export function PipelinePropostaBoard({ cards: cardsIniciais }: Props) {
           <div style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 680, maxHeight: '92vh', overflow: 'auto', boxShadow: '0 24px 64px rgba(0,0,0,.28)', display: 'flex', flexDirection: 'column' }}>
 
             {/* Header */}
-            <div style={{ padding: '1rem 1.25rem', borderBottom: `3px solid ${stageModal?.cor ?? '#4A7FDB'}`, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', flexShrink: 0 }}>
+            <div style={{ padding: '1rem 1.25rem', borderBottom: `3px solid ${stageModal?.cor ?? '#00889e'}`, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', flexShrink: 0 }}>
               <div>
-                <div style={{ fontSize: '.95rem', fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.25rem' }}>{modal.escola_nome}</div>
+                <div style={{ fontSize: '.95rem', fontWeight: 800, color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.25rem' }}>{modal.escola_nome}</div>
                 <div style={{ display: 'flex', gap: '.45rem', alignItems: 'center', flexWrap: 'wrap' }}>
                   {(modal.cidade || modal.estado) && <span style={{ fontSize: '.7rem', color: '#64748b' }}>{[modal.cidade, modal.estado].filter(Boolean).join(' · ')}</span>}
                   <span style={{ background: `${stageModal?.cor}20`, color: stageModal?.cor, border: `1px solid ${stageModal?.cor}50`, padding: '.12rem .5rem', borderRadius: 99, fontSize: '.6rem', fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)' }}>{stageModal?.label}</span>
@@ -371,7 +371,7 @@ export function PipelinePropostaBoard({ cards: cardsIniciais }: Props) {
                         {CORES_TAG.map(c => (
                           <button key={c} type="button" onClick={() => setNovaTagCor(c)}
                             title={c}
-                            style={{ width: 18, height: 18, borderRadius: '50%', background: c, border: novaTagCor === c ? '3px solid #0f172a' : '2px solid transparent', cursor: 'pointer', padding: 0, flexShrink: 0, transition: 'border .1s' }} />
+                            style={{ width: 18, height: 18, borderRadius: '50%', background: c, border: novaTagCor === c ? '3px solid #002933' : '2px solid transparent', cursor: 'pointer', padding: 0, flexShrink: 0, transition: 'border .1s' }} />
                         ))}
                       </div>
                       <button type="button" onClick={adicionarTag}
@@ -399,14 +399,14 @@ export function PipelinePropostaBoard({ cards: cardsIniciais }: Props) {
                       const marcado = modal.pipeline_responsaveis.includes(u.id)
                       return (
                         <button key={u.id} type="button" onClick={() => toggleResponsavel(u.id)}
-                          style={{ display: 'flex', alignItems: 'center', gap: '.45rem', padding: '.35rem .75rem .35rem .45rem', borderRadius: 99, border: `1.5px solid ${marcado ? '#4A7FDB' : '#e2e8f0'}`, background: marcado ? '#eff6ff' : '#f8fafc', cursor: 'pointer', transition: 'all .12s' }}>
-                          <div style={{ width: 24, height: 24, borderRadius: '50%', background: marcado ? '#4A7FDB' : '#cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '.62rem', fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)', flexShrink: 0 }}>
+                          style={{ display: 'flex', alignItems: 'center', gap: '.45rem', padding: '.35rem .75rem .35rem .45rem', borderRadius: 99, border: `1.5px solid ${marcado ? '#00889e' : '#e2e8f0'}`, background: marcado ? '#eff6ff' : '#f8fafc', cursor: 'pointer', transition: 'all .12s' }}>
+                          <div style={{ width: 24, height: 24, borderRadius: '50%', background: marcado ? '#00889e' : '#cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '.62rem', fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)', flexShrink: 0 }}>
                             {getInitials(u.nome_completo)}
                           </div>
                           <span style={{ fontSize: '.72rem', fontWeight: marcado ? 700 : 500, color: marcado ? '#2563eb' : '#475569', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                             {u.nome_completo.split(' ')[0]}
                           </span>
-                          {marcado && <span style={{ fontSize: '.6rem', color: '#4A7FDB' }}>✓</span>}
+                          {marcado && <span style={{ fontSize: '.6rem', color: '#00889e' }}>✓</span>}
                         </button>
                       )
                     })}
@@ -421,7 +421,7 @@ export function PipelinePropostaBoard({ cards: cardsIniciais }: Props) {
                   <input type="date"
                     value={modal.pipeline_due_date ?? ''}
                     onChange={e => { syncCard(modal.precadastro_id, { pipeline_due_date: e.target.value || null }); salvarDueDate(e.target.value) }}
-                    style={{ padding: '.5rem .85rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.82rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', background: '#f8fafc', color: '#0f172a' }}
+                    style={{ padding: '.5rem .85rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.82rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', background: '#f8fafc', color: '#002933' }}
                   />
                   {modal.pipeline_due_date && (() => { const b = dueBadge(modal.pipeline_due_date); return b ? <span style={{ background: b.bg, color: b.fg, padding: '.2rem .65rem', borderRadius: 99, fontSize: '.68rem', fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)' }}>{b.label}</span> : null })()}
                   {modal.pipeline_due_date && (
@@ -442,7 +442,7 @@ export function PipelinePropostaBoard({ cards: cardsIniciais }: Props) {
                     <button type="button"
                       onClick={() => fileRef.current?.click()}
                       disabled={uploading}
-                      style={{ display: 'flex', alignItems: 'center', gap: '.4rem', padding: '.45rem 1rem', borderRadius: 8, border: '1.5px solid #4A7FDB', background: uploading ? '#f8fafc' : '#eff6ff', color: '#2563eb', cursor: uploading ? 'not-allowed' : 'pointer', fontSize: '.75rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                      style={{ display: 'flex', alignItems: 'center', gap: '.4rem', padding: '.45rem 1rem', borderRadius: 8, border: '1.5px solid #00889e', background: uploading ? '#f8fafc' : '#eff6ff', color: '#2563eb', cursor: uploading ? 'not-allowed' : 'pointer', fontSize: '.75rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
                       {uploading ? 'Enviando…' : 'Anexar arquivo'}
                     </button>
@@ -459,7 +459,7 @@ export function PipelinePropostaBoard({ cards: cardsIniciais }: Props) {
                       <div key={arq.path} style={{ display: 'flex', alignItems: 'center', gap: '.65rem', padding: '.6rem .85rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 9 }}>
                         <span style={{ fontSize: '1.1rem' }}>📄</span>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontWeight: 600, fontSize: '.78rem', color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{arq.name}</div>
+                          <div style={{ fontWeight: 600, fontSize: '.78rem', color: '#002933', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{arq.name}</div>
                           <div style={{ fontSize: '.62rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>{fmtData(arq.criado_em)}{arq.tamanho ? ` · ${fmtSize(arq.tamanho)}` : ''}</div>
                         </div>
                         <div style={{ display: 'flex', gap: '.3rem', flexShrink: 0 }}>
@@ -486,10 +486,10 @@ export function PipelinePropostaBoard({ cards: cardsIniciais }: Props) {
                     value={novoComent} onChange={e => setNovoComent(e.target.value)}
                     placeholder="Adicionar nota ou comentário sobre esta escola…"
                     rows={2}
-                    style={{ flex: 1, padding: '.6rem .85rem', fontSize: '.82rem', fontFamily: 'var(--font-inter,sans-serif)', border: '1.5px solid #e2e8f0', borderRadius: 8, background: '#f8fafc', color: '#0f172a', outline: 'none', resize: 'vertical', minHeight: 60 }}
+                    style={{ flex: 1, padding: '.6rem .85rem', fontSize: '.82rem', fontFamily: 'var(--font-inter,sans-serif)', border: '1.5px solid #e2e8f0', borderRadius: 8, background: '#f8fafc', color: '#002933', outline: 'none', resize: 'vertical', minHeight: 60 }}
                   />
                   <button onClick={adicionarComentario} disabled={enviandoC || !novoComent.trim()} type="button"
-                    style={{ padding: '.6rem 1rem', borderRadius: 8, border: 'none', background: enviandoC || !novoComent.trim() ? '#e2e8f0' : '#4A7FDB', color: enviandoC || !novoComent.trim() ? '#94a3b8' : '#fff', fontWeight: 700, fontSize: '.78rem', cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)', alignSelf: 'flex-start', transition: 'all .12s' }}>
+                    style={{ padding: '.6rem 1rem', borderRadius: 8, border: 'none', background: enviandoC || !novoComent.trim() ? '#e2e8f0' : '#00889e', color: enviandoC || !novoComent.trim() ? '#94a3b8' : '#fff', fontWeight: 700, fontSize: '.78rem', cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)', alignSelf: 'flex-start', transition: 'all .12s' }}>
                     {enviandoC ? '…' : 'Salvar'}
                   </button>
                 </div>
@@ -507,7 +507,7 @@ export function PipelinePropostaBoard({ cards: cardsIniciais }: Props) {
                           <button type="button" onClick={() => removerComentario(c.id)}
                             style={{ background: 'none', border: 'none', color: '#cbd5e1', cursor: 'pointer', fontSize: '.62rem', padding: 0 }} title="Remover">✕</button>
                         </div>
-                        <div style={{ fontSize: '.82rem', color: '#0f172a', lineHeight: 1.5, fontFamily: 'var(--font-inter,sans-serif)', whiteSpace: 'pre-wrap' }}>{c.texto}</div>
+                        <div style={{ fontSize: '.82rem', color: '#002933', lineHeight: 1.5, fontFamily: 'var(--font-inter,sans-serif)', whiteSpace: 'pre-wrap' }}>{c.texto}</div>
                       </div>
                     ))}
                   </div>

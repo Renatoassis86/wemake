@@ -15,7 +15,7 @@ interface Props {
 
 const CLASSIF_COR: Record<string, { bg: string; text: string; dot: string; border: string }> = {
   quente: { bg: '#fef2f2', text: '#dc2626', dot: '#dc2626', border: '#fca5a5' },
-  morno:  { bg: '#fffbeb', text: '#4A7FDB', dot: '#f59e0b', border: '#fcd34d' },
+  morno:  { bg: '#fffbeb', text: '#00889e', dot: '#f59e0b', border: '#fcd34d' },
   frio:   { bg: '#eff6ff', text: '#2563eb', dot: '#60a5fa', border: '#93c5fd' },
 }
 
@@ -97,9 +97,9 @@ export default async function EscolasPage({ searchParams }: Props) {
             <MigrarLeadsBtn />
             <Link href="/comercial/escolas/nova" style={{
               display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-              background: '#4A7FDB', color: '#fff', padding: '.45rem 1rem',
+              background: '#00889e', color: '#fff', padding: '.45rem 1rem',
               borderRadius: 9999, fontSize: '.82rem', fontWeight: 700,
-              textDecoration: 'none', boxShadow: '0 4px 12px rgba(74,127,219,.3)',
+              textDecoration: 'none', boxShadow: '0 4px 12px rgba(0,137,158,.3)',
               fontFamily: 'var(--font-montserrat,sans-serif)',
             }}>
               <Plus size={14} /> Nova Escola
@@ -156,7 +156,7 @@ export default async function EscolasPage({ searchParams }: Props) {
                     <div style={{
                       fontFamily: 'var(--font-cormorant,serif)',
                       fontSize: '2rem', fontWeight: 800, lineHeight: 1,
-                      color: isActive ? cor.text : '#0f172a',
+                      color: isActive ? cor.text : '#002933',
                     }}>
                       {k.value}
                     </div>
@@ -223,7 +223,7 @@ export default async function EscolasPage({ searchParams }: Props) {
                     background: '#fff', border: '1px solid #e2e8f0',
                     borderTop: `3px solid ${cor.dot}`,
                     borderRadius: 14,
-                    boxShadow: '0 2px 8px rgba(15,23,42,.05)',
+                    boxShadow: '0 2px 8px rgba(0,41,51,.05)',
                     transition: 'all .2s', overflow: 'hidden',
                   }}
                   >
@@ -233,7 +233,7 @@ export default async function EscolasPage({ searchParams }: Props) {
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{
                             fontFamily: 'var(--font-montserrat,sans-serif)',
-                            fontWeight: 700, fontSize: '.9rem', color: '#0f172a',
+                            fontWeight: 700, fontSize: '.9rem', color: '#002933',
                             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                             marginBottom: '.2rem',
                           }}>
@@ -281,11 +281,11 @@ export default async function EscolasPage({ searchParams }: Props) {
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.5rem', marginBottom: '.9rem' }}>
                         <div style={{ background: '#f8fafc', borderRadius: 8, padding: '.5rem .75rem' }}>
                           <div style={{ fontSize: '.6rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '.05em', fontFamily: 'var(--font-montserrat,sans-serif)', fontWeight: 700 }}>Alunos</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.2 }}>{e.total_alunos ?? 0}</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.15rem', fontWeight: 800, color: '#002933', lineHeight: 1.2 }}>{e.total_alunos ?? 0}</div>
                         </div>
                         <div style={{ background: '#fffbeb', borderRadius: 8, padding: '.5rem .75rem', border: '1px solid #fef3c7' }}>
                           <div style={{ fontSize: '.6rem', color: '#92400e', textTransform: 'uppercase', letterSpacing: '.05em', fontFamily: 'var(--font-montserrat,sans-serif)', fontWeight: 700 }}>Potencial</div>
-                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#4A7FDB', lineHeight: 1.2 }}>{formatCurrency(e.potencial_financeiro ?? 0)}</div>
+                          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#00889e', lineHeight: 1.2 }}>{formatCurrency(e.potencial_financeiro ?? 0)}</div>
                         </div>
                       </div>
 
@@ -324,11 +324,11 @@ export default async function EscolasPage({ searchParams }: Props) {
             </div>
           ) : (
             /* ── Tabela premium ─────────────────────────────────── */
-            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 8px rgba(15,23,42,.05)' }}>
+            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,41,51,.05)' }}>
               <div className="mp-escolas-table-wrap" style={{ overflowX: 'auto' }}>
                 <table className="mp-escolas-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
-                    <tr style={{ background: '#0f172a' }}>
+                    <tr style={{ background: '#002933' }}>
                       {['Escola', 'Localidade', 'Contato', 'Alunos', 'Potencial', 'Status', 'Último contato', ''].map(col => (
                         <th key={col} style={{
                           padding: '.7rem 1rem', textAlign: col === 'Alunos' || col === 'Potencial' ? 'right' : 'left',
@@ -355,7 +355,7 @@ export default async function EscolasPage({ searchParams }: Props) {
                           <td style={{ padding: '.85rem 1rem', verticalAlign: 'middle' }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '.15rem' }}>
                               <Link href={`/comercial/escolas/${e.id}`} style={{
-                                fontWeight: 700, fontSize: '.875rem', color: '#0f172a',
+                                fontWeight: 700, fontSize: '.875rem', color: '#002933',
                                 textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)',
                                 transition: 'color .15s',
                               }}
@@ -382,7 +382,7 @@ export default async function EscolasPage({ searchParams }: Props) {
                           <td style={{ padding: '.85rem 1rem', verticalAlign: 'middle' }}>
                             {e.contato_nome ? (
                               <div>
-                                <div style={{ fontSize: '.82rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{e.contato_nome}</div>
+                                <div style={{ fontSize: '.82rem', fontWeight: 600, color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{e.contato_nome}</div>
                                 <div style={{ fontSize: '.7rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)' }}>{e.contato_cargo}</div>
                               </div>
                             ) : <span style={{ color: '#cbd5e1' }}>—</span>}
@@ -392,7 +392,7 @@ export default async function EscolasPage({ searchParams }: Props) {
                           <td style={{ padding: '.85rem 1rem', textAlign: 'right', verticalAlign: 'middle' }}>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '.3rem' }}>
                               <Users size={12} style={{ color: '#475569' }} />
-                              <span style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>
+                              <span style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#002933' }}>
                                 {e.total_alunos ?? 0}
                               </span>
                             </div>
@@ -440,7 +440,7 @@ export default async function EscolasPage({ searchParams }: Props) {
                               <Link href={`/comercial/registros/novo?escola=${e.id}`} style={{
                                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                                 width: 28, height: 28, borderRadius: 7,
-                                background: '#4A7FDB', color: '#fff', textDecoration: 'none',
+                                background: '#00889e', color: '#fff', textDecoration: 'none',
                                 fontSize: '1rem', fontWeight: 700,
                                 transition: 'background .15s',
                               }} title="Novo registro"
@@ -483,8 +483,8 @@ export default async function EscolasPage({ searchParams }: Props) {
                   background: '#fafafa',
                 }}>
                   <span style={{ fontSize: '.75rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                    Página <strong style={{ color: '#0f172a' }}>{page}</strong> de <strong style={{ color: '#0f172a' }}>{totalPages}</strong>
-                    {' '}— <strong style={{ color: '#0f172a' }}>{count}</strong> escolas no total
+                    Página <strong style={{ color: '#002933' }}>{page}</strong> de <strong style={{ color: '#002933' }}>{totalPages}</strong>
+                    {' '}— <strong style={{ color: '#002933' }}>{count}</strong> escolas no total
                   </span>
                   <div style={{ display: 'flex', gap: '.5rem' }}>
                     {page > 1 && (
@@ -495,7 +495,7 @@ export default async function EscolasPage({ searchParams }: Props) {
                     )}
                     {page < totalPages && (
                       <Link href={`?page=${page + 1}&q=${q}&estado=${estado}&classif=${classif}&view=${view}`}
-                        style={{ padding: '6px 14px', borderRadius: 7, background: '#4A7FDB', color: '#fff', fontSize: '.78rem', fontWeight: 700, textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 2px 8px rgba(74,127,219,.25)' }}>
+                        style={{ padding: '6px 14px', borderRadius: 7, background: '#00889e', color: '#fff', fontSize: '.78rem', fontWeight: 700, textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 2px 8px rgba(0,137,158,.25)' }}>
                         Próxima →
                       </Link>
                     )}
@@ -509,7 +509,7 @@ export default async function EscolasPage({ searchParams }: Props) {
           <div style={{
             background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14,
             padding: '4rem 2rem', textAlign: 'center',
-            boxShadow: '0 2px 8px rgba(15,23,42,.05)',
+            boxShadow: '0 2px 8px rgba(0,41,51,.05)',
           }}>
             <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
@@ -517,7 +517,7 @@ export default async function EscolasPage({ searchParams }: Props) {
                 <polyline points="9 22 9 12 15 12 15 22"/>
               </svg>
             </div>
-            <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', color: '#0f172a', marginBottom: '.4rem' }}>
+            <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', color: '#002933', marginBottom: '.4rem' }}>
               {q ? `Nenhum resultado para "${q}"` : 'Nenhuma escola cadastrada'}
             </h3>
             <p style={{ fontSize: '.85rem', color: '#475569', marginBottom: '1.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
@@ -525,11 +525,11 @@ export default async function EscolasPage({ searchParams }: Props) {
             </p>
             <Link href="/comercial/escolas/nova" style={{
               display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-              background: '#4A7FDB', color: '#fff', padding: '.55rem 1.25rem',
+              background: '#00889e', color: '#fff', padding: '.55rem 1.25rem',
               borderRadius: 9999, textDecoration: 'none',
               fontSize: '.85rem', fontWeight: 700,
               fontFamily: 'var(--font-montserrat,sans-serif)',
-              boxShadow: '0 4px 14px rgba(74,127,219,.3)',
+              boxShadow: '0 4px 14px rgba(0,137,158,.3)',
             }}>
               <Plus size={14} /> Nova Escola
             </Link>

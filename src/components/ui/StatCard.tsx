@@ -50,12 +50,12 @@ interface StatCardProps {
 const VARIANT_MAP: Record<StatVariant, {
   barColor: string; iconBg: string; iconColor: string; valueColor: string
 }> = {
-  default: { barColor: '#4A7FDB', iconBg: '#fef3c7', iconColor: '#2563b8', valueColor: '#0f172a' },
+  default: { barColor: '#00889e', iconBg: '#fef3c7', iconColor: '#00677d', valueColor: '#002933' },
   blue:    { barColor: '#1d4ed8', iconBg: '#dbeafe', iconColor: '#1d4ed8', valueColor: '#1e3a8a' },
-  amber:   { barColor: '#4A7FDB', iconBg: '#fef3c7', iconColor: '#2563b8', valueColor: '#0f172a' },
+  amber:   { barColor: '#00889e', iconBg: '#fef3c7', iconColor: '#00677d', valueColor: '#002933' },
   success: { barColor: '#16a34a', iconBg: '#dcfce7', iconColor: '#15803d', valueColor: '#14532d' },
   danger:  { barColor: '#dc2626', iconBg: '#fee2e2', iconColor: '#dc2626', valueColor: '#7f1d1d' },
-  warning: { barColor: '#4A7FDB', iconBg: '#fef3c7', iconColor: '#2563b8', valueColor: '#78350f' },
+  warning: { barColor: '#00889e', iconBg: '#fef3c7', iconColor: '#00677d', valueColor: '#78350f' },
   teal:    { barColor: '#0d9488', iconBg: '#ccfbf1', iconColor: '#0d9488', valueColor: '#134e4a' },
   purple:  { barColor: '#7c3aed', iconBg: '#ede9fe', iconColor: '#7c3aed', valueColor: '#3b0764' },
 }

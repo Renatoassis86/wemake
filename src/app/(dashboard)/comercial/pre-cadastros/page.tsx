@@ -182,7 +182,7 @@ function SeriesGranulares({ r }: { r: PreCadastro }) {
         if (preenchidos.length === 0) return null
         return (
           <div key={g.titulo}>
-            <div style={{ fontSize: '.68rem', fontWeight: 700, color: '#4A7FDB', marginBottom: '.3rem' }}>{g.titulo}</div>
+            <div style={{ fontSize: '.68rem', fontWeight: 700, color: '#00889e', marginBottom: '.3rem' }}>{g.titulo}</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.4rem' }}>
               {preenchidos.map(c => (
                 <span key={c.key} style={{
@@ -206,7 +206,7 @@ function RowDetails({ r }: { r: PreCadastro }) {
   const Field = ({ label, value }: { label: string; value: string | number | null | undefined }) => (
     <div>
       <div style={{ fontSize: '.62rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: '.15rem' }}>{label}</div>
-      <div style={{ fontSize: '.82rem', color: '#0f172a', fontWeight: 500, wordBreak: 'break-word' }}>{value ?? '—'}</div>
+      <div style={{ fontSize: '.82rem', color: '#002933', fontWeight: 500, wordBreak: 'break-word' }}>{value ?? '—'}</div>
     </div>
   )
   return (
@@ -215,7 +215,7 @@ function RowDetails({ r }: { r: PreCadastro }) {
       border: '1px solid #e2e8f0',
     }}>
       <summary style={{
-        cursor: 'pointer', fontSize: '.78rem', fontWeight: 600, color: '#4A7FDB',
+        cursor: 'pointer', fontSize: '.78rem', fontWeight: 600, color: '#00889e',
         fontFamily: 'var(--font-montserrat,sans-serif)',
       }}>
         Ver detalhes completos do pré-cadastro
@@ -223,7 +223,7 @@ function RowDetails({ r }: { r: PreCadastro }) {
 
       <div style={{ marginTop: '.85rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '.8rem 1.25rem' }}>
 
-        <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#4A7FDB', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem' }}>
+        <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#00889e', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem' }}>
           Escola
         </div>
         <Field label="CNPJ" value={r.cnpj} />
@@ -234,7 +234,7 @@ function RowDetails({ r }: { r: PreCadastro }) {
         <Field label="Telefone institucional" value={r.telefone_institucional} />
         <Field label="Endereço" value={[r.rua, r.numero, r.bairro, r.cidade, r.estado, r.cep].filter(Boolean).join(', ')} />
 
-        <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#4A7FDB', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem', marginTop: '.4rem' }}>
+        <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#00889e', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem', marginTop: '.4rem' }}>
           Endereço de entrega do material didático
         </div>
         {r.entrega_mesmo_endereco === false ? (
@@ -243,7 +243,7 @@ function RowDetails({ r }: { r: PreCadastro }) {
           <Field label="Endereço de entrega" value="Mesmo endereço da escola" />
         )}
 
-        <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#4A7FDB', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem', marginTop: '.4rem' }}>
+        <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#00889e', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem', marginTop: '.4rem' }}>
           Ano letivo e segmentos
         </div>
         <Field label="Formato" value={r.formato_ano_letivo} />
@@ -265,7 +265,7 @@ function RowDetails({ r }: { r: PreCadastro }) {
           </>
         )}
 
-        <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#4A7FDB', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem', marginTop: '.4rem' }}>
+        <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#00889e', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem', marginTop: '.4rem' }}>
           Representante legal
         </div>
         <Field label="Nome completo" value={r.legal_nome} />
@@ -274,7 +274,7 @@ function RowDetails({ r }: { r: PreCadastro }) {
         <Field label="WhatsApp" value={r.legal_whatsapp} />
         <Field label="Endereço" value={[r.legal_rua, r.legal_numero, r.legal_complemento, r.legal_bairro, r.legal_cidade, r.legal_estado, r.legal_cep].filter(Boolean).join(', ')} />
 
-        <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#4A7FDB', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem', marginTop: '.4rem' }}>
+        <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#00889e', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem', marginTop: '.4rem' }}>
           Financeiro
         </div>
         <Field label="E-mail (cobrança e NF)" value={r.fin_email_cobranca} />
@@ -282,14 +282,14 @@ function RowDetails({ r }: { r: PreCadastro }) {
 
         {r.observacoes && (
           <>
-            <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#4A7FDB', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem', marginTop: '.4rem' }}>
+            <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#00889e', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem', marginTop: '.4rem' }}>
               Observações
             </div>
-            <div style={{ gridColumn: '1 / -1', fontSize: '.85rem', color: '#0f172a', whiteSpace: 'pre-wrap' }}>{r.observacoes}</div>
+            <div style={{ gridColumn: '1 / -1', fontSize: '.85rem', color: '#002933', whiteSpace: 'pre-wrap' }}>{r.observacoes}</div>
           </>
         )}
 
-        <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#4A7FDB', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem', marginTop: '.4rem' }}>
+        <div style={{ gridColumn: '1 / -1', fontSize: '.7rem', fontWeight: 700, color: '#00889e', textTransform: 'uppercase', letterSpacing: '.1em', borderBottom: '1px solid rgba(74,143,231,.2)', paddingBottom: '.3rem', marginTop: '.4rem' }}>
           Metadados
         </div>
         <Field label="ID interno" value={r.id} />
@@ -347,7 +347,7 @@ export default async function PreCadastrosPage() {
               Nenhum pré-cadastro recebido ainda
             </div>
             <div style={{ fontSize: '.85rem', color: '#94a3b8', maxWidth: 420, margin: '0 auto' }}>
-              Compartilhe o link <span style={{ color: '#4A7FDB', fontWeight: 600 }}>/formulario</span> com as escolas interessadas. As respostas aparecem aqui automaticamente.
+              Compartilhe o link <span style={{ color: '#00889e', fontWeight: 600 }}>/formulario</span> com as escolas interessadas. As respostas aparecem aqui automaticamente.
             </div>
           </div>
         )}
@@ -358,13 +358,13 @@ export default async function PreCadastrosPage() {
               <article key={r.id} className="mp-precad-card" style={{
                 background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14,
                 padding: '1.1rem 1.25rem',
-                boxShadow: '0 1px 3px rgba(15,23,42,.04)',
+                boxShadow: '0 1px 3px rgba(0,41,51,.04)',
               }}>
                 {/* Header da escola */}
                 <div className="mp-precad-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap', marginBottom: '.5rem' }}>
                   <div style={{ flex: '1 1 320px', minWidth: 0 }}>
                     <h3 style={{
-                      fontSize: '1.05rem', fontWeight: 700, color: '#0f172a',
+                      fontSize: '1.05rem', fontWeight: 700, color: '#002933',
                       fontFamily: 'var(--font-cormorant, "Georgia", serif)',
                       lineHeight: 1.25, marginBottom: '.15rem',
                     }}>
@@ -419,10 +419,10 @@ export default async function PreCadastrosPage() {
                   )}
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem' }}>
                     <GraduationCap size={13} color="#94a3b8" />
-                    <span><strong style={{ color: '#0f172a' }}>{totalAlunos(r)}</strong> aluno{totalAlunos(r) !== 1 ? 's' : ''}</span>
+                    <span><strong style={{ color: '#002933' }}>{totalAlunos(r)}</strong> aluno{totalAlunos(r) !== 1 ? 's' : ''}</span>
                   </div>
                   {r.ticket_medio && (
-                    <div style={{ color: '#0f172a', fontWeight: 600 }}>
+                    <div style={{ color: '#002933', fontWeight: 600 }}>
                       Ticket médio: <span style={{ color: '#16a34a' }}>{r.ticket_medio}</span>
                     </div>
                   )}

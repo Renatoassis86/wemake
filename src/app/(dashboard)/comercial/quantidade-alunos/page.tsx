@@ -50,10 +50,13 @@ export default async function QuantidadeAlunosPage() {
   // a venda pro ano que vem está em andamento) — não contrato_enviado nem
   // contrato_assinado, que aqui misturavam headcount de veteranas com o
   // funil de vendas real. Veteranas entram só pela marcação manual.
+  // declinou=true sempre exclui, mesmo que minuta_enviada ou marcado_veterana
+  // estejam marcados — sem essa checagem, escola que já recusou continuava
+  // aparecendo na lista que vira pedido de livro pra gráfica.
   const linhas: EscolaLinha[] = (escolas ?? [])
     .filter(e => {
       const c = contratosPorEscola.get(e.id)
-      return !!c && (c.minuta_enviada || c.marcado_veterana)
+      return !!c && !c.declinou && (c.minuta_enviada || c.marcado_veterana)
     })
     .map(e => {
       const c = contratosPorEscola.get(e.id)!

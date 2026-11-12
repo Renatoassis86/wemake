@@ -13,13 +13,13 @@ interface Props { searchParams: Promise<{ escola?: string }> }
 // ── Helpers de cor por classificação ────────────────────────────────────────
 function corClassificacao(c: string | null | undefined) {
   if (c === 'quente') return '#ef4444'
-  if (c === 'morno')  return '#4A7FDB'
+  if (c === 'morno')  return '#00889e'
   return '#3b82f6'
 }
 
 function bgClassificacao(c: string | null | undefined) {
   if (c === 'quente') return 'rgba(239,68,68,0.10)'
-  if (c === 'morno')  return 'rgba(74,127,219,0.10)'
+  if (c === 'morno')  return 'rgba(0,137,158,0.10)'
   return 'rgba(59,130,246,0.10)'
 }
 
@@ -220,8 +220,8 @@ function CurvaEngajamento({ registros }: { registros: any[] }) {
     >
       <defs>
         <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#4A7FDB" stopOpacity="0.30"/>
-          <stop offset="100%" stopColor="#4A7FDB" stopOpacity="0.02"/>
+          <stop offset="0%" stopColor="#00889e" stopOpacity="0.30"/>
+          <stop offset="100%" stopColor="#00889e" stopOpacity="0.02"/>
         </linearGradient>
       </defs>
       {/* Grade horizontal */}
@@ -238,11 +238,11 @@ function CurvaEngajamento({ registros }: { registros: any[] }) {
       {/* Área preenchida */}
       <path d={areaPath} fill="url(#areaGrad)"/>
       {/* Linha de tendência */}
-      <polyline points={polyline} fill="none" stroke="#4A7FDB" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"/>
+      <polyline points={polyline} fill="none" stroke="#00889e" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"/>
       {/* Pontos */}
       {pts.map((p, i) => (
         <g key={i}>
-          <circle cx={p.x} cy={p.y} r={6} fill={corClassificacao(p.cls)} stroke="rgba(15,23,42,0.8)" strokeWidth={2}/>
+          <circle cx={p.x} cy={p.y} r={6} fill={corClassificacao(p.cls)} stroke="rgba(0,41,51,0.8)" strokeWidth={2}/>
           <text x={p.x} y={H - 2} fill="rgba(255,255,255,0.35)" fontSize={9} textAnchor="middle"
             fontFamily="var(--font-inter,sans-serif)">{i + 1}</text>
         </g>
@@ -396,7 +396,7 @@ export default async function JornadaPage({ searchParams }: Props) {
           </svg>
           <h2 style={{
             fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 700,
-            color: '#0f172a', marginBottom: '.5rem',
+            color: '#002933', marginBottom: '.5rem',
           }}>
             Selecione uma escola para começar
           </h2>
@@ -411,7 +411,7 @@ export default async function JornadaPage({ searchParams }: Props) {
         <>
           {/* ── HERO NARRATIVO ─────────────────────────────────────────── */}
           <div style={{
-            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%)',
+            background: 'linear-gradient(135deg, #002933 0%, #1e293b 60%, #002933 100%)',
             padding: '2.5rem 1.75rem 2rem',
             borderBottom: '1px solid rgba(255,255,255,0.06)',
           }}>
@@ -426,12 +426,12 @@ export default async function JornadaPage({ searchParams }: Props) {
                 <div style={{ animation: 'fadeInUp .4s ease' }}>
                   <div style={{
                     fontSize: '.72rem', fontWeight: 700, letterSpacing: '.12em',
-                    color: '#4A7FDB', textTransform: 'uppercase',
+                    color: '#00889e', textTransform: 'uppercase',
                     fontFamily: 'var(--font-montserrat,sans-serif)',
                     marginBottom: '.75rem',
                     display: 'flex', alignItems: 'center', gap: '.4rem',
                   }}>
-                    <svg viewBox="0 0 8 8" width={8} height={8} fill="#4A7FDB"><polygon points="4,0 5.4,2.6 8,3.1 6,5 6.5,7.6 4,6.3 1.5,7.6 2,5 0,3.1 2.6,2.6"/></svg>
+                    <svg viewBox="0 0 8 8" width={8} height={8} fill="#00889e"><polygon points="4,0 5.4,2.6 8,3.1 6,5 6.5,7.6 4,6.3 1.5,7.6 2,5 0,3.1 2.6,2.6"/></svg>
                     Jornada de Relacionamento
                   </div>
                   <h2 style={{
@@ -456,7 +456,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                     fontFamily: 'var(--font-cormorant,serif)',
                     fontSize: '1.1rem', fontStyle: 'italic',
                     color: 'rgba(255,255,255,0.7)',
-                    borderLeft: '3px solid #4A7FDB',
+                    borderLeft: '3px solid #00889e',
                     paddingLeft: '.85rem',
                     lineHeight: 1.5,
                   }}>
@@ -501,7 +501,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                         Probabilidade
                       </span>
                     </div>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#4A7FDB', fontFamily: 'var(--font-cormorant,serif)', lineHeight: 1 }}>
+                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#00889e', fontFamily: 'var(--font-cormorant,serif)', lineHeight: 1 }}>
                       {escola.probabilidade_atual ?? 0}%
                     </div>
                   </div>
@@ -604,7 +604,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                   </svg>
                   <h3 style={{
                     fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 700,
-                    color: '#0f172a', marginBottom: '.4rem',
+                    color: '#002933', marginBottom: '.4rem',
                   }}>
                     Nenhuma interação registrada
                   </h3>
@@ -650,7 +650,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                         borderTop: `3px solid ${corAcual}`,
                         borderRadius: 12,
                         padding: '1.25rem',
-                        boxShadow: '0 2px 12px rgba(15,23,42,0.06)',
+                        boxShadow: '0 2px 12px rgba(0,41,51,0.06)',
                         width: 'calc(50% - 48px)',
                         position: 'absolute',
                         top: 0,
@@ -769,7 +769,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                             <h4 style={{
                               fontFamily: 'var(--font-cormorant,serif)',
                               fontSize: '1.05rem', fontWeight: 700,
-                              color: '#0f172a', marginBottom: '.6rem', lineHeight: 1.3,
+                              color: '#002933', marginBottom: '.6rem', lineHeight: 1.3,
                             }}>
                               {tituloInteracao(r, idx)}
                             </h4>
@@ -929,13 +929,13 @@ export default async function JornadaPage({ searchParams }: Props) {
                   {!parceiro && !assinado && (
                     <div style={{
                       background: 'linear-gradient(135deg, #fffbeb, #fef3c7)',
-                      border: '2px solid #4A7FDB',
+                      border: '2px solid #00889e',
                       borderRadius: 16, padding: '1.5rem',
                       display: 'flex', alignItems: 'center', gap: '1rem',
                     }}>
                       <div style={{
                         width: 48, height: 48, borderRadius: '50%',
-                        background: '#4A7FDB', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        background: '#00889e', display: 'flex', alignItems: 'center', justifyContent: 'center',
                         flexShrink: 0,
                       }}>
                         <IconTrend size={22} cor="#ffffff"/>
@@ -995,7 +995,7 @@ export default async function JornadaPage({ searchParams }: Props) {
               <div style={{
                 background: '#ffffff', border: '1px solid #e2e8f0',
                 borderRadius: 12, overflow: 'hidden',
-                boxShadow: '0 1px 4px rgba(15,23,42,0.06)',
+                boxShadow: '0 1px 4px rgba(0,41,51,0.06)',
               }}>
                 <div style={{
                   padding: '.85rem 1rem',
@@ -1005,7 +1005,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                   <span style={{
                     fontFamily: 'var(--font-montserrat,sans-serif)',
                     fontSize: '.75rem', fontWeight: 700,
-                    color: '#0f172a', textTransform: 'uppercase', letterSpacing: '.06em',
+                    color: '#002933', textTransform: 'uppercase', letterSpacing: '.06em',
                   }}>
                     Proximos Passos
                   </span>
@@ -1031,7 +1031,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
                       {tarefas.slice(0, 5).map((t: any) => {
                         const vencida = t.vencimento && new Date(t.vencimento + 'T00:00:00') < hoje
-                        const corPrio = t.prioridade === 'urgente' ? '#ef4444' : t.prioridade === 'alta' ? '#f97316' : t.prioridade === 'media' ? '#4A7FDB' : '#64748b'
+                        const corPrio = t.prioridade === 'urgente' ? '#ef4444' : t.prioridade === 'alta' ? '#f97316' : t.prioridade === 'media' ? '#00889e' : '#64748b'
                         return (
                           <div key={t.id} style={{
                             padding: '.55rem .65rem',
@@ -1040,7 +1040,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                             borderLeft: `3px solid ${vencida ? '#ef4444' : corPrio}`,
                             borderRadius: 8,
                           }}>
-                            <div style={{ fontSize: '.78rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', lineHeight: 1.3, marginBottom: '.2rem' }}>
+                            <div style={{ fontSize: '.78rem', fontWeight: 600, color: '#002933', fontFamily: 'var(--font-inter,sans-serif)', lineHeight: 1.3, marginBottom: '.2rem' }}>
                               {t.titulo}
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '.3rem' }}>
@@ -1078,7 +1078,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                 <div style={{
                   background: '#ffffff', border: '1px solid #e2e8f0',
                   borderRadius: 12, overflow: 'hidden',
-                  boxShadow: '0 1px 4px rgba(15,23,42,0.06)',
+                  boxShadow: '0 1px 4px rgba(0,41,51,0.06)',
                 }}>
                   <div style={{
                     padding: '.85rem 1rem',
@@ -1087,7 +1087,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                     <span style={{
                       fontFamily: 'var(--font-montserrat,sans-serif)',
                       fontSize: '.75rem', fontWeight: 700,
-                      color: '#0f172a', textTransform: 'uppercase', letterSpacing: '.06em',
+                      color: '#002933', textTransform: 'uppercase', letterSpacing: '.06em',
                     }}>
                       Negociacoes Ativas
                     </span>
@@ -1112,7 +1112,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                         {n.valor_estimado && (
                           <div style={{
                             fontSize: '1rem', fontWeight: 800,
-                            color: '#4A7FDB', fontFamily: 'var(--font-cormorant,serif)',
+                            color: '#00889e', fontFamily: 'var(--font-cormorant,serif)',
                             lineHeight: 1,
                           }}>
                             {formatCurrency(n.valor_estimado)}
@@ -1128,7 +1128,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                             <div style={{
                               height: '100%', borderRadius: 2,
                               width: `${n.probabilidade}%`,
-                              background: n.probabilidade >= 70 ? '#10b981' : n.probabilidade >= 40 ? '#4A7FDB' : '#94a3b8',
+                              background: n.probabilidade >= 70 ? '#10b981' : n.probabilidade >= 40 ? '#00889e' : '#94a3b8',
                             }}/>
                           </div>
                         </div>
@@ -1142,7 +1142,7 @@ export default async function JornadaPage({ searchParams }: Props) {
               <div style={{
                 background: '#ffffff', border: '1px solid #e2e8f0',
                 borderRadius: 12, overflow: 'hidden',
-                boxShadow: '0 1px 4px rgba(15,23,42,0.06)',
+                boxShadow: '0 1px 4px rgba(0,41,51,0.06)',
               }}>
                 <div style={{
                   padding: '.85rem 1rem',
@@ -1151,7 +1151,7 @@ export default async function JornadaPage({ searchParams }: Props) {
                   <span style={{
                     fontFamily: 'var(--font-montserrat,sans-serif)',
                     fontSize: '.75rem', fontWeight: 700,
-                    color: '#0f172a', textTransform: 'uppercase', letterSpacing: '.06em',
+                    color: '#002933', textTransform: 'uppercase', letterSpacing: '.06em',
                   }}>
                     Acoes Rapidas
                   </span>

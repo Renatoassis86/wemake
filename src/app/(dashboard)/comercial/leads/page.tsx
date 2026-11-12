@@ -13,12 +13,12 @@ interface Props {
 const S = {
   page:    { padding: '2rem 2.5rem' } as React.CSSProperties,
   label:   { display: 'block', fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.7rem', fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '.06em', color: '#64748b', marginBottom: '.4rem' },
-  card:    { background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, marginBottom: '1.25rem', overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.06)' } as React.CSSProperties,
+  card:    { background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, marginBottom: '1.25rem', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,41,51,.06)' } as React.CSSProperties,
 }
 
 const CLASSIF_COR = {
   quente: { bg: '#fef2f2', text: '#dc2626', dot: '#dc2626', border: '#fca5a5' },
-  morno:  { bg: '#fffbeb', text: '#4A7FDB', dot: '#f59e0b', border: '#fcd34d' },
+  morno:  { bg: '#fffbeb', text: '#00889e', dot: '#f59e0b', border: '#fcd34d' },
   frio:   { bg: '#eff6ff', text: '#2563eb', dot: '#60a5fa', border: '#93c5fd' },
 } as Record<string, { bg: string; text: string; dot: string; border: string }>
 
@@ -66,9 +66,9 @@ export default async function LeadsPage({ searchParams }: Props) {
         actions={
           <Link href="/comercial/escolas/nova" style={{
             display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-            background: '#4A7FDB', color: '#fff', padding: '.45rem 1rem',
+            background: '#00889e', color: '#fff', padding: '.45rem 1rem',
             borderRadius: 9999, fontSize: '.82rem', fontWeight: 700,
-            textDecoration: 'none', boxShadow: '0 4px 12px rgba(74,127,219,.3)',
+            textDecoration: 'none', boxShadow: '0 4px 12px rgba(0,137,158,.3)',
             fontFamily: 'var(--font-montserrat,sans-serif)',
           }}>
             <Plus size={14} /> Novo Lead
@@ -104,7 +104,7 @@ export default async function LeadsPage({ searchParams }: Props) {
                     <div style={{ fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: cor.text, fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.35rem' }}>
                       {k.label}
                     </div>
-                    <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '2rem', fontWeight: 800, lineHeight: 1, color: active ? cor.text : '#0f172a' }}>
+                    <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '2rem', fontWeight: 800, lineHeight: 1, color: active ? cor.text : '#002933' }}>
                       {k.value}
                     </div>
                   </div>
@@ -125,14 +125,14 @@ export default async function LeadsPage({ searchParams }: Props) {
           <div style={{ position: 'relative', flex: 1, minWidth: 220, maxWidth: 360 }}>
             <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#475569', pointerEvents: 'none' }} />
             <input name="q" defaultValue={q} placeholder="Buscar escola, cidade..."
-              style={{ width: '100%', paddingLeft: 32, paddingRight: 12, paddingTop: 9, paddingBottom: 9, fontSize: '.82rem', border: '1.5px solid #e2e8f0', borderRadius: 8, outline: 'none', color: '#0f172a', background: '#f8fafc', fontFamily: 'var(--font-inter,sans-serif)', boxSizing: 'border-box' }} />
+              style={{ width: '100%', paddingLeft: 32, paddingRight: 12, paddingTop: 9, paddingBottom: 9, fontSize: '.82rem', border: '1.5px solid #e2e8f0', borderRadius: 8, outline: 'none', color: '#002933', background: '#f8fafc', fontFamily: 'var(--font-inter,sans-serif)', boxSizing: 'border-box' }} />
           </div>
-          <select name="estado" defaultValue={estado} style={{ padding: '9px 12px', fontSize: '.82rem', border: '1.5px solid #e2e8f0', borderRadius: 8, background: '#f8fafc', color: '#0f172a', outline: 'none', fontFamily: 'var(--font-inter,sans-serif)' }}>
+          <select name="estado" defaultValue={estado} style={{ padding: '9px 12px', fontSize: '.82rem', border: '1.5px solid #e2e8f0', borderRadius: 8, background: '#f8fafc', color: '#002933', outline: 'none', fontFamily: 'var(--font-inter,sans-serif)' }}>
             <option value="">Todos os estados</option>
             {estados.map(uf => <option key={uf} value={uf}>{uf}</option>)}
           </select>
           {classif && <input type="hidden" name="classif" value={classif} />}
-          <button type="submit" style={{ background: '#0f172a', color: '#fff', padding: '9px 18px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: '.82rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+          <button type="submit" style={{ background: '#002933', color: '#fff', padding: '9px 18px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: '.82rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
             Filtrar
           </button>
           {(q || estado || classif) && (
@@ -148,13 +148,13 @@ export default async function LeadsPage({ searchParams }: Props) {
               const diasSemContato = diasDesdeData(e.ultimo_contato)
               const atrasado = diasSemContato != null && diasSemContato > 14
               return (
-                <div key={e.id} style={{ background: '#fff', border: '1px solid #e2e8f0', borderTop: `3px solid ${cor.dot}`, borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 8px rgba(15,23,42,.05)', transition: 'box-shadow .2s' }}>
+                <div key={e.id} style={{ background: '#fff', border: '1px solid #e2e8f0', borderTop: `3px solid ${cor.dot}`, borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,41,51,.05)', transition: 'box-shadow .2s' }}>
                   <div style={{ padding: '1.25rem 1.5rem' }}>
 
                     {/* Header */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <Link href={`/comercial/escolas/${e.id}`} style={{ fontWeight: 700, fontSize: '.9rem', color: '#0f172a', textDecoration: 'none', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>
+                        <Link href={`/comercial/escolas/${e.id}`} style={{ fontWeight: 700, fontSize: '.9rem', color: '#002933', textDecoration: 'none', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>
                           {e.nome}
                         </Link>
                         <div style={{ fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
@@ -177,11 +177,11 @@ export default async function LeadsPage({ searchParams }: Props) {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.75rem', marginBottom: '1rem' }}>
                       <div style={{ background: '#f8fafc', borderRadius: 8, padding: '.65rem .85rem' }}>
                         <div style={{ fontSize: '.6rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '.05em', fontFamily: 'var(--font-montserrat,sans-serif)', fontWeight: 700, marginBottom: '.2rem' }}>Alunos</div>
-                        <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>{e.total_alunos ?? 0}</div>
+                        <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.2rem', fontWeight: 800, color: '#002933' }}>{e.total_alunos ?? 0}</div>
                       </div>
                       <div style={{ background: '#fffbeb', borderRadius: 8, padding: '.65rem .85rem', border: '1px solid #fef3c7' }}>
                         <div style={{ fontSize: '.6rem', color: '#92400e', textTransform: 'uppercase', letterSpacing: '.05em', fontFamily: 'var(--font-montserrat,sans-serif)', fontWeight: 700, marginBottom: '.2rem' }}>Potencial</div>
-                        <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#4A7FDB' }}>{formatCurrency(e.potencial_financeiro ?? 0)}</div>
+                        <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 800, color: '#00889e' }}>{formatCurrency(e.potencial_financeiro ?? 0)}</div>
                       </div>
                     </div>
 
@@ -206,7 +206,7 @@ export default async function LeadsPage({ searchParams }: Props) {
                           : 'Sem interações'}
                       </div>
                       <div style={{ display: 'flex', gap: '.35rem' }}>
-                        <Link href={`/comercial/registros/novo?escola=${e.id}`} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 7, background: '#4A7FDB', color: '#fff', textDecoration: 'none', fontSize: '1rem', fontWeight: 700 }} title="Novo registro">+</Link>
+                        <Link href={`/comercial/registros/novo?escola=${e.id}`} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 7, background: '#00889e', color: '#fff', textDecoration: 'none', fontSize: '1rem', fontWeight: 700 }} title="Novo registro">+</Link>
                         <Link href={`/comercial/escolas/${e.id}`} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 7, background: '#f1f5f9', color: '#475569', textDecoration: 'none', fontSize: '.75rem', fontWeight: 700 }} title="Ver ficha">→</Link>
                       </div>
                     </div>
@@ -217,20 +217,20 @@ export default async function LeadsPage({ searchParams }: Props) {
             })}
           </div>
         ) : (
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '4rem 2rem', textAlign: 'center', boxShadow: '0 2px 8px rgba(15,23,42,.05)' }}>
+          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '4rem 2rem', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,41,51,.05)' }}>
             <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block', margin: '0 auto .75rem' }}>
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
               </svg>
             </div>
-            <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', color: '#0f172a', marginBottom: '.4rem' }}>
+            <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', color: '#002933', marginBottom: '.4rem' }}>
               {q ? `Nenhum resultado para "${q}"` : 'Nenhum lead encontrado'}
             </h3>
             <p style={{ fontSize: '.85rem', color: '#475569', marginBottom: '1.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
               Cadastre escolas para começar a gerenciar seus leads.
             </p>
-            <Link href="/comercial/escolas/nova" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: '#4A7FDB', color: '#fff', padding: '.55rem 1.25rem', borderRadius: 9999, textDecoration: 'none', fontSize: '.85rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+            <Link href="/comercial/escolas/nova" style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: '#00889e', color: '#fff', padding: '.55rem 1.25rem', borderRadius: 9999, textDecoration: 'none', fontSize: '.85rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
               <Plus size={14} /> Cadastrar Lead
             </Link>
           </div>

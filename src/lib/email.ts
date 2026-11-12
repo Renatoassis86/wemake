@@ -45,8 +45,8 @@ function htmlConvite(p: ConviteParams) {
 
         <!-- Header -->
         <tr>
-          <td style="background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:16px 16px 0 0;padding:32px 40px;">
-            <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#4A7FDB;margin-bottom:8px;">
+          <td style="background:linear-gradient(135deg,#002933,#1e293b);border-radius:16px 16px 0 0;padding:32px 40px;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#00889e;margin-bottom:8px;">
               ✦ CVE Gestão Comercial
             </div>
             <div style="font-size:26px;font-weight:700;color:#ffffff;line-height:1.2;margin-bottom:6px;">
@@ -71,7 +71,7 @@ function htmlConvite(p: ConviteParams) {
               <tr>
                 <td style="padding:16px 20px;border-bottom:1px solid #f1f5f9;">
                   <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:4px;">Data e Horário</div>
-                  <div style="font-size:15px;font-weight:600;color:#0f172a;text-transform:capitalize;">
+                  <div style="font-size:15px;font-weight:600;color:#002933;text-transform:capitalize;">
                     ${inicio}${fim ? ` — ${fim}` : ''}
                   </div>
                 </td>
@@ -80,7 +80,7 @@ function htmlConvite(p: ConviteParams) {
               <tr>
                 <td style="padding:16px 20px;border-bottom:1px solid #f1f5f9;">
                   <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:4px;">${isLink ? 'Link da Reunião' : 'Local'}</div>
-                  <div style="font-size:15px;font-weight:600;color:#0f172a;">
+                  <div style="font-size:15px;font-weight:600;color:#002933;">
                     ${isLink
                       ? `<a href="${p.local}" style="color:#2563eb;text-decoration:none;">🔗 Clique aqui para entrar na reunião</a>`
                       : p.local
@@ -100,7 +100,7 @@ function htmlConvite(p: ConviteParams) {
             <!-- CTA se tiver link -->
             ${isLink ? `
             <div style="text-align:center;margin-bottom:24px;">
-              <a href="${p.local}" style="display:inline-block;background:linear-gradient(135deg,#4A7FDB,#2563b8);color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 32px;border-radius:9999px;box-shadow:0 4px 14px rgba(74,127,219,0.4);">
+              <a href="${p.local}" style="display:inline-block;background:linear-gradient(135deg,#00889e,#00677d);color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 32px;border-radius:9999px;box-shadow:0 4px 14px rgba(0,137,158,0.4);">
                 Entrar na Reunião Online
               </a>
             </div>` : ''}

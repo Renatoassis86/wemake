@@ -42,7 +42,7 @@ export default async function PipelinePage({ searchParams }: Props) {
                     padding: '5px 11px', borderRadius: 6, textDecoration: 'none',
                     fontSize: '.72rem', fontWeight: 700, whiteSpace: 'nowrap',
                     background: viewMode === t.v ? '#fff' : 'transparent',
-                    color: viewMode === t.v ? '#0f172a' : '#64748b',
+                    color: viewMode === t.v ? '#002933' : '#64748b',
                     boxShadow: viewMode === t.v ? '0 1px 3px rgba(0,0,0,.1)' : 'none',
                     fontFamily: 'var(--font-montserrat,sans-serif)',
                   }}>

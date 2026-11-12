@@ -20,7 +20,7 @@ const inputStyle: React.CSSProperties = {
   width: '100%', padding: '.65rem .9rem', fontSize: '.875rem',
   fontFamily: 'var(--font-inter,sans-serif)',
   border: '1.5px solid #e2e8f0', borderRadius: 8,
-  background: '#f8fafc', color: '#0f172a', outline: 'none',
+  background: '#f8fafc', color: '#002933', outline: 'none',
   boxSizing: 'border-box', transition: 'border-color .15s, box-shadow .15s',
 }
 
@@ -45,12 +45,12 @@ function SectionCard({ title, icon, accent, bg, children }: {
   title: string; icon: React.ReactNode; accent: string; bg: string; children: React.ReactNode
 }) {
   return (
-    <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, marginBottom: '1.5rem', overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.06)' }}>
+    <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, marginBottom: '1.5rem', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,41,51,.06)' }}>
       <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid #f1f5f9', background: '#fafafa', display: 'flex', alignItems: 'center', gap: '.65rem' }}>
         <div style={{ width: 30, height: 30, borderRadius: 8, background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           {icon}
         </div>
-        <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a' }}>
+        <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#002933' }}>
           {title}
         </div>
       </div>
@@ -132,7 +132,7 @@ Essa foi a proposta oficial que enviamos para a escola.`
             </div>
             <div>
               <label style={labelStyle}>Visualizações</label>
-              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '2rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>
+              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '2rem', fontWeight: 800, color: '#002933', lineHeight: 1 }}>
                 {p.visualizacoes ?? 0}
                 {p.visualizado_em && (
                   <span style={{ fontSize: '.68rem', color: '#94a3b8', fontWeight: 400, fontFamily: 'var(--font-inter,sans-serif)', marginLeft: '.6rem', letterSpacing: 0 }}>
@@ -270,7 +270,7 @@ Essa foi a proposta oficial que enviamos para a escola.`
                 { val: p.comodato_parcela ? formatCurrency(p.comodato_parcela) : '—', label: 'parcela comodato' },
               ].map((s, i) => (
                 <div key={i} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, padding: '.85rem 1rem' }}>
-                  <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{s.val}</div>
+                  <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.4rem', fontWeight: 800, color: '#002933', lineHeight: 1 }}>{s.val}</div>
                   <div style={{ fontSize: '.68rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.3rem' }}>{s.label}</div>
                 </div>
               ))}
@@ -280,13 +280,13 @@ Essa foi a proposta oficial que enviamos para a escola.`
           <div style={{
             display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap',
             padding: '1.25rem 1.75rem', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16,
-            boxShadow: '0 1px 4px rgba(15,23,42,.06)',
+            boxShadow: '0 1px 4px rgba(0,41,51,.06)',
           }}>
             <button type="submit" style={{
-              background: 'linear-gradient(135deg, #4A7FDB, #2563b8)', color: '#fff',
+              background: 'linear-gradient(135deg, #00889e, #00677d)', color: '#fff',
               padding: '.7rem 2rem', borderRadius: 9999, border: 'none', cursor: 'pointer',
               fontSize: '.875rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)',
-              boxShadow: '0 4px 14px rgba(74,127,219,.35)',
+              boxShadow: '0 4px 14px rgba(0,137,158,.35)',
             }}>
               Salvar alterações
             </button>

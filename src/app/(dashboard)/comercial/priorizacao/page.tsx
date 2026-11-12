@@ -86,7 +86,7 @@ function KpiCard({
         </div>
       </div>
       <div style={{
-        fontSize: '2rem', fontWeight: 800, color: urgente ? '#B91C1C' : '#0F172A',
+        fontSize: '2rem', fontWeight: 800, color: urgente ? '#B91C1C' : '#002933',
         fontFamily: 'var(--font-montserrat, sans-serif)', lineHeight: 1,
       }}>
         {value}
@@ -121,7 +121,7 @@ function TabelaEscolas({
     <div className="mp-prioriz-table-wrap" style={{ overflowX: 'auto' }}>
       <table className="mp-prioriz-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
-          <tr style={{ background: '#0F172A' }}>
+          <tr style={{ background: '#002933' }}>
             {['#', 'Escola', 'UF / Cidade', 'Alunos', 'PIB Município', 'Perfil', 'Proposta', 'Situação Comercial', 'Ações'].map(col => (
               <th key={col} style={{
                 padding: col === '#' ? '.7rem .9rem' : '.7rem 1rem',
@@ -173,7 +173,7 @@ function TabelaEscolas({
               <td data-label="Escola" style={{ padding: '.65rem 1rem', maxWidth: 280 }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <Link href={`/comercial/escolas/${escola.id}`} style={{
-                    fontSize: '.82rem', fontWeight: 700, color: '#0F172A',
+                    fontSize: '.82rem', fontWeight: 700, color: '#002933',
                     textDecoration: 'none',
                     fontFamily: 'var(--font-montserrat, sans-serif)',
                     display: 'flex', alignItems: 'center', gap: '.35rem',
@@ -266,7 +266,7 @@ function TabelaEscolas({
                 {escola.pibInfo ? (
                   <div title={`PIB per capita: R$ ${escola.pibInfo.pibPerCapita.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} — ${escola.pibInfo.pctPibEstado.toLocaleString('pt-BR')}% do PIB de ${escola.pibInfo.uf} — ${escola.pibInfo.posicaoNoEstado}º maior PIB per capita entre as ${escola.pibInfo.totalCidadesNoEstado} cidades mapeadas no estado`} style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     <span style={{
-                      fontSize: '.78rem', fontWeight: 800, color: '#0F172A',
+                      fontSize: '.78rem', fontWeight: 800, color: '#002933',
                       fontFamily: 'var(--font-montserrat, sans-serif)',
                     }}>
                       R$ {Math.round(escola.pibInfo.pibPerCapita).toLocaleString('pt-BR')}
@@ -532,18 +532,18 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
 
       {/* ── Cabeçalho ─────────────────────────────────────────────────────── */}
       <div style={{
-        background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+        background: 'linear-gradient(135deg, #002933 0%, #1E293B 100%)',
         borderRadius: 16, padding: '1.75rem 2rem',
         marginBottom: '1.75rem',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         flexWrap: 'wrap', gap: '1rem',
-        boxShadow: '0 4px 20px rgba(15,23,42,.15)',
+        boxShadow: '0 4px 20px rgba(0,41,51,.15)',
       }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', marginBottom: '.35rem' }}>
             <div style={{
               width: 38, height: 38, borderRadius: 10,
-              background: 'linear-gradient(135deg, #4A7FDB, #5FE3D0)',
+              background: 'linear-gradient(135deg, #00889e, #00ceff)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               <Target size={20} strokeWidth={2.5} style={{ color: 'white' }} />
@@ -593,7 +593,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
           value={elegiveis.length}
           sub="Escolas aguardando contato ou em andamento"
           icon={Users}
-          cor="#4A7FDB"
+          cor="#00889e"
         />
         <KpiCard
           label="Ação Urgente"
@@ -630,12 +630,12 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
           <MiniBarChart
             title="Top 10 Estados — Fila de Abordagem"
             data={distribuicaoPorEstado.map(d => ({ label: d.estado, count: d.count }))}
-            colorHex="#4A7FDB"
+            colorHex="#00889e"
           />
           <MiniBarChart
             title="Escolas por Estágio no Funil"
             data={distribuicaoPorEstagio.map(d => ({ label: d.label, full: d.detalhe, count: d.count }))}
-            colorHex="#5FE3D0"
+            colorHex="#00ceff"
             labelWidth={104}
           />
         </div>
@@ -679,7 +679,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
           <a href={buildHref({ uf: '', cidade: '', bairro: '', page: '' })} style={{
             padding: '4px 12px', borderRadius: 99, fontSize: '.72rem', fontWeight: 700,
             textDecoration: 'none', fontFamily: 'var(--font-montserrat, sans-serif)',
-            background: !ufAtivo ? 'linear-gradient(135deg, #4A7FDB, #5FE3D0)' : '#F1F5F9',
+            background: !ufAtivo ? 'linear-gradient(135deg, #00889e, #00ceff)' : '#F1F5F9',
             color: !ufAtivo ? 'white' : '#475569',
             border: !ufAtivo ? 'none' : '1px solid #E2E8F0',
           }}>Todos</a>
@@ -687,7 +687,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
             <a key={uf} href={buildHref({ uf, cidade: '', bairro: '', page: '' })} style={{
               padding: '4px 12px', borderRadius: 99, fontSize: '.72rem', fontWeight: 700,
               textDecoration: 'none', fontFamily: 'var(--font-montserrat, sans-serif)',
-              background: ufAtivo === uf ? 'linear-gradient(135deg, #4A7FDB, #5FE3D0)' : '#F1F5F9',
+              background: ufAtivo === uf ? 'linear-gradient(135deg, #00889e, #00ceff)' : '#F1F5F9',
               color: ufAtivo === uf ? 'white' : '#475569',
               border: ufAtivo === uf ? 'none' : '1px solid #E2E8F0',
             }}>{uf}</a>
@@ -718,7 +718,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
           <a href={buildHref({ cidade: '', bairro: '', page: '' })} style={{
             padding: '4px 12px', borderRadius: 99, fontSize: '.72rem', fontWeight: 700,
             textDecoration: 'none', fontFamily: 'var(--font-montserrat, sans-serif)',
-            background: !cidadeAtiva ? 'linear-gradient(135deg, #4A7FDB, #5FE3D0)' : '#F1F5F9',
+            background: !cidadeAtiva ? 'linear-gradient(135deg, #00889e, #00ceff)' : '#F1F5F9',
             color: !cidadeAtiva ? 'white' : '#475569',
             border: !cidadeAtiva ? 'none' : '1px solid #E2E8F0',
           }}>Todos</a>
@@ -727,7 +727,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
               display: 'inline-flex', alignItems: 'center', gap: '.3rem',
               padding: '4px 12px', borderRadius: 99, fontSize: '.72rem', fontWeight: 700,
               textDecoration: 'none', fontFamily: 'var(--font-montserrat, sans-serif)',
-              background: cidadeAtivaKey === key ? 'linear-gradient(135deg, #4A7FDB, #5FE3D0)' : '#F1F5F9',
+              background: cidadeAtivaKey === key ? 'linear-gradient(135deg, #00889e, #00ceff)' : '#F1F5F9',
               color: cidadeAtivaKey === key ? 'white' : '#475569',
               border: cidadeAtivaKey === key ? 'none' : '1px solid #E2E8F0',
             }}>
@@ -749,7 +749,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
           <MiniBarChart
             title={`Escolas por Cidade — ${ufAtivo} (${distribuicaoPorCidade.length} cidades)`}
             data={distribuicaoPorCidade}
-            colorHex="#4A7FDB"
+            colorHex="#00889e"
           />
         </div>
       )}
@@ -768,7 +768,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
           <a href={buildHref({ bairro: '', page: '' })} style={{
             padding: '4px 12px', borderRadius: 99, fontSize: '.72rem', fontWeight: 700,
             textDecoration: 'none', fontFamily: 'var(--font-montserrat, sans-serif)',
-            background: !bairroAtivo ? 'linear-gradient(135deg, #4A7FDB, #5FE3D0)' : '#F1F5F9',
+            background: !bairroAtivo ? 'linear-gradient(135deg, #00889e, #00ceff)' : '#F1F5F9',
             color: !bairroAtivo ? 'white' : '#475569',
             border: !bairroAtivo ? 'none' : '1px solid #E2E8F0',
           }}>Todos</a>
@@ -777,7 +777,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
               display: 'inline-flex', alignItems: 'center', gap: '.3rem',
               padding: '4px 12px', borderRadius: 99, fontSize: '.72rem', fontWeight: 700,
               textDecoration: 'none', fontFamily: 'var(--font-montserrat, sans-serif)',
-              background: bairroAtivoKey === key ? 'linear-gradient(135deg, #4A7FDB, #5FE3D0)' : '#F1F5F9',
+              background: bairroAtivoKey === key ? 'linear-gradient(135deg, #00889e, #00ceff)' : '#F1F5F9',
               color: bairroAtivoKey === key ? 'white' : '#475569',
               border: bairroAtivoKey === key ? 'none' : '1px solid #E2E8F0',
             }}>
@@ -825,8 +825,8 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
             background: '#FAFAFA',
           }}>
             <span style={{ fontSize: '.75rem', color: '#475569', fontFamily: 'var(--font-inter, sans-serif)' }}>
-              Página <strong style={{ color: '#0F172A' }}>{pageAtual}</strong> de <strong style={{ color: '#0F172A' }}>{totalPages}</strong>
-              {' '}— <strong style={{ color: '#0F172A' }}>{elegiveisFiltrados.length}</strong> escolas encontradas
+              Página <strong style={{ color: '#002933' }}>{pageAtual}</strong> de <strong style={{ color: '#002933' }}>{totalPages}</strong>
+              {' '}— <strong style={{ color: '#002933' }}>{elegiveisFiltrados.length}</strong> escolas encontradas
             </span>
             <div style={{ display: 'flex', gap: '.5rem' }}>
               {pageAtual > 1 && (
@@ -840,7 +840,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
               )}
               {pageAtual < totalPages && (
                 <a href={buildHref({ page: String(pageAtual + 1) })} style={{
-                  padding: '6px 14px', borderRadius: 7, background: '#4A7FDB', color: '#fff',
+                  padding: '6px 14px', borderRadius: 7, background: '#00889e', color: '#fff',
                   fontSize: '.78rem', fontWeight: 700, textDecoration: 'none',
                   fontFamily: 'var(--font-montserrat, sans-serif)',
                 }}>
@@ -903,7 +903,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
                     }}>
                       <td data-label="Escola" style={{ padding: '.6rem 1rem' }}>
                         <Link href={`/comercial/escolas/${escola.id}`} style={{
-                          fontSize: '.82rem', fontWeight: 600, color: '#0F172A',
+                          fontSize: '.82rem', fontWeight: 600, color: '#002933',
                           textDecoration: 'none',
                           fontFamily: 'var(--font-montserrat, sans-serif)',
                         }}>

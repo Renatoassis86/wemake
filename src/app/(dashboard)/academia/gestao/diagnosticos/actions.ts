@@ -235,9 +235,13 @@ const TIPOS_EQUIPE: Record<string, string> = {
 const MAX_TAMANHO_EQUIPE = 50 * 1024 * 1024
 const MAX_ARQUIVOS_EQUIPE = 40
 
+export type CategoriaArquivoEquipe = 'arquitetura' | 'espaco_maker'
+
 /** Plantas, memoriais e outros arquivos da equipe (ex.: Gabi, arquiteta) — bucket e lógica iguais
- *  ao upload da escola (src/app/diagnostico/actions.ts), só a pasta muda (equipe/ em vez do id). */
-export async function pedirUploadEquipe(id: string, input: { mime: string; tamanho: number }) {
+ *  ao upload da escola (src/app/diagnostico/actions.ts), só a pasta muda (equipe/ em vez do id).
+ *  A categoria separa os arquivos de arquitetura dos do projeto do Espaço Maker, cada um com seu
+ *  próprio limite de arquivos por diagnóstico. */
+export async function pedirUploadEquipe(id: string, input: { mime: string; tamanho: number; categoria: CategoriaArquivoEquipe }) {
   const user = await autorizado()
   if (!user) return { ok: false as const, erro: SEM_PERMISSAO.erro }
   const ext = TIPOS_EQUIPE[input.mime]
@@ -245,10 +249,10 @@ export async function pedirUploadEquipe(id: string, input: { mime: string; taman
   if (!(input.tamanho > 0) || input.tamanho > MAX_TAMANHO_EQUIPE) return { ok: false as const, erro: 'O arquivo passa de 50 MB.' }
 
   const db = createAdminClient()
-  const { count } = await db.from('academia_diag_arquivos_equipe').select('id', { count: 'exact', head: true }).eq('diagnostico_id', id)
+  const { count } = await db.from('academia_diag_arquivos_equipe').select('id', { count: 'exact', head: true }).eq('diagnostico_id', id).eq('categoria', input.categoria)
   if ((count ?? 0) >= MAX_ARQUIVOS_EQUIPE) return { ok: false as const, erro: 'Limite de arquivos deste diagnóstico atingido.' }
 
-  const path = `equipe/${id}/${randomUUID()}.${ext}`
+  const path = `equipe/${id}/${input.categoria}/${randomUUID()}.${ext}`
   const { data, error } = await db.storage.from(BUCKET).createSignedUploadUrl(path)
   if (error || !data) return { ok: false as const, erro: 'Não foi possível preparar o envio. Tente de novo.' }
   return { ok: true as const, path, token: data.token }
@@ -256,14 +260,14 @@ export async function pedirUploadEquipe(id: string, input: { mime: string; taman
 
 export interface ArquivoEquipe { id: string; nome: string; mime: string | null; tamanho: number | null; criado_em: string; enviado_por: string | null }
 
-export async function confirmarUploadEquipe(id: string, input: { path: string; nome: string; mime: string }): Promise<{ ok: boolean; erro?: string; arquivo?: ArquivoEquipe }> {
+export async function confirmarUploadEquipe(id: string, input: { path: string; nome: string; mime: string; categoria: CategoriaArquivoEquipe }): Promise<{ ok: boolean; erro?: string; arquivo?: ArquivoEquipe }> {
   const user = await autorizado()
   if (!user) return SEM_PERMISSAO
-  if (!input.path.startsWith(`equipe/${id}/`)) return { ok: false, erro: 'Arquivo inválido.' }
+  if (!input.path.startsWith(`equipe/${id}/${input.categoria}/`)) return { ok: false, erro: 'Arquivo inválido.' }
 
   const db = createAdminClient()
-  const pasta = input.path.split('/').slice(0, 2).join('/')
-  const nomeNoStorage = input.path.split('/')[2]
+  const pasta = input.path.split('/').slice(0, 3).join('/')
+  const nomeNoStorage = input.path.split('/')[3]
   const { data: lista } = await db.storage.from(BUCKET).list(pasta, { limit: 100, search: nomeNoStorage })
   const objeto = (lista ?? []).find(o => o.name === nomeNoStorage)
   if (!objeto) return { ok: false, erro: 'O envio não foi concluído. Tente de novo.' }
@@ -272,7 +276,7 @@ export async function confirmarUploadEquipe(id: string, input: { path: string; n
   const tamanho = Number((objeto.metadata as { size?: number } | null)?.size ?? 0) || null
   const { data, error } = await db
     .from('academia_diag_arquivos_equipe')
-    .insert({ diagnostico_id: id, path: input.path, nome, mime: input.mime, tamanho, enviado_por: user.email })
+    .insert({ diagnostico_id: id, path: input.path, nome, mime: input.mime, tamanho, enviado_por: user.email, categoria: input.categoria })
     .select('id, nome, mime, tamanho, criado_em, enviado_por')
     .single()
   if (error || !data) return { ok: false, erro: 'Não foi possível registrar o arquivo.' }

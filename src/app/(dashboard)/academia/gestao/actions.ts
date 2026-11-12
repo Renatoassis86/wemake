@@ -402,7 +402,7 @@ export async function criarEvento(fd: FormData): Promise<Resultado> {
     descricao: [txt(fd.get('notas'), 1500), resp ? `Responsável: ${resp}` : null].filter(Boolean).join(' · ') || null,
     local: txt(fd.get('local'), 160),
     tipo: 'reuniao',
-    cor: '#00c8ff',
+    cor: '#00677d',
     data_inicio: inicio.toISOString(),
     data_fim: (fim && !Number.isNaN(fim.getTime()) ? fim : new Date(inicio.getTime() + 3600_000)).toISOString(),
     dia_inteiro: false,

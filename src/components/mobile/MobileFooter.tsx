@@ -68,7 +68,7 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
             fontWeight: 700,
             textTransform: 'uppercase',
             letterSpacing: '.1em',
-            color: '#76f3cd',
+            color: '#00ceff',
             marginBottom: '1rem',
             fontFamily: 'var(--font-montserrat, sans-serif)',
           }}>
@@ -85,10 +85,10 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
               transition: 'color .2s',
               fontFamily: 'var(--font-inter, sans-serif)',
             }}
-              onMouseEnter={e => e.currentTarget.style.color = '#76f3cd'}
+              onMouseEnter={e => e.currentTarget.style.color = '#00ceff'}
               onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,.5)'}
             >
-              <Mail size={16} style={{ flexShrink: 0, color: '#76f3cd' }} />
+              <Mail size={16} style={{ flexShrink: 0, color: '#00ceff' }} />
               contato@wemake.tec.br
             </a>
             <a href="tel:+5583996541530" style={{
@@ -101,10 +101,10 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
               transition: 'color .2s',
               fontFamily: 'var(--font-inter, sans-serif)',
             }}
-              onMouseEnter={e => e.currentTarget.style.color = '#76f3cd'}
+              onMouseEnter={e => e.currentTarget.style.color = '#00ceff'}
               onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,.5)'}
             >
-              <Phone size={16} style={{ flexShrink: 0, color: '#76f3cd' }} />
+              <Phone size={16} style={{ flexShrink: 0, color: '#00ceff' }} />
               (83) 99654-1530
             </a>
             <a href="https://wa.me/5583996541530" target="_blank" rel="noopener noreferrer" style={{
@@ -117,10 +117,10 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
               transition: 'color .2s',
               fontFamily: 'var(--font-inter, sans-serif)',
             }}
-              onMouseEnter={e => e.currentTarget.style.color = '#76f3cd'}
+              onMouseEnter={e => e.currentTarget.style.color = '#00ceff'}
               onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,.5)'}
             >
-              <MessageCircle size={16} style={{ flexShrink: 0, color: '#76f3cd' }} />
+              <MessageCircle size={16} style={{ flexShrink: 0, color: '#00ceff' }} />
               WhatsApp
             </a>
           </div>
@@ -141,15 +141,15 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
                 background: 'transparent',
                 border: 'none',
                 borderBottom: '1px solid rgba(255,255,255,.05)',
-                color: '#76f3cd',
+                color: '#00ceff',
                 cursor: 'pointer',
                 fontSize: '0.9rem',
                 fontWeight: 600,
                 fontFamily: 'var(--font-montserrat, sans-serif)',
                 transition: 'color .2s',
               }}
-              onMouseEnter={e => e.currentTarget.style.color = '#4c8ade'}
-              onMouseLeave={e => e.currentTarget.style.color = '#76f3cd'}
+              onMouseEnter={e => e.currentTarget.style.color = '#00889e'}
+              onMouseLeave={e => e.currentTarget.style.color = '#00ceff'}
             >
               {section.title}
               <ChevronDown
@@ -175,7 +175,7 @@ export default function MobileFooter({ sections }: MobileFooterProps) {
                         transition: 'color .2s',
                         fontFamily: 'var(--font-inter, sans-serif)',
                       }}
-                        onMouseEnter={e => e.currentTarget.style.color = '#76f3cd'}
+                        onMouseEnter={e => e.currentTarget.style.color = '#00ceff'}
                         onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,.45)'}
                       >
                         {item.label}

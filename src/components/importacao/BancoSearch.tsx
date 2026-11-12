@@ -53,14 +53,14 @@ export function BancoSearch() {
   const inp: React.CSSProperties = {
     width: '100%', padding: '.75rem 1rem .75rem 2.8rem', fontSize: '.95rem',
     fontFamily: 'var(--font-inter,sans-serif)', border: '2px solid #e2e8f0',
-    borderRadius: 10, background: '#fff', color: '#0f172a', outline: 'none',
+    borderRadius: 10, background: '#fff', color: '#002933', outline: 'none',
     boxSizing: 'border-box' as const,
   }
 
   const total = (result?.escolas.length ?? 0) + (result?.leads.length ?? 0)
 
   return (
-    <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.5rem', boxShadow: '0 1px 4px rgba(15,23,42,.04)' }}>
+    <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,41,51,.04)' }}>
       <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', marginBottom: '.65rem' }}>
         Buscar escola ou pessoa no banco de dados
       </div>
@@ -78,7 +78,7 @@ export function BancoSearch() {
           autoFocus
         />
         {loading && (
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A7FDB" strokeWidth="2" style={{ position: 'absolute', right: '.9rem', top: '50%', transform: 'translateY(-50%)', animation: 'spin 1s linear infinite' }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00889e" strokeWidth="2" style={{ position: 'absolute', right: '.9rem', top: '50%', transform: 'translateY(-50%)', animation: 'spin 1s linear infinite' }}>
             <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
           </svg>
         )}
@@ -87,8 +87,8 @@ export function BancoSearch() {
       {/* Resultado — Escolas no CRM */}
       {result && result.escolas.length > 0 && (
         <div style={{ marginBottom: '1.25rem' }}>
-          <div style={{ fontSize: '.6rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.5rem', display: 'flex', alignItems: 'center', gap: '.4rem' }}>
-            <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#4A7FDB' }} />
+          <div style={{ fontSize: '.6rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#00889e', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.5rem', display: 'flex', alignItems: 'center', gap: '.4rem' }}>
+            <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#00889e' }} />
             Escolas no CRM ({result.escolas.length})
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '.35rem' }}>
@@ -97,11 +97,11 @@ export function BancoSearch() {
                 key={e.id}
                 onClick={() => window.location.href = `/comercial/escolas/${e.id}`}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '.75rem 1rem', borderRadius: 10, border: '1.5px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', transition: 'all .15s' }}
-                onMouseEnter={el => { el.currentTarget.style.borderColor = '#4A7FDB'; el.currentTarget.style.background = '#eff6ff' }}
+                onMouseEnter={el => { el.currentTarget.style.borderColor = '#00889e'; el.currentTarget.style.background = '#eff6ff' }}
                 onMouseLeave={el => { el.currentTarget.style.borderColor = '#e2e8f0'; el.currentTarget.style.background = '#f8fafc' }}
               >
                 <div>
-                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.85rem', fontWeight: 700, color: '#0f172a', marginBottom: '.15rem' }}>{e.nome}</div>
+                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.85rem', fontWeight: 700, color: '#002933', marginBottom: '.15rem' }}>{e.nome}</div>
                   <div style={{ fontSize: '.68rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
                     {[e.cidade, e.estado].filter(Boolean).join(' · ')}
                     {e.contato_nome && ` · ${e.contato_nome}`}
@@ -139,9 +139,9 @@ export function BancoSearch() {
                   onMouseLeave={el => { if (expandedLead !== l.id) { el.currentTarget.style.borderColor = '#e2e8f0'; el.currentTarget.style.background = '#f8fafc' } }}
                 >
                   <div>
-                    <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.85rem', fontWeight: 700, color: '#0f172a', marginBottom: '.15rem' }}>{l.nome}</div>
+                    <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.85rem', fontWeight: 700, color: '#002933', marginBottom: '.15rem' }}>{l.nome}</div>
                     <div style={{ fontSize: '.68rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                      {l.escola_nome && <span style={{ color: '#4A7FDB', fontWeight: 600 }}>{l.escola_nome}</span>}
+                      {l.escola_nome && <span style={{ color: '#00889e', fontWeight: 600 }}>{l.escola_nome}</span>}
                       {l.cargo && ` · ${l.cargo}`}
                       {l.cidade && ` · ${l.cidade}/${l.uf}`}
                     </div>
@@ -163,7 +163,7 @@ export function BancoSearch() {
                     ].filter(f => f.value).map(f => (
                       <div key={f.label}>
                         <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.15rem' }}>{f.label}</div>
-                        <div style={{ fontSize: '.78rem', color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', fontWeight: 500 }}>{f.value}</div>
+                        <div style={{ fontSize: '.78rem', color: '#002933', fontFamily: 'var(--font-inter,sans-serif)', fontWeight: 500 }}>{f.value}</div>
                       </div>
                     ))}
                   </div>

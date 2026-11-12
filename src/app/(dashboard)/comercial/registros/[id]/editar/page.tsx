@@ -16,7 +16,7 @@ const inp: React.CSSProperties = {
   width: '100%', padding: '.7rem .9rem', fontSize: '.875rem',
   fontFamily: 'var(--font-inter,sans-serif)',
   border: '1.5px solid #e2e8f0', borderRadius: 8,
-  background: '#f8fafc', color: '#0f172a', outline: 'none', boxSizing: 'border-box',
+  background: '#f8fafc', color: '#002933', outline: 'none', boxSizing: 'border-box',
 }
 const lbl: React.CSSProperties = {
   display: 'block', fontFamily: 'var(--font-montserrat,sans-serif)',
@@ -25,19 +25,19 @@ const lbl: React.CSSProperties = {
 }
 const card: React.CSSProperties = {
   background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16,
-  marginBottom: '1.5rem', overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.06)',
+  marginBottom: '1.5rem', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,41,51,.06)',
 }
-const secHdr = (c = '#4A7FDB'): React.CSSProperties => ({
+const secHdr = (c = '#00889e'): React.CSSProperties => ({
   padding: '1rem 1.75rem', borderBottom: '1px solid #f1f5f9',
   background: '#fafafa', display: 'flex', alignItems: 'center', gap: '.65rem',
 })
-const dot = (c = '#4A7FDB'): React.CSSProperties => ({
+const dot = (c = '#00889e'): React.CSSProperties => ({
   width: 28, height: 28, borderRadius: 7, flexShrink: 0, background: c,
   display: 'flex', alignItems: 'center', justifyContent: 'center',
 })
 const secTitle: React.CSSProperties = {
   fontFamily: 'var(--font-montserrat,sans-serif)',
-  fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a',
+  fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#002933',
 }
 const body: React.CSSProperties = { padding: '1.5rem 1.75rem' }
 const g3: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.25rem 1.5rem' }
@@ -76,8 +76,8 @@ export default async function RegistroEditar({ params }: Props) {
 
           {/* Escola e Data */}
           <div style={card}>
-            <div style={secHdr('#0f172a')}>
-              <div style={{ ...dot('#0f172a'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={secHdr('#002933')}>
+              <div style={{ ...dot('#002933'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               </div>
               <div style={secTitle}>Escola e Data</div>
@@ -159,8 +159,8 @@ export default async function RegistroEditar({ params }: Props) {
 
           {/* Diagnóstico */}
           <div style={card}>
-            <div style={secHdr('#4A7FDB')}>
-              <div style={{ ...dot('#4A7FDB'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={secHdr('#00889e')}>
+              <div style={{ ...dot('#00889e'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
               </div>
               <div style={secTitle}>Diagnóstico Comercial</div>
@@ -192,7 +192,7 @@ export default async function RegistroEditar({ params }: Props) {
                   <label key={o.value} style={{ display: 'flex', alignItems: 'center', gap: '.65rem', padding: '.75rem 1rem', background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 10, cursor: 'pointer', fontSize: '.82rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
                     <input type="checkbox" name="encaminhamentos" value={o.value}
                       defaultChecked={Array.isArray(r.encaminhamentos) && r.encaminhamentos.includes(o.value)}
-                      style={{ width: 16, height: 16, accentColor: '#4A7FDB', flexShrink: 0 }} />
+                      style={{ width: 16, height: 16, accentColor: '#00889e', flexShrink: 0 }} />
                     <span style={{ color: '#334155', fontWeight: 500 }}>{o.label}</span>
                   </label>
                 ))}
@@ -239,7 +239,7 @@ export default async function RegistroEditar({ params }: Props) {
 
           {/* Ações */}
           <div className="mp-form-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem 1.75rem', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16 }}>
-            <button type="submit" style={{ background: 'linear-gradient(135deg, #4A7FDB, #2563b8)', color: '#fff', padding: '.7rem 2rem', borderRadius: 9999, border: 'none', cursor: 'pointer', fontSize: '.875rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 14px rgba(74,127,219,.35)' }}>
+            <button type="submit" style={{ background: 'linear-gradient(135deg, #00889e, #00677d)', color: '#fff', padding: '.7rem 2rem', borderRadius: 9999, border: 'none', cursor: 'pointer', fontSize: '.875rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 14px rgba(0,137,158,.35)' }}>
               Salvar Alterações
             </button>
             <Link href={`/comercial/escolas/${r.escola_id}`} style={{ padding: '.7rem 1.5rem', borderRadius: 9999, border: '1.5px solid #e2e8f0', background: '#fff', color: '#64748b', textDecoration: 'none', fontSize: '.875rem', fontWeight: 600, fontFamily: 'var(--font-montserrat,sans-serif)' }}>

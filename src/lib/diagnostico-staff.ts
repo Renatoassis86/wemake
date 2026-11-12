@@ -125,6 +125,7 @@ export interface DiagnosticoArquitetura {
   encaminhamento: string | null
   anotacoes: AnotacaoStaff[]
   arquivosEquipe: ArquivoEquipeStaff[]
+  arquivosMaker: ArquivoEquipeStaff[]
 }
 
 /** Área da Gabi (arquitetura): um card por escola com o encaminhamento, o diário e os arquivos — sem precisar abrir cada diagnóstico. */
@@ -150,7 +151,7 @@ export async function listarParaArquitetura(): Promise<{ setup: boolean; erro?: 
   const [{ data: pareceres }, { data: anotacoesRaw }, { data: arquivosRaw }] = await Promise.all([
     db.from('academia_diag_pareceres').select('diagnostico_id, texto').eq('item_key', 'geral.arquitetura').in('diagnostico_id', ids),
     db.from('academia_diag_anotacoes').select('id, diagnostico_id, texto, criado_em, autor').in('diagnostico_id', ids).order('criado_em', { ascending: false }),
-    db.from('academia_diag_arquivos_equipe').select('id, diagnostico_id, nome, mime, tamanho, path, criado_em, enviado_por').in('diagnostico_id', ids).order('criado_em', { ascending: false }),
+    db.from('academia_diag_arquivos_equipe').select('id, diagnostico_id, nome, mime, tamanho, path, criado_em, enviado_por, categoria').in('diagnostico_id', ids).order('criado_em', { ascending: false }),
   ])
 
   const encaminhamentoPorDiag = new Map((pareceres ?? []).map(p => [p.diagnostico_id as string, p.texto as string | null]))
@@ -161,16 +162,18 @@ export async function listarParaArquitetura(): Promise<{ setup: boolean; erro?: 
     anotacoesPorDiag.set(a.diagnostico_id, l)
   }
 
-  const listaArquivos = (arquivosRaw ?? []) as { id: string; diagnostico_id: string; nome: string; mime: string | null; tamanho: number | null; path: string; criado_em: string; enviado_por: string | null }[]
+  const listaArquivos = (arquivosRaw ?? []) as { id: string; diagnostico_id: string; nome: string; mime: string | null; tamanho: number | null; path: string; criado_em: string; enviado_por: string | null; categoria: string }[]
   const urls = listaArquivos.length
     ? await db.storage.from(BUCKET).createSignedUrls(listaArquivos.map(a => a.path), 3600)
     : { data: [] as { path: string | null; signedUrl: string }[] }
   const porPath = new Map((urls.data ?? []).map(u => [u.path, u.signedUrl]))
   const arquivosPorDiag = new Map<string, ArquivoEquipeStaff[]>()
+  const makerPorDiag = new Map<string, ArquivoEquipeStaff[]>()
   for (const a of listaArquivos) {
-    const l = arquivosPorDiag.get(a.diagnostico_id) ?? []
+    const mapa = a.categoria === 'espaco_maker' ? makerPorDiag : arquivosPorDiag
+    const l = mapa.get(a.diagnostico_id) ?? []
     l.push({ id: a.id, nome: a.nome, mime: a.mime, tamanho: a.tamanho, criado_em: a.criado_em, enviado_por: a.enviado_por, url: porPath.get(a.path) ?? null })
-    arquivosPorDiag.set(a.diagnostico_id, l)
+    mapa.set(a.diagnostico_id, l)
   }
 
   return {
@@ -183,6 +186,7 @@ export async function listarParaArquitetura(): Promise<{ setup: boolean; erro?: 
       encaminhamento: encaminhamentoPorDiag.get(d.id) ?? null,
       anotacoes: anotacoesPorDiag.get(d.id) ?? [],
       arquivosEquipe: arquivosPorDiag.get(d.id) ?? [],
+      arquivosMaker: makerPorDiag.get(d.id) ?? [],
     })),
   }
 }
@@ -222,7 +226,7 @@ export async function carregarDiagnostico(id: string) {
 
   const { data: arqsEquipeRaw } = await db
     .from('academia_diag_arquivos_equipe')
-    .select('id, nome, mime, tamanho, path, criado_em, enviado_por')
+    .select('id, nome, mime, tamanho, path, criado_em, enviado_por, categoria')
     .eq('diagnostico_id', id)
     .order('criado_em', { ascending: false })
   const listaEquipe = arqsEquipeRaw ?? []
@@ -230,9 +234,11 @@ export async function carregarDiagnostico(id: string) {
     ? await db.storage.from(BUCKET).createSignedUrls(listaEquipe.map(a => a.path), 3600)
     : { data: [] as { path: string | null; signedUrl: string }[] }
   const porPathEquipe = new Map((urlsEquipe.data ?? []).map(u => [u.path, u.signedUrl]))
-  const arquivosEquipe: ArquivoEquipeStaff[] = listaEquipe.map(a => ({
+  const paraStaff = (a: typeof listaEquipe[number]): ArquivoEquipeStaff => ({
     id: a.id, nome: a.nome, mime: a.mime, tamanho: a.tamanho, criado_em: a.criado_em, enviado_por: a.enviado_por, url: porPathEquipe.get(a.path) ?? null,
-  }))
+  })
+  const arquivosEquipe: ArquivoEquipeStaff[] = listaEquipe.filter(a => a.categoria !== 'espaco_maker').map(paraStaff)
+  const arquivosMaker: ArquivoEquipeStaff[] = listaEquipe.filter(a => a.categoria === 'espaco_maker').map(paraStaff)
 
   return {
     diagnostico: {
@@ -244,5 +250,6 @@ export async function carregarDiagnostico(id: string) {
     arquivos,
     anotacoes,
     arquivosEquipe,
+    arquivosMaker,
   }
 }

@@ -99,9 +99,9 @@ export function AnotacaoContatoInline({ escolaId, notas: notasIniciais }: { esco
         <div ref={painelRef} style={{
           position: 'fixed', top: pos.top, left: pos.left, zIndex: 2000,
           width: 340, background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 12,
-          boxShadow: '0 12px 32px rgba(15,23,42,.18)', padding: '1rem',
+          boxShadow: '0 12px 32px rgba(0,41,51,.18)', padding: '1rem',
         }}>
-          <div style={{ fontSize: '.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#0f172a', marginBottom: '.6rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+          <div style={{ fontSize: '.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#002933', marginBottom: '.6rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
             Anotações de Contato
           </div>
 
@@ -110,7 +110,7 @@ export function AnotacaoContatoInline({ escolaId, notas: notasIniciais }: { esco
               {notasIniciais.map((n, i) => (
                 <div key={i} style={{ background: '#f8fafc', border: '1px solid #f1f5f9', borderRadius: 8, padding: '.5rem .6rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '.15rem' }}>
-                    <span style={{ fontSize: '.66rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{n.autor}</span>
+                    <span style={{ fontSize: '.66rem', fontWeight: 700, color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{n.autor}</span>
                     <span style={{ fontSize: '.6rem', color: '#94a3b8' }}>{tempoRelativo(n.criadoEm)}</span>
                   </div>
                   <div style={{ fontSize: '.74rem', color: '#334155', lineHeight: 1.4 }}>{n.texto}</div>
@@ -132,7 +132,7 @@ export function AnotacaoContatoInline({ escolaId, notas: notasIniciais }: { esco
           <div style={{ display: 'flex', gap: '.5rem' }}>
             <button onClick={salvar} disabled={pending || !texto.trim()} style={{
               flex: 1, padding: '.5rem', borderRadius: 8, border: 'none', cursor: pending ? 'wait' : 'pointer',
-              background: '#4A7FDB', color: '#fff', fontSize: '.75rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)',
+              background: '#00889e', color: '#fff', fontSize: '.75rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)',
               opacity: !texto.trim() ? .6 : 1,
             }}>
               {pending ? 'Salvando...' : 'Adicionar'}

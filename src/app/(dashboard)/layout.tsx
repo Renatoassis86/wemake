@@ -4,7 +4,6 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import Sidebar from '@/components/layout/Sidebar'
 import DashboardTopbar from '@/components/layout/DashboardTopbar'
 import type { Profile } from '@/types/database'
-import { modulosDoUsuario } from '@/lib/modulos'
 import { podeVerDiagnosticos } from '@/lib/diagnostico-staff'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -41,7 +40,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="flex">
-      <Sidebar profile={profile} modulos={modulosDoUsuario(user.email)} diagnosticos={diagnosticos} />
+      <Sidebar profile={profile} diagnosticos={diagnosticos} />
       <div
         className="dashboard-content"
         style={{ flex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}

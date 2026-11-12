@@ -171,7 +171,7 @@ export function EscolaSelector({ escolas, escolaId, basePath, placeholder, extra
                       padding: '.6rem .75rem',
                       cursor: 'pointer',
                       fontSize: '.85rem',
-                      color: '#0f172a',
+                      color: '#002933',
                       borderBottom: '1px solid #f1f5f9',
                       transition: 'all .15s',
                       background: escolaId === e.id ? '#eff6ff' : 'transparent',
@@ -181,7 +181,7 @@ export function EscolaSelector({ escolas, escolaId, basePath, placeholder, extra
                     onMouseEnter={(evt) => (evt.currentTarget.style.background = '#f8fafc')}
                     onMouseLeave={(evt) => (evt.currentTarget.style.background = escolaId === e.id ? '#eff6ff' : 'transparent')}
                   >
-                    <div style={{ fontWeight: 600, color: '#0f172a' }}>{e.nome}</div>
+                    <div style={{ fontWeight: 600, color: '#002933' }}>{e.nome}</div>
                     <div style={{ fontSize: '.75rem', color: '#64748b', marginTop: '.2rem' }}>
                       {e.cidade && e.estado ? `${e.cidade}/${e.estado}` : e.cidade ?? e.estado ?? ''}
                     </div>
@@ -198,7 +198,7 @@ export function EscolaSelector({ escolas, escolaId, basePath, placeholder, extra
                   fontSize: '.72rem',
                   fontWeight: 700,
                   textTransform: 'uppercase',
-                  color: '#4A7FDB',
+                  color: '#00889e',
                   letterSpacing: '.05em',
                   background: '#fef3c7',
                   borderBottom: '1px solid #fcd34d',
@@ -208,7 +208,7 @@ export function EscolaSelector({ escolas, escolaId, basePath, placeholder, extra
                   alignItems: 'center',
                 }}>
                   <span>◈ Banco de Leads</span>
-                  <span style={{ background: '#4A7FDB', color: '#fff', borderRadius: 99, padding: '.1rem .5rem', fontSize: '.65rem' }}>{lead_filtrado.length}</span>
+                  <span style={{ background: '#00889e', color: '#fff', borderRadius: 99, padding: '.1rem .5rem', fontSize: '.65rem' }}>{lead_filtrado.length}</span>
                 </div>
                 {lead_filtrado.map(e => (
                   <div
@@ -218,7 +218,7 @@ export function EscolaSelector({ escolas, escolaId, basePath, placeholder, extra
                       padding: '.6rem .75rem',
                       cursor: 'pointer',
                       fontSize: '.85rem',
-                      color: '#0f172a',
+                      color: '#002933',
                       borderBottom: '1px solid #f1f5f9',
                       transition: 'all .15s',
                       background: escolaId === e.id ? '#eff6ff' : 'transparent',
@@ -229,7 +229,7 @@ export function EscolaSelector({ escolas, escolaId, basePath, placeholder, extra
                     onMouseEnter={(evt) => (evt.currentTarget.style.background = '#f8fafc')}
                     onMouseLeave={(evt) => (evt.currentTarget.style.background = escolaId === e.id ? '#eff6ff' : 'transparent')}
                   >
-                    <div style={{ fontWeight: 600, color: '#0f172a' }}>{e.nome}</div>
+                    <div style={{ fontWeight: 600, color: '#002933' }}>{e.nome}</div>
                     <div style={{ fontSize: '.75rem', color: '#64748b', marginTop: '.2rem' }}>
                       {e.cidade && e.estado ? `${e.cidade}/${e.estado}` : e.cidade ?? e.estado ?? ''}
                     </div>

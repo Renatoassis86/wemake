@@ -526,10 +526,15 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
   // Escola que declinou é negócio fechado (perdido) — fica de fora do
   // gráfico de Funil de Vendas e dos totais de pipeline/temperatura (que
   // representam o funil ATIVO), mas continua em `linhas` pra aparecer no
-  // quadro "Declinaram" da tabela.
+  // quadro "Declinaram" da tabela. Mesma coisa pra escola marcada como
+  // veterana (contrato antigo em vigor, ou contrato renovado pros próximos
+  // anos, caso do Graciosa): esse funil é especificamente a campanha de
+  // captação de escolas NOVAS pra 2027, então ela não entra nos KPIs de
+  // pipeline/fase/temperatura dessa campanha — continua em `linhas` só pra
+  // aparecer no quadro "Escolas Atendidas", separado do negócio ativo.
   let escolasAtivasEmFunil = 0
   for (const l of linhas) {
-    if (l.declinou) continue
+    if (l.declinou || l.marcado_veterana) continue
     escolasAtivasEmFunil++
     porFase[l.fase_funil]++
     porFaseTemperatura[l.fase_funil][l.lead_temperatura]++
@@ -550,11 +555,11 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
   // etapa (sem interação) ou em qualquer etapa mais avançada".
   const baseDeLeads = { total: 0, quente: 0, morno: 0, frio: 0 }
   for (const l of linhasTodas) {
-    if (l.declinou) continue
+    if (l.declinou || l.marcado_veterana) continue
     baseDeLeads.total++
     baseDeLeads[l.lead_temperatura]++
   }
-  const leadsSemInteracao = linhasTodas.filter(l => !l.declinou && !l.negociacao_id && !l.proposta_id && !l.contrato_id).length
+  const leadsSemInteracao = linhasTodas.filter(l => !l.declinou && !l.marcado_veterana && !l.negociacao_id && !l.proposta_id && !l.contrato_id).length
 
   // Total de reuniões/contatos registrados — soma de TODAS as escolas ativas
   // (não só as que já entraram em negociação), sem deduplicar por escola. Vem

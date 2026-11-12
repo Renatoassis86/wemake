@@ -24,7 +24,7 @@ export const STATUS_AJUDA: Record<Status, string> = {
 export const RISCO_AJUDA: Record<Risco, string> = {
   Baixo: 'A implantação segue dentro do fluxo esperado. Acompanhamento normal.',
   Médio: 'Existe pendência, mas sem ameaça imediata ao cronograma. Monitorar e definir prazo.',
-  Alto: 'Há risco real de atraso, perda de qualidade ou impacto no Go-Live. Escalar internamente e criar ação de correção.',
+  Alto: 'Há risco real de atraso, perda de qualidade ou impacto no início das aulas. Escalar internamente e criar ação de correção.',
   Crítico: 'O início ou a continuidade da implantação está seriamente comprometido. Intervenção imediata da liderança.',
 }
 
@@ -136,7 +136,7 @@ export function resumo(impls: Implantacao[], tarefas: Pick<Tarefa, 'implantacao_
   })
   return {
     escolas: ativas.length,
-    goLive: ativas.filter(i => i.marcos?.['Go-Live'] === 'Concluído').length,
+    goLive: ativas.filter(i => i.marcos?.[MARCOS[7]] === 'Concluído').length, // marco 8 de 9: Início das Aulas
     riscoAlto: ativas.filter(i => i.risco === 'Alto' || i.risco === 'Crítico').length,
     // prazo da escola vencido OU tarefa aberta e vencida
     vencidos: ativas.filter(i => prazoVencido(i) || comTarefaVencida.has(i.id)).length,

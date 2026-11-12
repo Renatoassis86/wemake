@@ -90,7 +90,7 @@ export default function SincronizarLeadsButton() {
       <ActionButton
         label="Sincronizar com Banco de Leads"
         icon={RefreshCw}
-        color="#4A7FDB"
+        color="#00889e"
         onClick={handleSync}
         loading={syncState === 'loading'}
         msg={syncMsg}

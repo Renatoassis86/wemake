@@ -24,19 +24,19 @@ interface Props { searchParams: Promise<{ escola?: string; fase?: string; q?: st
 
 const card: React.CSSProperties = {
   background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16,
-  marginBottom: '1.5rem', overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.06)',
+  marginBottom: '1.5rem', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,41,51,.06)',
 }
-const secHdr = (color = '#4A7FDB'): React.CSSProperties => ({
+const secHdr = (color = '#00889e'): React.CSSProperties => ({
   padding: '1rem 1.75rem', borderBottom: '1px solid #f1f5f9',
   background: '#fafafa', display: 'flex', alignItems: 'center', gap: '.65rem',
 })
-const dot = (c = '#4A7FDB'): React.CSSProperties => ({
+const dot = (c = '#00889e'): React.CSSProperties => ({
   width: 28, height: 28, borderRadius: 7, flexShrink: 0, background: c,
   display: 'flex', alignItems: 'center', justifyContent: 'center',
 })
 const secTitle: React.CSSProperties = {
   fontFamily: 'var(--font-montserrat,sans-serif)',
-  fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a',
+  fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#002933',
 }
 const body: React.CSSProperties = { padding: '1.5rem 1.75rem' }
 const lbl: React.CSSProperties = {
@@ -48,7 +48,7 @@ const inp: React.CSSProperties = {
   width: '100%', padding: '.7rem .9rem', fontSize: '.875rem',
   fontFamily: 'var(--font-inter,sans-serif)',
   border: '1.5px solid #e2e8f0', borderRadius: 8,
-  background: '#f8fafc', color: '#0f172a', outline: 'none', boxSizing: 'border-box',
+  background: '#f8fafc', color: '#002933', outline: 'none', boxSizing: 'border-box',
 }
 const g2: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem 1.5rem' }
 
@@ -74,10 +74,14 @@ const FASE_EFETIVADA = { bg: '#f0fdfa', text: '#0f766e', border: '#5eead4' }
 // que já passou do contrato enviado desaparecer do quadro), declinaram
 // (sobrepõe todas as outras: uma escola que declinou sai do funil ativo
 // independente de que etapa estava, é sempre o quadro final dela), e
-// efetivadas (escolas veteranas/parcerias já fechadas em anos anteriores,
-// marcadas manualmente na tela Quantidade de Alunos — sem negócio 2027 em
-// andamento; se uma veterana começar a ser vendida de novo pro ano que vem,
-// ela sai daqui e vai pro quadro real da fase em que estiver).
+// efetivadas (escolas veteranas — contrato antigo em vigor, ou renovado pros
+// próximos anos, ex.: Graciosa — marcadas manualmente na tela Quantidade de
+// Alunos). Este funil é especificamente a campanha de captação de escolas
+// NOVAS pra 2027: uma veterana fica em "Escolas Atendidas" sempre, mesmo com
+// contrato_assinado=true e fase avançada — não entra misturada em
+// "Contrato"/"Minuta"/"Proposta" como se fosse negócio da campanha 2027,
+// nem conta nos KPIs de pipeline/fase/temperatura dessa campanha (ver
+// getFunilContratacao em lib/funil-contratacao.ts).
 // A escola "anda" de quadro sozinha conforme o checklist muda (não é
 // drag-and-drop) — o quadro é sempre derivado do estado real salvo no banco.
 type QuadroId = 'formulario' | 'dados' | 'proposta' | 'minuta' | 'contrato' | 'declinou' | 'efetivada'
@@ -98,13 +102,17 @@ const FASES_QUADRO_CONTRATO: FaseFunil[] = ['contrato_enviado', 'contrato_assina
 
 function classificarQuadro(l: { declinou: boolean; fase_funil: FaseFunil; marcado_veterana: boolean; formulario_recebido: boolean }): QuadroId {
   if (l.declinou) return 'declinou'
+  // Veterana primeiro, antes de olhar a fase: este funil é a campanha de
+  // captação de escolas NOVAS pra 2027, não o negócio ativo com quem já
+  // atendemos. Uma escola com contrato antigo em vigor, ou contrato
+  // renovado pros próximos anos (ex.: Graciosa), fica em "Escolas
+  // Atendidas" mesmo tendo contrato_assinado=true — não deve aparecer
+  // misturada em "Contrato"/"Minuta"/"Proposta" como se fosse um lead da
+  // campanha 2027.
+  if (l.marcado_veterana) return 'efetivada'
   if (FASES_QUADRO_CONTRATO.includes(l.fase_funil)) return 'contrato'
   if (l.fase_funil === 'minuta') return 'minuta'
   if (l.fase_funil === 'proposta_enviada') return 'proposta'
-  // Veterana sem negócio 2027 real em andamento (nenhuma fase acima bateu) —
-  // fica parcada aqui em vez de cair em "Formulário Preenchido" como se
-  // fosse um lead novo em negociação.
-  if (l.marcado_veterana) return 'efetivada'
   // dados do formulário recebidos e nenhuma proposta ainda
   if (l.formulario_recebido) return 'dados'
   return 'formulario'
@@ -212,7 +220,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
           <PrioridadeInline escolaId={l.escola_id} prioridade={l.prioridade_manual != null ? idx + 1 : null} escolaIdsQuadro={escolaIdsQuadro} />
         </td>
         <td style={{ padding: '.65rem .75rem', verticalAlign: 'middle', width: 150, maxWidth: 150 }}>
-          <div style={{ fontWeight: 700, fontSize: '.8rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', lineHeight: 1.3 }}>
+          <div style={{ fontWeight: 700, fontSize: '.8rem', color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)', lineHeight: 1.3 }}>
             {l.escola_nome}
           </div>
           <div style={{ fontSize: '.68rem', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -222,7 +230,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
         <td style={{ padding: '.65rem .75rem', whiteSpace: 'nowrap' }}>
           <ResponsavelInlineSelect escolaId={l.escola_id} responsavelId={l.responsavel_id} usuarios={usuariosAtivos ?? []} />
         </td>
-        <td style={{ padding: '.65rem .75rem', fontSize: '.8rem', color: '#0f172a', fontWeight: 700, textAlign: 'center' }}>{l.alunos_cadastro || '—'}</td>
+        <td style={{ padding: '.65rem .75rem', fontSize: '.8rem', color: '#002933', fontWeight: 700, textAlign: 'center' }}>{l.alunos_cadastro || '—'}</td>
         <td style={{ padding: '.65rem .75rem', fontSize: '.72rem', color: '#334155', maxWidth: 160 }}
           title={l.primeiro_contato_resumo ?? ''}>
           {l.primeiro_contato ? (
@@ -237,7 +245,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
           )}
         </td>
         <td style={{ padding: '.65rem .75rem', whiteSpace: 'nowrap' }}>
-          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '.85rem', fontWeight: 700, color: '#0f172a' }}>
+          <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '.85rem', fontWeight: 700, color: '#002933' }}>
             {l.proposta_valor_aluno_ano
               ? `${formatCurrency(l.proposta_valor_aluno_ano)}/aluno`
               : l.negociacao_valor_estimado
@@ -302,7 +310,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
             <Link href={`/comercial/escolas/${l.escola_id}`} title={`Editar ${l.escola_nome}`} style={{
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
               width: 28, height: 28, borderRadius: 7, flexShrink: 0,
-              background: '#eff6ff', color: '#4A7FDB',
+              background: '#eff6ff', color: '#00889e',
             }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </Link>
@@ -326,11 +334,11 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
             { label: 'Valor em Pipeline',  value: formatCurrency(kpis.valorPipelineTotal), sub: 'negociações abertas', cor: '#b45309', bg: '#fffbeb', border: '#fcd34d' },
             { label: 'Valor Contratado',   value: formatCurrency(kpis.valorContratadoTotal), sub: 'contratos assinados', cor: '#16a34a', bg: '#f0fdf4', border: '#86efac' },
             { label: 'Em Implantação',     value: kpis.emImplantacao, sub: 'pós-arquivamento', cor: '#7c3aed', bg: '#f5f3ff', border: '#c4b5fd' },
-            { label: 'Meta de Receita 2027', value: `${pctReceita}%`, sub: formatCurrency(META_RECEITA), cor: '#0f172a', bg: '#f8fafc', border: '#e2e8f0' },
+            { label: 'Meta de Receita 2027', value: `${pctReceita}%`, sub: formatCurrency(META_RECEITA), cor: '#002933', bg: '#f8fafc', border: '#e2e8f0' },
           ].map(k => (
             <div key={k.label} style={{ background: k.bg, border: `1.5px solid ${k.border}`, borderRadius: 14, padding: '1.1rem 1.25rem', borderTop: `3px solid ${k.cor}` }}>
               <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: k.cor, fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.35rem' }}>{k.label}</div>
-              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, lineHeight: 1, color: '#0f172a' }}>{k.value}</div>
+              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, lineHeight: 1, color: '#002933' }}>{k.value}</div>
               <div style={{ fontSize: '.7rem', color: '#64748b', marginTop: '.2rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{k.sub}</div>
             </div>
           ))}
@@ -338,7 +346,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
 
         {/* ── Funil visual + classificação de leads ─────────── */}
         <div style={card}>
-          <div style={secHdr('#0f172a')}>
+          <div style={secHdr('#002933')}>
             <div>
               <div style={secTitle}>Funil de Vendas</div>
               <div style={{ fontSize: '.68rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.1rem' }}>
@@ -367,7 +375,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
 
         {/* ── Distribuição por fase ─────────────────────────── */}
         <div style={{ ...card }}>
-          <div style={secHdr('#0f172a')}>
+          <div style={secHdr('#002933')}>
             <div style={secTitle}>Distribuição por Fase</div>
           </div>
           <div style={{ padding: '1.25rem 1.75rem', display: 'flex', flexWrap: 'wrap', gap: '.6rem' }}>
@@ -375,14 +383,14 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
               <Link key={fase} href={faseFiltro === fase ? '/comercial/funil-contratacao' : `/comercial/funil-contratacao?fase=${fase}`} style={{ textDecoration: 'none' }}>
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: '.5rem', padding: '.55rem .9rem',
-                  borderRadius: 10, background: faseFiltro === fase ? '#0f172a' : '#f8fafc',
-                  border: `1.5px solid ${faseFiltro === fase ? '#0f172a' : '#e2e8f0'}`,
+                  borderRadius: 10, background: faseFiltro === fase ? '#002933' : '#f8fafc',
+                  border: `1.5px solid ${faseFiltro === fase ? '#002933' : '#e2e8f0'}`,
                 }}>
                   <span style={{ fontSize: '.78rem', fontWeight: 700, color: faseFiltro === fase ? '#fff' : '#334155', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                     {FASE_LABELS[fase]}
                   </span>
                   <span style={{
-                    fontSize: '.72rem', fontWeight: 800, color: faseFiltro === fase ? '#fff' : '#0f172a',
+                    fontSize: '.72rem', fontWeight: 800, color: faseFiltro === fase ? '#fff' : '#002933',
                     fontFamily: 'var(--font-cormorant,serif)',
                   }}>
                     {kpis.porFase[fase]}
@@ -457,7 +465,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                   placeholder="Histórico de negociação, condições especiais, motivo de recusa..." />
               </div>
 
-              <button type="submit" style={{ background: 'linear-gradient(135deg, #4A7FDB, #2563b8)', color: '#fff', padding: '.7rem 2rem', borderRadius: 9999, border: 'none', cursor: 'pointer', fontSize: '.875rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 14px rgba(74,127,219,.35)' }}>
+              <button type="submit" style={{ background: 'linear-gradient(135deg, #00889e, #00677d)', color: '#fff', padding: '.7rem 2rem', borderRadius: 9999, border: 'none', cursor: 'pointer', fontSize: '.875rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 14px rgba(0,137,158,.35)' }}>
                 Salvar Negociação
               </button>
             </form>
@@ -497,7 +505,7 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
                 {quadroLinhas.length > 0 ? (
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
-                      <tr style={{ background: '#0f172a' }}>
+                      <tr style={{ background: '#002933' }}>
                         {['Prior.', 'Escola', 'Responsável', 'Alunos', 'Atividade', 'Valor/Desconto', 'Fase', 'Contato', ''].map(col => (
                           <th key={col} style={{ padding: '.6rem .75rem', textAlign: 'left', fontSize: '.63rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'rgba(255,255,255,.65)', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{col}</th>
                         ))}

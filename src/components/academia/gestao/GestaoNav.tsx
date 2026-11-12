@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 const ABAS: { href: string; label: string; exato?: boolean }[] = [
   { href: '/academia/gestao', label: 'Painel', exato: true },
   { href: '/academia/gestao/lista', label: 'Lista' },
+  { href: '/academia/gestao/jornada', label: 'Jornada' },
   { href: '/academia/gestao/quadro', label: 'Quadro' },
   { href: '/academia/gestao/calendario', label: 'Calendário' },
   { href: '/academia/gestao/agenda', label: 'Agenda' },

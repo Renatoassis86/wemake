@@ -203,7 +203,7 @@ function calcLeasing(
 const INP: React.CSSProperties = {
   width: '100%', padding: '.65rem .9rem', fontSize: '.875rem',
   border: '1.5px solid #e2e8f0', borderRadius: 8,
-  background: '#fffef0', color: '#0f172a', outline: 'none',
+  background: '#fffef0', color: '#002933', outline: 'none',
   fontFamily: 'var(--font-inter,sans-serif)', boxSizing: 'border-box',
 }
 const INP_SM: React.CSSProperties = {
@@ -212,8 +212,8 @@ const INP_SM: React.CSSProperties = {
 const INP_KEY: React.CSSProperties = {
   ...INP,
   background: '#eff6ff',
-  border: '2px solid #4A7FDB',
-  boxShadow: '0 0 0 3px rgba(74,127,219,0.12)',
+  border: '2px solid #00889e',
+  boxShadow: '0 0 0 3px rgba(0,137,158,0.12)',
 }
 const LBL: React.CSSProperties = {
   display: 'block', fontSize: '.65rem', fontWeight: 700,
@@ -223,7 +223,7 @@ const LBL: React.CSSProperties = {
 const NOTA: React.CSSProperties = {
   fontSize: '.7rem', color: '#475569', lineHeight: 1.55,
   fontFamily: 'var(--font-inter,sans-serif)', background: '#f8fafc',
-  border: '1px solid #e2e8f0', borderLeft: '3px solid #4A7FDB',
+  border: '1px solid #e2e8f0', borderLeft: '3px solid #00889e',
   borderRadius: '0 6px 6px 0', padding: '.45rem .7rem', marginTop: '.4rem',
 }
 
@@ -233,17 +233,17 @@ function Nota({ t }: { t: string }) { return <div style={NOTA}>{t}</div> }
 function SecTitle({ n, title }: { n: number; title: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '1rem' }}>
-      <div style={{ width: 26, height: 26, borderRadius: 7, background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.72rem', fontWeight: 800, color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)', flexShrink: 0 }}>{n}</div>
-      <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#0f172a' }}>{title}</div>
+      <div style={{ width: 26, height: 26, borderRadius: 7, background: '#002933', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.72rem', fontWeight: 800, color: '#00889e', fontFamily: 'var(--font-montserrat,sans-serif)', flexShrink: 0 }}>{n}</div>
+      <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#002933' }}>{title}</div>
     </div>
   )
 }
 
 function Card({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
-  return <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, padding: '1.25rem 1.5rem', boxShadow: '0 1px 4px rgba(15,23,42,.05)', ...style }}>{children}</div>
+  return <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, padding: '1.25rem 1.5rem', boxShadow: '0 1px 4px rgba(0,41,51,.05)', ...style }}>{children}</div>
 }
 
-function KV({ label, value, sub, color = '#0f172a', big }: { label: string; value: string; sub?: string; color?: string; big?: boolean }) {
+function KV({ label, value, sub, color = '#002933', big }: { label: string; value: string; sub?: string; color?: string; big?: boolean }) {
   return (
     <div style={{ padding: '.85rem 1rem' }}>
       <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>{label}</div>
@@ -577,7 +577,7 @@ function CalculadoraInner() {
   const tabStyle = (t: string): React.CSSProperties => ({
     padding: '.55rem 1.25rem', borderRadius: 8, border: 'none', cursor: 'pointer',
     fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 700,
-    background: tab === t ? '#0f172a' : '#f1f5f9',
+    background: tab === t ? '#002933' : '#f1f5f9',
     color: tab === t ? '#fff' : '#64748b', transition: 'all .15s',
   })
 
@@ -603,9 +603,9 @@ function CalculadoraInner() {
             style={{
               padding: '.6rem 1.4rem', borderRadius: 9, border: 'none', cursor: 'pointer',
               fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.8rem', fontWeight: 800,
-              background: 'linear-gradient(135deg, #4c8ade, #2a69ba)',
+              background: 'linear-gradient(135deg, #00889e, #00677d)',
               color: '#fff', letterSpacing: '.04em',
-              boxShadow: '0 2px 10px rgba(76,138,222,.35)',
+              boxShadow: '0 2px 10px rgba(0,137,158,.35)',
               display: 'flex', alignItems: 'center', gap: '.5rem',
             }}
           >
@@ -640,8 +640,8 @@ function CalculadoraInner() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
             {/* Header banner */}
-            <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius: 14, padding: '1.1rem 1.5rem' }}>
-              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4A7FDB', marginBottom: '.3rem' }}>
+            <div style={{ background: 'linear-gradient(135deg, #002933, #1e293b)', borderRadius: 14, padding: '1.1rem 1.5rem' }}>
+              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#00889e', marginBottom: '.3rem' }}>
                 Lógica de precificação — Calculadora_v7 · Score ponderado + Faixas de volume + Leasing retorno garantido
               </div>
               <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '.4rem' }}>
@@ -656,8 +656,8 @@ function CalculadoraInner() {
             <Card>
               <SecTitle n={1} title="Entradas principais" />
               <div style={{ marginTop: '-.5rem', marginBottom: '.75rem', display: 'flex', alignItems: 'center', gap: '.4rem' }}>
-                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#4A7FDB', flexShrink: 0 }} />
-                <span style={{ fontSize: '.67rem', fontWeight: 600, color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#00889e', flexShrink: 0 }} />
+                <span style={{ fontSize: '.67rem', fontWeight: 600, color: '#00889e', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                   campos destacados em azul mudam por contrato
                 </span>
               </div>
@@ -674,7 +674,7 @@ function CalculadoraInner() {
                 </div>
                 <div>
                   <label style={LBL}>Segmentos atendidos</label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.35rem', padding: '.45rem', background: '#eff6ff', border: '2px solid #4A7FDB', borderRadius: 8, boxShadow: '0 0 0 3px rgba(74,127,219,0.12)' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.35rem', padding: '.45rem', background: '#eff6ff', border: '2px solid #00889e', borderRadius: 8, boxShadow: '0 0 0 3px rgba(0,137,158,0.12)' }}>
                     {[
                       { key: 'inf', label: 'Infantil',       checked: segInfantil },
                       { key: 'f1',  label: 'Fundamental 1',  checked: segFund1 },
@@ -698,7 +698,7 @@ function CalculadoraInner() {
                 </div>
                 <div>
                   <label style={LBL}>Alta complexidade?</label>
-                  <div style={{ display: 'flex', gap: '.5rem', padding: '.35rem', background: '#eff6ff', border: '2px solid #4A7FDB', borderRadius: 8, boxShadow: '0 0 0 3px rgba(74,127,219,0.12)' }}>
+                  <div style={{ display: 'flex', gap: '.5rem', padding: '.35rem', background: '#eff6ff', border: '2px solid #00889e', borderRadius: 8, boxShadow: '0 0 0 3px rgba(0,137,158,0.12)' }}>
                     {['NÃO', 'SIM'].map(v => (
                       <button key={v} onClick={() => setAltaCompl(v === 'SIM')} style={{ flex: 1, padding: '.5rem', borderRadius: 6, border: `1.5px solid ${(altaCompl ? 'SIM' : 'NÃO') === v ? '#1d4ed8' : '#93c5fd'}`, background: (altaCompl ? 'SIM' : 'NÃO') === v ? '#1d4ed8' : '#fff', color: (altaCompl ? 'SIM' : 'NÃO') === v ? '#fff' : '#1d4ed8', fontWeight: 700, fontSize: '.82rem', cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{v}</button>
                     ))}
@@ -716,7 +716,7 @@ function CalculadoraInner() {
                 </div>
                 <div>
                   <label style={LBL}>Desconto comercial (%)</label>
-                  <input type="number" min={0} max={30} step={0.5} value={desconto} onChange={e => setDesconto(+e.target.value || 0)} style={{ ...INP_KEY, borderColor: desconto > 10 ? '#fca5a5' : desconto > 5 ? '#fbbf24' : '#4A7FDB' }} />
+                  <input type="number" min={0} max={30} step={0.5} value={desconto} onChange={e => setDesconto(+e.target.value || 0)} style={{ ...INP_KEY, borderColor: desconto > 10 ? '#fca5a5' : desconto > 5 ? '#fbbf24' : '#00889e' }} />
                   <div style={NOTA}>≤5% autônomo · 6–10% Renato · &gt;10% Dênis.</div>
                 </div>
                 <div>
@@ -793,7 +793,7 @@ function CalculadoraInner() {
                                 style={{
                                   background: isAtiva ? '#eff6ff' : idx % 2 === 0 ? '#fff' : '#fafafa',
                                   borderBottom: '1px solid #f1f5f9',
-                                  outline: isAtiva ? '2px solid #4A7FDB' : 'none',
+                                  outline: isAtiva ? '2px solid #00889e' : 'none',
                                   outlineOffset: -1,
                                 }}
                               >
@@ -816,7 +816,7 @@ function CalculadoraInner() {
                                 <td style={{ padding: '.5rem .65rem', minWidth: 120 }}>
                                   <InlineNum value={+f.scoreCap.toFixed(2)} onChange={v => updFaixa(idx, 'scoreCap', Math.min(1, Math.max(0, v)))} min={0} step={0.01} style={{ maxWidth: 100 }} />
                                 </td>
-                                <td style={{ padding: '.5rem .65rem', minWidth: 90, fontFamily: 'var(--font-cormorant,serif)', fontSize: '.95rem', fontWeight: 700, color: precoMax < 300 ? '#16a34a' : '#0f172a' }}>
+                                <td style={{ padding: '.5rem .65rem', minWidth: 90, fontFamily: 'var(--font-cormorant,serif)', fontSize: '.95rem', fontWeight: 700, color: precoMax < 300 ? '#16a34a' : '#002933' }}>
                                   {R$(precoMax)}
                                 </td>
                                 <td style={{ padding: '.5rem .85rem' }}>
@@ -956,9 +956,9 @@ function CalculadoraInner() {
                   </div>
                 </div>
               </div>
-              <div style={{ background: '#0f172a', borderRadius: 10, padding: '1.1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+              <div style={{ background: '#002933', borderRadius: 10, padding: '1.1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
                 <div>
-                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', marginBottom: '.25rem' }}>Score Final Ponderado</div>
+                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#00889e', marginBottom: '.25rem' }}>Score Final Ponderado</div>
                   <div style={{ fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.72rem', color: 'rgba(255,255,255,.45)', marginBottom: '.15rem' }}>
                     Bruto: {pct(sp.wEscala)}×{dec(sis.s1)} + {pct(sp.wTicket)}×{dec(sis.s2)} + {pct(sp.wCompl)}×{dec(sis.s3)} + {pct(sp.wFid)}×{dec(sis.s4)} = {dec(sis.scoreBruto)}
                   </div>
@@ -971,7 +971,7 @@ function CalculadoraInner() {
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '.7rem', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '.2rem' }}>Navega entre</div>
-                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.85rem', fontWeight: 800, color: '#5FE3D0' }}>{R$(sp.piso)} a {R$(sp.teto)}</div>
+                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.85rem', fontWeight: 800, color: '#00ceff' }}>{R$(sp.piso)} a {R$(sp.teto)}</div>
                   <div style={{ fontSize: '.65rem', color: 'rgba(255,255,255,.3)', marginTop: '.1rem', fontFamily: 'var(--font-inter,sans-serif)' }}>piso único {R$(sp.piso)}</div>
                 </div>
               </div>
@@ -984,7 +984,7 @@ function CalculadoraInner() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
                   <KV label="(1) Piso único" value={R$(sp.piso)} sub={`Piso único: ${sis.faixaEscala.nome} ativa`} />
                   <KV label="(2) Amplitude × Score" value={R$(sis.valorBruto - sp.piso)} sub={`(${R$(sp.teto)} − ${R$(sp.piso)}) × ${dec(sis.scoreFinal)}`} />
-                  <KV label="(3) Valor bruto" value={R$(sis.valorBruto)} sub="Piso + amplitude × score" color="#4A7FDB" />
+                  <KV label="(3) Valor bruto" value={R$(sis.valorBruto)} sub="Piso + amplitude × score" color="#00889e" />
                 </div>
                 <Nota t={`${R$(sp.piso)} + (${R$(sp.teto)} − ${R$(sp.piso)}) × ${dec(sis.scoreFinal)} = ${R$(sis.valorBruto)}/aluno/ano`} />
 
@@ -1018,7 +1018,7 @@ function CalculadoraInner() {
               <Card>
                 <SecTitle n={5} title="Resultado — análise financeira" />
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '.75rem' }}>
-                  <KV label="Valor/aluno/ano" value={R$(sis.valorFinal)} color="#4A7FDB" big />
+                  <KV label="Valor/aluno/ano" value={R$(sis.valorFinal)} color="#00889e" big />
                   <KV label="Valor/aluno/mês" value={R$(sis.valorFinal / 12)} sub="÷ 12 meses" />
                   <KV label="Valor anual total" value={R$(sis.anual)} sub={`${alunos} alunos × ${R$(sis.valorFinal)}`} />
                   <KV label="Custo livro/aluno/ano" value={R$(sis.livroAno)} sub={`R$${sp.livroMes}/mês × 12`} />
@@ -1075,11 +1075,11 @@ function CalculadoraInner() {
                       const ativo = incluiComodato ? n === 12 : n === parcelas
                       const locked = incluiComodato && n !== 12
                       return (
-                        <tr key={n} onClick={() => !incluiComodato && setParcelas(n)} style={{ background: ativo ? '#eff6ff' : n % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f1f5f9', cursor: incluiComodato ? 'default' : 'pointer', outline: ativo ? '2px solid #4A7FDB' : 'none', outlineOffset: -1, opacity: locked ? 0.4 : 1 }}>
-                          <td style={{ padding: '.7rem 1rem', fontWeight: 800, fontSize: '.88rem', color: ativo ? '#2563eb' : '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                        <tr key={n} onClick={() => !incluiComodato && setParcelas(n)} style={{ background: ativo ? '#eff6ff' : n % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f1f5f9', cursor: incluiComodato ? 'default' : 'pointer', outline: ativo ? '2px solid #00889e' : 'none', outlineOffset: -1, opacity: locked ? 0.4 : 1 }}>
+                          <td style={{ padding: '.7rem 1rem', fontWeight: 800, fontSize: '.88rem', color: ativo ? '#2563eb' : '#002933', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                             {n}x{ativo && incluiComodato ? ' (fixo)' : ''}
                           </td>
-                          <td style={{ padding: '.7rem 1rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: ativo ? '#2563eb' : '#0f172a' }}>{R$(pm)}</td>
+                          <td style={{ padding: '.7rem 1rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: ativo ? '#2563eb' : '#002933' }}>{R$(pm)}</td>
                           <td style={{ padding: '.7rem 1rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#475569' }}>{R$(pa)}</td>
                           <td style={{ padding: '.7rem 1rem', fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
                             {desconto === 0 ? 'Livre' : desconto <= 5 ? 'Comercial' : desconto <= 10 ? 'Gerência — Renato' : 'Diretoria — Dênis'}
@@ -1099,10 +1099,10 @@ function CalculadoraInner() {
             </Card>
 
             {/* 8. Fechamento do Orçamento */}
-            <Card style={{ border: `2px solid ${incluiComodato ? '#4A7FDB' : '#e2e8f0'}` }}>
+            <Card style={{ border: `2px solid ${incluiComodato ? '#00889e' : '#e2e8f0'}` }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
                 <div>
-                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#0f172a', marginBottom: '.25rem' }}>Fechamento do Orçamento</div>
+                  <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#002933', marginBottom: '.25rem' }}>Fechamento do Orçamento</div>
                   <div style={{ fontSize: '.72rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>Este orçamento inclui leasing de equipamentos?</div>
                 </div>
                 <div style={{ display: 'flex', gap: '.5rem' }}>
@@ -1116,8 +1116,8 @@ function CalculadoraInner() {
                       style={{
                         padding: '.55rem 1.1rem', borderRadius: 8, cursor: 'pointer',
                         fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.75rem', fontWeight: 700,
-                        border: `1.5px solid ${incluiComodato === opt.v ? '#0f172a' : '#e2e8f0'}`,
-                        background: incluiComodato === opt.v ? '#0f172a' : '#f8fafc',
+                        border: `1.5px solid ${incluiComodato === opt.v ? '#002933' : '#e2e8f0'}`,
+                        background: incluiComodato === opt.v ? '#002933' : '#f8fafc',
                         color: incluiComodato === opt.v ? '#fff' : '#64748b',
                       }}
                     >
@@ -1133,17 +1133,17 @@ function CalculadoraInner() {
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '.75rem' }}>
                     <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
                       <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Valor / aluno / ano</div>
-                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#4A7FDB', lineHeight: 1 }}>{R$(sis.valorFinal)}</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#00889e', lineHeight: 1 }}>{R$(sis.valorFinal)}</div>
                       <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>piso único {R$(sp.piso)}</div>
                     </div>
                     <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
                       <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Valor / aluno / mês</div>
-                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{R$(sis.valorFinal / 12)}</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#002933', lineHeight: 1 }}>{R$(sis.valorFinal / 12)}</div>
                       <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{R$(sis.valorFinal)}/ano ÷ 12</div>
                     </div>
                     <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
                       <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Parcela escola ({parcelasCurriculo}x)</div>
-                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{R$(parcelaCurriculo)}</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#002933', lineHeight: 1 }}>{R$(parcelaCurriculo)}</div>
                       <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{R$(sis.anual)}/ano ÷ {parcelasCurriculo}x</div>
                     </div>
                   </div>
@@ -1157,17 +1157,17 @@ function CalculadoraInner() {
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden', marginBottom: '.75rem' }}>
                     <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
                       <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Valor / aluno / ano</div>
-                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#4A7FDB', lineHeight: 1 }}>{R$(totalAluMes * 12)}</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#00889e', lineHeight: 1 }}>{R$(totalAluMes * 12)}</div>
                       <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>currículo + equipamentos</div>
                     </div>
                     <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
                       <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Valor / aluno / mês</div>
-                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{R$(totalAluMes)}</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#002933', lineHeight: 1 }}>{R$(totalAluMes)}</div>
                       <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{R$(totalAluMes * 12)}/ano ÷ 12</div>
                     </div>
                     <div style={{ padding: '1rem 1.1rem', background: '#f8fafc' }}>
                       <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>Parcela mensal escola</div>
-                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{R$(mensalidadeEscola)}</div>
+                      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#002933', lineHeight: 1 }}>{R$(mensalidadeEscola)}</div>
                       <div style={{ fontSize: '.62rem', color: '#94a3b8', marginTop: '.25rem', fontFamily: 'var(--font-inter,sans-serif)' }}>12x de {R$(mensalidadeEscola)}</div>
                     </div>
                   </div>
@@ -1185,8 +1185,8 @@ function CalculadoraInner() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
             {/* Header banner */}
-            <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius: 14, padding: '1.1rem 1.5rem' }}>
-              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#5FE3D0', marginBottom: '.3rem' }}>
+            <div style={{ background: 'linear-gradient(135deg, #002933, #1e293b)', borderRadius: 14, padding: '1.1rem 1.5rem' }}>
+              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#00ceff', marginBottom: '.3rem' }}>
                 Leasing de equipamentos — retorno garantido + projeção IPCA
               </div>
               <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '.4rem' }}>
@@ -1223,8 +1223,8 @@ function CalculadoraInner() {
                 </div>
                 <div style={{ gridColumn: 'span 2' }}>
                   <label style={LBL}>Taxa manut. + admin (por faixa de alunos)</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '.65rem', padding: '.65rem .9rem', background: '#eff6ff', border: '2px solid #4A7FDB', borderRadius: 8 }}>
-                    <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#4A7FDB', flexShrink: 0 }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '.65rem', padding: '.65rem .9rem', background: '#eff6ff', border: '2px solid #00889e', borderRadius: 8 }}>
+                    <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#00889e', flexShrink: 0 }} />
                     <div style={{ flex: 1 }}>
                       <span style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.72rem', fontWeight: 800, color: '#1d4ed8' }}>{com.faixaTax.nome}</span>
                       <span style={{ fontSize: '.72rem', color: '#475569', marginLeft: '.4rem' }}>({com.faixaTax.min}–{com.faixaTax.max === 9999 ? '∞' : com.faixaTax.max} alunos)</span>
@@ -1262,7 +1262,7 @@ function CalculadoraInner() {
                         {lp.faixasTax.map((f, idx) => {
                           const isAtiva = com.faixaTax.nome === f.nome
                           return (
-                            <tr key={idx} style={{ background: isAtiva ? '#eff6ff' : idx % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f1f5f9', outline: isAtiva ? '2px solid #4A7FDB' : 'none', outlineOffset: -1 }}>
+                            <tr key={idx} style={{ background: isAtiva ? '#eff6ff' : idx % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f1f5f9', outline: isAtiva ? '2px solid #00889e' : 'none', outlineOffset: -1 }}>
                               <td style={{ padding: '.5rem .65rem', minWidth: 110 }}>
                                 <input type="text" value={f.nome} onChange={e => updLpFaixa(idx, 'nome', e.target.value)} style={{ ...INP_SM, background: '#fff', minWidth: 100 }} />
                               </td>
@@ -1300,9 +1300,9 @@ function CalculadoraInner() {
               {/* Derivados */}
               <div style={{ marginTop: '1rem', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '.75rem' }}>
                 {[
-                  { label: 'PV (investimento total)', value: R$(com.PV), sub: 'equip + manut + admin', color: '#4A7FDB' },
-                  { label: 'Parcelas', value: `${com.N}x`, sub: `${com.N / 12} anos (igual ao contrato)`, color: '#0f172a' },
-                  { label: 'Notebooks (sala÷2)', value: String(com.qtdNB), sub: `⌈${maiorSala} ÷ 2⌉ = ${com.qtdNB} unidades`, color: '#0f172a' },
+                  { label: 'PV (investimento total)', value: R$(com.PV), sub: 'equip + manut + admin', color: '#00889e' },
+                  { label: 'Parcelas', value: `${com.N}x`, sub: `${com.N / 12} anos (igual ao contrato)`, color: '#002933' },
+                  { label: 'Notebooks (sala÷2)', value: String(com.qtdNB), sub: `⌈${maiorSala} ÷ 2⌉ = ${com.qtdNB} unidades`, color: '#002933' },
                   { label: 'Retorno s/ PV', value: pct(com.retornoRealPV), sub: `lucro ${R$(com.resultadoBruto)} = 2×PV`, color: '#7c3aed' },
                 ].map(k => (
                   <div key={k.label} style={{ background: '#f8fafc', borderRadius: 8, padding: '.75rem 1rem', border: '1px solid #e2e8f0' }}>
@@ -1346,7 +1346,7 @@ function CalculadoraInner() {
                           {/* Quantidade */}
                           <td style={{ padding: '.5rem .65rem', minWidth: 90 }}>
                             {item.fixedQty ? (
-                              <div style={{ padding: '.35rem .55rem', background: '#f1f5f9', borderRadius: 6, fontSize: '.8rem', fontWeight: 700, color: '#4A7FDB', fontFamily: 'var(--font-cormorant,serif)', textAlign: 'center', border: '1.5px solid #e2e8f0' }}>
+                              <div style={{ padding: '.35rem .55rem', background: '#f1f5f9', borderRadius: 6, fontSize: '.8rem', fontWeight: 700, color: '#00889e', fontFamily: 'var(--font-cormorant,serif)', textAlign: 'center', border: '1.5px solid #e2e8f0' }}>
                                 {com.qtdNB}
                               </div>
                             ) : (
@@ -1359,7 +1359,7 @@ function CalculadoraInner() {
                           </td>
                           {/* Total */}
                           <td style={{ padding: '.5rem .65rem', minWidth: 120 }}>
-                            <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0f172a', padding: '.35rem .55rem' }}>
+                            <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#002933', padding: '.35rem .55rem' }}>
                               {R$(total)}
                             </div>
                           </td>
@@ -1373,8 +1373,8 @@ function CalculadoraInner() {
                       )
                     })}
                     {/* Total */}
-                    <tr style={{ background: '#0f172a' }}>
-                      <td colSpan={3} style={{ padding: '.85rem 1rem', fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 700, color: '#4A7FDB' }}>TOTAL EQUIPAMENTOS (sumEquip)</td>
+                    <tr style={{ background: '#002933' }}>
+                      <td colSpan={3} style={{ padding: '.85rem 1rem', fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 700, color: '#00889e' }}>TOTAL EQUIPAMENTOS (sumEquip)</td>
                       <td style={{ padding: '.85rem 1rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.2rem', fontWeight: 800, color: '#fff' }}>{R$(com.sumEquip)}</td>
                       <td />
                     </tr>
@@ -1391,13 +1391,13 @@ function CalculadoraInner() {
                   label={`Manutenção: ${pct(com.txRate)} × total equipamentos`}
                   value={R$(com.C_man)}
                   sub={`${pct(com.txRate)} × ${R$(com.sumEquip)}`}
-                  color="#0f172a"
+                  color="#002933"
                 />
                 <KV
                   label={`Admin: ${pct(com.txRate)} × total equipamentos`}
                   value={R$(com.C_adm)}
                   sub={`${pct(com.txRate)} × ${R$(com.sumEquip)}`}
-                  color="#0f172a"
+                  color="#002933"
                 />
               </div>
               <Nota t={`Manutenção: ${pct(com.txRate)} × ${R$(com.sumEquip)} (total equip.) = ${R$(com.C_man)}`} />
@@ -1415,11 +1415,11 @@ function CalculadoraInner() {
                   Fórmula: PV × (1 + {lp.retornoAlvo}%) ÷ N meses = parcela mensal → amortização + resultado
                 </div>
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '.75rem 1rem', fontSize: '.8rem', fontFamily: 'var(--font-inter,sans-serif)', color: '#1e293b', marginBottom: '.75rem', lineHeight: 1.7 }}>
-                  {R$(com.PV)} × {(1 + lp.retornoAlvo / 100).toFixed(2)} ÷ {com.N} meses = <strong style={{ color: '#4A7FDB' }}>{R$(com.parcelaPrice)}/mês</strong> &nbsp;·&nbsp; por aluno: <strong>{R$(com.valorPorAlunoMes)}/mês</strong> &nbsp;·&nbsp; total: <strong style={{ color: '#16a34a' }}>{R$(com.totalRecebido)}</strong>
+                  {R$(com.PV)} × {(1 + lp.retornoAlvo / 100).toFixed(2)} ÷ {com.N} meses = <strong style={{ color: '#00889e' }}>{R$(com.parcelaPrice)}/mês</strong> &nbsp;·&nbsp; por aluno: <strong>{R$(com.valorPorAlunoMes)}/mês</strong> &nbsp;·&nbsp; total: <strong style={{ color: '#16a34a' }}>{R$(com.totalRecebido)}</strong>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px', background: '#e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
                   <KV label="PV (base do cálculo)" value={R$(com.PV)} sub={`equip ${R$(com.sumEquip)} + manut + admin`} big />
-                  <KV label="Parcela (FIXA)" value={R$(com.parcelaPrice)} sub={`${com.N} parcelas mensais fixas`} color="#4A7FDB" big />
+                  <KV label="Parcela (FIXA)" value={R$(com.parcelaPrice)} sub={`${com.N} parcelas mensais fixas`} color="#00889e" big />
                   <KV label="Por aluno / mês" value={R$(com.valorPorAlunoMes)} sub={`${R$(com.parcelaPrice)} ÷ ${alunos} al.`} color="#7c3aed" big />
                 </div>
               </div>
@@ -1434,7 +1434,7 @@ function CalculadoraInner() {
                     label="Total recebido (leasing)"
                     value={R$(com.totalRecebido)}
                     sub={`${R$(com.parcelaPrice)} × ${com.N} meses`}
-                    color="#0f172a"
+                    color="#002933"
                     big
                   />
                   <KV
@@ -1474,11 +1474,11 @@ function CalculadoraInner() {
                   <tbody>
                     {com.tabela.map((row, idx) => (
                       <tr key={row.ano} style={{ background: idx % 2 === 0 ? '#fff' : '#fafafa', borderBottom: '1px solid #f1f5f9' }}>
-                        <td style={{ padding: '.6rem .85rem', fontWeight: 700, fontSize: '.88rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Ano {row.ano}</td>
+                        <td style={{ padding: '.6rem .85rem', fontWeight: 700, fontSize: '.88rem', color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Ano {row.ano}</td>
                         <td style={{ padding: '.6rem .85rem', fontSize: '.78rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
                           mês {(row.ano - 1) * 12 + 1}–{row.ano * 12}
                         </td>
-                        <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#4A7FDB' }}>
+                        <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#00889e' }}>
                           {R$(row.parcelaCurr)}
                           {row.ano > 1 && <span style={{ fontSize: '.6rem', color: '#94a3b8', marginLeft: '.3rem' }}>×{row.fatorIpca.toFixed(3)}</span>}
                           {row.ano === 2 && (parseFloat(precoSegundoAno.replace(',', '.')) || 0) > 0 && (
@@ -1488,7 +1488,7 @@ function CalculadoraInner() {
                           )}
                         </td>
                         <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0369a1' }}>{R$(row.parcelaComodato)}</td>
-                        <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>{R$(row.totalEscola)}</td>
+                        <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#002933' }}>{R$(row.totalEscola)}</td>
                         <td style={{ padding: '.6rem .85rem', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0369a1' }}>{R$(row.recCom)}</td>
                       </tr>
                     ))}
@@ -1507,15 +1507,15 @@ function CalculadoraInner() {
             </Card>
 
             {/* 6. Resumo Combinado */}
-            <Card style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,.08)' }}>
+            <Card style={{ background: '#002933', border: '1px solid rgba(255,255,255,.08)' }}>
               <div style={{ marginBottom: '1rem' }}>
-                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#5FE3D0', marginBottom: '.3rem' }}>Resumo combinado — sistema + leasing</div>
+                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#00ceff', marginBottom: '.3rem' }}>Resumo combinado — sistema + leasing</div>
                 <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>O que a escola paga por aluno mensalmente</div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1px', background: 'rgba(255,255,255,.08)', borderRadius: 10, overflow: 'hidden' }}>
                 {[
-                  { label: 'Sistema We Make', value: R$(alunoMesSis), sub: `${R$(sis.valorFinal)}/ano ÷ 12`, color: '#4A7FDB' },
-                  { label: 'Leasing Equip.', value: R$(com.valorPorAlunoMes), sub: `${R$(com.parcelaPrice)}/mês ÷ ${alunos} al.`, color: '#5FE3D0' },
+                  { label: 'Sistema We Make', value: R$(alunoMesSis), sub: `${R$(sis.valorFinal)}/ano ÷ 12`, color: '#00889e' },
+                  { label: 'Leasing Equip.', value: R$(com.valorPorAlunoMes), sub: `${R$(com.parcelaPrice)}/mês ÷ ${alunos} al.`, color: '#00ceff' },
                   { label: 'Total / aluno / mês', value: R$(totalAluMes), sub: `${R$(totalAluMes * 12)}/aluno/ano`, color: '#fff', big: true },
                   { label: 'Mensalidade escola', value: R$(mensalidadeEscola), sub: `currículo 12x + leasing ${com.N} meses`, color: '#f59e0b' },
                 ].map(k => (
@@ -1559,13 +1559,13 @@ function CalculadoraInner() {
           }}>
             {/* Modal header */}
             <div style={{
-              background: 'linear-gradient(135deg, #0b1f44, #1e3a6e)',
+              background: 'linear-gradient(135deg, #002933, #1e3a6e)',
               padding: '1.2rem 1.5rem',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               borderRadius: '16px 16px 0 0',
             }}>
               <div>
-                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.6rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#76f3cd', marginBottom: '.2rem' }}>
+                <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.6rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#00ceff', marginBottom: '.2rem' }}>
                   We Make
                 </div>
                 <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.25rem', fontWeight: 700, color: '#fff' }}>
@@ -1603,7 +1603,7 @@ function CalculadoraInner() {
                       href={propostaResult.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.82rem', color: '#2a69ba', wordBreak: 'break-all', textDecoration: 'underline', display: 'block', marginBottom: '.7rem' }}
+                      style={{ fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.82rem', color: '#00677d', wordBreak: 'break-all', textDecoration: 'underline', display: 'block', marginBottom: '.7rem' }}
                     >
                       {typeof window !== 'undefined' ? window.location.origin : ''}{propostaResult.link}
                     </a>
@@ -1612,7 +1612,7 @@ function CalculadoraInner() {
                         const url = (typeof window !== 'undefined' ? window.location.origin : '') + propostaResult.link
                         navigator.clipboard.writeText(url)
                       }}
-                      style={{ padding: '.45rem 1rem', borderRadius: 7, border: '1.5px solid #4c8ade', background: '#eff6ff', color: '#2a69ba', cursor: 'pointer', fontSize: '.75rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}
+                      style={{ padding: '.45rem 1rem', borderRadius: 7, border: '1.5px solid #00889e', background: '#eff6ff', color: '#00677d', cursor: 'pointer', fontSize: '.75rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}
                     >
                       Copiar link
                     </button>
@@ -1667,7 +1667,7 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                     </button>
                     <button
                       onClick={closeModal}
-                      style={{ padding: '.55rem 1.2rem', borderRadius: 8, border: 'none', background: '#0b1f44', cursor: 'pointer', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#fff' }}
+                      style={{ padding: '.55rem 1.2rem', borderRadius: 8, border: 'none', background: '#002933', cursor: 'pointer', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', color: '#fff' }}
                     >
                       Fechar
                     </button>
@@ -1717,7 +1717,7 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                             type="checkbox"
                             checked={s.checked}
                             onChange={e => handleToggleSegment(s.key as 'inf'|'f1'|'f2'|'med', e.target.checked)}
-                            style={{ width: 16, height: 16, cursor: 'pointer', accentColor: '#4A7FDB' }}
+                            style={{ width: 16, height: 16, cursor: 'pointer', accentColor: '#00889e' }}
                           />
                           {s.label}
                         </label>
@@ -1747,7 +1747,7 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                         <>
                           <img src={logoPreview} alt="Logo preview" style={{ width: 64, height: 64, objectFit: 'contain', borderRadius: 6, border: '1px solid #e2e8f0', flexShrink: 0 }} />
                           <div style={{ textAlign: 'left' }}>
-                            <div style={{ fontSize: '.78rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)' }}>{logoFile?.name}</div>
+                            <div style={{ fontSize: '.78rem', fontWeight: 700, color: '#002933', fontFamily: 'var(--font-inter,sans-serif)' }}>{logoFile?.name}</div>
                             <div style={{ fontSize: '.65rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>Clique para trocar</div>
                           </div>
                         </>
@@ -1785,8 +1785,8 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                           style={{
                             flex: 1, padding: '.6rem .5rem', borderRadius: 8, cursor: 'pointer',
                             fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.75rem', fontWeight: 700,
-                            border: `1.5px solid ${modalForm.tipo === opt.val ? '#0b1f44' : '#e2e8f0'}`,
-                            background: modalForm.tipo === opt.val ? '#0b1f44' : '#f8fafc',
+                            border: `1.5px solid ${modalForm.tipo === opt.val ? '#002933' : '#e2e8f0'}`,
+                            background: modalForm.tipo === opt.val ? '#002933' : '#f8fafc',
                             color: modalForm.tipo === opt.val ? '#fff' : '#64748b',
                           }}
                         >
@@ -1883,7 +1883,7 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                         )}
                       </span>
                       <span style={{ color: '#94a3b8' }}>
-                        Total anual: <strong style={{ color: '#0b1f44' }}>{((parseFloat(valorCustom) || 0) * alunos).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong>
+                        Total anual: <strong style={{ color: '#002933' }}>{((parseFloat(valorCustom) || 0) * alunos).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong>
                       </span>
                     </div>
                   </div>
@@ -1924,8 +1924,8 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                     const totalAno     = curriculoAno + comodatoAno
                     const totalMes     = totalAno / 12
                     const blocos = [
-                      { label: 'Currículo', ano: curriculoAno, mes: curriculoMes, cor: '#0b1f44', bg: '#f8fafc', nota: 'campo acima' },
-                      { label: 'Comodato',  ano: comodatoAno,  mes: comodatoMes,  cor: '#4A7FDB', bg: '#eff6ff', nota: 'equipamentos' },
+                      { label: 'Currículo', ano: curriculoAno, mes: curriculoMes, cor: '#002933', bg: '#f8fafc', nota: 'campo acima' },
+                      { label: 'Comodato',  ano: comodatoAno,  mes: comodatoMes,  cor: '#00889e', bg: '#eff6ff', nota: 'equipamentos' },
                       { label: 'Total',     ano: totalAno,     mes: totalMes,     cor: '#16a34a', bg: '#f0fdf4', nota: 'currículo + comodato' },
                     ]
                     return (
@@ -1935,7 +1935,7 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                           {blocos.map(b => (
                             <div key={b.label} style={{ background: b.bg, border: `1px solid ${b.cor}30`, borderRadius: 8, padding: '.6rem .7rem' }}>
                               <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: b.cor, fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.35rem' }}>{b.label}</div>
-                              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>
+                              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 800, color: '#002933', lineHeight: 1 }}>
                                 {R$(b.ano)}<span style={{ fontSize: '.58rem', color: '#94a3b8', fontWeight: 400, marginLeft: 2 }}>/ano</span>
                               </div>
                               <div style={{ fontSize: '.72rem', color: '#475569', marginTop: '.25rem' }}>
@@ -1955,7 +1955,7 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                           {blocos.map(b => (
                             <div key={b.label} style={{ background: b.bg, border: `1px solid ${b.cor}30`, borderRadius: 8, padding: '.6rem .7rem' }}>
                               <div style={{ fontSize: '.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: b.cor, fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.35rem' }}>{b.label}</div>
-                              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>
+                              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 800, color: '#002933', lineHeight: 1 }}>
                                 {R$(b.ano * alunos)}<span style={{ fontSize: '.58rem', color: '#94a3b8', fontWeight: 400, marginLeft: 2 }}>/ano</span>
                               </div>
                               <div style={{ fontSize: '.72rem', color: '#475569', marginTop: '.25rem' }}>
@@ -2006,7 +2006,7 @@ Essa foi a proposta oficial que enviamos para a escola.`}
                       style={{
                         flex: 1, padding: '.7rem 1.2rem', borderRadius: 9, border: 'none', cursor: modalLoading ? 'wait' : 'pointer',
                         fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.82rem', fontWeight: 800,
-                        background: modalLoading ? '#93c5fd' : 'linear-gradient(135deg, #4c8ade, #2a69ba)',
+                        background: modalLoading ? '#93c5fd' : 'linear-gradient(135deg, #00889e, #00677d)',
                         color: '#fff', letterSpacing: '.03em',
                       }}
                     >

@@ -1,11 +1,12 @@
 import Link from 'next/link'
-import { Source_Serif_4 } from 'next/font/google'
+import { Fraunces } from 'next/font/google'
 import './academia.css'
 import './gestao.css'
 
-const serif = Source_Serif_4({
+const serif = Fraunces({
   subsets: ['latin'],
   variable: '--font-source-serif',
+  weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
   style: ['normal', 'italic'],
 })

@@ -48,12 +48,12 @@ const HORAS = Array.from({ length: 24 }, (_, i) => i)
 const TIPOS = [
   { value: 'reuniao',   label: 'Reunião',         cor: '#2563eb' },
   { value: 'ligacao',   label: 'Ligação',          cor: '#7c3aed' },
-  { value: 'visita',    label: 'Visita Presencial', cor: '#4A7FDB' },
+  { value: 'visita',    label: 'Visita Presencial', cor: '#00889e' },
   { value: 'interno',   label: 'Interno We Make',      cor: '#16a34a' },
   { value: 'outro',     label: 'Outro',            cor: '#64748b' },
 ]
 
-const CORES = ['#2563eb','#7c3aed','#4A7FDB','#16a34a','#dc2626','#0891b2','#db2777','#ea580c','#64748b']
+const CORES = ['#2563eb','#7c3aed','#00889e','#16a34a','#dc2626','#0891b2','#db2777','#ea580c','#64748b']
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 function pad(n: number) { return String(n).padStart(2, '0') }
@@ -89,7 +89,7 @@ function getStatusColor(status: string) {
   switch (status) {
     case 'aceito':   return { bg: '#f0fdf4', color: '#16a34a', border: '#86efac' }
     case 'recusado': return { bg: '#fef2f2', color: '#dc2626', border: '#fca5a5' }
-    case 'talvez':   return { bg: '#fffbeb', color: '#4A7FDB', border: '#fde68a' }
+    case 'talvez':   return { bg: '#fffbeb', color: '#00889e', border: '#fde68a' }
     default:         return { bg: '#f1f5f9', color: '#64748b', border: '#e2e8f0' }
   }
 }
@@ -186,7 +186,7 @@ function ModalEvento({
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 1000,
-      background: 'rgba(15,23,42,.55)', backdropFilter: 'blur(4px)',
+      background: 'rgba(0,41,51,.55)', backdropFilter: 'blur(4px)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: '1rem',
     }}
@@ -202,11 +202,11 @@ function ModalEvento({
         <div style={{
           padding: '1.25rem 1.5rem', borderBottom: '1px solid #f1f5f9',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          background: 'linear-gradient(135deg, #0f172a, #1e293b)',
+          background: 'linear-gradient(135deg, #002933, #1e293b)',
           borderRadius: '18px 18px 0 0',
         }}>
           <div>
-            <div style={{ fontSize: '.6rem', fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#4A7FDB', marginBottom: '.25rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+            <div style={{ fontSize: '.6rem', fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#00889e', marginBottom: '.25rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
               ✦ {isEdicao ? 'Editar Evento' : 'Novo Evento'}
             </div>
             <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 700, color: '#fff' }}>
@@ -229,7 +229,7 @@ function ModalEvento({
             </label>
             <input value={titulo} onChange={e => setTitulo(e.target.value)} required
               placeholder="Ex: Reunião Escola Jardim das Flores"
-              style={{ width: '100%', padding: '.7rem .9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.875rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', boxSizing: 'border-box', color: '#0f172a' }} />
+              style={{ width: '100%', padding: '.7rem .9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.875rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', boxSizing: 'border-box', color: '#002933' }} />
           </div>
 
           {/* Tipo + Cor */}
@@ -239,7 +239,7 @@ function ModalEvento({
                 Tipo
               </label>
               <select value={tipo} onChange={e => { setTipo(e.target.value); setCor(TIPOS.find(t => t.value === e.target.value)?.cor ?? cor) }}
-                style={{ width: '100%', padding: '.7rem .9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.875rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', background: '#fff', color: '#0f172a' }}>
+                style={{ width: '100%', padding: '.7rem .9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.875rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', background: '#fff', color: '#002933' }}>
                 {TIPOS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
             </div>
@@ -248,7 +248,7 @@ function ModalEvento({
               <div style={{ display: 'flex', gap: '.3rem', flexWrap: 'wrap', maxWidth: 160 }}>
                 {CORES.map(c => (
                   <button key={c} type="button" onClick={() => setCor(c)}
-                    style={{ width: 24, height: 24, borderRadius: '50%', background: c, border: cor === c ? '3px solid #0f172a' : '2px solid transparent', cursor: 'pointer', flexShrink: 0 }} />
+                    style={{ width: 24, height: 24, borderRadius: '50%', background: c, border: cor === c ? '3px solid #002933' : '2px solid transparent', cursor: 'pointer', flexShrink: 0 }} />
                 ))}
               </div>
             </div>
@@ -259,7 +259,7 @@ function ModalEvento({
             <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', marginBottom: '.6rem' }}>
               <label style={{ fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#64748b', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Data e Hora</label>
               <label style={{ display: 'flex', alignItems: 'center', gap: '.35rem', cursor: 'pointer', fontSize: '.75rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                <input type="checkbox" checked={diaInteiro} onChange={e => setDiaInteiro(e.target.checked)} style={{ accentColor: '#4A7FDB' }} />
+                <input type="checkbox" checked={diaInteiro} onChange={e => setDiaInteiro(e.target.checked)} style={{ accentColor: '#00889e' }} />
                 Dia inteiro
               </label>
             </div>
@@ -293,7 +293,7 @@ function ModalEvento({
             <div style={{ position: 'relative' }}>
               <input value={local} onChange={e => setLocal(e.target.value)}
                 placeholder="Endereço físico ou link do Google Meet / Zoom"
-                style={{ width: '100%', padding: '.7rem .9rem .7rem 2.5rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.875rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', boxSizing: 'border-box', color: '#0f172a' }} />
+                style={{ width: '100%', padding: '.7rem .9rem .7rem 2.5rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.875rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', boxSizing: 'border-box', color: '#002933' }} />
               <div style={{ position: 'absolute', left: '.8rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
                 {local.startsWith('http') ? (
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -317,7 +317,7 @@ function ModalEvento({
               Escola Relacionada (opcional)
             </label>
             <select value={escolaId} onChange={e => setEscolaId(e.target.value)}
-              style={{ width: '100%', padding: '.7rem .9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.875rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', background: '#fff', color: '#0f172a' }}>
+              style={{ width: '100%', padding: '.7rem .9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.875rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', background: '#fff', color: '#002933' }}>
               <option value="">— Nenhuma escola —</option>
               {escolas.map(e => <option key={e.id} value={e.id}>{e.nome}</option>)}
             </select>
@@ -352,11 +352,11 @@ function ModalEvento({
                       onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
                       onMouseLeave={e => e.currentTarget.style.background = '#fff'}
                     >
-                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '.7rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', flexShrink: 0 }}>
+                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#002933', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '.7rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', flexShrink: 0 }}>
                         {p.full_name[0].toUpperCase()}
                       </div>
                       <div>
-                        <div style={{ fontSize: '.8rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)' }}>{p.full_name}</div>
+                        <div style={{ fontSize: '.8rem', fontWeight: 600, color: '#002933', fontFamily: 'var(--font-inter,sans-serif)' }}>{p.full_name}</div>
                         <div style={{ fontSize: '.68rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)' }}>{p.email}</div>
                       </div>
                     </div>
@@ -376,7 +376,7 @@ function ModalEvento({
                         {email[0].toUpperCase()}
                       </div>
                       <div style={{ flex: 1 }}>
-                        {p && <div style={{ fontSize: '.75rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', lineHeight: 1.2 }}>{p.full_name}</div>}
+                        {p && <div style={{ fontSize: '.75rem', fontWeight: 600, color: '#002933', fontFamily: 'var(--font-inter,sans-serif)', lineHeight: 1.2 }}>{p.full_name}</div>}
                         <div style={{ fontSize: '.68rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>{email}</div>
                       </div>
                       <button type="button" onClick={() => removerConvidado(email)}
@@ -397,7 +397,7 @@ function ModalEvento({
             </label>
             <textarea value={descricao} onChange={e => setDescricao(e.target.value)} rows={3}
               placeholder="Pauta da reunião, objetivos, materiais necessários..."
-              style={{ width: '100%', padding: '.7rem .9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.875rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', resize: 'vertical', minHeight: 80, boxSizing: 'border-box', color: '#0f172a' }} />
+              style={{ width: '100%', padding: '.7rem .9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.875rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', resize: 'vertical', minHeight: 80, boxSizing: 'border-box', color: '#002933' }} />
           </div>
 
           {/* Recorrência */}
@@ -406,7 +406,7 @@ function ModalEvento({
               Recorrência
             </label>
             <select value={recorrencia} onChange={e => setRecorrencia(e.target.value)}
-              style={{ width: '100%', padding: '.7rem .9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.875rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', background: '#fff', color: '#0f172a' }}>
+              style={{ width: '100%', padding: '.7rem .9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.875rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', background: '#fff', color: '#002933' }}>
               <option value="">Não se repete</option>
               <option value="diario">Diariamente</option>
               <option value="semanal">Semanalmente</option>
@@ -465,7 +465,7 @@ function ModalDetalhes({
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 1000,
-      background: 'rgba(15,23,42,.5)', backdropFilter: 'blur(4px)',
+      background: 'rgba(0,41,51,.5)', backdropFilter: 'blur(4px)',
       display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem',
     }}
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
@@ -560,7 +560,7 @@ function ModalDetalhes({
                         {p.email[0].toUpperCase()}
                       </div>
                       <div style={{ flex: 1 }}>
-                        {p.nome && <div style={{ fontSize: '.75rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)' }}>{p.nome}</div>}
+                        {p.nome && <div style={{ fontSize: '.75rem', fontWeight: 600, color: '#002933', fontFamily: 'var(--font-inter,sans-serif)' }}>{p.nome}</div>}
                         <div style={{ fontSize: '.68rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>{p.email}</div>
                       </div>
                       <span style={{ fontSize: '.62rem', fontWeight: 700, color: s.color, fontFamily: 'var(--font-montserrat,sans-serif)', textTransform: 'capitalize' }}>
@@ -681,7 +681,7 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
           <button onClick={() => navMes(1)} style={{ width: 32, height: 32, borderRadius: 7, border: '1.5px solid #e2e8f0', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569' }}>
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
-          <h2 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.35rem', fontWeight: 700, color: '#0f172a', minWidth: 200 }}>
+          <h2 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.35rem', fontWeight: 700, color: '#002933', minWidth: 200 }}>
             {MESES[mes]} {ano}
           </h2>
         </div>
@@ -693,7 +693,7 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
               <button key={v} onClick={() => setView(v)} style={{
                 padding: '.35rem .8rem', borderRadius: 6, border: 'none', cursor: 'pointer',
                 background: view === v ? '#fff' : 'transparent',
-                color: view === v ? '#0f172a' : '#64748b',
+                color: view === v ? '#002933' : '#64748b',
                 fontWeight: view === v ? 700 : 500, fontSize: '.72rem',
                 boxShadow: view === v ? '0 1px 3px rgba(0,0,0,.1)' : 'none',
                 fontFamily: 'var(--font-montserrat,sans-serif)', textTransform: 'capitalize',
@@ -704,10 +704,10 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
           <button onClick={() => setModalCriar(true)} style={{
             display: 'flex', alignItems: 'center', gap: '.4rem',
             padding: '.5rem 1.1rem', borderRadius: 9999, border: 'none',
-            background: 'linear-gradient(135deg, #4A7FDB, #2563b8)',
+            background: 'linear-gradient(135deg, #00889e, #00677d)',
             color: '#fff', fontWeight: 700, fontSize: '.78rem', cursor: 'pointer',
             fontFamily: 'var(--font-montserrat,sans-serif)',
-            boxShadow: '0 4px 14px rgba(74,127,219,.35)',
+            boxShadow: '0 4px 14px rgba(0,137,158,.35)',
           }}>
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Novo Evento
@@ -719,7 +719,7 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
 
         {/* ── Vista Mês ───────────────────────────────────── */}
         {view === 'mes' && (
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.06)' }}>
+          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,41,51,.06)' }}>
             {/* Header dos dias */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', borderBottom: '1px solid #e2e8f0' }}>
               {DIAS_SEMANA_ABREV.map((d, i) => (
@@ -763,7 +763,7 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
                     <div style={{
                       width: 26, height: 26, borderRadius: '50%', marginBottom: '.3rem',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      background: isHoje ? '#4A7FDB' : 'transparent',
+                      background: isHoje ? '#00889e' : 'transparent',
                       color: isHoje ? '#fff' : isWeekend ? '#94a3b8' : '#334155',
                       fontSize: '.78rem', fontWeight: isHoje ? 700 : 500,
                       fontFamily: 'var(--font-montserrat,sans-serif)',
@@ -785,7 +785,7 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
                         onMouseLeave={e => e.currentTarget.style.opacity = '1'}
                       >
                         {/* Hora + título */}
-                        <div style={{ fontSize: '.62rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <div style={{ fontSize: '.62rem', fontWeight: 600, color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {!ev.dia_inteiro && <span style={{ color: ev.cor, marginRight: '.2rem' }}>{fmtHora(ev.data_inicio)}</span>}
                           {ev.titulo}
                         </div>
@@ -846,12 +846,12 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
                 <div key={g.data} style={{ display: 'flex', gap: '1.25rem', marginBottom: '1.5rem' }}>
                   {/* Coluna de data */}
                   <div style={{ minWidth: 70, textAlign: 'right', paddingTop: '.35rem' }}>
-                    <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', color: isHoje ? '#4A7FDB' : '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', letterSpacing: '.06em' }}>
+                    <div style={{ fontSize: '.65rem', fontWeight: 700, textTransform: 'uppercase', color: isHoje ? '#00889e' : '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', letterSpacing: '.06em' }}>
                       {DIAS_SEMANA_ABREV[d.getDay()]}
                     </div>
                     <div style={{
                       fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, lineHeight: 1,
-                      color: isHoje ? '#4A7FDB' : '#0f172a',
+                      color: isHoje ? '#00889e' : '#002933',
                     }}>
                       {pad(d.getDate())}
                     </div>
@@ -870,14 +870,14 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
                           borderLeft: `4px solid ${ev.cor}`,
                           borderRadius: '0 12px 12px 0', padding: '.85rem 1.1rem',
                           cursor: 'pointer', transition: 'all .15s',
-                          boxShadow: '0 1px 3px rgba(15,23,42,.05)',
+                          boxShadow: '0 1px 3px rgba(0,41,51,.05)',
                           display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem',
                         }}
                         onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = ev.cor }}
                         onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.borderLeftColor = ev.cor }}
                       >
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontWeight: 700, fontSize: '.875rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>
+                          <div style={{ fontWeight: 700, fontSize: '.875rem', color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.2rem' }}>
                             {ev.titulo}
                           </div>
                           <div style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -894,7 +894,7 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
                               </span>
                             )}
                             {ev.escola && (
-                              <span style={{ fontSize: '.65rem', background: '#fffbeb', color: '#4A7FDB', border: '1px solid #fde68a', padding: '.1rem .4rem', borderRadius: 99, fontWeight: 600, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                              <span style={{ fontSize: '.65rem', background: '#fffbeb', color: '#00889e', border: '1px solid #fde68a', padding: '.1rem .4rem', borderRadius: 99, fontWeight: 600, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                                 {ev.escola.nome.slice(0, 20)}
                               </span>
                             )}
@@ -965,7 +965,7 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
             return d
           })
           return (
-            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.06)' }}>
+            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,41,51,.06)' }}>
               {/* Header dias semana */}
               <div style={{ display: 'grid', gridTemplateColumns: '60px repeat(7,1fr)', borderBottom: '2px solid #e2e8f0' }}>
                 <div style={{ background: '#fafafa' }} />
@@ -977,13 +977,13 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
                       background: isHoje ? '#fffbeb' : '#fafafa',
                       borderLeft: '1px solid #f1f5f9',
                     }}>
-                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: isHoje ? '#4A7FDB' : '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                      <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: isHoje ? '#00889e' : '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                         {DIAS_SEMANA_ABREV[d.getDay()]}
                       </div>
                       <div style={{
                         width: 28, height: 28, borderRadius: '50%', margin: '.15rem auto 0',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        background: isHoje ? '#4A7FDB' : 'transparent',
+                        background: isHoje ? '#00889e' : 'transparent',
                         color: isHoje ? '#fff' : '#334155',
                         fontSize: '.85rem', fontWeight: isHoje ? 700 : 600,
                         fontFamily: 'var(--font-montserrat,sans-serif)',
@@ -1029,7 +1029,7 @@ export function AgendaClient({ eventos: eventosIniciais, profiles, userId, userE
                               style={{
                                 background: ev.cor + '22', borderLeft: `3px solid ${ev.cor}`,
                                 borderRadius: '0 5px 5px 0', padding: '.2rem .35rem',
-                                fontSize: '.62rem', fontWeight: 600, color: '#0f172a',
+                                fontSize: '.62rem', fontWeight: 600, color: '#002933',
                                 fontFamily: 'var(--font-montserrat,sans-serif)',
                                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                                 cursor: 'pointer', marginBottom: '.1rem',

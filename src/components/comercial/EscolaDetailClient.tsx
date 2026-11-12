@@ -44,9 +44,9 @@ export function EscolaDetailClient({ escolaId, registros, negociacoes, tarefas, 
             style={{
               padding: '.65rem 1.1rem', fontSize: '.82rem',
               fontWeight: active === tab.id ? 700 : 500,
-              color: active === tab.id ? '#4A7FDB' : 'var(--text-s)',
+              color: active === tab.id ? '#00889e' : 'var(--text-s)',
               background: 'none', border: 'none', cursor: 'pointer',
-              borderBottom: `2px solid ${active === tab.id ? '#4A7FDB' : 'transparent'}`,
+              borderBottom: `2px solid ${active === tab.id ? '#00889e' : 'transparent'}`,
               marginBottom: -2, transition: 'all .15s',
               fontFamily: 'var(--font-montserrat,sans-serif)',
               display: 'flex', alignItems: 'center', gap: '.35rem',
@@ -69,14 +69,14 @@ export function EscolaDetailClient({ escolaId, registros, negociacoes, tarefas, 
       {active === 'registros' && (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', alignItems: 'center' }}>
-            <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#0f172a' }}>Jornada de Relacionamento</h3>
+            <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, color: '#002933' }}>Jornada de Relacionamento</h3>
             <Link href={`/comercial/registros/novo?escola=${escolaId}`} className="btn btn-primary btn-sm">+ Nova Interacao</Link>
           </div>
           {registros.length > 0 ? (
             <div style={{ position: 'relative' }}>
               <div style={{ position: 'absolute', left: 19, top: 0, bottom: 0, width: 2, background: 'linear-gradient(to bottom, #e2e8f0, #f1f5f9)' }} />
               {registros.map((r: any, idx: number) => {
-                const cor = r.classificacao === 'quente' ? '#ef4444' : r.classificacao === 'morno' ? '#4A7FDB' : '#6366f1'
+                const cor = r.classificacao === 'quente' ? '#ef4444' : r.classificacao === 'morno' ? '#00889e' : '#6366f1'
                 return (
                   <div key={r.id} style={{ display: 'flex', gap: '1rem', marginBottom: idx < registros.length - 1 ? '1.25rem' : 0, position: 'relative', zIndex: 1 }}>
                     <div style={{ flexShrink: 0, paddingTop: '.2rem' }}>
@@ -84,10 +84,10 @@ export function EscolaDetailClient({ escolaId, registros, negociacoes, tarefas, 
                         {MEIO_SVG[r.meio_contato] ?? MEIO_SVG.outro}
                       </div>
                     </div>
-                    <div style={{ flex: 1, background: '#fff', border: '1px solid #e2e8f0', borderLeft: `4px solid ${cor}`, borderRadius: 12, padding: '1rem 1.25rem', boxShadow: '0 2px 8px rgba(15,23,42,.05)' }}>
+                    <div style={{ flex: 1, background: '#fff', border: '1px solid #e2e8f0', borderLeft: `4px solid ${cor}`, borderRadius: 12, padding: '1rem 1.25rem', boxShadow: '0 2px 8px rgba(0,41,51,.05)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '.6rem', flexWrap: 'wrap', gap: '.4rem' }}>
                         <div>
-                          <div style={{ fontWeight: 700, fontSize: '.875rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                          <div style={{ fontWeight: 700, fontSize: '.875rem', color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                             {LABEL.meio_contato?.[r.meio_contato] ?? r.meio_contato}
                           </div>
                           <div style={{ fontSize: '.72rem', color: 'var(--text-s)' }}>{formatDate(r.data_contato)}</div>
@@ -138,7 +138,7 @@ export function EscolaDetailClient({ escolaId, registros, negociacoes, tarefas, 
               <div className="card-body">
                 <div style={{ fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>{LABEL.stage?.[n.stage] ?? n.stage}</div>
                 <div style={{ fontSize: '.75rem', color: 'var(--text-s)' }}>{formatDateTime(n.updated_at)}</div>
-                {n.valor_estimado && <div style={{ fontWeight: 800, color: '#4A7FDB', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem' }}>{formatCurrency(n.valor_estimado)}</div>}
+                {n.valor_estimado && <div style={{ fontWeight: 800, color: '#00889e', fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem' }}>{formatCurrency(n.valor_estimado)}</div>}
               </div>
             </div>
           )) : <div className="empty-state"><h3>Nenhuma negociacao</h3></div>}
@@ -173,7 +173,7 @@ export function EscolaDetailClient({ escolaId, registros, negociacoes, tarefas, 
           {tarefas.length > 0 ? tarefas.map((t: any) => {
             const vencida = t.vencimento && new Date(t.vencimento) < new Date()
             return (
-              <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.75rem 1rem', marginBottom: '.5rem', background: vencida ? '#fef2f2' : '#fff', border: `1px solid ${vencida ? '#fca5a5' : '#e2e8f0'}`, borderLeft: `4px solid ${vencida ? '#dc2626' : '#4A7FDB'}`, borderRadius: 10 }}>
+              <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.75rem 1rem', marginBottom: '.5rem', background: vencida ? '#fef2f2' : '#fff', border: `1px solid ${vencida ? '#fca5a5' : '#e2e8f0'}`, borderLeft: `4px solid ${vencida ? '#dc2626' : '#00889e'}`, borderRadius: 10 }}>
                 <form action={concluirTarefaEscola.bind(null, t.id) as any}>
                   <button type="submit" style={{ width: 22, height: 22, borderRadius: '50%', cursor: 'pointer', border: '2px solid #94a3b8', background: 'none' }} />
                 </form>
@@ -205,7 +205,7 @@ export function EscolaDetailClient({ escolaId, registros, negociacoes, tarefas, 
             </div>
           </form>
           {notas.length > 0 ? notas.map((n: any) => (
-            <div key={n.id} style={{ padding: '.85rem 1rem', marginBottom: '.5rem', background: '#fff', border: '1px solid #e2e8f0', borderLeft: n.fixada ? '4px solid #4A7FDB' : '4px solid #e2e8f0', borderRadius: 10 }}>
+            <div key={n.id} style={{ padding: '.85rem 1rem', marginBottom: '.5rem', background: '#fff', border: '1px solid #e2e8f0', borderLeft: n.fixada ? '4px solid #00889e' : '4px solid #e2e8f0', borderRadius: 10 }}>
               <div style={{ fontSize: '.875rem', lineHeight: 1.6, color: '#334155' }}>{n.texto}</div>
               <div style={{ fontSize: '.68rem', color: 'var(--text-s)', marginTop: '.4rem' }}>{formatDateTime(n.created_at)}</div>
             </div>

@@ -58,7 +58,7 @@ export function ExportContatosModal({ ufsDisponiveis }: Props) {
     background: '#f8fafc',
     fontSize: '.82rem',
     fontFamily: 'var(--font-inter,sans-serif)',
-    color: '#0f172a',
+    color: '#002933',
     outline: 'none',
     cursor: 'pointer',
   }
@@ -81,10 +81,10 @@ export function ExportContatosModal({ ufsDisponiveis }: Props) {
         style={{
           display: 'inline-flex', alignItems: 'center', gap: '.4rem',
           padding: '.45rem 1rem', borderRadius: 9999,
-          background: '#0b1f44', color: '#fff', border: 'none',
+          background: '#002933', color: '#fff', border: 'none',
           fontSize: '.78rem', fontWeight: 700, cursor: 'pointer',
           fontFamily: 'var(--font-montserrat,sans-serif)',
-          boxShadow: '0 4px 12px rgba(11,31,68,.3)',
+          boxShadow: '0 4px 12px rgba(0,41,51,.3)',
         }}
       >
         {svgDown}
@@ -97,7 +97,7 @@ export function ExportContatosModal({ ufsDisponiveis }: Props) {
           onClick={e => { if (e.target === e.currentTarget) setOpen(false) }}
           style={{
             position: 'fixed', inset: 0, zIndex: 9999,
-            background: 'rgba(11,31,68,.55)', backdropFilter: 'blur(4px)',
+            background: 'rgba(0,41,51,.55)', backdropFilter: 'blur(4px)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             padding: '1rem',
           }}
@@ -108,7 +108,7 @@ export function ExportContatosModal({ ufsDisponiveis }: Props) {
             overflow: 'hidden',
           }}>
             {/* Header */}
-            <div style={{ background: '#0b1f44', padding: '1.1rem 1.4rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ background: '#002933', padding: '1.1rem 1.4rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.58rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.12em', color: 'rgba(255,255,255,.45)', marginBottom: 2 }}>
                   Banco de Leads
@@ -155,12 +155,12 @@ export function ExportContatosModal({ ufsDisponiveis }: Props) {
                     { checked: apenasComTel,   set: setApenasComTel,   label: 'Apenas leads com telefone' },
                     { checked: apenasComEmail, set: setApenasComEmail, label: 'Apenas leads com e-mail' },
                   ].map(({ checked, set, label }) => (
-                    <label key={label} style={{ display: 'flex', alignItems: 'center', gap: '.55rem', cursor: 'pointer', fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.82rem', color: '#0f172a' }}>
+                    <label key={label} style={{ display: 'flex', alignItems: 'center', gap: '.55rem', cursor: 'pointer', fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.82rem', color: '#002933' }}>
                       <input
                         type="checkbox"
                         checked={checked}
                         onChange={e => set(e.target.checked)}
-                        style={{ width: 16, height: 16, accentColor: '#0b1f44', cursor: 'pointer' }}
+                        style={{ width: 16, height: 16, accentColor: '#002933', cursor: 'pointer' }}
                       />
                       {label}
                     </label>
@@ -185,7 +185,7 @@ export function ExportContatosModal({ ufsDisponiveis }: Props) {
               </button>
               <button
                 onClick={handleDownload}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '.45rem', padding: '.55rem 1.4rem', borderRadius: 8, border: 'none', background: '#0b1f44', color: '#fff', fontSize: '.82rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', cursor: 'pointer', boxShadow: '0 2px 8px rgba(11,31,68,.3)' }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '.45rem', padding: '.55rem 1.4rem', borderRadius: 8, border: 'none', background: '#002933', color: '#fff', fontSize: '.82rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,41,51,.3)' }}
               >
                 {svgDown}
                 Baixar Excel

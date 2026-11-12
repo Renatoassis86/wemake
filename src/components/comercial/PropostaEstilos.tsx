@@ -14,7 +14,7 @@ export function PropostaEstilos() {
       <style>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
-        body { font-family: 'Geist', sans-serif; background: #0b1f44; overflow: hidden; }
+        body { font-family: 'Geist', sans-serif; background: #002933; overflow: hidden; }
 
         /* ── We Make design tokens ─────────────────────────────────── */
         :root {
@@ -38,8 +38,8 @@ export function PropostaEstilos() {
           --shadow-md:       0 8px 24px -8px rgba(2,6,23,0.55);
           --shadow-lg:       0 24px 64px -24px rgba(2,6,23,0.70);
           --shadow-inset:    inset 0 1px 0 rgba(255,255,255,0.06);
-          --shadow-royal:    0 12px 40px -8px rgba(76,138,222,0.45);
-          --shadow-mint:     0 8px 32px -8px rgba(118,243,205,0.35);
+          --shadow-royal:    0 12px 40px -8px rgba(0,137,158,0.45);
+          --shadow-mint:     0 8px 32px -8px rgba(0,206,255,0.35);
           --shadow-btn:      0 8px 32px -8px rgba(96,165,250,0.55), inset 0 1px 0 rgba(255,255,255,0.6);
           --shadow-btn-h:    0 16px 48px -12px rgba(96,165,250,0.70), inset 0 1px 0 rgba(255,255,255,0.7);
 
@@ -103,8 +103,8 @@ export function PropostaEstilos() {
           background: rgba(255,255,255,0.85);
           backdrop-filter: blur(20px) saturate(140%);
           -webkit-backdrop-filter: blur(20px) saturate(140%);
-          border: 1px solid rgba(11,31,68,0.08);
-          box-shadow: 0 8px 24px -8px rgba(11,31,68,0.1), inset 0 1px 0 rgba(255,255,255,0.9);
+          border: 1px solid rgba(0,41,51,0.08);
+          box-shadow: 0 8px 24px -8px rgba(0,41,51,0.1), inset 0 1px 0 rgba(255,255,255,0.9);
         }
         .surface-card-royal {
           background: rgba(255,255,255,0.08);
@@ -125,7 +125,7 @@ export function PropostaEstilos() {
         .btn-primary {
           display: inline-flex; align-items: center; justify-content: center; gap: 8px;
           font-family: 'Geist', sans-serif; font-weight: 600; font-size: 0.9375rem;
-          color: #0b1f44; text-decoration: none; white-space: nowrap;
+          color: #002933; text-decoration: none; white-space: nowrap;
           border: none; border-radius: var(--radius-pill); cursor: pointer;
           padding: 14px 32px;
           background: radial-gradient(120% 140% at 50% -20%, #fff 0%, #cfe2ff 45%, #9fc1f5 100%);
@@ -196,7 +196,7 @@ export function PropostaEstilos() {
           .pv-hero-royal     { width: 100% !important; }
           .pv-hero-logo      {
             flex: none !important; width: 100% !important; height: 140px !important;
-            border-top: 1px solid rgba(15,23,42,.08) !important;
+            border-top: 1px solid rgba(0,41,51,.08) !important;
           }
           .pv-hero-photo     { flex: none !important; height: 260px !important; min-height: 260px !important; }
 
@@ -272,7 +272,7 @@ export function PropostaEstilos() {
           .pv-hero-royal     { width: 100% !important; }
           .pv-hero-logo      {
             flex: none !important; width: 100% !important; height: 160px !important;
-            border-top: 1px solid rgba(15,23,42,.08) !important;
+            border-top: 1px solid rgba(0,41,51,.08) !important;
           }
           .pv-hero-photo     { flex: none !important; height: 320px !important; min-height: 320px !important; }
 
@@ -341,7 +341,7 @@ export function PropostaEstilos() {
           @page { size: 1600px 1300px; margin: 0; }
 
           html, body {
-            background: #0b1f44 !important;
+            background: #002933 !important;
             overflow: visible !important;
             height: auto !important;
           }

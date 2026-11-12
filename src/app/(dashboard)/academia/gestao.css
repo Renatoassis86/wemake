@@ -294,6 +294,32 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 .an-arq-equipe-lista li { display: flex; align-items: center; gap: .6rem; padding: .5rem 0; border-bottom: 1px solid var(--ac-line); }
 .an-arq-equipe-lista a { color: var(--ac-link); font-weight: 600; }
 .an-arq-equipe-lista small { color: var(--ac-muted); margin-left: auto; white-space: nowrap; }
+
+/* Página Arquitetura (gestao/arquitetura): um <details> por escola. */
+.an-arq-lista-escolas { list-style: none; margin: 0; padding: 0; display: grid; gap: .9rem; }
+.an-arq-card { border: 1px solid var(--ac-line-2); border-radius: 12px; background: #fff; overflow: hidden; }
+.an-arq-card[open] { border-color: var(--ac-ink-3); }
+.an-arq-card summary {
+  display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; list-style: none; cursor: pointer;
+  padding: 1rem 1.25rem; font: 600 .98rem/1.3 var(--ac-sans); color: var(--ac-ink);
+}
+.an-arq-card summary::-webkit-details-marker { display: none; }
+.an-arq-card summary::before { content: '▸'; display: inline-block; color: var(--ac-muted); font-size: .75rem; transition: transform .15s; flex-shrink: 0; }
+.an-arq-card[open] summary::before { transform: rotate(90deg); }
+.an-arq-card summary:hover { background: var(--ac-ivory); }
+.an-arq-card-cidade { font: 500 .78rem/1 var(--ac-sans); color: var(--ac-muted); }
+.an-arq-card summary .ac-chip { margin-left: auto; }
+.an-arq-card-corpo { padding: 1.25rem 1.25rem 1.5rem; border-top: 1px solid var(--ac-line); }
+.an-arq-card-corpo > .an-geral:first-child { margin-top: 0; }
+.an-arq-sub { margin: 1.7rem 0 0; font: 600 .68rem/1.2 var(--ac-sans); letter-spacing: .1em; text-transform: uppercase; color: var(--ac-ink); }
+.an-arq-sub small { margin-left: .5rem; font: 500 .66rem/1 var(--ac-sans); letter-spacing: 0; text-transform: none; color: var(--ac-muted); }
+.an-arq-equipe { margin-top: .7rem; }
+.an-arq-equipe input[type="file"] { font: 500 .8rem/1.3 var(--ac-sans); color: var(--ac-muted); }
+.an-arq-equipe input[type="file"]::file-selector-button {
+  font: 600 .72rem/1 var(--ac-sans); background: var(--ac-ivory); color: var(--ac-ink);
+  border: 1px solid var(--ac-line-2); border-radius: 6px; padding: .5rem .65rem; cursor: pointer; margin-right: .6rem;
+}
+.an-arq-equipe input[type="file"]::file-selector-button:hover { border-color: var(--ac-ink); }
 .an-dl { margin: 0; border-top: 2px solid var(--ac-ink); } .an-dl > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 1rem; padding: .8rem 0; border-bottom: 1px solid var(--ac-line); }
 .an-dl dt { font: 600 .9rem/1.4 var(--ac-sans); color: var(--ac-ink); } .an-dl dd { margin: 0; line-height: 1.5; } .an-det { color: var(--ac-muted); }
 .an-vazio, .an-dl em { color: var(--ac-muted); font-style: italic; }

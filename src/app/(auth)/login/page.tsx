@@ -47,7 +47,7 @@ export default function LoginPage() {
     <div style={{
       minHeight: '100vh', display: 'flex', flexDirection: 'column',
       fontFamily: 'var(--font-inter, var(--font-montserrat), system-ui, sans-serif)',
-      background: '#0b1f44',
+      background: '#002933',
     }}>
 
       {/* ══════════════════════════════════════════════════════════
@@ -71,23 +71,23 @@ export default function LoginPage() {
           ══════════════════════════════════════════════════════════ */}
       <div className="mobile-cta-header" style={{
         display: 'none',
-        background: 'linear-gradient(135deg, rgba(118,243,205,.2) 0%, rgba(118,243,205,.1) 100%)',
-        borderBottom: '2px solid #76f3cd',
+        background: 'linear-gradient(135deg, rgba(0,206,255,.2) 0%, rgba(0,206,255,.1) 100%)',
+        borderBottom: '2px solid #00ceff',
         padding: '0.75rem 1rem',
         position: 'static',
       }}>
         <a href="/formulario" style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.6rem',
-          background: '#76f3cd', color: '#0b1f44',
+          background: '#00ceff', color: '#002933',
           padding: '0 1.2rem', borderRadius: 9999,
           minHeight: 48,
           fontSize: '.9rem', fontWeight: 700, textDecoration: 'none',
-          boxShadow: '0 6px 20px rgba(118,243,205,.5)',
+          boxShadow: '0 6px 20px rgba(0,206,255,.5)',
           fontFamily: 'var(--font-montserrat, sans-serif)',
           width: '100%', textAlign: 'center',
         }}
-          onTouchStart={e => { e.currentTarget.style.background = '#4c8ade'; e.currentTarget.style.color = '#fff' }}
-          onTouchEnd={e => { e.currentTarget.style.background = '#76f3cd'; e.currentTarget.style.color = '#0b1f44' }}
+          onTouchStart={e => { e.currentTarget.style.background = '#00889e'; e.currentTarget.style.color = '#fff' }}
+          onTouchEnd={e => { e.currentTarget.style.background = '#00ceff'; e.currentTarget.style.color = '#002933' }}
         >
           <ClipboardList size={18} />
           <span>Formulário da Escola</span>
@@ -101,7 +101,7 @@ export default function LoginPage() {
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
         padding: '1rem 2rem',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        background: 'linear-gradient(to bottom, rgba(11,31,68,.9) 0%, transparent 100%)',
+        background: 'linear-gradient(to bottom, rgba(0,41,51,.9) 0%, transparent 100%)',
       }} className="desktop-header">
         <Link href="/" aria-label="Voltar à página inicial" style={{ display: 'inline-flex', alignItems: 'center' }}>
           <Image
@@ -131,32 +131,32 @@ export default function LoginPage() {
           </Link>
           <Link href="/proposta/acesso" style={{
             display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-            background: 'rgba(118,243,205,0.1)',
-            border: '1px solid rgba(118,243,205,0.3)',
-            color: '#76f3cd',
+            background: 'rgba(0,206,255,0.1)',
+            border: '1px solid rgba(0,206,255,0.3)',
+            color: '#00ceff',
             padding: '.45rem 1.1rem', borderRadius: 9999,
             fontSize: '.78rem', fontWeight: 600, textDecoration: 'none',
             letterSpacing: '.02em',
             transition: 'all .2s',
             fontFamily: 'var(--font-montserrat, sans-serif)',
           }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(118,243,205,0.2)'; e.currentTarget.style.borderColor = 'rgba(118,243,205,0.6)' }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(118,243,205,0.1)'; e.currentTarget.style.borderColor = 'rgba(118,243,205,0.3)' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,206,255,0.2)'; e.currentTarget.style.borderColor = 'rgba(0,206,255,0.6)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,206,255,0.1)'; e.currentTarget.style.borderColor = 'rgba(0,206,255,0.3)' }}
           >
             <FileText size={14} />
             Ver minha proposta
           </Link>
           <a href="/formulario" style={{
             display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-            background: '#76f3cd', color: '#0b1f44',
+            background: '#00ceff', color: '#002933',
             padding: '.45rem 1.1rem', borderRadius: 9999,
             fontSize: '.78rem', fontWeight: 700, textDecoration: 'none',
-          letterSpacing: '.03em', boxShadow: '0 4px 14px rgba(118,243,205,.4)',
+          letterSpacing: '.03em', boxShadow: '0 4px 14px rgba(0,206,255,.4)',
           transition: 'all .2s',
           fontFamily: 'var(--font-montserrat, sans-serif)',
         }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#4c8ade'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.transform = 'translateY(-1px)' }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#76f3cd'; e.currentTarget.style.color = '#0b1f44'; e.currentTarget.style.transform = 'translateY(0)' }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#00889e'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#00ceff'; e.currentTarget.style.color = '#002933'; e.currentTarget.style.transform = 'translateY(0)' }}
         >
             <ClipboardList size={14} />
             Formulário da Escola
@@ -192,7 +192,7 @@ export default function LoginPage() {
           right: 0,
           height: '20%',
           zIndex: 1,
-          background: 'linear-gradient(to bottom, rgba(11,31,68,.95), transparent)',
+          background: 'linear-gradient(to bottom, rgba(0,41,51,.95), transparent)',
         }} />
 
         {/* Máscara inferior para cortar textos */}
@@ -203,13 +203,13 @@ export default function LoginPage() {
           right: 0,
           height: '20%',
           zIndex: 1,
-          background: 'linear-gradient(to top, rgba(11,31,68,.95), transparent)',
+          background: 'linear-gradient(to top, rgba(0,41,51,.95), transparent)',
         }} />
 
         {/* Overlay gradiente profundo */}
         <div style={{
           position: 'absolute', inset: 0, zIndex: 1,
-          background: 'linear-gradient(110deg, rgba(11,31,68,.95) 0%, rgba(11,31,68,.8) 45%, rgba(11,31,68,.6) 100%)',
+          background: 'linear-gradient(110deg, rgba(0,41,51,.95) 0%, rgba(0,41,51,.8) 45%, rgba(0,41,51,.6) 100%)',
         }} />
 
         {/* Conteúdo principal */}
@@ -229,13 +229,13 @@ export default function LoginPage() {
             {/* Badge */}
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-              background: 'rgba(11,31,68,.7)',
-              border: '1px solid rgba(118,243,205,.4)',
+              background: 'rgba(0,41,51,.7)',
+              border: '1px solid rgba(0,206,255,.4)',
               backdropFilter: 'blur(8px)',
               borderRadius: 9999, padding: '.3rem .9rem',
               marginBottom: '1.5rem',
               fontSize: '.68rem', fontWeight: 700, letterSpacing: '.1em',
-              textTransform: 'uppercase', color: '#76f3cd',
+              textTransform: 'uppercase', color: '#00ceff',
               fontFamily: 'var(--font-montserrat, sans-serif)',
               boxShadow: '0 4px 16px rgba(0,0,0,.3)',
             }}>
@@ -252,7 +252,7 @@ export default function LoginPage() {
               textWrap: 'balance' as any,
             }}>
               Gestão comercial<br />
-              <span style={{ color: '#76f3cd' }}>inteligente e integrada</span>
+              <span style={{ color: '#00ceff' }}>inteligente e integrada</span>
             </h1>
 
             <p style={{
@@ -265,21 +265,21 @@ export default function LoginPage() {
 
             {/* Bloco para escolas parceiras */}
             <div style={{
-              background: 'linear-gradient(135deg, rgba(118,243,205,.18) 0%, rgba(118,243,205,.08) 100%)',
-              border: '1px solid rgba(118,243,205,.35)',
-              borderLeft: '4px solid #76f3cd',
+              background: 'linear-gradient(135deg, rgba(0,206,255,.18) 0%, rgba(0,206,255,.08) 100%)',
+              border: '1px solid rgba(0,206,255,.35)',
+              borderLeft: '4px solid #00ceff',
               borderRadius: 14, padding: '1.35rem 1.5rem',
               backdropFilter: 'blur(8px)',
               maxWidth: 500,
-              boxShadow: '0 8px 32px rgba(118,243,205,.12)',
+              boxShadow: '0 8px 32px rgba(0,206,255,.12)',
             }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
                 {/* Ícone */}
                 <div style={{
                   width: 46, height: 46, borderRadius: 12, flexShrink: 0,
-                  background: 'linear-gradient(135deg, #76f3cd, #4c8ade)',
+                  background: 'linear-gradient(135deg, #00ceff, #00889e)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 4px 12px rgba(118,243,205,.4)',
+                  boxShadow: '0 4px 12px rgba(0,206,255,.4)',
                 }}>
                   <ClipboardList size={21} color="#fff" />
                 </div>
@@ -288,7 +288,7 @@ export default function LoginPage() {
                   {/* Eyebrow label */}
                   <div style={{
                     fontSize: '.6rem', fontWeight: 800, letterSpacing: '.1em',
-                    textTransform: 'uppercase', color: '#76f3cd',
+                    textTransform: 'uppercase', color: '#00ceff',
                     marginBottom: '.3rem',
                     fontFamily: 'var(--font-montserrat, sans-serif)',
                   }}>
@@ -316,10 +316,10 @@ export default function LoginPage() {
                   {/* CTA */}
                   <a href="/formulario" style={{
                     display: 'inline-flex', alignItems: 'center', gap: '.45rem',
-                    background: '#76f3cd', color: '#0b1f44',
+                    background: '#00ceff', color: '#002933',
                     padding: '.55rem 1.25rem', borderRadius: 9999,
                     fontSize: '.8rem', fontWeight: 700, textDecoration: 'none',
-                    boxShadow: '0 4px 16px rgba(118,243,205,.45)',
+                    boxShadow: '0 4px 16px rgba(0,206,255,.45)',
                     fontFamily: 'var(--font-montserrat, sans-serif)',
                     letterSpacing: '.01em',
                   }}>
@@ -332,7 +332,7 @@ export default function LoginPage() {
 
           {/* Coluna direita — Card de Login */}
           <div style={{
-            background: 'rgba(11,31,68,.85)',
+            background: 'rgba(0,41,51,.85)',
             backdropFilter: 'blur(20px)',
             border: '1px solid rgba(255,255,255,.08)',
             borderRadius: 20,
@@ -344,7 +344,7 @@ export default function LoginPage() {
             <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
               <div style={{
                 fontSize: '.65rem', fontWeight: 700, letterSpacing: '.12em',
-                textTransform: 'uppercase', color: '#76f3cd', marginBottom: '.65rem',
+                textTransform: 'uppercase', color: '#00ceff', marginBottom: '.65rem',
                 fontFamily: 'var(--font-montserrat, sans-serif)',
               }}>
                 ✦ Equipe We Make
@@ -393,7 +393,7 @@ export default function LoginPage() {
                     transition: 'border-color .15s, box-shadow .15s',
                     fontFamily: 'var(--font-inter, sans-serif)',
                   }}
-                  onFocus={e => { e.target.style.borderColor = '#76f3cd'; e.target.style.boxShadow = '0 0 0 3px rgba(118,243,205,.15)' }}
+                  onFocus={e => { e.target.style.borderColor = '#00ceff'; e.target.style.boxShadow = '0 0 0 3px rgba(0,206,255,.15)' }}
                   onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,.1)'; e.target.style.boxShadow = 'none' }}
                 />
               </div>
@@ -419,7 +419,7 @@ export default function LoginPage() {
                       transition: 'border-color .15s, box-shadow .15s',
                       fontFamily: 'var(--font-inter, sans-serif)',
                     }}
-                    onFocus={e => { e.target.style.borderColor = '#76f3cd'; e.target.style.boxShadow = '0 0 0 3px rgba(118,243,205,.15)' }}
+                    onFocus={e => { e.target.style.borderColor = '#00ceff'; e.target.style.boxShadow = '0 0 0 3px rgba(0,206,255,.15)' }}
                     onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,.1)'; e.target.style.boxShadow = 'none' }}
                   />
                   <button type="button" onClick={() => setShowPass(!showPass)} style={{
@@ -435,17 +435,17 @@ export default function LoginPage() {
 
               <button type="submit" disabled={loading} style={{
                 marginTop: '.25rem', width: '100%', padding: '.85rem',
-                background: loading ? 'rgba(118,243,205,.4)' : '#76f3cd',
-                color: loading ? '#fff' : '#0b1f44', fontWeight: 700, fontSize: '.9rem',
-                border: '1px solid rgba(118,243,205,.5)',
+                background: loading ? 'rgba(0,206,255,.4)' : '#00ceff',
+                color: loading ? '#fff' : '#002933', fontWeight: 700, fontSize: '.9rem',
+                border: '1px solid rgba(0,206,255,.5)',
                 borderRadius: 9999, cursor: loading ? 'not-allowed' : 'pointer',
                 transition: 'all .2s',
-                boxShadow: loading ? 'none' : '0 4px 16px rgba(118,243,205,.4)',
+                boxShadow: loading ? 'none' : '0 4px 16px rgba(0,206,255,.4)',
                 fontFamily: 'var(--font-montserrat, sans-serif)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem',
               }}
-                onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#4c8ade'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.transform = 'translateY(-1px)' }}}
-                onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#76f3cd'; e.currentTarget.style.color = '#0b1f44'; e.currentTarget.style.transform = 'translateY(0)' }}}
+                onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#00889e'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.transform = 'translateY(-1px)' }}}
+                onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#00ceff'; e.currentTarget.style.color = '#002933'; e.currentTarget.style.transform = 'translateY(0)' }}}
               >
                 {loading ? 'Entrando...' : <><span>Entrar na Plataforma</span> <ArrowRight size={16} /></>}
               </button>
@@ -466,16 +466,16 @@ export default function LoginPage() {
             <a href="/formulario" style={{
               display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.6rem',
               padding: '.75rem 1rem', borderRadius: 10,
-              border: '1px solid rgba(118,243,205,.25)',
-              background: 'rgba(118,243,205,.08)',
-              color: '#76f3cd', textDecoration: 'none',
+              border: '1px solid rgba(0,206,255,.25)',
+              background: 'rgba(0,206,255,.08)',
+              color: '#00ceff', textDecoration: 'none',
               fontSize: '.82rem', fontWeight: 600,
               transition: 'all .2s',
               fontFamily: 'var(--font-montserrat, sans-serif)',
               whiteSpace: 'nowrap',
             }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(118,243,205,.15)'; e.currentTarget.style.borderColor = 'rgba(118,243,205,.5)' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(118,243,205,.08)'; e.currentTarget.style.borderColor = 'rgba(118,243,205,.25)' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,206,255,.15)'; e.currentTarget.style.borderColor = 'rgba(0,206,255,.5)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,206,255,.08)'; e.currentTarget.style.borderColor = 'rgba(0,206,255,.25)' }}
             >
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.55rem', minWidth: 0 }}>
                 <ClipboardList size={15} style={{ flexShrink: 0 }} />
@@ -546,10 +546,10 @@ export default function LoginPage() {
                     textDecoration: 'none', transition: 'color .15s',
                     fontFamily: 'var(--font-inter, sans-serif)',
                   }}
-                    onMouseEnter={e => e.currentTarget.style.color = '#76f3cd'}
+                    onMouseEnter={e => e.currentTarget.style.color = '#00ceff'}
                     onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,.45)'}
                   >
-                    <span style={{ color: '#76f3cd', flexShrink: 0 }}>{item.icon}</span>
+                    <span style={{ color: '#00ceff', flexShrink: 0 }}>{item.icon}</span>
                     {item.label}
                   </a>
                 ))}
@@ -560,7 +560,7 @@ export default function LoginPage() {
             <div>
               <div style={{
                 fontSize: '.65rem', fontWeight: 700, letterSpacing: '.1em',
-                textTransform: 'uppercase', color: '#76f3cd', marginBottom: '1rem',
+                textTransform: 'uppercase', color: '#00ceff', marginBottom: '1rem',
                 fontFamily: 'var(--font-montserrat, sans-serif)',
               }}>
                 Módulos da Plataforma
@@ -587,7 +587,7 @@ export default function LoginPage() {
             <div>
               <div style={{
                 fontSize: '.65rem', fontWeight: 700, letterSpacing: '.1em',
-                textTransform: 'uppercase', color: '#76f3cd', marginBottom: '1rem',
+                textTransform: 'uppercase', color: '#00ceff', marginBottom: '1rem',
                 fontFamily: 'var(--font-montserrat, sans-serif)',
               }}>
                 Links Úteis
@@ -603,7 +603,7 @@ export default function LoginPage() {
                   padding: '.25rem 0', textDecoration: 'none', transition: 'color .15s',
                   fontFamily: 'var(--font-inter, sans-serif)',
                 }}
-                  onMouseEnter={e => e.currentTarget.style.color = '#76f3cd'}
+                  onMouseEnter={e => e.currentTarget.style.color = '#00ceff'}
                   onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,.4)'}
                 >
                   {item.label}
@@ -614,10 +614,10 @@ export default function LoginPage() {
               <div style={{ marginTop: '1.25rem' }}>
                 <a href="/formulario" style={{
                   display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-                  background: '#76f3cd', color: '#0b1f44',
+                  background: '#00ceff', color: '#002933',
                   padding: '.45rem 1rem', borderRadius: 9999,
                   fontSize: '.75rem', fontWeight: 700, textDecoration: 'none',
-                  boxShadow: '0 4px 12px rgba(118,243,205,.3)',
+                  boxShadow: '0 4px 12px rgba(0,206,255,.3)',
                   fontFamily: 'var(--font-montserrat, sans-serif)',
                 }}>
                   <ClipboardList size={13} />
@@ -694,7 +694,7 @@ export default function LoginPage() {
           .hero-grid > div:first-child {
             display: block !important;
             padding-bottom: 1.5rem !important;
-            border-bottom: 1px solid rgba(118,243,205,.15) !important;
+            border-bottom: 1px solid rgba(0,206,255,.15) !important;
           }
 
           .hero-grid > div:first-child h1 {

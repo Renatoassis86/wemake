@@ -12,7 +12,7 @@ const ACTIVE_STAGES = ['prospeccao','qualificacao','apresentacao','proposta','ne
 const STAGE_COLORS: Record<string, string> = {
   prospeccao:   '#6366f1',
   qualificacao: '#8b5cf6',
-  apresentacao: '#4A7FDB',
+  apresentacao: '#00889e',
   proposta:     '#f59e0b',
   negociacao:   '#0ea5e9',
   fechamento:   '#16a34a',
@@ -126,19 +126,19 @@ export function PipelineBoard({ escolas, userId, viewMode, filtroResp }: Props) 
         <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', flexWrap: 'wrap' }}>
           <span style={{ fontSize: '.68rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.06em', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Filtrar:</span>
           <Link href={`/comercial/pipeline?view=${viewMode}`}
-            style={{ padding: '4px 12px', borderRadius: 9999, textDecoration: 'none', fontSize: '.72rem', fontWeight: 700, background: !filtroResp ? '#0f172a' : '#f1f5f9', color: !filtroResp ? '#fff' : '#475569', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+            style={{ padding: '4px 12px', borderRadius: 9999, textDecoration: 'none', fontSize: '.72rem', fontWeight: 700, background: !filtroResp ? '#002933' : '#f1f5f9', color: !filtroResp ? '#fff' : '#475569', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
             Todos
           </Link>
           {profiles.map(p => (
             <Link key={p.id} href={`/comercial/pipeline?view=${viewMode}&responsavel=${p.id}`}
-              style={{ padding: '4px 12px', borderRadius: 9999, textDecoration: 'none', fontSize: '.72rem', fontWeight: 700, background: filtroResp === p.id ? '#4A7FDB' : '#f1f5f9', color: filtroResp === p.id ? '#fff' : '#475569', fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: filtroResp === p.id ? '0 2px 8px rgba(74,127,219,.3)' : 'none' }}>
+              style={{ padding: '4px 12px', borderRadius: 9999, textDecoration: 'none', fontSize: '.72rem', fontWeight: 700, background: filtroResp === p.id ? '#00889e' : '#f1f5f9', color: filtroResp === p.id ? '#fff' : '#475569', fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: filtroResp === p.id ? '0 2px 8px rgba(0,137,158,.3)' : 'none' }}>
               {p.full_name.split(' ')[0]}
             </Link>
           ))}
         </div>
         <div style={{ display: 'flex', gap: '.4rem', alignItems: 'center' }}>
-          {loading && <div style={{ width: 14, height: 14, border: '2px solid #e2e8f0', borderTopColor: '#4A7FDB', borderRadius: '50%', animation: 'spin .7s linear infinite' }} />}
-          <span style={{ background: '#0f172a', color: '#f59e0b', fontSize: '.65rem', fontWeight: 800, padding: '.2rem .6rem', borderRadius: 99, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+          {loading && <div style={{ width: 14, height: 14, border: '2px solid #e2e8f0', borderTopColor: '#00889e', borderRadius: '50%', animation: 'spin .7s linear infinite' }} />}
+          <span style={{ background: '#002933', color: '#f59e0b', fontSize: '.65rem', fontWeight: 800, padding: '.2rem .6rem', borderRadius: 99, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
             {kanbanNegs.length} ativas
           </span>
           {totalValor > 0 && (
@@ -166,13 +166,13 @@ export function PipelineBoard({ escolas, userId, viewMode, filtroResp }: Props) 
           {!loading && !erroDb && kanbanNegs.length === 0 && (
             <div style={{ background: '#fffbeb', border: '1.5px dashed #fde68a', borderRadius: 12, padding: '1rem 1.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
               <div style={{ width: 40, height: 40, borderRadius: 10, background: '#fff', border: '1.5px solid #fde68a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A7FDB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="6" height="18" rx="2"/><rect x="9" y="3" width="6" height="18" rx="2"/><rect x="16" y="3" width="6" height="18" rx="2"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00889e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="6" height="18" rx="2"/><rect x="9" y="3" width="6" height="18" rx="2"/><rect x="16" y="3" width="6" height="18" rx="2"/></svg>
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontWeight: 700, fontSize: '.82rem', color: '#92400e' }}>
                   {filtroResp ? 'Nenhuma negociação para este consultor' : 'Nenhuma escola no pipeline'}
                 </div>
-                <div style={{ fontSize: '.72rem', color: '#2563b8', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.15rem' }}>
+                <div style={{ fontSize: '.72rem', color: '#00677d', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.15rem' }}>
                   {negociacoes.length > 0
                     ? `Há ${negociacoes.length} negociações no banco mas nenhuma corresponde ao filtro atual — clique em "Todos" para ver todas.`
                     : 'Adicione escolas para acompanhar as negociações nos quadros abaixo.'}
@@ -207,7 +207,7 @@ export function PipelineBoard({ escolas, userId, viewMode, filtroResp }: Props) 
                   <div style={{ padding: '1rem 1.25rem' }}>
                     {group.items.map((n: any) => (
                       <div key={n.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '.4rem 0', borderBottom: '1px solid #f1f5f9' }}>
-                        <span style={{ fontWeight: 600, fontSize: '.8rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{n.escola?.nome?.substring(0, 28) ?? '—'}</span>
+                        <span style={{ fontWeight: 600, fontSize: '.8rem', color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{n.escola?.nome?.substring(0, 28) ?? '—'}</span>
                         {n.valor_estimado && <span style={{ color: group.cor, fontWeight: 700, fontFamily: 'var(--font-cormorant,serif)', fontSize: '.9rem' }}>{formatCurrency(n.valor_estimado)}</span>}
                       </div>
                     ))}
@@ -226,9 +226,9 @@ export function PipelineBoard({ escolas, userId, viewMode, filtroResp }: Props) 
             <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)', fontSize: '.85rem' }}>Nenhuma negociação cadastrada.</div>
           )}
           {consultorStats.map(({ profile: prof, negs: negsList, ativos: a, ganhos: g, potencial }) => (
-            <div key={prof.id} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 8px rgba(15,23,42,.05)' }}>
-              <div style={{ background: '#0f172a', padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-                <div style={{ width: 38, height: 38, borderRadius: '50%', background: '#4A7FDB', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '.8rem', fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)', flexShrink: 0 }}>
+            <div key={prof.id} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,41,51,.05)' }}>
+              <div style={{ background: '#002933', padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                <div style={{ width: 38, height: 38, borderRadius: '50%', background: '#00889e', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '.8rem', fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)', flexShrink: 0 }}>
                   {prof.full_name.split(' ').slice(0,2).map((n: string) => n[0]).join('').toUpperCase()}
                 </div>
                 <div style={{ flex: 1 }}>
@@ -259,7 +259,7 @@ export function PipelineBoard({ escolas, userId, viewMode, filtroResp }: Props) 
                           : items.map((n: any) => (
                             <Link key={n.id} href={`/comercial/escolas/${n.escola_id}`}
                               style={{ display: 'block', textDecoration: 'none', background: '#fff', border: '1px solid #e2e8f0', borderLeft: `3px solid ${cor}`, borderRadius: 7, padding: '.45rem .6rem' }}>
-                              <div style={{ fontWeight: 700, fontSize: '.7rem', color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                              <div style={{ fontWeight: 700, fontSize: '.7rem', color: '#002933', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                                 {n.escola?.nome?.substring(0, 20) ?? '—'}
                               </div>
                             </Link>

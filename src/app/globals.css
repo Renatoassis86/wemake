@@ -1,25 +1,29 @@
 @import "tailwindcss";
 
 /* ================================================================
-   We Make — Gestão Comercial — Design System v3
-   Fontes: Fraunces (serif/display) + Geist (sans/UI) — mesma
-   identidade usada na proposta comercial enviada às escolas.
-   Paleta: Navy #0b1f44 + Royal #4c8ade + Mint #76f3cd
+   We Make — Gestão Comercial — Design System v4
+   Fonte: Satoshi (só ela — sem par serifado no kit oficial).
+   Paleta oficial (identidade_visual_nova.zip, medida pixel a pixel
+   nos PNGs do kit): Preto-petróleo #002933 + Ciano #00ceff + Marfim #f4f3ee.
+   --brand-blue/--brand-blue-m NÃO são o ciano puro: são tons mais escuros
+   da mesma família de cor, pra ficarem legíveis como texto/fundo de botão
+   com texto branco em cima — o ciano #00ceff puro não tem contraste
+   suficiente pra isso (ótimo em fundo grande, ruim em texto/botão pequeno).
    ================================================================ */
 
 :root {
   /* Brand — We Make */
-  --brand-cyan:   #76f3cd;
-  --brand-blue:   #4c8ade;
-  --brand-blue-m: #2a69ba;
-  --brand-blue-l: #dce9ff;
-  --amber:        var(--brand-blue);    /* alias legado mantido pelas classes que ainda o referenciam; é o azul royal da identidade, não amarelo — preferir --brand-blue em código novo */
-  --amber-light:  var(--brand-cyan);    /* mint accent */
-  --amber-dark:   var(--brand-blue-m);  /* royal escuro, hover */
+  --brand-cyan:   #00ceff;
+  --brand-blue:   #00889e;
+  --brand-blue-m: #00677d;
+  --brand-blue-l: #d6f7ff;
+  --amber:        var(--brand-blue);    /* alias legado mantido pelas classes que ainda o referenciam; é o ciano escuro da identidade, não amarelo — preferir --brand-blue em código novo */
+  --amber-light:  var(--brand-cyan);    /* ciano vivo */
+  --amber-dark:   var(--brand-blue-m);  /* ciano escuro, hover */
 
   /* Slate scale */
   --slate-950:    #020617;
-  --slate-900:    #0b1f44;       /* navy da identidade */
+  --slate-900:    #002933;       /* preto-petróleo da identidade */
   --slate-800:    #1e293b;
   --slate-700:    #334155;
   --slate-600:    #475569;
@@ -39,7 +43,7 @@
   --border-d:     #cbd5e1;
 
   /* Text hierarchy — ajustado para melhor legibilidade */
-  --text:         #0b1f44;
+  --text:         #002933;
   --text-m:       #1e293b;
   --text-s:       #475569;
   --text-xs:      #64748b;
@@ -69,8 +73,8 @@
   --shadow-xs: 0 1px 2px rgba(0,0,0,.05);
   --shadow:    0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
   --shadow-md: 0 4px 12px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.04);
-  --shadow-lg: 0 10px 40px rgba(11,31,68,.12);
-  --shadow-xl: 0 20px 60px rgba(11,31,68,.18);
+  --shadow-lg: 0 10px 40px rgba(0,41,51,.12);
+  --shadow-xl: 0 20px 60px rgba(0,41,51,.18);
 
   /* Transition */
   --transition: all .18s ease;
@@ -211,9 +215,9 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   .btn:active { transform: translateY(1px); }
   .btn-primary {
     background: var(--amber); color: #fff; border-color: var(--amber);
-    box-shadow: 0 4px 14px rgba(76,138,222,.3);
+    box-shadow: 0 4px 14px rgba(0,137,158,.3);
   }
-  .btn-primary:hover { background: var(--amber-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(76,138,222,.4); color: #fff; }
+  .btn-primary:hover { background: var(--amber-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,137,158,.4); color: #fff; }
   .btn-secondary { background: var(--brand-blue); color: #fff; }
   .btn-secondary:hover { background: var(--brand-blue-m); color: #fff; transform: translateY(-1px); }
   .btn-outline { background: transparent; color: var(--amber); border-color: var(--amber); }
@@ -269,7 +273,7 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   }
   .form-control:focus {
     border-color: var(--amber);
-    box-shadow: 0 0 0 3px rgba(76,138,222,.12);
+    box-shadow: 0 0 0 3px rgba(0,137,158,.12);
   }
   select.form-control { cursor: pointer; }
   textarea.form-control { resize: vertical; min-height: 100px; }
@@ -287,7 +291,7 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   /* Table */
   .data-table { width: 100%; border-collapse: collapse; font-size: .875rem; }
   .data-table thead th {
-    background: #0b1f44; color: rgba(255,255,255,.65);
+    background: #002933; color: rgba(255,255,255,.65);
     font-size: .66rem; font-weight: 700; text-transform: uppercase;
     letter-spacing: .07em; padding: .7rem 1rem;
     border-bottom: none; white-space: nowrap; text-align: left;
@@ -312,7 +316,7 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   .nav-item:hover { background: rgba(255,255,255,.08); color: rgba(255,255,255,.95); }
   .nav-item.active {
     background: linear-gradient(135deg, var(--amber), var(--amber-dark));
-    color: #fff; box-shadow: 0 4px 12px rgba(76,138,222,.35);
+    color: #fff; box-shadow: 0 4px 12px rgba(0,137,158,.35);
   }
   .nav-item.wip { opacity: .45; pointer-events: none; }
   .nav-wip-tag {
@@ -678,7 +682,7 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
   }
 
   /* ── Estatísticas hero (fundo escuro) ── */
-  div[style*="background: linear-gradient(135deg, #0b1f44"] {
+  div[style*="background: linear-gradient(135deg, #002933"] {
     padding: 1.25rem !important;
   }
 
@@ -918,7 +922,7 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
 
   /* Better focus states for touch */
   button:focus, a:focus, input:focus {
-    outline: 2px solid #76f3cd !important;
+    outline: 2px solid #00ceff !important;
     outline-offset: 2px !important;
   }
 }

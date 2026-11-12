@@ -114,7 +114,7 @@ export default function HubLanding() {
       </div>
 
       <style>{`
-        .hub { --ink:#0b1f44; --ink2:#16305c; --cyan:#2a69ba; --ivory:#f2f0ea; --line:#d8d4c8; min-height:100vh; background:#fbfaf6; color:#15272d; font-family:Georgia, 'Times New Roman', serif; }
+        .hub { --ink:#002933; --ink2:#16305c; --cyan:#00677d; --ivory:#f2f0ea; --line:#d8d4c8; min-height:100vh; background:#fbfaf6; color:#15272d; font-family:Georgia, 'Times New Roman', serif; }
         .hub-top { position:fixed; inset:0 0 auto 0; z-index:100; display:flex; background:rgba(3,43,54,.45); backdrop-filter:blur(12px); border-bottom:1px solid transparent; transition:background .25s, border-color .25s; }
         .hub-top.is-scrolled { background:rgba(3,43,54,.94); border-bottom-color:rgba(255,255,255,.1); }
         .hub-top-in { width:100%; max-width:1280px; margin:0 auto; padding:.8rem 1.75rem; display:flex; align-items:center; justify-content:space-between; gap:1.5rem; }
@@ -151,7 +151,7 @@ export default function HubLanding() {
         .hub-sec--ivory { background:var(--ivory); }
         .hub-wrap { max-width:1280px; margin:0 auto; }
         .hub-sec-h { max-width:60ch; margin-bottom:clamp(2rem,4vw,3.5rem); }
-        .hub-k { font:700 .68rem/1 ${DISPLAY}; letter-spacing:.2em; text-transform:uppercase; color:#2a69ba; margin:0 0 1rem; }
+        .hub-k { font:700 .68rem/1 ${DISPLAY}; letter-spacing:.2em; text-transform:uppercase; color:#00677d; margin:0 0 1rem; }
         .hub-sec-h h2 { font:600 clamp(1.7rem,3.4vw,2.6rem)/1.1 ${DISPLAY}; letter-spacing:-.022em; color:var(--ink); margin:0 0 1rem; text-wrap:balance; }
         .hub-sec-h p:last-child { color:#56676d; line-height:1.6; margin:0; }
 

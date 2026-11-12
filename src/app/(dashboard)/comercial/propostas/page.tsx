@@ -20,7 +20,7 @@ const STATUS_COR: Record<string, { bg: string; text: string; border: string }> =
 
 const inputStyle: React.CSSProperties = {
   padding: '.55rem .85rem', fontSize: '.82rem', fontFamily: 'var(--font-inter,sans-serif)',
-  border: '1.5px solid #e2e8f0', borderRadius: 8, background: '#f8fafc', color: '#0f172a', outline: 'none',
+  border: '1.5px solid #e2e8f0', borderRadius: 8, background: '#f8fafc', color: '#002933', outline: 'none',
 }
 
 export default async function PropostasPage({ searchParams }: Props) {
@@ -56,9 +56,9 @@ export default async function PropostasPage({ searchParams }: Props) {
         actions={
           <Link href="/calculadora" style={{
             display: 'inline-flex', alignItems: 'center', gap: '.4rem',
-            background: '#4A7FDB', color: '#fff', padding: '.45rem 1rem',
+            background: '#00889e', color: '#fff', padding: '.45rem 1rem',
             borderRadius: 9999, fontSize: '.82rem', fontWeight: 700,
-            textDecoration: 'none', boxShadow: '0 4px 12px rgba(74,127,219,.3)',
+            textDecoration: 'none', boxShadow: '0 4px 12px rgba(0,137,158,.3)',
             fontFamily: 'var(--font-montserrat,sans-serif)',
           }}>
             + Gerar Proposta
@@ -73,7 +73,7 @@ export default async function PropostasPage({ searchParams }: Props) {
           <form style={{ display: 'flex', gap: '.5rem', flex: 1, minWidth: 240 }}>
             {arquivadas && <input type="hidden" name="arquivadas" value="1" />}
             <input name="q" defaultValue={q} placeholder="Buscar por escola..." style={{ ...inputStyle, flex: 1 }} />
-            <button type="submit" style={{ ...inputStyle, background: '#0f172a', color: '#fff', fontWeight: 700, cursor: 'pointer', border: 'none' }}>
+            <button type="submit" style={{ ...inputStyle, background: '#002933', color: '#fff', fontWeight: 700, cursor: 'pointer', border: 'none' }}>
               Buscar
             </button>
           </form>
@@ -81,7 +81,7 @@ export default async function PropostasPage({ searchParams }: Props) {
             href={arquivadas ? '/comercial/propostas' : `/comercial/propostas?arquivadas=1${q ? `&q=${q}` : ''}`}
             style={{
               padding: '.55rem .9rem', borderRadius: 8, textDecoration: 'none',
-              border: `1.5px solid ${arquivadas ? '#4A7FDB' : '#e2e8f0'}`,
+              border: `1.5px solid ${arquivadas ? '#00889e' : '#e2e8f0'}`,
               background: arquivadas ? '#eff6ff' : '#fff',
               color: arquivadas ? '#2563eb' : '#475569',
               fontSize: '.78rem', fontWeight: 700, whiteSpace: 'nowrap',
@@ -94,11 +94,11 @@ export default async function PropostasPage({ searchParams }: Props) {
 
         {/* ── Tabela ──────────────────────────────────────────────── */}
         {propostas && propostas.length > 0 ? (
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 8px rgba(15,23,42,.05)' }}>
+          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,41,51,.05)' }}>
             <div className="mp-escolas-table-wrap" style={{ overflowX: 'auto' }}>
               <table className="mp-escolas-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: '#0f172a' }}>
+                  <tr style={{ background: '#002933' }}>
                     {['Escola', 'Tipo', 'Valor/aluno/ano', 'Validade', 'Status', 'Views', 'Criada em', ''].map(col => (
                       <th key={col} style={{
                         padding: '.7rem 1rem', textAlign: col === 'Valor/aluno/ano' || col === 'Views' ? 'right' : 'left',
@@ -116,7 +116,7 @@ export default async function PropostasPage({ searchParams }: Props) {
                     return (
                       <tr key={p.id} style={{ borderBottom: '1px solid #f1f5f9', background: idx % 2 === 0 ? '#fff' : '#fafafa' }}>
                         <td style={{ padding: '.85rem 1rem', verticalAlign: 'middle' }}>
-                          <Link href={`/comercial/propostas/${p.id}/editar`} style={{ fontWeight: 700, fontSize: '.875rem', color: '#0f172a', textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                          <Link href={`/comercial/propostas/${p.id}/editar`} style={{ fontWeight: 700, fontSize: '.875rem', color: '#002933', textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                             {p.escola_nome}
                           </Link>
                         </td>
@@ -126,7 +126,7 @@ export default async function PropostasPage({ searchParams }: Props) {
                           </span>
                         </td>
                         <td style={{ padding: '.85rem 1rem', textAlign: 'right', verticalAlign: 'middle' }}>
-                          <span style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>
+                          <span style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1rem', fontWeight: 700, color: '#002933' }}>
                             {formatCurrency(p.valor_aluno_ano ?? 0)}
                           </span>
                         </td>
@@ -187,8 +187,8 @@ export default async function PropostasPage({ searchParams }: Props) {
             </div>
           </div>
         ) : (
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, padding: '4rem 2rem', textAlign: 'center', boxShadow: '0 2px 8px rgba(15,23,42,.05)' }}>
-            <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', color: '#0f172a', marginBottom: '.4rem' }}>
+          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, padding: '4rem 2rem', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,41,51,.05)' }}>
+            <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', color: '#002933', marginBottom: '.4rem' }}>
               {q ? `Nenhum resultado para "${q}"` : arquivadas ? 'Nenhuma proposta arquivada' : 'Nenhuma proposta gerada ainda'}
             </h3>
             <p style={{ fontSize: '.85rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)' }}>

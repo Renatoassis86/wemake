@@ -79,16 +79,16 @@ export function ModuloLateral({ slug, pathname }: { slug: ModuloSlug; pathname: 
 
 export const SIDEBAR_CSS = `
   .sbc-voltar { display:block; margin:.35rem 1rem .9rem; font:500 .74rem/1 var(--font-inter, sans-serif); color:rgba(255,255,255,.55); text-decoration:none; }
-  .sbc-voltar:hover { color:#00c8ff; }
+  .sbc-voltar:hover { color:#00677d; }
   .sbc-rotulo { font:700 .6rem/1.2 var(--font-inter, sans-serif); letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.38); padding:1.15rem 1.25rem .45rem; }
   .sbc-item { display:flex; align-items:center; gap:.7rem; margin:1px 8px; padding:.5rem .8rem .5rem .75rem; border-radius:8px; text-decoration:none;
     font:500 .83rem/1.3 var(--font-inter, sans-serif); color:rgba(255,255,255,.68); transition:background .15s, color .15s; position:relative; }
   .sbc-item:hover { background:rgba(255,255,255,.06); color:#fff; }
-  .sbc-item.is-on { background:rgba(0,200,255,.13); color:#fff; font-weight:600; box-shadow:inset 3px 0 0 #00c8ff; }
+  .sbc-item.is-on { background:rgba(42,105,186,.13); color:#fff; font-weight:600; box-shadow:inset 3px 0 0 #00677d; }
   .sbc-item.is-off { color:rgba(255,255,255,.35); cursor:default; justify-content:space-between; }
   .sbc-item.is-off:hover { background:none; color:rgba(255,255,255,.35); }
-  .sbc-n { flex:0 0 auto; width:1.5rem; font:700 .66rem/1 var(--font-inter, sans-serif); font-variant-numeric:tabular-nums; color:rgba(0,200,255,.75); }
-  .sbc-item.is-on .sbc-n { color:#00c8ff; }
+  .sbc-n { flex:0 0 auto; width:1.5rem; font:700 .66rem/1 var(--font-inter, sans-serif); font-variant-numeric:tabular-nums; color:rgba(42,105,186,.75); }
+  .sbc-item.is-on .sbc-n { color:#00677d; }
   .sbc-t { flex:1; min-width:0; }
   .sbc-breve { font:600 .54rem/1 var(--font-inter, sans-serif); letter-spacing:.1em; text-transform:uppercase; border:1px solid rgba(255,255,255,.2); border-radius:99px; padding:.25rem .45rem; color:rgba(255,255,255,.4); }
   @media (max-width: 640px) {

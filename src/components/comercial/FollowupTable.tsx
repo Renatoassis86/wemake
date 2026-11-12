@@ -22,11 +22,11 @@ export function FollowupTable({ linhas }: { linhas: FollowupLinha[] }) {
       cell: row => (
         <div style={{ minWidth: 0 }}>
           {row.escolaId ? (
-            <Link href={`/comercial/escolas/${row.escolaId}`} style={{ fontWeight: 700, fontSize: '.82rem', color: '#0f172a', textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+            <Link href={`/comercial/escolas/${row.escolaId}`} style={{ fontWeight: 700, fontSize: '.82rem', color: '#002933', textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
               {row.escolaNome}
             </Link>
           ) : (
-            <span style={{ fontWeight: 700, fontSize: '.82rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{row.escolaNome}</span>
+            <span style={{ fontWeight: 700, fontSize: '.82rem', color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{row.escolaNome}</span>
           )}
           <div style={{ fontSize: '.68rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
             {[row.cidade, row.estado].filter(Boolean).join('/') || '—'}
@@ -59,7 +59,7 @@ export function FollowupTable({ linhas }: { linhas: FollowupLinha[] }) {
       width: '13%',
       cell: row => (
         <div>
-          <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontWeight: 700, color: row.valorContratoAssinado ? '#16a34a' : '#0f172a' }}>
+          <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontWeight: 700, color: row.valorContratoAssinado ? '#16a34a' : '#002933' }}>
             {row.valorContrato ? formatCurrency(row.valorContrato) : '—'}
           </div>
           <div style={{ fontSize: '.62rem', color: '#94a3b8' }}>{row.valorContratoAssinado ? 'contrato assinado' : 'potencial anual'}</div>
@@ -102,7 +102,7 @@ export function FollowupTable({ linhas }: { linhas: FollowupLinha[] }) {
           const resto = separador === -1 ? null : texto.slice(separador + 3)
           return (
             <div title={texto} style={{ maxWidth: 320 }}>
-              <div style={{ fontSize: '.72rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: resto ? '.15rem' : 0 }}>{fase}</div>
+              <div style={{ fontSize: '.72rem', fontWeight: 700, color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: resto ? '.15rem' : 0 }}>{fase}</div>
               {resto && (
                 <div style={{
                   fontSize: '.72rem', color: '#64748b', lineHeight: 1.35,
@@ -128,12 +128,12 @@ export function FollowupTable({ linhas }: { linhas: FollowupLinha[] }) {
               style={{
                 flex: 1, minWidth: 0, fontSize: '.74rem', padding: '.35rem .55rem',
                 border: '1.5px solid #e2e8f0', borderRadius: 6, background: '#f8fafc',
-                color: '#0f172a', outline: 'none', fontFamily: 'var(--font-inter,sans-serif)',
+                color: '#002933', outline: 'none', fontFamily: 'var(--font-inter,sans-serif)',
               }}
             />
             <button type="submit" title="Salvar" style={{
               flexShrink: 0, width: 26, height: 26, borderRadius: 6, border: 'none',
-              background: '#4A7FDB', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: '#00889e', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer',
             }}>
               <Save size={12} />

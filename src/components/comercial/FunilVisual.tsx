@@ -37,7 +37,7 @@ export function FunilVisual({ estagios }: { estagios: FunilVisualEstagio[] }) {
               width: `${larguraPct}%`, minWidth: 160, maxWidth: '100%',
               borderRadius: idx === estagios.length - 1 ? 8 : 6,
               overflow: 'hidden', display: 'flex', height: 46,
-              boxShadow: '0 1px 4px rgba(15,23,42,.08)', border: '1px solid rgba(15,23,42,.06)',
+              boxShadow: '0 1px 4px rgba(0,41,51,.08)', border: '1px solid rgba(0,41,51,.06)',
             }}>
               {somaTemp > 0 ? (
                 (['quente', 'morno', 'frio'] as LeadTemperatura[]).map(t => {
@@ -57,8 +57,8 @@ export function FunilVisual({ estagios }: { estagios: FunilVisualEstagio[] }) {
             <div style={{
               display: 'flex', alignItems: 'baseline', gap: '.4rem', marginTop: '.3rem', marginBottom: idx < estagios.length - 1 ? '.15rem' : 0,
             }}>
-              <span style={{ fontSize: '.75rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{e.label}</span>
-              <span style={{ fontSize: '.72rem', fontWeight: 800, color: '#4A7FDB', fontFamily: 'var(--font-cormorant,serif)' }}>{e.total}</span>
+              <span style={{ fontSize: '.75rem', fontWeight: 700, color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{e.label}</span>
+              <span style={{ fontSize: '.72rem', fontWeight: 800, color: '#00889e', fontFamily: 'var(--font-cormorant,serif)' }}>{e.total}</span>
             </div>
           </div>
         )

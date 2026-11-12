@@ -65,7 +65,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://gestao.wemake.tec.br'),
   title: 'We Make — Gestão Comercial para Educação',
   description: 'Plataforma de gestão comercial e inteligência para educação',
-  // A imagem em si vem do arquivo opengraph-image.tsx (convenção de rota do
+  // A imagem em si vem do arquivo opengraph-image.png (convenção de rota do
   // Next) — ele já injeta og:image automaticamente; não repetir aqui.
   twitter: { card: 'summary_large_image' },
 }

@@ -18,7 +18,7 @@ const inputStyle: React.CSSProperties = {
   width: '100%', padding: '.65rem .9rem', fontSize: '.875rem',
   fontFamily: 'var(--font-inter,sans-serif)',
   border: '1.5px solid #e2e8f0', borderRadius: 8,
-  background: '#f8fafc', color: '#0f172a', outline: 'none',
+  background: '#f8fafc', color: '#002933', outline: 'none',
   boxSizing: 'border-box',
 }
 
@@ -38,8 +38,8 @@ function SectionHeader({ icon, title, hint }: { icon: keyof typeof SECTION_ICONS
       <div style={{ display: 'flex', alignItems: 'center', gap: '.7rem' }}>
         <div style={{
           width: 34, height: 34, borderRadius: 9, flexShrink: 0,
-          background: 'linear-gradient(135deg, rgba(74,127,219,.12), rgba(74,127,219,.06))',
-          color: '#4A7FDB', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'linear-gradient(135deg, rgba(0,137,158,.12), rgba(0,137,158,.06))',
+          color: '#00889e', display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           {SECTION_ICONS[icon]}
         </div>

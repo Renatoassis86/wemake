@@ -353,7 +353,7 @@ export default function FormularioPublico() {
           style={{
             background: 'transparent',
             border: '1px solid #cbd5e1',
-            color: '#0b1f44',
+            color: '#002933',
             padding: 'clamp(0.5rem, 2vw, 0.65rem) clamp(0.85rem, 3vw, 1.25rem)',
             borderRadius: '9999px',
             cursor: 'pointer',
@@ -367,7 +367,7 @@ export default function FormularioPublico() {
           }}
           onMouseEnter={e => {
             e.currentTarget.style.background = '#f1f5f9'
-            e.currentTarget.style.borderColor = '#76f3cd'
+            e.currentTarget.style.borderColor = '#00ceff'
           }}
           onMouseLeave={e => {
             e.currentTarget.style.background = 'transparent'
@@ -398,7 +398,7 @@ export default function FormularioPublico() {
           <h1 style={{
             fontFamily: 'var(--font-cormorant, "Georgia", serif)',
             fontSize: 'clamp(1.75rem, 5vw, 3rem)',
-            fontWeight: 700, color: '#0b1f44', lineHeight: 1.15,
+            fontWeight: 700, color: '#002933', lineHeight: 1.15,
             marginBottom: '0.75rem',
           }}>
             Parceria Educacional<br />
@@ -522,13 +522,13 @@ export default function FormularioPublico() {
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <input type="radio" name="entrega_mesmo_endereco" id="entrega_sim" value="true"
                       checked={entregaMesmoEndereco} onChange={() => setEntregaMesmoEndereco(true)}
-                      style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#76f3cd' }} />
+                      style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#00ceff' }} />
                     <label htmlFor="entrega_sim" style={{ marginLeft: '.5rem', fontSize: '.85rem', color: '#475569', cursor: 'pointer' }}>Sim</label>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <input type="radio" name="entrega_mesmo_endereco" id="entrega_nao" value="false"
                       checked={!entregaMesmoEndereco} onChange={() => setEntregaMesmoEndereco(false)}
-                      style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#76f3cd' }} />
+                      style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#00ceff' }} />
                     <label htmlFor="entrega_nao" style={{ marginLeft: '.5rem', fontSize: '.85rem', color: '#475569', cursor: 'pointer' }}>Não</label>
                   </div>
                 </div>
@@ -567,19 +567,19 @@ export default function FormularioPublico() {
                 <div style={{ fontSize: '.85rem', fontWeight: 600, color: '#334155', marginBottom: '.75rem' }}>Quais segmentos adotarão?</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '.8rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <input type="checkbox" name="seg_infantil" id="seg_infantil" checked={segInfantil} onChange={e => setSegInfantil(e.target.checked)} style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#76f3cd' }} />
+                    <input type="checkbox" name="seg_infantil" id="seg_infantil" checked={segInfantil} onChange={e => setSegInfantil(e.target.checked)} style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#00ceff' }} />
                     <label htmlFor="seg_infantil" style={{ marginLeft: '.5rem', fontSize: '.85rem', color: '#475569', cursor: 'pointer' }}>Infantil</label>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <input type="checkbox" name="seg_fundamental_1" id="seg_fundamental_1" checked={segFund1} onChange={e => setSegFund1(e.target.checked)} style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#76f3cd' }} />
+                    <input type="checkbox" name="seg_fundamental_1" id="seg_fundamental_1" checked={segFund1} onChange={e => setSegFund1(e.target.checked)} style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#00ceff' }} />
                     <label htmlFor="seg_fundamental_1" style={{ marginLeft: '.5rem', fontSize: '.85rem', color: '#475569', cursor: 'pointer' }}>Fundamental 1</label>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <input type="checkbox" name="seg_fundamental_2" id="seg_fundamental_2" checked={segFund2} onChange={e => setSegFund2(e.target.checked)} style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#76f3cd' }} />
+                    <input type="checkbox" name="seg_fundamental_2" id="seg_fundamental_2" checked={segFund2} onChange={e => setSegFund2(e.target.checked)} style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#00ceff' }} />
                     <label htmlFor="seg_fundamental_2" style={{ marginLeft: '.5rem', fontSize: '.85rem', color: '#475569', cursor: 'pointer' }}>Fundamental 2</label>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <input type="checkbox" name="seg_ensino_medio" id="seg_ensino_medio" checked={segMedio} onChange={e => setSegMedio(e.target.checked)} style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#76f3cd' }} />
+                    <input type="checkbox" name="seg_ensino_medio" id="seg_ensino_medio" checked={segMedio} onChange={e => setSegMedio(e.target.checked)} style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#00ceff' }} />
                     <label htmlFor="seg_ensino_medio" style={{ marginLeft: '.5rem', fontSize: '.85rem', color: '#475569', cursor: 'pointer' }}>Ensino Médio</label>
                   </div>
                 </div>
@@ -608,7 +608,7 @@ export default function FormularioPublico() {
                 <div style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
                   <input
                     name="maior_sala" type="number" min="0" max="80" defaultValue={0}
-                    style={{ width: 90, padding: '.65rem .75rem', fontSize: '1.4rem', fontWeight: 700, textAlign: 'center', border: '2px solid #93c5fd', borderRadius: 8, outline: 'none', background: '#fff', color: '#0b1f44' }}
+                    style={{ width: 90, padding: '.65rem .75rem', fontSize: '1.4rem', fontWeight: 700, textAlign: 'center', border: '2px solid #93c5fd', borderRadius: 8, outline: 'none', background: '#fff', color: '#002933' }}
                     onFocus={e => { e.target.style.borderColor = '#2563eb'; e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,.15)' }}
                     onBlur={e => { e.target.style.borderColor = '#93c5fd'; e.target.style.boxShadow = 'none' }}
                   />
@@ -663,8 +663,8 @@ export default function FormularioPublico() {
               </Row>
             </Section>
 
-            <aside style={{ margin: '0 0 1.25rem', padding: '1rem 1.15rem', border: '1px solid #e2e8f0', borderLeft: '4px solid #76f3cd', borderRadius: 10, background: '#f8fafc', fontSize: '.82rem', lineHeight: 1.6, color: '#334155' }}>
-              <b style={{ display: 'block', marginBottom: '.25rem', color: '#0b1f44' }}>Como usamos os seus dados</b>
+            <aside style={{ margin: '0 0 1.25rem', padding: '1rem 1.15rem', border: '1px solid #e2e8f0', borderLeft: '4px solid #00ceff', borderRadius: 10, background: '#f8fafc', fontSize: '.82rem', lineHeight: 1.6, color: '#334155' }}>
+              <b style={{ display: 'block', marginBottom: '.25rem', color: '#002933' }}>Como usamos os seus dados</b>
               Os dados deste formulário, incluindo o CPF e o endereço do representante legal, servem para preparar a proposta comercial e o contrato da sua escola. Quem acessa é a equipe da We Make. Para corrigir ou pedir a exclusão dos dados, escreva para contato@wemake.tec.br.
             </aside>
 
@@ -689,7 +689,7 @@ export default function FormularioPublico() {
                   minWidth: 0,
                   padding: '.75rem 1rem',
                   background: '#f1f5f9',
-                  color: '#0b1f44',
+                  color: '#002933',
                   fontWeight: 600,
                   fontSize: '.9rem',
                   border: '1px solid #cbd5e1',
@@ -711,8 +711,8 @@ export default function FormularioPublico() {
                 flex: 2,
                 minWidth: 0,
                 padding: 'clamp(0.75rem, 2vw, 0.95rem)',
-                background: loading ? '#cbd5e1' : '#76f3cd',
-                color: loading ? '#64748b' : '#0b1f44',
+                background: loading ? '#cbd5e1' : '#00ceff',
+                color: loading ? '#64748b' : '#002933',
                 fontWeight: 700,
                 fontSize: 'clamp(0.9rem, 2vw, 0.95rem)',
                 border: 'none',
@@ -720,21 +720,21 @@ export default function FormularioPublico() {
                 cursor: loading ? 'not-allowed' : 'pointer',
                 fontFamily: 'var(--font-montserrat, sans-serif)',
                 letterSpacing: '.02em',
-                boxShadow: loading ? 'none' : '0 4px 12px rgba(118,243,205,.3)',
+                boxShadow: loading ? 'none' : '0 4px 12px rgba(0,206,255,.3)',
                 transition: 'all .2s',
                 opacity: loading ? 0.7 : 1,
                 minHeight: 48,
               }}
               onMouseEnter={e => {
                 if (!loading) {
-                  e.currentTarget.style.background = '#4c8ade'
+                  e.currentTarget.style.background = '#00889e'
                   e.currentTarget.style.color = '#fff'
                 }
               }}
               onMouseLeave={e => {
                 if (!loading) {
-                  e.currentTarget.style.background = '#76f3cd'
-                  e.currentTarget.style.color = '#0b1f44'
+                  e.currentTarget.style.background = '#00ceff'
+                  e.currentTarget.style.color = '#002933'
                 }
               }}>
               {loading ? 'Enviando...' : 'Enviar Formulário'}
@@ -754,7 +754,7 @@ export default function FormularioPublico() {
         form input, form select, form textarea {
           color-scheme: light !important;
           background-color: #ffffff !important;
-          color: #0b1f44 !important;
+          color: #002933 !important;
           border-color: #cbd5e1 !important;
         }
         form input::placeholder, form textarea::placeholder {
@@ -762,8 +762,8 @@ export default function FormularioPublico() {
           opacity: 1 !important;
         }
         form input:focus, form select:focus, form textarea:focus {
-          border-color: #4c8ade !important;
-          box-shadow: 0 0 0 3px rgba(76,138,222,.15) !important;
+          border-color: #00889e !important;
+          box-shadow: 0 0 0 3px rgba(0,137,158,.15) !important;
         }
         /* Section card borders */
         .form-section {

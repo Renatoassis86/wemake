@@ -53,7 +53,10 @@ export default async function ArquiteturaPage() {
                   <DiarioEquipe id={i.id} anotacoes={i.anotacoes} semSecao />
 
                   <h4 className="an-arq-sub">Arquivos <small>plantas, memoriais e pareceres</small></h4>
-                  <ArquivosEquipe id={i.id} inicial={i.arquivosEquipe} />
+                  <ArquivosEquipe id={i.id} inicial={i.arquivosEquipe} categoria="arquitetura" />
+
+                  <h4 className="an-arq-sub">Espaço Maker (Arquitetura) <small>projeto final da Gabi, por escola</small></h4>
+                  <ArquivosEquipe id={i.id} inicial={i.arquivosMaker} categoria="espaco_maker" />
                 </div>
               </details>
             </li>

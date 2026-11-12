@@ -8,7 +8,7 @@ import { NegociacaoCardModal } from './NegociacaoCardModal'
 const STAGE_COLORS: Record<string, string> = {
   prospeccao:   '#6366f1',
   qualificacao: '#8b5cf6',
-  apresentacao: '#4A7FDB',
+  apresentacao: '#00889e',
   proposta:     '#f59e0b',
   negociacao:   '#0ea5e9',
   fechamento:   '#16a34a',
@@ -70,7 +70,7 @@ function getInitials(name: string) {
 }
 
 function nameColor(name: string) {
-  const colors = ['#6366f1','#8b5cf6','#4A7FDB','#0ea5e9','#16a34a','#dc2626','#7c3aed','#db2777']
+  const colors = ['#6366f1','#8b5cf6','#00889e','#0ea5e9','#16a34a','#dc2626','#7c3aed','#db2777']
   let h = 0
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffffffff
   return colors[Math.abs(h) % colors.length]
@@ -236,7 +236,7 @@ export function PipelineKanban({ negociacoes, stages, userId, onUpdate }: Props)
             <div style={{
               padding: '.6rem .9rem',
               borderRadius: '10px 10px 0 0',
-              background: '#0f172a',
+              background: '#002933',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               borderBottom: `3px solid ${cor}`,
               gap: '.5rem',
@@ -310,7 +310,7 @@ export function PipelineKanban({ negociacoes, stages, userId, onUpdate }: Props)
                       borderLeft: `3px solid ${cor}`,
                       borderRadius: 9,
                       padding: '.65rem .75rem',
-                      boxShadow: '0 1px 4px rgba(15,23,42,.07)',
+                      boxShadow: '0 1px 4px rgba(0,41,51,.07)',
                       cursor: draggingId ? 'grabbing' : 'pointer',
                       userSelect: 'none',
                       transition: 'box-shadow .15s, transform .1s',
@@ -319,14 +319,14 @@ export function PipelineKanban({ negociacoes, stages, userId, onUpdate }: Props)
                     }}
                     onMouseEnter={e => {
                       if (!draggingId) {
-                        e.currentTarget.style.boxShadow = '0 6px 20px rgba(15,23,42,.13)'
+                        e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,41,51,.13)'
                         e.currentTarget.style.transform = 'translateY(-2px)'
                       }
                       const btn = e.currentTarget.querySelector('.card-remove-btn') as HTMLElement
                       if (btn) btn.style.opacity = '1'
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.boxShadow = '0 1px 4px rgba(15,23,42,.07)'
+                      e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,41,51,.07)'
                       e.currentTarget.style.transform = 'translateY(0)'
                       const btn = e.currentTarget.querySelector('.card-remove-btn') as HTMLElement
                       if (btn) btn.style.opacity = '0'
@@ -351,7 +351,7 @@ export function PipelineKanban({ negociacoes, stages, userId, onUpdate }: Props)
                     </button>
 
                     {/* Nome da escola */}
-                    <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontWeight: 800, fontSize: '.8rem', color: '#0f172a', lineHeight: 1.3, marginBottom: '.35rem', wordBreak: 'break-word', paddingRight: '1.2rem' }}>
+                    <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontWeight: 800, fontSize: '.8rem', color: '#002933', lineHeight: 1.3, marginBottom: '.35rem', wordBreak: 'break-word', paddingRight: '1.2rem' }}>
                       {n.escola?.nome ?? n.titulo ?? '—'}
                     </div>
 

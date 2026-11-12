@@ -49,10 +49,10 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
         <PageHeader title="Banco de Leads" subtitle="Leads importados dos congressos e CRM" />
         <div style={{ padding: '3rem 2rem', textAlign: 'center' }}>
           <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 18, padding: '3rem', maxWidth: 520, margin: '0 auto' }}>
-            <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.4rem', fontWeight: 700, color: '#0f172a', marginBottom: '.5rem' }}>Banco não configurado</h3>
+            <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.4rem', fontWeight: 700, color: '#002933', marginBottom: '.5rem' }}>Banco não configurado</h3>
             <p style={{ fontSize: '.875rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '1.5rem' }}>Execute o SQL e depois importe os dados.</p>
             <div style={{ display: 'flex', gap: '.75rem', justifyContent: 'center' }}>
-              <a href="https://supabase.com/dashboard/project/lyisdsnocroocxfblvqf/sql/new" target="_blank" rel="noopener noreferrer" style={{ background: '#4A7FDB', color: '#fff', padding: '.6rem 1.5rem', borderRadius: 9999, textDecoration: 'none', fontWeight: 700, fontSize: '.82rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+              <a href="https://supabase.com/dashboard/project/lyisdsnocroocxfblvqf/sql/new" target="_blank" rel="noopener noreferrer" style={{ background: '#00889e', color: '#fff', padding: '.6rem 1.5rem', borderRadius: 9999, textDecoration: 'none', fontWeight: 700, fontSize: '.82rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                 Criar tabelas (SQL)
               </a>
               <Link href="/importacao" style={{ border: '1.5px solid #e2e8f0', background: '#fff', color: '#475569', padding: '.6rem 1.5rem', borderRadius: 9999, textDecoration: 'none', fontWeight: 600, fontSize: '.82rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
@@ -173,10 +173,10 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
             <Link href="/importacao" style={{
               display: 'inline-flex', alignItems: 'center', gap: '.4rem',
               padding: '.45rem 1rem', borderRadius: 9999,
-              background: '#4A7FDB', color: '#fff', textDecoration: 'none',
+              background: '#00889e', color: '#fff', textDecoration: 'none',
               fontSize: '.78rem', fontWeight: 700,
               fontFamily: 'var(--font-montserrat,sans-serif)',
-              boxShadow: '0 4px 12px rgba(74,127,219,.3)',
+              boxShadow: '0 4px 12px rgba(0,137,158,.3)',
             }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
               Importar Dados
@@ -194,7 +194,7 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
               label: 'Total de Leads',
               val: (totalGeral ?? 0).toLocaleString('pt-BR'),
               sub: `${total2025 ?? 0} em 2025 · ${total2026 ?? 0} em 2026`,
-              cor: '#0f172a', bg: '#f8fafc', border: '#e2e8f0',
+              cor: '#002933', bg: '#f8fafc', border: '#e2e8f0',
               icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
             },
             {
@@ -215,7 +215,7 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
               label: 'Vinculados a Escola',
               val: (totalComEscola ?? 0).toLocaleString('pt-BR'),
               sub: `${(totalGeral ?? 0) - (totalComEscola ?? 0)} sem escola identificada`,
-              cor: '#4A7FDB', bg: '#fffbeb', border: '#fde68a',
+              cor: '#00889e', bg: '#fffbeb', border: '#fde68a',
               icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
             },
           ].map(k => (
@@ -224,19 +224,19 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
                 <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: k.cor, fontFamily: 'var(--font-montserrat,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{k.label}</div>
                 <div style={{ color: k.cor, opacity: .5, flexShrink: 0 }}>{k.icon}</div>
               </div>
-              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.8rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{k.val}</div>
+              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.8rem', fontWeight: 800, color: '#002933', lineHeight: 1 }}>{k.val}</div>
               <div style={{ fontSize: '.62rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', lineHeight: 1.4 }}>{k.sub}</div>
             </div>
           ))}
         </div>
 
         {/* ── Barra de progresso de alcançabilidade ────────── */}
-        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '.85rem 1.25rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap', boxShadow: '0 1px 4px rgba(15,23,42,.04)' }}>
+        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '.85rem 1.25rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap', boxShadow: '0 1px 4px rgba(0,41,51,.04)' }}>
           {[
             { label: 'Decisores', n: totalDecisores ?? 0, total: totalGeral ?? 0, cor: '#dc2626' },
             { label: 'Com E-mail', n: totalComEmail ?? 0, total: totalGeral ?? 0, cor: '#2563eb' },
             { label: 'Com Telefone', n: totalComTel ?? 0, total: totalGeral ?? 0, cor: '#16a34a' },
-            { label: 'Com Escola', n: totalComEscola ?? 0, total: totalGeral ?? 0, cor: '#4A7FDB' },
+            { label: 'Com Escola', n: totalComEscola ?? 0, total: totalGeral ?? 0, cor: '#00889e' },
             { label: 'Sem Contato', n: totalSemContato ?? 0, total: totalGeral ?? 0, cor: '#94a3b8' },
           ].map(m => {
             const p = m.total > 0 ? Math.round((m.n / m.total) * 100) : 0
@@ -258,13 +258,13 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
         </div>
 
         {/* ── Filtros ──────────────────────────────────────── */}
-        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, padding: '.85rem 1.25rem', marginBottom: '1.25rem', display: 'flex', gap: '.75rem', alignItems: 'center', flexWrap: 'wrap', boxShadow: '0 1px 4px rgba(15,23,42,.04)' }}>
+        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, padding: '.85rem 1.25rem', marginBottom: '1.25rem', display: 'flex', gap: '.75rem', alignItems: 'center', flexWrap: 'wrap', boxShadow: '0 1px 4px rgba(0,41,51,.04)' }}>
 
           {/* Busca */}
           <div style={{ position: 'relative', flex: 1, minWidth: 200 }}>
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" style={{ position: 'absolute', left: '.75rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <form method="get" action="/leads-banco" style={{ display: 'contents' }}>
-              <input name="q" defaultValue={q} placeholder="Buscar por nome, e-mail ou escola..." style={{ width: '100%', padding: '.6rem .85rem .6rem 2.1rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.82rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', background: '#f8fafc', color: '#0f172a', boxSizing: 'border-box' as const }} />
+              <input name="q" defaultValue={q} placeholder="Buscar por nome, e-mail ou escola..." style={{ width: '100%', padding: '.6rem .85rem .6rem 2.1rem', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: '.82rem', fontFamily: 'var(--font-inter,sans-serif)', outline: 'none', background: '#f8fafc', color: '#002933', boxSizing: 'border-box' as const }} />
               <input type="hidden" name="fonte" value={fonte} />
               <input type="hidden" name="tipo" value={tipo} />
               <input type="hidden" name="uf" value={uf} />
@@ -278,7 +278,7 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
               <a key={f.value} href={buildUrl({ fonte: f.value })} style={{
                 padding: '.3rem .65rem', borderRadius: 7, textDecoration: 'none',
                 fontSize: '.68rem', fontWeight: fonte === f.value ? 700 : 400,
-                background: fonte === f.value ? '#0f172a' : '#f1f5f9',
+                background: fonte === f.value ? '#002933' : '#f1f5f9',
                 color: fonte === f.value ? '#fff' : '#475569',
                 fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
               }}>{f.label}</a>
@@ -308,7 +308,7 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
               <a href={buildUrl({ uf: '' })} style={{
                 padding: '.3rem .65rem', borderRadius: 7, textDecoration: 'none',
                 fontSize: '.68rem', fontWeight: !uf ? 700 : 400,
-                background: !uf ? '#0f172a' : '#f1f5f9',
+                background: !uf ? '#002933' : '#f1f5f9',
                 color: !uf ? '#fff' : '#475569',
                 fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
               }}>Todos</a>
@@ -317,7 +317,7 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
                 <a key={u} href={buildUrl({ uf: u })} style={{
                   padding: '.3rem .55rem', borderRadius: 7, textDecoration: 'none',
                   fontSize: '.68rem', fontWeight: uf === u ? 700 : 400,
-                  background: uf === u ? '#4A7FDB' : '#f1f5f9',
+                  background: uf === u ? '#00889e' : '#f1f5f9',
                   color: uf === u ? '#fff' : '#475569',
                   fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
                 }}>{u}</a>
@@ -327,7 +327,7 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
                 <a key={u} href={buildUrl({ uf: u })} style={{
                   padding: '.3rem .55rem', borderRadius: 7, textDecoration: 'none',
                   fontSize: '.68rem', fontWeight: uf === u ? 700 : 400,
-                  background: uf === u ? '#4A7FDB' : '#f1f5f9',
+                  background: uf === u ? '#00889e' : '#f1f5f9',
                   color: uf === u ? '#fff' : '#475569',
                   fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
                 }}>{u}</a>
@@ -339,7 +339,7 @@ export default async function LeadsBancoPage({ searchParams }: Props) {
           {(q || fonte || tipo || uf) && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginLeft: 'auto', flexShrink: 0 }}>
               <span style={{ fontSize: '.72rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                <strong style={{ color: '#0f172a' }}>{total.toLocaleString('pt-BR')}</strong> resultado{total !== 1 ? 's' : ''}
+                <strong style={{ color: '#002933' }}>{total.toLocaleString('pt-BR')}</strong> resultado{total !== 1 ? 's' : ''}
               </span>
               <a href="/leads-banco" style={{ fontSize: '.65rem', color: '#dc2626', fontWeight: 700, textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)', background: '#fef2f2', border: '1px solid #fca5a5', padding: '.2rem .5rem', borderRadius: 6 }}>
                 Limpar

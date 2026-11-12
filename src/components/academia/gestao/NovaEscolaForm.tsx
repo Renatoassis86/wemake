@@ -5,7 +5,7 @@ import { PRIORIDADES } from '@/lib/academia-gestao'
 import { criarImplantacao } from '@/app/(dashboard)/academia/gestao/actions'
 import { Aviso, SelectPessoa, useRun } from './ui'
 
-/** Cadastra uma escola no Painel Mestre (regra 1: cadastrar assim que o Handoff for concluído). */
+/** Cadastra uma escola no Painel Mestre (regra 1: cadastrar assim que a Entrada do Cliente for concluída). */
 export default function NovaEscolaForm({ escolas, pessoas }: { escolas: { id: string; nome: string; cidade_uf?: string; responsavel?: string }[]; pessoas: string[] }) {
   const ref = useRef<HTMLFormElement>(null)
   const [aberto, setAberto] = useState(false)

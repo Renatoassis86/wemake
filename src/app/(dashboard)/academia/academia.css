@@ -10,12 +10,12 @@
   color-scheme: light;
 
   /* Identidade We Make (mesma da proposta comercial): navy + royal + mint */
-  --ac-ink: #0b1f44;
+  --ac-ink: #002933;
   --ac-ink-2: #16305c;
-  --ac-ink-3: #2a69ba;
-  --ac-cyan: #2a69ba;
-  --ac-cyan-soft: #dce9ff;
-  --ac-link: #2a69ba;
+  --ac-ink-3: #00677d;
+  --ac-cyan: #00677d;
+  --ac-cyan-soft: #d6f7ff;
+  --ac-link: #00677d;
   --ac-ivory: #f2f0ea;
   --ac-ivory-2: #e9e6dc;
   --ac-paper: #fbfaf6;

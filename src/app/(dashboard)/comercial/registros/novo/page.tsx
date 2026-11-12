@@ -16,19 +16,19 @@ interface Props { searchParams: Promise<{ escola?: string }> }
 /* ── Estilos locais ── */
 const card: React.CSSProperties = {
   background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16,
-  marginBottom: '1.5rem', overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.06)',
+  marginBottom: '1.5rem', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,41,51,.06)',
 }
-const secHeader = (color = '#4A7FDB'): React.CSSProperties => ({
+const secHeader = (color = '#00889e'): React.CSSProperties => ({
   padding: '1rem 1.75rem', borderBottom: '1px solid #f1f5f9', background: '#fafafa',
   display: 'flex', alignItems: 'center', gap: '.65rem',
 })
-const iconDot = (c = '#4A7FDB'): React.CSSProperties => ({
+const iconDot = (c = '#00889e'): React.CSSProperties => ({
   width: 28, height: 28, borderRadius: 7, flexShrink: 0,
   background: c, display: 'flex', alignItems: 'center', justifyContent: 'center',
 })
 const secTitle: React.CSSProperties = {
   fontFamily: 'var(--font-montserrat,sans-serif)',
-  fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a',
+  fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#002933',
 }
 const body: React.CSSProperties = { padding: '1.5rem 1.75rem' }
 const lbl: React.CSSProperties = {
@@ -40,7 +40,7 @@ const inp: React.CSSProperties = {
   width: '100%', padding: '.7rem .9rem', fontSize: '.875rem',
   fontFamily: 'var(--font-inter,sans-serif)',
   border: '1.5px solid #e2e8f0', borderRadius: 8,
-  background: '#f8fafc', color: '#0f172a', outline: 'none',
+  background: '#f8fafc', color: '#002933', outline: 'none',
   boxSizing: 'border-box',
 }
 const g2: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem 1.5rem' }
@@ -81,8 +81,8 @@ export default async function RegistroNovo({ searchParams }: Props) {
 
           {/* ── 1. ESCOLA E DATA ─────────────────────────────── */}
           <div style={card}>
-            <div style={secHeader('#0f172a')}>
-              <div style={{ ...iconDot('#0f172a'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={secHeader('#002933')}>
+              <div style={{ ...iconDot('#002933'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
               </div>
               <div style={secTitle}>Escola e Data do Contato</div>
@@ -90,7 +90,7 @@ export default async function RegistroNovo({ searchParams }: Props) {
             <div style={body}>
               <div style={{ ...g3, marginBottom: '1.25rem' }}>
                 <div style={{ gridColumn: 'span 2' }}>
-                  <label style={lbl}>Escola <span style={{ color: '#4A7FDB' }}>*</span></label>
+                  <label style={lbl}>Escola <span style={{ color: '#00889e' }}>*</span></label>
                   <input type="hidden" name="escola_id" value={escolaId} required />
                   <EscolaSelector
                     escolas={escolas}
@@ -112,7 +112,7 @@ export default async function RegistroNovo({ searchParams }: Props) {
               </div>
               <div style={g3}>
                 <div>
-                  <label style={lbl}>Data do Contato <span style={{ color: '#4A7FDB' }}>*</span></label>
+                  <label style={lbl}>Data do Contato <span style={{ color: '#00889e' }}>*</span></label>
                   <input name="data_contato" type="date" style={inp} defaultValue={hoje} required />
                 </div>
                 <div>
@@ -176,7 +176,7 @@ export default async function RegistroNovo({ searchParams }: Props) {
             </div>
             <div style={body}>
               <div style={{ marginBottom: '1.25rem' }}>
-                <label style={lbl}>Resumo da Conversa <span style={{ color: '#4A7FDB' }}>*</span></label>
+                <label style={lbl}>Resumo da Conversa <span style={{ color: '#00889e' }}>*</span></label>
                 <textarea name="resumo" rows={5} style={{ ...inp, resize: 'vertical', minHeight: 120 }}
                   placeholder="Descreva detalhadamente o que foi conversado, principais pontos discutidos, objeções levantadas, interesse demonstrado e qualquer informação relevante sobre o andamento da negociação..." required />
               </div>
@@ -190,8 +190,8 @@ export default async function RegistroNovo({ searchParams }: Props) {
 
           {/* ── 4. DIAGNÓSTICO COMERCIAL ─────────────────────── */}
           <div style={card}>
-            <div style={secHeader('#4A7FDB')}>
-              <div style={{ ...iconDot('#4A7FDB'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={secHeader('#00889e')}>
+              <div style={{ ...iconDot('#00889e'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
               </div>
               <div>
@@ -234,7 +234,7 @@ export default async function RegistroNovo({ searchParams }: Props) {
                       transition: 'border-color .15s',
                     }}>
                       <input type="checkbox" name="encaminhamentos" value={o.value}
-                        style={{ width: 16, height: 16, accentColor: '#4A7FDB', flexShrink: 0 }} />
+                        style={{ width: 16, height: 16, accentColor: '#00889e', flexShrink: 0 }} />
                       <span style={{ color: '#334155', fontWeight: 500 }}>{o.label}</span>
                     </label>
                   ))}
@@ -345,11 +345,11 @@ export default async function RegistroNovo({ searchParams }: Props) {
           {/* ── AÇÕES ──────────────────────────────────────────── */}
           <div className="mp-form-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem 1.75rem', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16 }}>
             <button type="submit" style={{
-              background: 'linear-gradient(135deg, #4A7FDB, #2563b8)',
+              background: 'linear-gradient(135deg, #00889e, #00677d)',
               color: '#fff', padding: '.7rem 2rem', borderRadius: 9999,
               border: 'none', cursor: 'pointer', fontSize: '.875rem', fontWeight: 700,
               fontFamily: 'var(--font-montserrat,sans-serif)',
-              boxShadow: '0 4px 14px rgba(74,127,219,.35)', letterSpacing: '.01em',
+              boxShadow: '0 4px 14px rgba(0,137,158,.35)', letterSpacing: '.01em',
             }}>
               Salvar Registro
             </button>
@@ -358,7 +358,7 @@ export default async function RegistroNovo({ searchParams }: Props) {
               Cancelar
             </Link>
             <span style={{ fontSize: '.72rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)', marginLeft: 'auto' }}>
-              Campos com <span style={{ color: '#4A7FDB', fontWeight: 700 }}>*</span> são obrigatórios
+              Campos com <span style={{ color: '#00889e', fontWeight: 700 }}>*</span> são obrigatórios
             </span>
           </div>
 

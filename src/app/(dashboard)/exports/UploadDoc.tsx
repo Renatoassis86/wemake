@@ -63,7 +63,7 @@ export function UploadDoc({ tipo, label }: Props) {
           fontFamily: 'var(--font-montserrat,sans-serif)', transition: 'all .15s',
           opacity: loading ? .6 : 1,
         }}
-        onMouseEnter={e => { if (!loading) { (e.target as HTMLLabelElement).style.background = '#0f172a'; (e.target as HTMLLabelElement).style.color = '#fff'; (e.target as HTMLLabelElement).style.borderColor = '#0f172a' }}}
+        onMouseEnter={e => { if (!loading) { (e.target as HTMLLabelElement).style.background = '#002933'; (e.target as HTMLLabelElement).style.color = '#fff'; (e.target as HTMLLabelElement).style.borderColor = '#002933' }}}
         onMouseLeave={e => { (e.target as HTMLLabelElement).style.background = '#fff'; (e.target as HTMLLabelElement).style.color = '#475569'; (e.target as HTMLLabelElement).style.borderColor = '#e2e8f0' }}
       >
         {loading ? (

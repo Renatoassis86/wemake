@@ -8,14 +8,14 @@ function IlustrDashboard() {
     <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
       <defs>
         <linearGradient id="gd1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#0f172a"/><stop offset="100%" stopColor="#1e3a5f"/>
+          <stop offset="0%" stopColor="#002933"/><stop offset="100%" stopColor="#1e3a5f"/>
         </linearGradient>
       </defs>
       <rect width="400" height="260" fill="url(#gd1)" rx="12"/>
       {/* Sidebar */}
       <rect x="10" y="10" width="70" height="240" rx="8" fill="rgba(255,255,255,.06)"/>
       {[40,65,90,115,140,165].map((y,i) => (
-        <rect key={i} x="18" y={y} width={i===0?54:44} height="14" rx="4" fill={i===0?"#4A7FDB":"rgba(255,255,255,.12)"}/>
+        <rect key={i} x="18" y={y} width={i===0?54:44} height="14" rx="4" fill={i===0?"#00889e":"rgba(255,255,255,.12)"}/>
       ))}
       {/* Main area */}
       <rect x="92" y="10" width="298" height="50" rx="8" fill="rgba(255,255,255,.06)"/>
@@ -25,7 +25,7 @@ function IlustrDashboard() {
       {[0,1,2,3].map(i => (
         <g key={i}>
           <rect x={92+i*75} y="72" width="68" height="50" rx="6" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.1)" strokeWidth="1"/>
-          <rect x={92+i*75} y="72" width="68" height="4" rx="2" fill={['#4A7FDB','#dc2626','#2563eb','#16a34a'][i]}/>
+          <rect x={92+i*75} y="72" width="68" height="4" rx="2" fill={['#00889e','#dc2626','#2563eb','#16a34a'][i]}/>
           <rect x={100+i*75} y="84" width="40" height="5" rx="2" fill="rgba(255,255,255,.25)"/>
           <rect x={100+i*75} y="94" width="28" height="14" rx="3" fill="rgba(255,255,255,.5)"/>
           <rect x={100+i*75} y="112" width="35" height="4" rx="2" fill="rgba(255,255,255,.15)"/>
@@ -34,12 +34,12 @@ function IlustrDashboard() {
       {/* Charts area */}
       <rect x="92" y="134" width="190" height="116" rx="8" fill="rgba(255,255,255,.06)"/>
       {[0,1,2,3,4,5].map(i => (
-        <rect key={i} x={105+i*30} y={200-[40,60,35,80,55,70][i]} width="20" height={[40,60,35,80,55,70][i]} rx="4" fill={`rgba(74,127,219,${0.3+i*0.1})`}/>
+        <rect key={i} x={105+i*30} y={200-[40,60,35,80,55,70][i]} width="20" height={[40,60,35,80,55,70][i]} rx="4" fill={`rgba(0,137,158,${0.3+i*0.1})`}/>
       ))}
       <rect x="294" y="134" width="96" height="116" rx="8" fill="rgba(255,255,255,.06)"/>
       {[0,1,2,3].map(i => (
         <g key={i}>
-          <rect x="304" y={146+i*26} width="8" height="8" rx="2" fill={['#4A7FDB','#dc2626','#2563eb','#16a34a'][i]}/>
+          <rect x="304" y={146+i*26} width="8" height="8" rx="2" fill={['#00889e','#dc2626','#2563eb','#16a34a'][i]}/>
           <rect x="316" y={148+i*26} width="50" height="4" rx="2" fill="rgba(255,255,255,.25)"/>
           <rect x="316" y={156+i*26} width="35" height="3" rx="2" fill="rgba(255,255,255,.1)"/>
         </g>
@@ -54,31 +54,31 @@ function IlustrEscolas() {
     <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
       <defs>
         <linearGradient id="ge1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#1e293b"/><stop offset="100%" stopColor="#0f172a"/>
+          <stop offset="0%" stopColor="#1e293b"/><stop offset="100%" stopColor="#002933"/>
         </linearGradient>
       </defs>
       <rect width="400" height="260" fill="url(#ge1)" rx="12"/>
       {/* Hero card */}
       <rect x="15" y="15" width="370" height="80" rx="10" fill="rgba(255,255,255,.06)"/>
-      <rect x="25" y="25" width="60" height="60" rx="8" fill="rgba(74,127,219,.2)" stroke="#4A7FDB" strokeWidth="1"/>
+      <rect x="25" y="25" width="60" height="60" rx="8" fill="rgba(0,137,158,.2)" stroke="#00889e" strokeWidth="1"/>
       {/* School icon */}
-      <path d="M55 45 L70 36 L85 45 L85 60 L25 60 L25 45 Z" fill="none" stroke="#4A7FDB" strokeWidth="1.5" transform="translate(-20,0)"/>
-      <rect x="47" y="50" width="16" height="14" rx="2" fill="#4A7FDB" opacity=".6" transform="translate(-5,0)"/>
+      <path d="M55 45 L70 36 L85 45 L85 60 L25 60 L25 45 Z" fill="none" stroke="#00889e" strokeWidth="1.5" transform="translate(-20,0)"/>
+      <rect x="47" y="50" width="16" height="14" rx="2" fill="#00889e" opacity=".6" transform="translate(-5,0)"/>
       <rect x="100" y="26" width="140" height="8" rx="3" fill="rgba(255,255,255,.5)"/>
       <rect x="100" y="38" width="100" height="5" rx="2" fill="rgba(255,255,255,.2)"/>
       <rect x="100" y="47" width="80" height="5" rx="2" fill="rgba(255,255,255,.15)"/>
-      <rect x="280" y="30" width="60" height="18" rx="9" fill="rgba(74,127,219,.3)" stroke="#4A7FDB" strokeWidth="1"/>
+      <rect x="280" y="30" width="60" height="18" rx="9" fill="rgba(0,137,158,.3)" stroke="#00889e" strokeWidth="1"/>
       <rect x="283" y="51" width="54" height="14" rx="7" fill="rgba(37,99,235,.3)" stroke="#2563eb" strokeWidth="1"/>
       {/* List rows */}
       {[0,1,2,3].map(i => (
         <g key={i}>
           <rect x="15" y={108+i*37} width="370" height="32" rx="7" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.08)" strokeWidth="1"/>
-          <rect x="25" y={114+i*37} width="8" height="8" rx="2" fill={['#dc2626','#4A7FDB','#2563eb','#16a34a'][i]}/>
+          <rect x="25" y={114+i*37} width="8" height="8" rx="2" fill={['#dc2626','#00889e','#2563eb','#16a34a'][i]}/>
           <rect x="40" y={115+i*37} width="80" height="6" rx="2" fill="rgba(255,255,255,.4)"/>
           <rect x="40" y={124+i*37} width="55" height="4" rx="2" fill="rgba(255,255,255,.15)"/>
           <rect x="160" y={116+i*37} width="50" height="12" rx="6" fill={`rgba(${['220,38,38','217,119,6','37,99,235','22,163,74'][i]},.2)`}/>
           <rect x="250" y={117+i*37} width="55" height="5" rx="2" fill="rgba(255,255,255,.25)"/>
-          <rect x="350" y={115+i*37} width="24" height="8" rx="4" fill="rgba(74,127,219,.4)"/>
+          <rect x="350" y={115+i*37} width="24" height="8" rx="4" fill="rgba(0,137,158,.4)"/>
           <rect x="378" y={115+i*37} width="0" height="0"/>
         </g>
       ))}
@@ -90,13 +90,13 @@ function IlustrEscolas() {
 function IlustrJornada() {
   return (
     <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-      <rect width="400" height="260" fill="#0f172a" rx="12"/>
+      <rect width="400" height="260" fill="#002933" rx="12"/>
       {/* Timeline line */}
-      <line x1="60" y1="30" x2="60" y2="230" stroke="rgba(74,127,219,.3)" strokeWidth="2" strokeDasharray="4,4"/>
+      <line x1="60" y1="30" x2="60" y2="230" stroke="rgba(0,137,158,.3)" strokeWidth="2" strokeDasharray="4,4"/>
       {/* Events */}
       {[
         { y:40, cor:'#6366f1', label:'Primeiro Contato', sub:'WhatsApp · 15/01' },
-        { y:90, cor:'#4A7FDB', label:'Apresentação Paideia', sub:'Videoconf · 28/01' },
+        { y:90, cor:'#00889e', label:'Apresentação Paideia', sub:'Videoconf · 28/01' },
         { y:140, cor:'#2563eb', label:'Envio de Proposta', sub:'E-mail · 05/02' },
         { y:190, cor:'#16a34a', label:'Contrato Assinado', sub:'Presencial · 14/02' },
       ].map((e,i) => (
@@ -118,11 +118,11 @@ function IlustrJornada() {
 function IlustrAgenda() {
   return (
     <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-      <rect width="400" height="260" fill="#0f172a" rx="12"/>
+      <rect width="400" height="260" fill="#002933" rx="12"/>
       {/* Calendar header */}
       <rect x="15" y="15" width="370" height="40" rx="8" fill="rgba(255,255,255,.06)"/>
       <rect x="25" y="25" width="80" height="10" rx="3" fill="rgba(255,255,255,.4)"/>
-      <rect x="270" y="22" width="55" height="16" rx="8" fill="rgba(74,127,219,.8)"/>
+      <rect x="270" y="22" width="55" height="16" rx="8" fill="rgba(0,137,158,.8)"/>
       {/* Day headers */}
       {['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map((d,i) => (
         <rect key={i} x={15+i*53} y="63" width="50" height="16" rx="4" fill="rgba(255,255,255,.04)"/>
@@ -135,10 +135,10 @@ function IlustrAgenda() {
           return (
             <g key={`${row}-${col}`}>
               <rect x={15+col*53} y={85+row*32} width="50" height="30" rx="4"
-                fill={isToday?"rgba(74,127,219,.15)":"rgba(255,255,255,.03)"}
-                stroke={isToday?"rgba(74,127,219,.5)":"rgba(255,255,255,.05)"} strokeWidth="1"/>
+                fill={isToday?"rgba(0,137,158,.15)":"rgba(255,255,255,.03)"}
+                stroke={isToday?"rgba(0,137,158,.5)":"rgba(255,255,255,.05)"} strokeWidth="1"/>
               {hasEvent && <rect x={18+col*53} y={96+row*32} width="42" height="8" rx="3" fill="rgba(37,99,235,.5)"/>}
-              {isToday && <circle cx={40+col*53} cy={92+row*32} r="7" fill="rgba(74,127,219,.8)"/>}
+              {isToday && <circle cx={40+col*53} cy={92+row*32} r="7" fill="rgba(0,137,158,.8)"/>}
             </g>
           )
         })
@@ -151,11 +151,11 @@ function IlustrAgenda() {
 function IlustrImportacao() {
   return (
     <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-      <rect width="400" height="260" fill="#0f172a" rx="12"/>
+      <rect width="400" height="260" fill="#002933" rx="12"/>
       {/* Upload area */}
-      <rect x="30" y="20" width="160" height="100" rx="10" fill="rgba(255,255,255,.04)" stroke="rgba(74,127,219,.4)" strokeWidth="1.5" strokeDasharray="5,3"/>
-      <circle cx="110" cy="55" r="18" fill="rgba(74,127,219,.2)"/>
-      <path d="M103 55 L110 48 L117 55 M110 48 L110 65" stroke="#4A7FDB" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <rect x="30" y="20" width="160" height="100" rx="10" fill="rgba(255,255,255,.04)" stroke="rgba(0,137,158,.4)" strokeWidth="1.5" strokeDasharray="5,3"/>
+      <circle cx="110" cy="55" r="18" fill="rgba(0,137,158,.2)"/>
+      <path d="M103 55 L110 48 L117 55 M110 48 L110 65" stroke="#00889e" strokeWidth="2" fill="none" strokeLinecap="round"/>
       <rect x="60" y="80" width="100" height="6" rx="3" fill="rgba(255,255,255,.2)"/>
       <rect x="75" y="90" width="70" height="5" rx="2" fill="rgba(255,255,255,.1)"/>
       {/* Column selector */}
@@ -173,7 +173,7 @@ function IlustrImportacao() {
       ))}
       {/* Progress bar */}
       <rect x="30" y="135" width="160" height="8" rx="4" fill="rgba(255,255,255,.08)"/>
-      <rect x="30" y="135" width="110" height="8" rx="4" fill="rgba(74,127,219,.7)"/>
+      <rect x="30" y="135" width="110" height="8" rx="4" fill="rgba(0,137,158,.7)"/>
       <rect x="30" y="152" width="160" height="30" rx="8" fill="rgba(22,163,74,.15)" stroke="rgba(22,163,74,.3)" strokeWidth="1"/>
       <rect x="50" y="162" width="80" height="6" rx="2" fill="rgba(22,163,74,.5)"/>
       <text x="200" y="252" textAnchor="middle" fill="rgba(255,255,255,.2)" fontSize="9" fontFamily="Arial">Importação Power BI</text>
@@ -184,11 +184,11 @@ function IlustrImportacao() {
 function IlustrPipeline() {
   return (
     <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-      <rect width="400" height="260" fill="#0f172a" rx="12"/>
+      <rect width="400" height="260" fill="#002933" rx="12"/>
       {[
         { x:10, label:'Prospecção', cor:'#6366f1', cards:3 },
         { x:85, label:'Qualificação', cor:'#8b5cf6', cards:2 },
-        { x:160, label:'Proposta', cor:'#4A7FDB', cards:2 },
+        { x:160, label:'Proposta', cor:'#00889e', cards:2 },
         { x:235, label:'Negociação', cor:'#0ea5e9', cards:1 },
         { x:310, label:'Fechamento', cor:'#16a34a', cards:1 },
       ].map((col,ci) => (
@@ -217,7 +217,7 @@ function IlustrPipeline() {
 function IlustrMetas() {
   return (
     <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-      <rect width="400" height="260" fill="#0f172a" rx="12"/>
+      <rect width="400" height="260" fill="#002933" rx="12"/>
       {/* Hero banner */}
       <rect x="15" y="15" width="370" height="60" rx="10" fill="rgba(255,255,255,.04)"/>
       <rect x="25" y="25" width="140" height="10" rx="3" fill="rgba(255,255,255,.45)"/>
@@ -225,15 +225,15 @@ function IlustrMetas() {
       {/* Countdown */}
       {[0,1,2,3].map(i => (
         <g key={i}>
-          <rect x={280+i*26} y="18" width="22" height="28" rx="5" fill="rgba(74,127,219,.25)" stroke="rgba(74,127,219,.4)" strokeWidth="1"/>
-          <rect x={283+i*26} y="25" width="16" height="8" rx="2" fill="rgba(74,127,219,.5)"/>
+          <rect x={280+i*26} y="18" width="22" height="28" rx="5" fill="rgba(0,137,158,.25)" stroke="rgba(0,137,158,.4)" strokeWidth="1"/>
+          <rect x={283+i*26} y="25" width="16" height="8" rx="2" fill="rgba(0,137,158,.5)"/>
           <rect x={283+i*26} y="37" width="16" height="4" rx="2" fill="rgba(255,255,255,.1)"/>
         </g>
       ))}
       {/* KPI cards */}
       {[
         { label:'Reuniões', val:'0/80', pct:0, cor:'#2563eb' },
-        { label:'Contratos', val:'0/26', pct:0, cor:'#4A7FDB' },
+        { label:'Contratos', val:'0/26', pct:0, cor:'#00889e' },
         { label:'Alunos', val:'2.000/5.000', pct:40, cor:'#7c3aed' },
       ].map((k,i) => (
         <g key={i}>
@@ -259,7 +259,7 @@ function IlustrMetas() {
 function IlustrBancoLeads() {
   return (
     <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-      <rect width="400" height="260" fill="#0f172a" rx="12"/>
+      <rect width="400" height="260" fill="#002933" rx="12"/>
       {/* KPIs */}
       {[
         {label:'Total',val:'981',cor:'#64748b'},
@@ -283,11 +283,11 @@ function IlustrBancoLeads() {
       <rect x="200" y="62" width="190" height="28" rx="7" fill="rgba(255,255,255,.05)"/>
       {['1ºCIECC','2ºCIECC','CRM','Oikos'].map((l,i) => (
         <rect key={i} x={208+i*46} y="69" width="42" height="14" rx="7"
-          fill={i===0?"#0f172a":"rgba(255,255,255,.08)"}
+          fill={i===0?"#002933":"rgba(255,255,255,.08)"}
           stroke={i===0?"rgba(255,255,255,.4)":"rgba(255,255,255,.1)"} strokeWidth="1"/>
       ))}
       {/* Table */}
-      <rect x="10" y="100" width="380" height="22" rx="4" fill="#0f172a"/>
+      <rect x="10" y="100" width="380" height="22" rx="4" fill="#002933"/>
       {['#','Nome','Cargo','Escola','Contato','Cidade','Ações'].map((h,i) => (
         <rect key={i} x={10+[0,18,90,155,225,290,355][i]} y="106" width={[14,65,58,65,60,60,30][i]} height="8" rx="2" fill="rgba(255,255,255,.2)"/>
       ))}
@@ -299,10 +299,10 @@ function IlustrBancoLeads() {
           {[0,1,2,3,4,5].map(col => (
             <rect key={col} x={10+[0,18,90,155,225,290][col]} y={131+row*24}
               width={[14,65,58,65,60,60][col]} height="6" rx="2"
-              fill={col===2?"rgba(220,38,38,.4)":col===0?"rgba(74,127,219,.5)":"rgba(255,255,255,.15)"}/>
+              fill={col===2?"rgba(220,38,38,.4)":col===0?"rgba(0,137,158,.5)":"rgba(255,255,255,.15)"}/>
           ))}
           {/* Action buttons */}
-          <rect x="360" y={129+row*24} width="8" height="8" rx="2" fill="rgba(74,127,219,.4)"/>
+          <rect x="360" y={129+row*24} width="8" height="8" rx="2" fill="rgba(0,137,158,.4)"/>
           <rect x="372" y={129+row*24} width="8" height="8" rx="2" fill="rgba(37,99,235,.4)"/>
           <rect x="384" y={129+row*24} width="8" height="8" rx="2" fill="rgba(22,163,74,.4)"/>
         </g>
@@ -320,11 +320,11 @@ const MODULOS = [
     num: '01',
     titulo: 'Dashboard Comercial',
     href: '/comercial',
-    cor: '#4A7FDB',
+    cor: '#00889e',
     bg: '#fffbeb',
     border: '#fde68a',
     tag: 'CRM',
-    tagCor: '#4A7FDB',
+    tagCor: '#00889e',
     ilustracao: <IlustrDashboard />,
     para: 'Visão geral da operação comercial em tempo real.',
     como: [
@@ -400,11 +400,11 @@ const MODULOS = [
     num: '05',
     titulo: 'Jornada de Relacionamento',
     href: '/comercial/jornada',
-    cor: '#4A7FDB',
+    cor: '#00889e',
     bg: '#fffbeb',
     border: '#fde68a',
     tag: 'PROCESSO',
-    tagCor: '#4A7FDB',
+    tagCor: '#00889e',
     ilustracao: <IlustrJornada />,
     para: 'Storytelling visual da história comercial com cada escola.',
     como: [
@@ -573,24 +573,24 @@ export default function TutorialPage() {
 
         {/* ── Hero ─────────────────────────────────────────────── */}
         <div className="mp-banner-stack" style={{
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a5f 100%)',
+          background: 'linear-gradient(135deg, #002933 0%, #1e293b 60%, #1e3a5f 100%)',
           borderRadius: 20, padding: '2.5rem 3rem', marginBottom: '2.5rem',
           display: 'grid', gridTemplateColumns: '1fr auto',
           gap: '2rem', alignItems: 'center',
-          boxShadow: '0 8px 32px rgba(15,23,42,.25)',
+          boxShadow: '0 8px 32px rgba(0,41,51,.25)',
           position: 'relative', overflow: 'hidden',
         }}>
-          <div style={{ position: 'absolute', top: -40, right: 200, width: 200, height: 200, borderRadius: '50%', background: 'rgba(74,127,219,.05)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', top: -40, right: 200, width: 200, height: 200, borderRadius: '50%', background: 'rgba(0,137,158,.05)', pointerEvents: 'none' }} />
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: 'rgba(74,127,219,.15)', border: '1px solid rgba(74,127,219,.3)', borderRadius: 9999, padding: '.3rem .9rem', marginBottom: '1rem' }}>
-              <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#4A7FDB' }} />
-              <span style={{ fontSize: '.62rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', background: 'rgba(0,137,158,.15)', border: '1px solid rgba(0,137,158,.3)', borderRadius: 9999, padding: '.3rem .9rem', marginBottom: '1rem' }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#00889e' }} />
+              <span style={{ fontSize: '.62rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#00889e', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                 Guia Completo
               </span>
             </div>
             <h1 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '2rem', fontWeight: 700, color: '#fff', lineHeight: 1.15, marginBottom: '.75rem' }}>
               Bem-vindo ao We Make<br />
-              <span style={{ color: '#4A7FDB' }}>Gestão Comercial</span>
+              <span style={{ color: '#00889e' }}>Gestão Comercial</span>
             </h1>
             <p style={{ fontSize: '.875rem', color: 'rgba(255,255,255,.55)', fontFamily: 'var(--font-inter,sans-serif)', lineHeight: 1.7, maxWidth: 520 }}>
               Esta plataforma centraliza toda a gestão comercial da We Make.
@@ -605,7 +605,7 @@ export default function TutorialPage() {
               { n: '∞', label: 'Dados' },
             ].map(s => (
               <div key={s.label} style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', borderRadius: 12, padding: '.85rem 1.25rem', textAlign: 'center' }}>
-                <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.8rem', fontWeight: 800, color: '#4A7FDB', lineHeight: 1 }}>{s.n}</div>
+                <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.8rem', fontWeight: 800, color: '#00889e', lineHeight: 1 }}>{s.n}</div>
                 <div style={{ fontSize: '.62rem', color: 'rgba(255,255,255,.4)', fontFamily: 'var(--font-montserrat,sans-serif)', textTransform: 'uppercase', letterSpacing: '.08em', marginTop: '.25rem' }}>{s.label}</div>
               </div>
             ))}
@@ -613,7 +613,7 @@ export default function TutorialPage() {
         </div>
 
         {/* ── Índice rápido ───────────────────────────────────── */}
-        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.5rem 2rem', marginBottom: '2.5rem', boxShadow: '0 1px 4px rgba(15,23,42,.05)' }}>
+        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.5rem 2rem', marginBottom: '2.5rem', boxShadow: '0 1px 4px rgba(0,41,51,.05)' }}>
           <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#64748b', marginBottom: '1rem' }}>
             Navegação rápida
           </div>
@@ -642,8 +642,8 @@ export default function TutorialPage() {
             {/* Group header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
               <div style={{ height: 2, flex: 1, background: 'linear-gradient(to right, #e2e8f0, transparent)' }} />
-              <div style={{ padding: '.4rem 1.25rem', background: '#0f172a', borderRadius: 9999 }}>
-                <span style={{ fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.12em', color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+              <div style={{ padding: '.4rem 1.25rem', background: '#002933', borderRadius: 9999 }}>
+                <span style={{ fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.12em', color: '#00889e', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                   {grupo === 'CRM' ? 'CRM — Gestão de Clientes' : grupo === 'PROCESSO' ? 'Processos Comerciais' : 'Ferramentas'}
                 </span>
               </div>
@@ -655,14 +655,14 @@ export default function TutorialPage() {
               {MODULOS.filter(m => m.tag === grupo).map((m, idx) => (
                 <div key={m.id} id={m.id} className="mp-tutorial-card" style={{
                   background: '#fff', border: '1px solid #e2e8f0', borderRadius: 20,
-                  overflow: 'hidden', boxShadow: '0 2px 12px rgba(15,23,42,.06)',
+                  overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,41,51,.06)',
                   display: 'grid',
                   gridTemplateColumns: idx % 2 === 0 ? '380px 1fr' : '1fr 380px',
                 }}>
 
                   {/* Ilustração */}
                   {idx % 2 === 0 && (
-                    <div style={{ background: '#0f172a', minHeight: 260, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+                    <div style={{ background: '#002933', minHeight: 260, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
                       {m.ilustracao}
                     </div>
                   )}
@@ -677,7 +677,7 @@ export default function TutorialPage() {
                             {m.tag}
                           </span>
                         </div>
-                        <h2 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 700, color: '#0f172a', lineHeight: 1 }}>
+                        <h2 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 700, color: '#002933', lineHeight: 1 }}>
                           {m.titulo}
                         </h2>
                       </div>
@@ -729,7 +729,7 @@ export default function TutorialPage() {
 
                   {/* Ilustração lado direito (índices pares invertidos) */}
                   {idx % 2 !== 0 && (
-                    <div style={{ background: '#0f172a', minHeight: 260, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+                    <div style={{ background: '#002933', minHeight: 260, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
                       {m.ilustracao}
                     </div>
                   )}
@@ -740,7 +740,7 @@ export default function TutorialPage() {
         ))}
 
         {/* ── Rodapé ──────────────────────────────────────────── */}
-        <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius: 16, padding: '2rem', textAlign: 'center', marginTop: '1rem' }}>
+        <div style={{ background: 'linear-gradient(135deg, #002933, #1e293b)', borderRadius: 16, padding: '2rem', textAlign: 'center', marginTop: '1rem' }}>
           <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.4rem', fontWeight: 700, color: '#fff', marginBottom: '.5rem' }}>
             Precisa de ajuda?
           </div>

@@ -9,6 +9,17 @@ export function formatCurrency(value: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)
 }
 
+// Versão curta pra cartão/rótulo estreito — "R$ 3,6 mi" em vez de
+// "R$ 3.567.526,00". Abaixo de mil usa o valor cheio (não vale a pena
+// abreviar "R$ 480,00").
+export function formatCurrencyCompact(value: number) {
+  const abs = Math.abs(value)
+  const casas = { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+  if (abs >= 1_000_000) return `R$ ${(value / 1_000_000).toLocaleString('pt-BR', casas)} mi`
+  if (abs >= 1_000) return `R$ ${(value / 1_000).toLocaleString('pt-BR', casas)} mil`
+  return formatCurrency(value)
+}
+
 export function formatDate(date: string | null | undefined) {
   if (!date) return '—'
   return new Date(date + 'T00:00:00').toLocaleDateString('pt-BR')

@@ -11,15 +11,15 @@ import {
   LayoutDashboard, School, Users, FileText, Activity,
   Kanban, Calculator, LogOut, Settings,
   Package, FlaskConical, BarChart2, Download,
-  Bot, DollarSign, Table2, Info, FileSignature, ClipboardList,
+  Bot, Table2, Info, FileSignature, ClipboardList,
   ExternalLink, GitBranch, Target, CalendarDays, FileAudio,
-  Upload, Database, BookOpen, Crosshair, Milestone, GraduationCap, Landmark
+  Upload, Database, BookOpen, Crosshair, Milestone
 } from 'lucide-react'
 
 import { AcademiaNav, ModuloLateral, SIDEBAR_CSS } from './SidebarContextual'
 import { moduloDoCaminho, getModulo } from '@/lib/modulos'
 
-interface SidebarProps { profile: Profile | null; modulos?: string[]; diagnosticos?: boolean }
+interface SidebarProps { profile: Profile | null; diagnosticos?: boolean }
 
 // ── Nav groups ───────────────────────────────────────────────────────────────
 
@@ -109,7 +109,7 @@ function NavItem({ href, label, icon: Icon, active, badge, external, wip }: NavI
     letterSpacing: '.005em',
     position: 'relative',
     background: active
-      ? 'linear-gradient(135deg, rgba(118,243,205,.85), rgba(74,143,231,.85))'
+      ? 'linear-gradient(135deg, rgba(0,206,255,.85), rgba(74,143,231,.85))'
       : 'transparent',
     boxShadow: active ? '0 2px 10px rgba(74,143,231,.3)' : 'none',
     opacity: wip ? .4 : 1,
@@ -134,7 +134,7 @@ function NavItem({ href, label, icon: Icon, active, badge, external, wip }: NavI
 
       {badge !== undefined && (
         <span style={{
-          marginLeft: 'auto', background: active ? 'rgba(255,255,255,.25)' : '#4c8ade',
+          marginLeft: 'auto', background: active ? 'rgba(255,255,255,.25)' : '#00889e',
           color: '#fff', fontSize: '.58rem', fontWeight: 800, padding: '.1rem .4rem',
           borderRadius: 99, minWidth: 18, textAlign: 'center',
         }}>
@@ -187,8 +187,7 @@ function NavItem({ href, label, icon: Icon, active, badge, external, wip }: NavI
 
 // ── Main Sidebar ──────────────────────────────────────────────────────────────
 
-export default function Sidebar({ profile, modulos = [], diagnosticos = false }: SidebarProps) {
-  const tem = (m: string) => modulos.includes(m)
+export default function Sidebar({ profile, diagnosticos = false }: SidebarProps) {
   const pathname = usePathname()
   const router   = useRouter()
   const supabase = createClient()
@@ -245,7 +244,7 @@ export default function Sidebar({ profile, modulos = [], diagnosticos = false }:
       className={mobileOpen ? 'mobile-open' : ''}
       style={{
         width: 'var(--sidebar-w)', minHeight: '100vh',
-        background: 'linear-gradient(180deg, #0b1f44 0%, #0a1830 100%)',
+        background: 'linear-gradient(180deg, #002933 0%, #0a1830 100%)',
         position: 'fixed', top: 0, left: 0, bottom: 0,
         zIndex: 100, display: 'flex', flexDirection: 'column',
         borderRight: '1px solid rgba(255,255,255,.05)',
@@ -289,11 +288,11 @@ export default function Sidebar({ profile, modulos = [], diagnosticos = false }:
         <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', marginTop: '.55rem' }}>
           <span style={{
             display: 'inline-block',
-            width: 6, height: 6, borderRadius: '50%', background: '#76f3cd', flexShrink: 0,
+            width: 6, height: 6, borderRadius: '50%', background: '#00ceff', flexShrink: 0,
           }} />
           <span style={{
             fontSize: '.6rem', fontWeight: 700, letterSpacing: '.1em',
-            textTransform: 'uppercase', color: 'rgba(118,243,205,.85)',
+            textTransform: 'uppercase', color: 'rgba(0,206,255,.85)',
             fontFamily: 'var(--font-montserrat, sans-serif)',
           }}>
             {infoModulo ? infoModulo.nome : 'Gestão Comercial'}
@@ -316,25 +315,10 @@ export default function Sidebar({ profile, modulos = [], diagnosticos = false }:
         <NavItem href="/tutorial" label="Tutorial"     icon={BookOpen} active={isActive('/tutorial')} />
         <NavDivider />
 
-        {tem('administrativo') || tem('financeiro') || tem('contratos') || tem('pedidos') ? (
-          <>
-            <SectionLabel>Gestão</SectionLabel>
-            {tem('administrativo') ? <NavItem href="/administrativo" label="Gestão Administrativa" icon={Landmark} active={isActive('/administrativo')} /> : null}
-            {tem('financeiro') ? <NavItem href="/financeiro" label="Gestão Financeira" icon={DollarSign} active={isActive('/financeiro')} /> : null}
-            {tem('contratos') ? <NavItem href="/contratos" label="Gestão de Contratos" icon={FileSignature} active={isActive('/contratos')} /> : null}
-            {tem('pedidos') ? <NavItem href="/pedidos" label="Gestão de Pedidos" icon={Package} active={isActive('/pedidos')} /> : null}
-            <NavDivider />
-          </>
-        ) : null}
-
-        {tem('academia') ? (
-          <>
-            <SectionLabel>Academia</SectionLabel>
-            <NavItem href="/academia" label="Academia We Make" icon={GraduationCap} active={pathname === '/academia' || (pathname.startsWith('/academia/') && !pathname.startsWith('/academia/gestao'))} badge="Novo" />
-            <NavItem href="/academia/gestao" label="Gestão da implantação" icon={Kanban} active={isActive('/academia/gestao')} />
-            <NavDivider />
-          </>
-        ) : null}
+        {/* Sem seções "Gestão" (Administrativa/Financeira/Contratos/Pedidos)
+            nem "Academia" aqui — essa lateral é a do módulo Comercial, só
+            as sessões dele. Os outros módulos ficam acessíveis pela página
+            inicial ("Plataforma We Make"), não cruzados dentro de cada um. */}
 
         <SectionLabel>CRM</SectionLabel>
         {NAV_CRM.map(item => (
@@ -408,7 +392,7 @@ export default function Sidebar({ profile, modulos = [], diagnosticos = false }:
             {/* Avatar */}
             <div style={{
               width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
-              background: 'linear-gradient(135deg, #76f3cd, #4c8ade)',
+              background: 'linear-gradient(135deg, #00ceff, #00889e)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: '#fff', fontSize: '.72rem', fontWeight: 700,
               overflow: 'hidden', boxShadow: '0 0 0 2px rgba(74,143,231,.25)',

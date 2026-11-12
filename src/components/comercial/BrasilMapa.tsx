@@ -132,8 +132,8 @@ export function BrasilMapa({
         if (!c) return null
         return (
           <g key={`label-${f.properties.codarea}`}>
-            <text x={c[0]} y={c[1] - 3} textAnchor="middle" fontFamily="var(--font-montserrat, sans-serif)" fontSize={8.5} fontWeight={700} fill="#0b1f44">{uf}</text>
-            {qtd > 0 && <text x={c[0]} y={c[1] + 7} textAnchor="middle" fontFamily="var(--font-inter, sans-serif)" fontSize={8} fontWeight={700} fill="#4A7FDB">{qtd}</text>}
+            <text x={c[0]} y={c[1] - 3} textAnchor="middle" fontFamily="var(--font-montserrat, sans-serif)" fontSize={8.5} fontWeight={700} fill="#002933">{uf}</text>
+            {qtd > 0 && <text x={c[0]} y={c[1] + 7} textAnchor="middle" fontFamily="var(--font-inter, sans-serif)" fontSize={8} fontWeight={700} fill="#00889e">{qtd}</text>}
           </g>
         )
       })}

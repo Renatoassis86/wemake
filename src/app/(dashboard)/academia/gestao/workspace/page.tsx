@@ -20,7 +20,7 @@ export default async function WorkspacePage() {
       <p className="ac-sec-lead">
         A estrutura segue o que o Manual Operacional define: cada <strong>pasta</strong> é uma macroetapa, cada <strong>lista</strong> é um
         marco do Painel Mestre e cada <strong>tarefa</strong> sai do “como executar” e dos formulários oficiais. Os prazos relativos usam
-        só as regras dos documentos (por exemplo, Handoff em até 2 dias úteis após a assinatura).
+        só as regras dos documentos (por exemplo, Entrada do Cliente em até 2 dias úteis após a assinatura).
       </p>
 
       <div className="ac-tree" aria-label="Estrutura do workspace">

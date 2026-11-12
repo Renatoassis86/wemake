@@ -47,28 +47,33 @@ export interface DocContent {
 
 /* ───────────────────────────── Jornada ─────────────────────────────────── */
 
-/** Os nove marcos do Painel Mestre (Ecologia Formativa desdobrada em três). */
+/**
+ * Os nove marcos do Painel Mestre ("Preparação do Espaço" desdobrada em três).
+ * Nomes em linguagem simples, do jeito que a equipe fala no dia a dia — os
+ * documentos oficiais (Ficha de Handoff, Checklist Pré-Onboarding etc.)
+ * mantêm seus nomes próprios; só o rótulo da etapa no painel muda.
+ */
 export const MARCOS = [
-  'Transição Comercial-Implantação',
-  'Diagnóstico',
-  'Arquitetura',
-  'Recursos',
-  'Ativação Comercial',
-  'Pré-Onboarding',
-  'Onboarding',
-  'Go-Live',
-  'Transição para Academia',
+  'Entrada do Cliente',
+  'Diagnóstico do Espaço',
+  'Adequação do Espaço',
+  'Materiais e Equipamentos',
+  'Treinamento da Equipe de Vendas',
+  'Preparação para o Início',
+  'Formação da Equipe',
+  'Início das Aulas',
+  'Acompanhamento Contínuo',
 ] as const
 
-/** As sete macroetapas do Manual Operacional. */
+/** As sete macroetapas do Manual Operacional, com o mesmo nome simples do marco que agrupam. */
 export const MACROETAPAS = [
-  { n: 1, nome: 'Transição Comercial-Implantação', marcos: [0], gate: 'Ficha revisada pelo Comercial e aceita pela Implantação.' },
-  { n: 2, nome: 'Ecologia Formativa', marcos: [1, 2, 3], gate: 'Diagnóstico, adequações e lista de recursos definidos.' },
-  { n: 3, nome: 'Ativação Comercial', marcos: [4], gate: 'Equipe da escola apta a apresentar a proposta.' },
-  { n: 4, nome: 'Pré-Onboarding', marcos: [5], gate: 'Pré-Onboarding validado → formação confirmada.' },
-  { n: 5, nome: 'Onboarding Pedagógico', marcos: [6], gate: 'Onboarding concluído → escola avança para o Go-Live.' },
-  { n: 6, nome: 'Go-Live', marcos: [7], gate: 'Go-Live liberado → escola entra em operação.' },
-  { n: 7, nome: 'Transição para a Academia', marcos: [8], gate: 'Responsável, cadência e pontos de atenção registrados.' },
+  { n: 1, nome: 'Entrada do Cliente', marcos: [0], gate: 'Ficha revisada pelo Comercial e aceita pela Implantação.' },
+  { n: 2, nome: 'Preparação do Espaço', marcos: [1, 2, 3], gate: 'Diagnóstico, adequações e lista de recursos definidos.' },
+  { n: 3, nome: 'Treinamento da Equipe de Vendas', marcos: [4], gate: 'Equipe da escola apta a apresentar a proposta.' },
+  { n: 4, nome: 'Preparação para o Início', marcos: [5], gate: 'Preparação para o início validada → formação confirmada.' },
+  { n: 5, nome: 'Formação da Equipe', marcos: [6], gate: 'Formação concluída → escola avança para o início das aulas.' },
+  { n: 6, nome: 'Início das Aulas', marcos: [7], gate: 'Início das aulas liberado → escola entra em operação.' },
+  { n: 7, nome: 'Acompanhamento Contínuo', marcos: [8], gate: 'Responsável, cadência e pontos de atenção registrados.' },
 ] as const
 
 export type Grupo = 'Fundamentos' | 'Jornada de implantação' | 'Formação e Acompanhamento' | 'Controle'
@@ -142,14 +147,14 @@ const BASE_DOCS: BaseDoc[] = [
   },
   {
     slug: 'handoff', n: 4, grupo: 'Jornada de implantação', etapa: 1, marcos: [0],
-    tipo: 'Formulário', kicker: 'Macroetapa 1 de 7 · Transição Comercial-Implantação',
+    tipo: 'Formulário', kicker: 'Macroetapa 1 de 7 · Entrada do Cliente',
     title: 'Transição Comercial-Implantação', short: 'Transição Comercial-Implantação',
     deck: 'Ficha padrão de transição entre Comercial e Implantação após fechamento do contrato.',
     facts: [], content: c(handoff),
   },
   {
     slug: 'procedimento-diagnostico', n: 5, grupo: 'Jornada de implantação', etapa: 2, marcos: [1, 2, 3],
-    tipo: 'Procedimento oficial', kicker: 'Macroetapa 2 de 7 · Ecologia Formativa',
+    tipo: 'Procedimento oficial', kicker: 'Macroetapa 2 de 7 · Preparação do Espaço',
     title: 'Diagnóstico do Espaço Maker', short: 'Procedimento de Diagnóstico',
     deck: 'Etapas, responsabilidades, evidências e critérios para análise da infraestrutura e dos recursos da escola parceira.',
     facts: [
@@ -161,7 +166,7 @@ const BASE_DOCS: BaseDoc[] = [
   },
   {
     slug: 'planilha-diagnostico', n: 6, grupo: 'Jornada de implantação', etapa: 2, marcos: [1, 2, 3],
-    tipo: 'Planilha', kicker: 'Macroetapa 2 de 7 · Ecologia Formativa',
+    tipo: 'Planilha', kicker: 'Macroetapa 2 de 7 · Preparação do Espaço',
     title: 'Planilha de Diagnóstico do Espaço Maker', short: 'Planilha de Diagnóstico',
     deck: 'Planilha para levantamento de informações pela escola e parecer técnico da We Make.',
     facts: [
@@ -173,14 +178,14 @@ const BASE_DOCS: BaseDoc[] = [
   },
   {
     slug: 'registro-ativacao-comercial', n: 7, grupo: 'Jornada de implantação', etapa: 3, marcos: [4],
-    tipo: 'Formulário', kicker: 'Macroetapa 3 de 7 · Ativação Comercial',
+    tipo: 'Formulário', kicker: 'Macroetapa 3 de 7 · Treinamento da Equipe de Vendas',
     title: 'Registro de Ativação Comercial', short: 'Ativação Comercial',
     deck: 'Escola Parceira — We Make 2027.',
     facts: [], content: c(registroAtivacao),
   },
   {
     slug: 'manual-do-formador', n: 8, grupo: 'Jornada de implantação', etapa: 3, marcos: [4],
-    tipo: 'Manual', kicker: 'Academia We Make · Trilha de ativação comercial',
+    tipo: 'Manual', kicker: 'Academia We Make · Trilha de treinamento de vendas',
     title: 'Manual do Formador', short: 'Manual do Formador',
     deck: 'Como formar equipes comerciais, de marketing, secretaria e coordenação para apresentar a We Make às famílias.',
     facts: [
@@ -195,7 +200,7 @@ const BASE_DOCS: BaseDoc[] = [
   },
   {
     slug: 'material-do-multiplicador', n: 9, grupo: 'Jornada de implantação', etapa: 3, marcos: [4],
-    tipo: 'Material de apoio', kicker: 'Academia We Make · Trilha de ativação comercial',
+    tipo: 'Material de apoio', kicker: 'Academia We Make · Trilha de treinamento de vendas',
     title: 'Material do Multiplicador', short: 'Material do Multiplicador',
     deck: 'Um guia para apresentar a We Make às famílias com clareza, segurança e verdade.',
     facts: [
@@ -209,14 +214,14 @@ const BASE_DOCS: BaseDoc[] = [
   },
   {
     slug: 'checklist-pre-onboarding', n: 10, grupo: 'Jornada de implantação', etapa: 4, marcos: [5],
-    tipo: 'Formulário', kicker: 'Macroetapa 4 de 7 · Pré-Onboarding',
+    tipo: 'Formulário', kicker: 'Macroetapa 4 de 7 · Preparação para o Início',
     title: 'Checklist Pré-Onboarding', short: 'Checklist Pré-Onboarding',
     deck: 'Validação de prontidão para realização do onboarding presencial.',
     facts: [], content: c(checklistPreOnboarding),
   },
   {
     slug: 'processo-de-onboarding-2026', n: 11, grupo: 'Jornada de implantação', etapa: 5, marcos: [6],
-    tipo: 'Diretrizes', kicker: 'Macroetapa 5 de 7 · Onboarding Pedagógico',
+    tipo: 'Diretrizes', kicker: 'Macroetapa 5 de 7 · Formação da Equipe',
     title: 'Processo de Onboarding', short: 'Processo de Onboarding',
     deck: 'Diretrizes, estrutura, carga horária e resultados esperados.',
     facts: [
@@ -228,14 +233,14 @@ const BASE_DOCS: BaseDoc[] = [
   },
   {
     slug: 'relatorio-onboarding', n: 12, grupo: 'Jornada de implantação', etapa: 5, marcos: [6],
-    tipo: 'Formulário', kicker: 'Macroetapa 5 de 7 · Onboarding Pedagógico',
+    tipo: 'Formulário', kicker: 'Macroetapa 5 de 7 · Formação da Equipe',
     title: 'Relatório de Onboarding da Escola Parceira', short: 'Relatório de Onboarding',
     deck: 'Registro de execução, conclusão e prontidão para as primeiras aulas.',
     facts: [], content: c(relatorioOnboarding),
   },
   {
     slug: 'ficha-go-live', n: 13, grupo: 'Jornada de implantação', etapa: 6, marcos: [7, 8],
-    tipo: 'Formulário', kicker: 'Macroetapas 6 e 7 de 7 · Go-Live e Transição',
+    tipo: 'Formulário', kicker: 'Macroetapas 6 e 7 de 7 · Início das Aulas e Acompanhamento Contínuo',
     title: 'Ficha de Go-Live', short: 'Ficha de Go-Live',
     deck: 'Validação final para início das aulas We Make, com a transição para a Academia na seção 8.',
     facts: [], content: c(fichaGoLive),
@@ -282,7 +287,7 @@ const BASE_DOCS: BaseDoc[] = [
     deck: 'Visão executiva das escolas parceiras: etapas, prazos, riscos e próximas ações.',
     facts: [
       { k: 'Regra básica', v: 'Uma linha por escola' },
-      { k: 'Marcos', v: '9 marcos, da Transição Comercial-Implantação à Transição para a Academia' },
+      { k: 'Marcos', v: '9 marcos, da Entrada do Cliente ao Acompanhamento Contínuo' },
       { k: 'Abas', v: 'Painel · Implantacao · Listas · Como usar · Matriz documentos' },
     ],
     content: c(painelMestre),

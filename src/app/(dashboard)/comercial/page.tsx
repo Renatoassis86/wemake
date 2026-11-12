@@ -20,7 +20,7 @@ interface Props {
 // ── Estilos reutilizáveis ─────────────────────────────────────────────────────
 const card: React.CSSProperties = {
   background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16,
-  overflow: 'hidden', boxShadow: '0 2px 8px rgba(15,23,42,.05)',
+  overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,41,51,.05)',
 }
 const cardHead: React.CSSProperties = {
   padding: '.85rem 1.4rem', borderBottom: '1px solid #f1f5f9', background: '#fafafa',
@@ -28,7 +28,7 @@ const cardHead: React.CSSProperties = {
 }
 const cardTitle: React.CSSProperties = {
   fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.74rem', fontWeight: 800,
-  textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a',
+  textTransform: 'uppercase', letterSpacing: '.07em', color: '#002933',
 }
 const cardSub: React.CSSProperties = {
   fontSize: '.7rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.15rem',
@@ -36,7 +36,7 @@ const cardSub: React.CSSProperties = {
 const pill = (ativo: boolean): React.CSSProperties => ({
   padding: '.35rem .8rem', borderRadius: 999, fontSize: '.72rem', fontWeight: 700,
   textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)',
-  background: ativo ? 'linear-gradient(135deg, #4A7FDB, #5FE3D0)' : '#F1F5F9',
+  background: ativo ? 'linear-gradient(135deg, #00889e, #00ceff)' : '#F1F5F9',
   color: ativo ? '#fff' : '#475569',
   border: ativo ? 'none' : '1px solid #E2E8F0',
 })
@@ -73,7 +73,7 @@ export default async function ComercialDashboard({ searchParams }: Props) {
   const escolasSemNegociacao = (todasEscolas ?? []).filter((e: any) => !idsComRegistro.has(e.id)).slice(0, 8)
 
   const MEIO_LABEL: Record<string, string> = { presencial: 'Presencial', whatsapp: 'WhatsApp', email: 'E-mail', telefone: 'Telefone', videoconf: 'Videoconf', outro: 'Outro' }
-  const CLASSIF_DOT: Record<string, string> = { quente: '#dc2626', morno: '#4A7FDB', frio: '#60a5fa' }
+  const CLASSIF_DOT: Record<string, string> = { quente: '#dc2626', morno: '#00889e', frio: '#60a5fa' }
 
   return (
     <div>
@@ -81,7 +81,7 @@ export default async function ComercialDashboard({ searchParams }: Props) {
         title="Dashboard Comercial"
         subtitle={`Ao vivo · atualizado a cada acesso · ${new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: 'long', hour: '2-digit', minute: '2-digit' })}`}
         actions={
-          <Link href="/comercial/registros/novo" style={{ display: 'inline-flex', alignItems: 'center', gap: '.35rem', padding: '.45rem 1rem', borderRadius: 9999, background: '#4A7FDB', color: '#fff', textDecoration: 'none', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 12px rgba(74,127,219,.3)' }}>
+          <Link href="/comercial/registros/novo" style={{ display: 'inline-flex', alignItems: 'center', gap: '.35rem', padding: '.45rem 1rem', borderRadius: 9999, background: '#00889e', color: '#fff', textDecoration: 'none', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', boxShadow: '0 4px 12px rgba(0,137,158,.3)' }}>
             <Plus size={13} /> Novo Registro
           </Link>
         }
@@ -208,10 +208,10 @@ export default async function ComercialDashboard({ searchParams }: Props) {
               <div style={cardTitle}>Formulários Recebidos × Conversão em Proposta</div>
               <div style={cardSub}>Cruza form_precadastro_wemake (exclui descartados) com propostas geradas</div>
             </div>
-            <Link href="/comercial/pre-cadastros" style={{ fontSize: '.72rem', color: '#4A7FDB', fontWeight: 600, textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Ver todos →</Link>
+            <Link href="/comercial/pre-cadastros" style={{ fontSize: '.72rem', color: '#00889e', fontWeight: 600, textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Ver todos →</Link>
           </div>
           <div style={{ padding: '1.25rem 1.5rem', display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '.85rem', borderBottom: dados.formularios.pendentes.length > 0 ? '1px solid #f1f5f9' : 'none' }}>
-            <MiniStat label="Formulários Recebidos" valor={dados.formularios.total} cor="#0f172a" />
+            <MiniStat label="Formulários Recebidos" valor={dados.formularios.total} cor="#002933" />
             <MiniStat label="Convertidos em Proposta" valor={dados.formularios.convertidos} cor="#16a34a" sub={dados.formularios.total ? `${Math.round((dados.formularios.convertidos / dados.formularios.total) * 100)}% do total` : undefined} />
             <MiniStat label="Sem Proposta Correspondente" valor={dados.formularios.pendentes.length} cor="#dc2626" />
           </div>
@@ -274,7 +274,7 @@ export default async function ComercialDashboard({ searchParams }: Props) {
           <div style={card}>
             <div style={cardHead}>
               <div style={cardTitle}>Últimas Interações</div>
-              <Link href="/comercial/registros" style={{ fontSize: '.72rem', color: '#4A7FDB', fontWeight: 600, textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Ver todas →</Link>
+              <Link href="/comercial/registros" style={{ fontSize: '.72rem', color: '#00889e', fontWeight: 600, textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>Ver todas →</Link>
             </div>
             {registrosRecentes && registrosRecentes.length > 0 ? (
               <div style={{ padding: '.75rem' }}>
@@ -282,7 +282,7 @@ export default async function ComercialDashboard({ searchParams }: Props) {
                   <Link key={r.id} href={`/comercial/escolas/${r.escola_id}`} style={{ display: 'flex', alignItems: 'center', gap: '.85rem', padding: '.6rem .85rem', borderRadius: 10, textDecoration: 'none', marginBottom: idx < registrosRecentes.length - 1 ? '.25rem' : 0, background: idx % 2 === 0 ? '#fafafa' : '#fff' }}>
                     <div style={{ width: 8, height: 8, borderRadius: '50%', background: CLASSIF_DOT[r.classificacao] ?? '#94a3b8', flexShrink: 0 }} />
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 700, fontSize: '.8rem', color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{r.escola?.nome ?? '—'}</div>
+                      <div style={{ fontWeight: 700, fontSize: '.8rem', color: '#002933', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{r.escola?.nome ?? '—'}</div>
                       <div style={{ fontSize: '.66rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>{formatDate(r.data_contato)} · {MEIO_LABEL[r.meio_contato] ?? r.meio_contato}</div>
                     </div>
                   </Link>
@@ -302,7 +302,7 @@ export default async function ComercialDashboard({ searchParams }: Props) {
                   <Link key={e.id} href={`/comercial/registros/novo?escola=${e.id}`} style={{ display: 'flex', alignItems: 'center', gap: '.85rem', padding: '.6rem .85rem', borderRadius: 10, textDecoration: 'none', marginBottom: idx < escolasSemNegociacao.length - 1 ? '.25rem' : 0, background: idx % 2 === 0 ? '#faf5ff' : '#fff' }}>
                     <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(135deg, #7c3aed, #6d28d9)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '.7rem', fontWeight: 700, flexShrink: 0 }}>{e.nome[0].toUpperCase()}</div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 700, fontSize: '.8rem', color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{e.nome}</div>
+                      <div style={{ fontWeight: 700, fontSize: '.8rem', color: '#002933', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{e.nome}</div>
                       <div style={{ fontSize: '.66rem', color: '#7c3aed', fontFamily: 'var(--font-inter,sans-serif)' }}>{e.cidade}{e.estado ? `, ${e.estado}` : ''}</div>
                     </div>
                   </Link>
@@ -315,13 +315,13 @@ export default async function ComercialDashboard({ searchParams }: Props) {
         {/* ── Acesso rápido ──────────────────────────────────────── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem' }}>
           {[
-            { label: 'Nova Escola', href: '/comercial/escolas/nova', cor: '#4A7FDB', desc: 'Cadastrar parceiro' },
+            { label: 'Nova Escola', href: '/comercial/escolas/nova', cor: '#00889e', desc: 'Cadastrar parceiro' },
             { label: 'Novo Registro', href: '/comercial/registros/novo', cor: '#0d9488', desc: 'Registrar interação' },
             { label: 'Ver Pipeline', href: '/comercial/pipeline', cor: '#7c3aed', desc: 'Kanban de negociações' },
             { label: 'Metas do Sprint', href: '/comercial/metas', cor: '#b45309', desc: 'Acompanhamento até 31/08' },
           ].map(item => (
-            <Link key={item.label} href={item.href} style={{ display: 'block', background: '#fff', border: '1px solid #e2e8f0', borderLeft: `4px solid ${item.cor}`, borderRadius: 12, padding: '.85rem 1.1rem', textDecoration: 'none', boxShadow: '0 1px 4px rgba(15,23,42,.04)' }}>
-              <div style={{ fontWeight: 700, fontSize: '.82rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.15rem' }}>{item.label}</div>
+            <Link key={item.label} href={item.href} style={{ display: 'block', background: '#fff', border: '1px solid #e2e8f0', borderLeft: `4px solid ${item.cor}`, borderRadius: 12, padding: '.85rem 1.1rem', textDecoration: 'none', boxShadow: '0 1px 4px rgba(0,41,51,.04)' }}>
+              <div style={{ fontWeight: 700, fontSize: '.82rem', color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.15rem' }}>{item.label}</div>
               <div style={{ fontSize: '.72rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>{item.desc}</div>
             </Link>
           ))}
@@ -350,7 +350,7 @@ function TabelaSimples({ cabecalho, linhas }: { cabecalho: string[]; linhas: str
           {linhas.map((linha, ri) => (
             <tr key={ri} style={{ background: ri % 2 === 0 ? '#fafafa' : '#fff' }}>
               {linha.map((v, ci) => (
-                <td key={ci} style={{ padding: '.5rem 1rem', textAlign: ci === 0 ? 'left' : 'right', color: ci === 0 ? '#0f172a' : '#475569', fontWeight: ci === 0 ? 600 : 500, fontFamily: 'var(--font-inter,sans-serif)' }}>{v}</td>
+                <td key={ci} style={{ padding: '.5rem 1rem', textAlign: ci === 0 ? 'left' : 'right', color: ci === 0 ? '#002933' : '#475569', fontWeight: ci === 0 ? 600 : 500, fontFamily: 'var(--font-inter,sans-serif)' }}>{v}</td>
               ))}
             </tr>
           ))}
@@ -368,10 +368,10 @@ function RankingLista({ itens }: { itens: { nome: string; valor: string; sub: st
         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.5rem 0', borderBottom: i < itens.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
           <div style={{ width: 22, height: 22, borderRadius: 6, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.68rem', fontWeight: 800, color: '#64748b', flexShrink: 0, fontFamily: 'var(--font-montserrat,sans-serif)' }}>{i + 1}</div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: '.78rem', fontWeight: 700, color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-inter,sans-serif)' }}>{it.nome}</div>
+            <div style={{ fontSize: '.78rem', fontWeight: 700, color: '#002933', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-inter,sans-serif)' }}>{it.nome}</div>
             {it.sub && <div style={{ fontSize: '.64rem', color: '#94a3b8' }}>{it.sub}</div>}
           </div>
-          <div style={{ fontSize: '.76rem', fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', flexShrink: 0 }}>{it.valor}</div>
+          <div style={{ fontSize: '.76rem', fontWeight: 800, color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)', flexShrink: 0 }}>{it.valor}</div>
         </div>
       ))}
     </div>
@@ -382,7 +382,7 @@ function MiniStat({ label, valor, cor, sub }: { label: string; valor: number; co
   return (
     <div style={{ padding: '.75rem .9rem', background: '#f8fafc', border: `1px solid ${cor}20`, borderTop: `3px solid ${cor}`, borderRadius: 10 }}>
       <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: cor, fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.3rem' }}>{label}</div>
-      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{valor.toLocaleString('pt-BR')}</div>
+      <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.6rem', fontWeight: 800, color: '#002933', lineHeight: 1 }}>{valor.toLocaleString('pt-BR')}</div>
       {sub && <div style={{ fontSize: '.64rem', color: '#94a3b8', marginTop: '.2rem' }}>{sub}</div>}
     </div>
   )

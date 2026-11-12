@@ -21,7 +21,7 @@ export default async function DiagnosticoDetalhe({ params }: { params: Promise<{
   return (
     <>
       <p className="ac-nota" style={{ marginTop: 0 }}><Link href="/academia/gestao/diagnosticos">← Todos os diagnósticos</Link></p>
-      <AnaliseDiagnostico diagnostico={r.diagnostico} arquivos={r.arquivos} anotacoes={r.anotacoes} arquivosEquipe={r.arquivosEquipe} />
+      <AnaliseDiagnostico diagnostico={r.diagnostico} arquivos={r.arquivos} anotacoes={r.anotacoes} arquivosEquipe={r.arquivosEquipe} arquivosMaker={r.arquivosMaker} />
     </>
   )
 }

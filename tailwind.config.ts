@@ -10,15 +10,15 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', ...defaultTheme.fontFamily.sans],
+        sans: ['Geist', ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        // We Make Brand Colors
+        // We Make Brand Colors — mesma identidade da proposta comercial
         cyan: {
           50: '#f0fdfc',
           100: '#ccfbf1',
           200: '#99f6e4',
-          300: '#5FE3D0',
+          300: '#76f3cd', // We Make Mint
           400: '#2dd4bf',
           500: '#14b8a6',
           600: '#0d9488',
@@ -32,11 +32,11 @@ const config: Config = {
           200: '#bae6fd',
           300: '#7dd3fc',
           400: '#38bdf8',
-          500: '#4A7FDB', // We Make Primary Blue
-          600: '#3a6fb5',
+          500: '#4c8ade', // We Make Royal Blue
+          600: '#2a69ba',
           700: '#2a5f95',
           800: '#1e40af',
-          900: '#1e3a8a',
+          900: '#0b1f44', // We Make Navy
         },
         // Semantic colors
         success: '#10b981',

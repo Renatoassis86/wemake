@@ -73,7 +73,7 @@ export function ContratoUpload({ escolaId, escolaNome, arquivosExistentes }: Pro
 
     // Buscar path do documento
     const { data: doc } = await supabase
-      .from('documentos_oficiais')
+      .from('contratos_arquivos')
       .select('path')
       .eq('id', arq.id)
       .single()
@@ -132,7 +132,7 @@ export function ContratoUpload({ escolaId, escolaNome, arquivosExistentes }: Pro
           transition: 'all .15s',
           marginBottom: '1rem',
         }}
-        onMouseEnter={e => { if (!uploading) e.currentTarget.style.borderColor = '#4A7FDB' }}
+        onMouseEnter={e => { if (!uploading) e.currentTarget.style.borderColor = '#00889e' }}
         onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0' }}
       >
         <input
@@ -145,7 +145,7 @@ export function ContratoUpload({ escolaId, escolaNome, arquivosExistentes }: Pro
         />
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '.65rem' }}>
           {uploading ? (
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4A7FDB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ animation: 'spin 1s linear infinite' }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00889e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ animation: 'spin 1s linear infinite' }}>
               <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
             </svg>
           ) : (
@@ -155,7 +155,7 @@ export function ContratoUpload({ escolaId, escolaNome, arquivosExistentes }: Pro
             </svg>
           )}
         </div>
-        <div style={{ fontSize: '.82rem', fontWeight: 600, color: uploading ? '#4A7FDB' : '#475569', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.25rem' }}>
+        <div style={{ fontSize: '.82rem', fontWeight: 600, color: uploading ? '#00889e' : '#475569', fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.25rem' }}>
           {uploading ? 'Enviando arquivo...' : 'Clique para selecionar o arquivo'}
         </div>
         <div style={{ fontSize: '.7rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
@@ -188,7 +188,7 @@ export function ContratoUpload({ escolaId, escolaNome, arquivosExistentes }: Pro
               <div style={{ flexShrink: 0 }}>{iconeArquivo(arq.nome)}</div>
 
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 600, fontSize: '.82rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ fontWeight: 600, fontSize: '.82rem', color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {arq.nome}
                 </div>
                 <div style={{ fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.15rem' }}>

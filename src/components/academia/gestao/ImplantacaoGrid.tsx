@@ -119,7 +119,7 @@ function Linha({ i, pessoas }: { i: Implantacao; pessoas: string[] }) {
 
 export default function ImplantacaoGrid({ itens, pessoas }: { itens: Implantacao[]; pessoas: string[] }) {
   if (!itens.length) {
-    return <p className="ac-vazio">Nenhuma escola no Painel Mestre ainda. Cadastre a primeira logo após o Handoff Comercial.</p>
+    return <p className="ac-vazio">Nenhuma escola no Painel Mestre ainda. Cadastre a primeira logo após a Entrada do Cliente.</p>
   }
   return (
     <div className="ac-grid-wrap" role="region" aria-label="Implantação por escola" tabIndex={0}>

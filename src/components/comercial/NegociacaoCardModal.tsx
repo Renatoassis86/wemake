@@ -30,7 +30,7 @@ interface Negociacao {
 const STAGES = [
   { id: 'prospeccao',   label: 'Prospecção',     cor: '#6366f1' },
   { id: 'qualificacao', label: 'Qualificação',   cor: '#8b5cf6' },
-  { id: 'apresentacao', label: 'Apresentação',   cor: '#4A7FDB' },
+  { id: 'apresentacao', label: 'Apresentação',   cor: '#00889e' },
   { id: 'proposta',     label: 'Proposta',       cor: '#f59e0b' },
   { id: 'negociacao',   label: 'Negociação',     cor: '#0ea5e9' },
   { id: 'fechamento',   label: 'Fechamento',     cor: '#16a34a' },
@@ -40,7 +40,7 @@ const STAGES = [
 
 const TAG_COLORS = [
   '#dc2626', '#f59e0b', '#16a34a', '#0ea5e9', '#6366f1',
-  '#8b5cf6', '#db2777', '#0f172a', '#64748b',
+  '#8b5cf6', '#db2777', '#002933', '#64748b',
 ]
 
 function getInitials(name: string) {
@@ -229,13 +229,13 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
   const inp: React.CSSProperties = {
     width: '100%', padding: '.5rem .7rem', border: '1.5px solid #e2e8f0',
     borderRadius: 7, fontSize: '.82rem', fontFamily: 'var(--font-inter,sans-serif)',
-    outline: 'none', background: '#fff', color: '#0f172a', boxSizing: 'border-box',
+    outline: 'none', background: '#fff', color: '#002933', boxSizing: 'border-box',
   }
 
   return (
     <div
       style={{
-        position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(15,23,42,.55)',
+        position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,41,51,.55)',
         backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'flex-start',
         justifyContent: 'center', padding: '2rem 1rem', overflowY: 'auto',
       }}
@@ -247,7 +247,7 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
       }}>
         {/* HEADER */}
         <div style={{
-          background: 'linear-gradient(135deg, #0f172a, #1e293b)',
+          background: 'linear-gradient(135deg, #002933, #1e293b)',
           padding: '1.1rem 1.5rem', display: 'flex', alignItems: 'flex-start',
           justifyContent: 'space-between', gap: '1rem',
         }}>
@@ -422,7 +422,7 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
                       }}
                         style={{
                           padding: '.4rem .9rem', borderRadius: 7, border: 'none',
-                          background: '#4A7FDB', color: '#fff', fontWeight: 700,
+                          background: '#00889e', color: '#fff', fontWeight: 700,
                           fontSize: '.75rem', cursor: 'pointer',
                           fontFamily: 'var(--font-montserrat,sans-serif)',
                         }}>Salvar</button>
@@ -437,7 +437,7 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
                   <div onClick={() => setEditDesc(true)}
                     style={{
                       minHeight: 60, background: '#f8fafc', padding: '.65rem .8rem',
-                      borderRadius: 8, fontSize: '.82rem', color: neg.descricao ? '#0f172a' : '#94a3b8',
+                      borderRadius: 8, fontSize: '.82rem', color: neg.descricao ? '#002933' : '#94a3b8',
                       fontFamily: 'var(--font-inter,sans-serif)', cursor: 'pointer',
                       whiteSpace: 'pre-wrap', lineHeight: 1.5,
                     }}>
@@ -452,7 +452,7 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
                 <div style={{ display: 'flex', gap: '.55rem', marginBottom: '1rem' }}>
                   <div style={{
                     width: 32, height: 32, borderRadius: '50%',
-                    background: '#4A7FDB', flexShrink: 0,
+                    background: '#00889e', flexShrink: 0,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     color: '#fff', fontSize: '.7rem', fontWeight: 800,
                     fontFamily: 'var(--font-montserrat,sans-serif)',
@@ -469,7 +469,7 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
                         style={{
                           marginTop: '.4rem',
                           padding: '.4rem 1rem', borderRadius: 7, border: 'none',
-                          background: salvandoComent ? '#94a3b8' : '#4A7FDB',
+                          background: salvandoComent ? '#94a3b8' : '#00889e',
                           color: '#fff', fontWeight: 700, fontSize: '.75rem',
                           cursor: salvandoComent ? 'not-allowed' : 'pointer',
                           fontFamily: 'var(--font-montserrat,sans-serif)',
@@ -497,7 +497,7 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
                         }}>{getInitials(nome)}</div>
                         <div style={{ flex: 1 }}>
                           <div style={{ display: 'flex', alignItems: 'baseline', gap: '.5rem' }}>
-                            <span style={{ fontWeight: 700, fontSize: '.78rem', color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{nome}</span>
+                            <span style={{ fontWeight: 700, fontSize: '.78rem', color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{nome}</span>
                             <span style={{ fontSize: '.65rem', color: '#94a3b8' }}>
                               {new Date(c.created_at).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                             </span>
@@ -509,7 +509,7 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
                           </div>
                           <div style={{
                             background: '#f8fafc', padding: '.5rem .75rem', borderRadius: 8,
-                            marginTop: '.25rem', fontSize: '.8rem', color: '#0f172a',
+                            marginTop: '.25rem', fontSize: '.8rem', color: '#002933',
                             fontFamily: 'var(--font-inter,sans-serif)', lineHeight: 1.45,
                             whiteSpace: 'pre-wrap',
                           }}>{c.texto}</div>
@@ -534,7 +534,7 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
               <a href={`/comercial/escolas/${neg.escola_id}`}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '.45rem',
-                  padding: '.45rem .65rem', borderRadius: 7, background: '#0f172a',
+                  padding: '.45rem .65rem', borderRadius: 7, background: '#002933',
                   color: '#fff', textDecoration: 'none', fontSize: '.72rem', fontWeight: 700,
                   fontFamily: 'var(--font-montserrat,sans-serif)', marginTop: '.5rem',
                 }}>
@@ -570,10 +570,10 @@ export function NegociacaoCardModal({ negociacaoId, onClose, onChange }: Props) 
                         fontFamily: 'var(--font-montserrat,sans-serif)',
                       }}>{getInitials(p.nome_completo)}</div>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '.78rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{p.nome_completo}</div>
+                        <div style={{ fontSize: '.78rem', fontWeight: 600, color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{p.nome_completo}</div>
                         {p.role && <div style={{ fontSize: '.6rem', color: '#94a3b8' }}>{p.role}</div>}
                       </div>
-                      {ja && <span style={{ fontSize: '.65rem', fontWeight: 700, color: '#4A7FDB' }}>✓ marcado</span>}
+                      {ja && <span style={{ fontSize: '.65rem', fontWeight: 700, color: '#00889e' }}>✓ marcado</span>}
                     </button>
                   )
                 })}

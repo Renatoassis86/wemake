@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { BUCKET } from '@/lib/diagnostico'
-import { confirmarUploadEquipe, pedirUploadEquipe, removerArquivoEquipe } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
+import { confirmarUploadEquipe, pedirUploadEquipe, removerArquivoEquipe, type CategoriaArquivoEquipe } from '@/app/(dashboard)/academia/gestao/diagnosticos/actions'
 import type { ArquivoEquipeStaff } from '@/lib/diagnostico-staff'
 
 const tamanhoLabel = (b: number | null) => (!b ? '' : b < 1048576 ? `${Math.max(1, Math.round(b / 1024))} KB` : `${(b / 1048576).toFixed(1).replace('.', ',')} MB`)
@@ -13,7 +13,7 @@ const tamanhoLabel = (b: number | null) => (!b ? '' : b < 1048576 ? `${Math.max(
  * diagnóstico — mesmo bucket e padrão de envio por URL assinada do upload da
  * escola, só a pasta muda (equipe/ em vez do id da sessão).
  */
-export default function ArquivosEquipe({ id, inicial }: { id: string; inicial: ArquivoEquipeStaff[] }) {
+export default function ArquivosEquipe({ id, inicial, categoria = 'arquitetura' }: { id: string; inicial: ArquivoEquipeStaff[]; categoria?: CategoriaArquivoEquipe }) {
   const [arquivos, setArquivos] = useState(inicial)
   const [enviando, setEnviando] = useState(0)
   const [erro, setErro] = useState<string | null>(null)
@@ -27,11 +27,11 @@ export default function ArquivosEquipe({ id, inicial }: { id: string; inicial: A
       setEnviando(n => n + 1)
       try {
         const mime = arq.type || 'application/octet-stream'
-        const pedido = await pedirUploadEquipe(id, { mime, tamanho: arq.size })
+        const pedido = await pedirUploadEquipe(id, { mime, tamanho: arq.size, categoria })
         if (!pedido.ok) { setErro(pedido.erro); continue }
         const { error } = await supabase.storage.from(BUCKET).uploadToSignedUrl(pedido.path, pedido.token, arq, { contentType: mime })
         if (error) { setErro('O envio falhou. Verifique a conexão e tente de novo.'); continue }
-        const conf = await confirmarUploadEquipe(id, { path: pedido.path, nome: arq.name, mime })
+        const conf = await confirmarUploadEquipe(id, { path: pedido.path, nome: arq.name, mime, categoria })
         if (!conf.ok || !conf.arquivo) { setErro(conf.erro ?? 'Não foi possível registrar o arquivo.'); continue }
         setArquivos(a => [{ ...conf.arquivo!, url: null }, ...a])
       } catch {

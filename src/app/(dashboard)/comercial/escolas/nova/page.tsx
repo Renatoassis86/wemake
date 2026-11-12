@@ -10,13 +10,13 @@ import { PERFIL_OPTIONS, ORIGEM_OPTIONS, CARGO_CONTATO_OPTIONS } from '@/types/d
 const card: React.CSSProperties = {
   background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16,
   marginBottom: '1.5rem', overflow: 'hidden',
-  boxShadow: '0 1px 4px rgba(15,23,42,.06)',
+  boxShadow: '0 1px 4px rgba(0,41,51,.06)',
 }
-const cardHeader = (color = '#4A7FDB'): React.CSSProperties => ({
+const cardHeader = (color = '#00889e'): React.CSSProperties => ({
   padding: '1rem 1.75rem', borderBottom: '1px solid #f1f5f9',
   background: '#fafafa', display: 'flex', alignItems: 'center', gap: '.65rem',
 })
-const dot = (color = '#4A7FDB'): React.CSSProperties => ({
+const dot = (color = '#00889e'): React.CSSProperties => ({
   width: 28, height: 28, borderRadius: 7, flexShrink: 0,
   background: `linear-gradient(135deg, ${color}, ${color}cc)`,
   display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.9rem',
@@ -24,7 +24,7 @@ const dot = (color = '#4A7FDB'): React.CSSProperties => ({
 const sectionTitle: React.CSSProperties = {
   fontFamily: 'var(--font-montserrat,sans-serif)',
   fontSize: '.78rem', fontWeight: 800,
-  textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a',
+  textTransform: 'uppercase', letterSpacing: '.07em', color: '#002933',
 }
 const cardBody: React.CSSProperties = { padding: '1.5rem 1.75rem' }
 const label: React.CSSProperties = {
@@ -36,7 +36,7 @@ const input: React.CSSProperties = {
   width: '100%', padding: '.65rem .9rem', fontSize: '.875rem',
   fontFamily: 'var(--font-inter,sans-serif)',
   border: '1.5px solid #e2e8f0', borderRadius: 8,
-  background: '#f8fafc', color: '#0f172a', outline: 'none',
+  background: '#f8fafc', color: '#002933', outline: 'none',
   boxSizing: 'border-box',
 }
 const grid2: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem 1.5rem' }
@@ -108,7 +108,7 @@ export default async function EscolaNova({ searchParams }: Props) {
             <div style={cardBody}>
               <div style={grid2}>
                 <div style={{ gridColumn: 'span 2' }}>
-                  <label style={label}>Nome da Escola <span style={{ color: '#4A7FDB' }}>*</span></label>
+                  <label style={label}>Nome da Escola <span style={{ color: '#00889e' }}>*</span></label>
                   <input name="nome" style={input} required placeholder="Nome completo da escola" />
                 </div>
                 <div>
@@ -331,7 +331,7 @@ export default async function EscolaNova({ searchParams }: Props) {
 
           {/* ── 5. GESTÃO COMERCIAL ────────────────────────────── */}
           <div style={card}>
-            <div style={cardHeader('#4A7FDB')}>
+            <div style={cardHeader('#00889e')}>
               <div style={dot()}><svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='#fff' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'><line x1='18' y1='20' x2='18' y2='10'/><line x1='12' y1='20' x2='12' y2='4'/><line x1='6' y1='20' x2='6' y2='14'/></svg></div>
               <div style={sectionTitle}>Gestão Comercial</div>
             </div>
@@ -370,12 +370,12 @@ export default async function EscolaNova({ searchParams }: Props) {
             borderRadius: 16,
           }}>
             <button type="submit" style={{
-              background: 'linear-gradient(135deg, #4A7FDB, #2563b8)',
+              background: 'linear-gradient(135deg, #00889e, #00677d)',
               color: '#fff', padding: '.7rem 2rem',
               borderRadius: 9999, border: 'none', cursor: 'pointer',
               fontSize: '.875rem', fontWeight: 700,
               fontFamily: 'var(--font-montserrat,sans-serif)',
-              boxShadow: '0 4px 14px rgba(74,127,219,.35)',
+              boxShadow: '0 4px 14px rgba(0,137,158,.35)',
               letterSpacing: '.01em',
             }}>
               Cadastrar Escola
@@ -390,7 +390,7 @@ export default async function EscolaNova({ searchParams }: Props) {
               Cancelar
             </Link>
             <span style={{ fontSize: '.72rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)', marginLeft: 'auto' }}>
-              Campos com <span style={{ color: '#4A7FDB', fontWeight: 700 }}>*</span> são obrigatórios
+              Campos com <span style={{ color: '#00889e', fontWeight: 700 }}>*</span> são obrigatórios
             </span>
           </div>
 

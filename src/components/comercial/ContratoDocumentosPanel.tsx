@@ -138,9 +138,9 @@ export function ContratoDocumentosPanel({ escolaId, escolaNome, arquivos: arquiv
         <div ref={painelRef} style={{
           position: 'fixed', top: pos.top, left: pos.left, zIndex: 2000,
           width: 380, maxHeight: 480, overflowY: 'auto', background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 12,
-          boxShadow: '0 12px 32px rgba(15,23,42,.18)', padding: '1rem',
+          boxShadow: '0 12px 32px rgba(0,41,51,.18)', padding: '1rem',
         }}>
-          <div style={{ fontSize: '.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#0f172a', marginBottom: '.15rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+          <div style={{ fontSize: '.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#002933', marginBottom: '.15rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
             Minuta e Contrato
           </div>
           <div style={{ fontSize: '.7rem', color: '#94a3b8', marginBottom: '.75rem' }}>{escolaNome}</div>
@@ -215,7 +215,7 @@ export function ContratoDocumentosPanel({ escolaId, escolaNome, arquivos: arquiv
               {notasIniciais.map((n, i) => (
                 <div key={i} style={{ background: '#f8fafc', border: '1px solid #f1f5f9', borderRadius: 8, padding: '.5rem .6rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '.15rem' }}>
-                    <span style={{ fontSize: '.64rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{n.autor}</span>
+                    <span style={{ fontSize: '.64rem', fontWeight: 700, color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{n.autor}</span>
                     <span style={{ fontSize: '.58rem', color: '#94a3b8' }}>{tempoRelativo(n.criadoEm)}</span>
                   </div>
                   <div style={{ fontSize: '.72rem', color: '#334155', lineHeight: 1.4 }}>{n.texto}</div>

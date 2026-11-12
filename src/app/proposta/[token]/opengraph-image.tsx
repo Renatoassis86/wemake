@@ -6,7 +6,7 @@ export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
 const SITE_URL = 'https://comercial.wemake.tec.br'
-const C = { navy: '#0b1f44', royal: '#4c8ade', royalD: '#2a69ba', mint: '#76f3cd', amber: '#ffcc00' }
+const C = { navy: '#002933', royal: '#00889e', royalD: '#00677d', mint: '#00ceff', amber: '#ffcc00' }
 
 interface PropostaCapa {
   escola_nome: string
@@ -107,7 +107,7 @@ export default async function Image({ params }: { params: Promise<{ token: strin
         }}>
           <div style={{
             display: 'flex', position: 'absolute', inset: 0,
-            backgroundImage: 'linear-gradient(180deg, rgba(11,31,68,0.55) 0%, rgba(11,31,68,0.15) 35%, rgba(11,31,68,0.15) 65%, rgba(11,31,68,0.8) 100%)',
+            backgroundImage: 'linear-gradient(180deg, rgba(0,41,51,0.55) 0%, rgba(0,41,51,0.15) 35%, rgba(0,41,51,0.15) 65%, rgba(0,41,51,0.8) 100%)',
           }} />
           <div style={{
             display: 'flex', position: 'absolute', left: 44, right: 44, bottom: 32,

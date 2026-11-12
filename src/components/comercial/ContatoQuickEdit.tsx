@@ -102,7 +102,7 @@ export function ContatoQuickEdit({ escolaId, telefone: telefoneInicial, email: e
           </>
         ) : (
           <button onClick={abrir} style={{
-            fontSize: '.72rem', color: '#4A7FDB', fontWeight: 600, background: 'transparent', border: 'none', cursor: 'pointer', padding: 0,
+            fontSize: '.72rem', color: '#00889e', fontWeight: 600, background: 'transparent', border: 'none', cursor: 'pointer', padding: 0,
           }}>
             + adicionar
           </button>
@@ -113,9 +113,9 @@ export function ContatoQuickEdit({ escolaId, telefone: telefoneInicial, email: e
         <div ref={painelRef} style={{
           position: 'fixed', top: pos.top, left: pos.left, zIndex: 2000,
           width: 260, background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 12,
-          boxShadow: '0 12px 32px rgba(15,23,42,.18)', padding: '1rem',
+          boxShadow: '0 12px 32px rgba(0,41,51,.18)', padding: '1rem',
         }}>
-          <div style={{ fontSize: '.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#0f172a', marginBottom: '.75rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+          <div style={{ fontSize: '.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#002933', marginBottom: '.75rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
             Contato da Escola
           </div>
 
@@ -144,7 +144,7 @@ export function ContatoQuickEdit({ escolaId, telefone: telefoneInicial, email: e
           <div style={{ display: 'flex', gap: '.5rem' }}>
             <button onClick={salvar} disabled={pending} style={{
               flex: 1, padding: '.5rem', borderRadius: 8, border: 'none', cursor: pending ? 'wait' : 'pointer',
-              background: '#4A7FDB', color: '#fff', fontSize: '.75rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)',
+              background: '#00889e', color: '#fff', fontSize: '.75rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)',
             }}>
               {pending ? 'Salvando...' : 'Salvar'}
             </button>

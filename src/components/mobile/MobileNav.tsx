@@ -27,7 +27,7 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        background: 'rgba(11,31,68,.92)',
+        background: 'rgba(0,41,51,.92)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(255,255,255,.06)',
@@ -51,7 +51,7 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
           style={{
             background: 'transparent',
             border: 'none',
-            color: '#76f3cd',
+            color: '#00ceff',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -98,7 +98,7 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
           left: 0,
           bottom: 0,
           width: 'min(86vw, 320px)',
-          background: '#0b1f44',
+          background: '#002933',
           borderRight: '1px solid rgba(255,255,255,.06)',
           zIndex: 46,
           display: 'flex',
@@ -166,8 +166,8 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
                 fontFamily: 'var(--font-montserrat, sans-serif)',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.background = 'rgba(118,243,205,.1)'
-                e.currentTarget.style.color = '#76f3cd'
+                e.currentTarget.style.background = 'rgba(0,206,255,.1)'
+                e.currentTarget.style.color = '#00ceff'
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.background = 'transparent'
@@ -190,7 +190,7 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
                 justifyContent: 'center',
                 minHeight: 52,
                 padding: '0 1.25rem',
-                background: 'linear-gradient(135deg, #76f3cd, #4c8ade)',
+                background: 'linear-gradient(135deg, #00ceff, #00889e)',
                 color: '#fff',
                 textDecoration: 'none',
                 borderRadius: '9999px',
@@ -199,7 +199,7 @@ export default function MobileNav({ mobileMenuOpen, setMobileMenuOpen, menuItems
                 textAlign: 'center',
                 transition: 'transform .2s, box-shadow .2s',
                 fontFamily: 'var(--font-montserrat, sans-serif)',
-                boxShadow: '0 6px 20px rgba(118,243,205,.4)',
+                boxShadow: '0 6px 20px rgba(0,206,255,.4)',
                 letterSpacing: '.02em',
               }}
               onClick={() => setMobileMenuOpen(false)}

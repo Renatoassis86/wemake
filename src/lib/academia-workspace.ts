@@ -41,10 +41,10 @@ export const WORKSPACE_NOME = 'Academia We Make · Implantação 2027'
 
 export const PASTAS: PastaModelo[] = [
   {
-    slug: 'handoff', nome: 'Transição Comercial-Implantação', etapa: 1,
+    slug: 'handoff', nome: 'Entrada do Cliente', etapa: 1,
     gate: 'Ficha revisada pelo Comercial e aceita pela Implantação; responsável definido; escola cadastrada no Painel Mestre com próxima ação registrada.',
     listas: [{
-      slug: 'handoff', nome: 'Transição Comercial-Implantação', marco: 0, doc: 'handoff',
+      slug: 'handoff', nome: 'Entrada do Cliente', marco: 0, doc: 'handoff',
       tarefas: [
         { titulo: 'Preencher a Ficha de Transição Comercial-Implantação', descricao: 'Quem preenche: responsável pelo fechamento comercial.', quando: { ref: 'assinatura', dias: 2, uteis: true, nota: 'até 2 dias úteis após a assinatura' }, prioridade: 'Alta', origem: 'Transição Comercial-Implantação · Manual Operacional, macroetapa 1' },
         { titulo: 'Registrar escopo contratado, calendário, pessoas-chave, acordos e exceções, contexto da decisão, situação do Espaço Maker, pendências e alertas', quando: { ref: 'assinatura', dias: 2, uteis: true }, origem: 'Manual Operacional, macroetapa 1' },
@@ -56,11 +56,11 @@ export const PASTAS: PastaModelo[] = [
     }],
   },
   {
-    slug: 'ecologia-formativa', nome: 'Ecologia Formativa', etapa: 2,
+    slug: 'ecologia-formativa', nome: 'Preparação do Espaço', etapa: 2,
     gate: 'Diagnóstico analisado; recursos existentes classificados; adequações definidas; lista final de recursos entregue; pendências críticas com responsável e prazo.',
     listas: [
       {
-        slug: 'diagnostico', nome: 'Diagnóstico', marco: 1, doc: 'procedimento-diagnostico',
+        slug: 'diagnostico', nome: 'Diagnóstico do Espaço', marco: 1, doc: 'procedimento-diagnostico',
         tarefas: [
           { titulo: 'Enviar à escola a planilha oficial de diagnóstico e o checklist de medidas e evidências', descricao: 'Etapa 1 do procedimento. A planilha já contém a lista de recursos reutilizáveis e consumíveis.', origem: 'Procedimento de Diagnóstico, etapa 1' },
           { titulo: 'Escola: levantar o ambiente (uso atual, alunos, mobiliário, equipamentos e checklist de medidas)', descricao: 'Paredes, pé-direito, portas, janelas, tomadas, pontos de rede, climatização, iluminação, pilares, vigas e elementos fixos.', origem: 'Procedimento de Diagnóstico, etapa 2' },
@@ -70,14 +70,14 @@ export const PASTAS: PastaModelo[] = [
         ],
       },
       {
-        slug: 'arquitetura', nome: 'Arquitetura', marco: 2, doc: 'procedimento-diagnostico',
+        slug: 'arquitetura', nome: 'Adequação do Espaço', marco: 2, doc: 'procedimento-diagnostico',
         tarefas: [
           { titulo: 'Consolidar o briefing e encaminhar ao estúdio de arquitetura (quando aplicável)', origem: 'Procedimento de Diagnóstico, etapa 6' },
           { titulo: 'Receber o memorial/orientações do estúdio e devolvê-los à escola', origem: 'Manual Operacional, macroetapa 2' },
         ],
       },
       {
-        slug: 'recursos', nome: 'Recursos', marco: 3, doc: 'planilha-diagnostico',
+        slug: 'recursos', nome: 'Materiais e Equipamentos', marco: 3, doc: 'planilha-diagnostico',
         tarefas: [
           { titulo: 'Classificar os itens reutilizáveis (parecer, quantidade aproveitável e ação recomendada)', origem: 'Planilha de Diagnóstico' },
           { titulo: 'Definir a lista final de aquisições permanentes e consumíveis', origem: 'Manual Operacional, macroetapa 2' },
@@ -88,10 +88,10 @@ export const PASTAS: PastaModelo[] = [
     ],
   },
   {
-    slug: 'ativacao-comercial', nome: 'Ativação Comercial', etapa: 3,
+    slug: 'ativacao-comercial', nome: 'Treinamento da Equipe de Vendas', etapa: 3,
     gate: 'Equipe-chave orientada; materiais oficiais disponibilizados; responsável da escola capaz de apresentar a proposta; dúvidas ou riscos de comunicação registrados.',
     listas: [{
-      slug: 'ativacao-comercial', nome: 'Ativação Comercial', marco: 4, doc: 'registro-ativacao-comercial',
+      slug: 'ativacao-comercial', nome: 'Treinamento da Equipe de Vendas', marco: 4, doc: 'registro-ativacao-comercial',
       tarefas: [
         { titulo: 'Encontro 1 · 90 min · Quem é a We Make, fundamentação teológica e dado do Nobel', descricao: 'Momento Conhecer.', quando: { ref: 'handoff', dias: 30, nota: 'a trilha conclui em até 30 dias corridos após a Transição Comercial-Implantação' }, origem: 'Manual do Formador · cronograma-modelo' },
         { titulo: 'Encontro 2 · 90 min · Posicionamento “soma, não substitui” e mapa de temas por área', descricao: 'Momentos Conhecer e Explorar.', quando: { ref: 'handoff', dias: 30 }, origem: 'Manual do Formador · cronograma-modelo' },
@@ -104,10 +104,10 @@ export const PASTAS: PastaModelo[] = [
     }],
   },
   {
-    slug: 'pre-onboarding', nome: 'Pré-Onboarding', etapa: 4,
-    gate: 'Pré-Onboarding validado → formação confirmada.',
+    slug: 'pre-onboarding', nome: 'Preparação para o Início', etapa: 4,
+    gate: 'Preparação para o início validada → formação confirmada.',
     listas: [{
-      slug: 'pre-onboarding', nome: 'Pré-Onboarding', marco: 5, doc: 'checklist-pre-onboarding',
+      slug: 'pre-onboarding', nome: 'Preparação para o Início', marco: 5, doc: 'checklist-pre-onboarding',
       tarefas: [
         { titulo: 'Enviar o Checklist Pré-Onboarding à escola', quando: { ref: 'onboarding', dias: -10, nota: 'iniciar entre 7 e 10 dias antes da formação' }, origem: 'Manual Operacional, macroetapa 4' },
         { titulo: 'Escola: confirmar participantes, espaço, dispositivos e acessos, equipamentos e agenda', origem: 'Checklist Pré-Onboarding' },
@@ -118,10 +118,10 @@ export const PASTAS: PastaModelo[] = [
     }],
   },
   {
-    slug: 'onboarding', nome: 'Onboarding Pedagógico', etapa: 5,
-    gate: 'Onboarding concluído → escola avança para a preparação do Go-Live.',
+    slug: 'onboarding', nome: 'Formação da Equipe', etapa: 5,
+    gate: 'Formação concluída → escola avança para a preparação do início das aulas.',
     listas: [{
-      slug: 'onboarding', nome: 'Onboarding', marco: 6, doc: 'relatorio-onboarding',
+      slug: 'onboarding', nome: 'Formação da Equipe', marco: 6, doc: 'relatorio-onboarding',
       tarefas: [
         { titulo: 'Dia 1 · Fundamentos e metodologia (≈ 6 h)', descricao: 'Cosmovisão, Educação e Tecnologia; Conhecer, Explorar e Criar.', quando: { ref: 'onboarding', dias: 0 }, prioridade: 'Alta', origem: 'Processo de Onboarding' },
         { titulo: 'Dia 2 · Plataforma, planos, máquinas e prática (≈ 6 h)', descricao: 'Plataforma; planos e planejamento; máquinas e ferramentas; prática orientada; recomendações para as primeiras aulas.', prioridade: 'Alta', origem: 'Processo de Onboarding' },
@@ -132,11 +132,11 @@ export const PASTAS: PastaModelo[] = [
     }],
   },
   {
-    slug: 'go-live', nome: 'Go-Live e Transição', etapa: 6,
-    gate: 'Go-Live liberado → escola entra em operação; responsável, cadência e pontos de atenção registrados.',
+    slug: 'go-live', nome: 'Início das Aulas e Acompanhamento Contínuo', etapa: 6,
+    gate: 'Início das aulas liberado → escola entra em operação; responsável, cadência e pontos de atenção registrados.',
     listas: [
       {
-        slug: 'go-live', nome: 'Go-Live', marco: 7, doc: 'ficha-go-live',
+        slug: 'go-live', nome: 'Início das Aulas', marco: 7, doc: 'ficha-go-live',
         tarefas: [
           { titulo: 'Preencher a Ficha de Go-Live (pessoas e formação, plataforma, Espaço Maker, recursos e primeiras aulas)', quando: { ref: 'inicio', dias: -1, nota: 'após o onboarding e antes da primeira aula' }, prioridade: 'Alta', origem: 'Ficha de Go-Live' },
           { titulo: 'Registrar as pendências abertas e a decisão: Liberado, Liberado com Pendências ou Go-Live Bloqueado', quando: { ref: 'inicio', dias: -1 }, prioridade: 'Alta', origem: 'Ficha de Go-Live' },
@@ -144,7 +144,7 @@ export const PASTAS: PastaModelo[] = [
         ],
       },
       {
-        slug: 'transicao', nome: 'Transição para a Academia', marco: 8, doc: 'ficha-go-live',
+        slug: 'transicao', nome: 'Acompanhamento Contínuo', marco: 8, doc: 'ficha-go-live',
         tarefas: [
           { titulo: 'Registrar a seção 8 da Ficha de Go-Live: data de entrada, responsável, frequência inicial, ponto de atenção e primeira ação', quando: { ref: 'inicio', dias: 0, nota: 'imediatamente após a liberação do Go-Live' }, prioridade: 'Alta', origem: 'Manual Operacional, macroetapa 7' },
           { titulo: 'Definir o nível de acompanhamento inicial (A, B ou C)', descricao: 'Proposta da Arquitetura de Processos: o campo ainda não existe na Ficha de Go-Live.', quando: { ref: 'inicio', dias: 0 }, origem: 'Arquitetura de Processos · ajuste 2' },

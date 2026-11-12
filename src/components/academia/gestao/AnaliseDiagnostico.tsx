@@ -26,7 +26,7 @@ const tamanho = (b: number | null) => (!b ? '' : b < 1048576 ? `${Math.max(1, Ma
 
 const ehImagem = (mime: string | null) => !!mime && mime.startsWith('image/')
 
-export default function AnaliseDiagnostico({ diagnostico, arquivos, anotacoes, arquivosEquipe }: { diagnostico: DiagnosticoLinha; arquivos: ArquivoStaff[]; anotacoes: AnotacaoStaff[]; arquivosEquipe: ArquivoEquipeStaff[] }) {
+export default function AnaliseDiagnostico({ diagnostico, arquivos, anotacoes, arquivosEquipe, arquivosMaker }: { diagnostico: DiagnosticoLinha; arquivos: ArquivoStaff[]; anotacoes: AnotacaoStaff[]; arquivosEquipe: ArquivoEquipeStaff[]; arquivosMaker: ArquivoEquipeStaff[] }) {
   const resp = diagnostico.respostas as Respostas
   const [p, setP] = useState<Respostas>(diagnostico.parecer as Respostas)
   const [foto, setFoto] = useState<ArquivoStaff | null>(null)
@@ -231,7 +231,11 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos, anotacoes, a
         </label>
         <div className="an-geral" style={{ marginTop: '1rem' }}>
           <span>Arquivos da arquitetura <small>plantas, memoriais e pareceres da Gabi e de outros</small></span>
-          <ArquivosEquipe id={diagnostico.id} inicial={arquivosEquipe} />
+          <ArquivosEquipe id={diagnostico.id} inicial={arquivosEquipe} categoria="arquitetura" />
+        </div>
+        <div className="an-geral" style={{ marginTop: '1rem' }}>
+          <span>Espaço Maker (Arquitetura) <small>projeto final da Gabi, por escola</small></span>
+          <ArquivosEquipe id={diagnostico.id} inicial={arquivosMaker} categoria="espaco_maker" />
         </div>
       </section>
 

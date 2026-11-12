@@ -84,11 +84,11 @@ export function EscolasToolbar({ q: initialQ, estado: initialEstado, classif, vi
             width: '100%', paddingLeft: 32, paddingRight: searchVal ? 32 : 12,
             paddingTop: 8, paddingBottom: 8,
             fontSize: '.82rem',
-            border: `1.5px solid ${focusSearch ? '#4A7FDB' : '#e2e8f0'}`,
-            borderRadius: 8, outline: 'none', color: '#0f172a',
+            border: `1.5px solid ${focusSearch ? '#00889e' : '#e2e8f0'}`,
+            borderRadius: 8, outline: 'none', color: '#002933',
             background: '#f8fafc',
             fontFamily: 'var(--font-inter,sans-serif)',
-            boxShadow: focusSearch ? '0 0 0 3px rgba(74,127,219,.12)' : 'none',
+            boxShadow: focusSearch ? '0 0 0 3px rgba(0,137,158,.12)' : 'none',
             transition: 'border-color .15s, box-shadow .15s',
           }}
         />
@@ -105,7 +105,7 @@ export function EscolasToolbar({ q: initialQ, estado: initialEstado, classif, vi
           <div style={{
             position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 4,
             background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10,
-            boxShadow: '0 8px 24px rgba(15,23,42,.12)', zIndex: 50, overflow: 'hidden',
+            boxShadow: '0 8px 24px rgba(0,41,51,.12)', zIndex: 50, overflow: 'hidden',
           }}>
             {sugestoes.map(e => (
               <div key={e.id} onMouseDown={() => selecionarEscola(e.nome)}
@@ -122,7 +122,7 @@ export function EscolasToolbar({ q: initialQ, estado: initialEstado, classif, vi
                   <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: '.82rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div style={{ fontSize: '.82rem', fontWeight: 600, color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {e.nome}
                   </div>
                   {(e.cidade || e.estado) && (
@@ -134,7 +134,7 @@ export function EscolasToolbar({ q: initialQ, estado: initialEstado, classif, vi
                 {/* Ir direto para ficha */}
                 <Link href={`/comercial/escolas/${e.id}`}
                   onMouseDown={ev => ev.stopPropagation()}
-                  style={{ width: 24, height: 24, borderRadius: 6, background: '#4A7FDB', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', flexShrink: 0 }}
+                  style={{ width: 24, height: 24, borderRadius: 6, background: '#00889e', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', flexShrink: 0 }}
                   title="Ver ficha">
                   <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
                 </Link>
@@ -158,7 +158,7 @@ export function EscolasToolbar({ q: initialQ, estado: initialEstado, classif, vi
         style={{
           padding: '8px 12px', fontSize: '.82rem',
           border: '1.5px solid #e2e8f0', borderRadius: 8,
-          background: '#f8fafc', color: '#0f172a', outline: 'none',
+          background: '#f8fafc', color: '#002933', outline: 'none',
           fontFamily: 'var(--font-inter,sans-serif)', cursor: 'pointer',
         }}
       >
@@ -169,14 +169,14 @@ export function EscolasToolbar({ q: initialQ, estado: initialEstado, classif, vi
       <button
         type="submit"
         style={{
-          background: '#0f172a', color: '#fff', padding: '8px 16px',
+          background: '#002933', color: '#fff', padding: '8px 16px',
           borderRadius: 8, border: 'none', cursor: 'pointer',
           fontSize: '.82rem', fontWeight: 700,
           fontFamily: 'var(--font-montserrat,sans-serif)',
           transition: 'background .15s',
         }}
         onMouseEnter={e => (e.currentTarget.style.background = '#1e293b')}
-        onMouseLeave={e => (e.currentTarget.style.background = '#0f172a')}
+        onMouseLeave={e => (e.currentTarget.style.background = '#002933')}
       >
         Filtrar
       </button>
@@ -207,7 +207,7 @@ export function EscolasToolbar({ q: initialQ, estado: initialEstado, classif, vi
               width: 30, height: 28, borderRadius: 6,
               fontSize: '.85rem', textDecoration: 'none',
               background: view === t.v ? '#fff' : 'transparent',
-              color: view === t.v ? '#0f172a' : '#94a3b8',
+              color: view === t.v ? '#002933' : '#94a3b8',
               boxShadow: view === t.v ? '0 1px 3px rgba(0,0,0,.1)' : 'none',
               transition: 'all .15s',
             }}

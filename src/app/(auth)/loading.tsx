@@ -3,11 +3,11 @@ export default function AuthLoading() {
     <div style={{
       minHeight: '100vh', display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center', gap: '1rem',
-      background: '#0f172a',
+      background: '#002933',
     }}>
       <div style={{
         width: 40, height: 40, borderRadius: '50%',
-        border: '3px solid rgba(255,255,255,.15)', borderTopColor: '#5FE3D0',
+        border: '3px solid rgba(255,255,255,.15)', borderTopColor: '#00ceff',
         animation: 'we-make-spin .8s linear infinite',
       }} />
       <div style={{

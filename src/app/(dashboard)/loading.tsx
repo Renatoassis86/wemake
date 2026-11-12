@@ -7,7 +7,7 @@ export default function DashboardLoading() {
     }}>
       <div style={{
         width: 40, height: 40, borderRadius: '50%',
-        border: '3px solid #e2e8f0', borderTopColor: '#4A7FDB',
+        border: '3px solid #e2e8f0', borderTopColor: '#00889e',
         animation: 'we-make-spin .8s linear infinite',
       }} />
       <div style={{

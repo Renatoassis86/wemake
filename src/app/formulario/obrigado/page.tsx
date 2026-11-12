@@ -19,7 +19,7 @@ export default function FormularioObrigado() {
 
         {/* Ícone de sucesso */}
         <div style={{ marginBottom: '2rem' }}>
-          <CheckCircle size={80} color="#5FE3D0" style={{ margin: '0 auto', filter: 'drop-shadow(0 4px 12px rgba(95,227,208,.3))' }} />
+          <CheckCircle size={80} color="#00ceff" style={{ margin: '0 auto', filter: 'drop-shadow(0 4px 12px rgba(0,206,255,.3))' }} />
         </div>
 
         {/* Título */}
@@ -27,7 +27,7 @@ export default function FormularioObrigado() {
           fontFamily: 'var(--font-cormorant, "Georgia", serif)',
           fontSize: 'clamp(2rem, 7vw, 2.5rem)',
           fontWeight: 700,
-          color: '#0f172a',
+          color: '#002933',
           marginBottom: '1rem',
           lineHeight: 1.2,
         }}>
@@ -63,14 +63,14 @@ export default function FormularioObrigado() {
           gap: '.5rem',
           minHeight: 48,
           padding: '0 1.75rem',
-          background: 'linear-gradient(135deg, #5FE3D0, #4A7FDB)',
+          background: 'linear-gradient(135deg, #00ceff, #00889e)',
           color: '#fff',
           textDecoration: 'none',
           borderRadius: 9999,
           fontWeight: 700,
           fontSize: '.95rem',
           fontFamily: 'var(--font-montserrat, sans-serif)',
-          boxShadow: '0 6px 20px rgba(95,227,208,.35)',
+          boxShadow: '0 6px 20px rgba(0,206,255,.35)',
           letterSpacing: '.02em',
           transition: 'transform .2s, box-shadow .2s',
         }}>

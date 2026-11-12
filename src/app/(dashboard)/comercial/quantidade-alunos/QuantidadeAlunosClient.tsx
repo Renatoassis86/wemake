@@ -98,7 +98,7 @@ function NomeEditavel({ escolaId, nome }: { escolaId: string; nome: string }) {
       title="Corrigir nome da escola"
       style={{
         minWidth: 140, width: `${Math.max(texto.length, 10)}ch`, padding: '.15rem .3rem', borderRadius: 5,
-        border: '1.5px solid transparent', fontSize: '.78rem', fontWeight: 700, color: '#0f172a',
+        border: '1.5px solid transparent', fontSize: '.78rem', fontWeight: 700, color: '#002933',
         fontFamily: 'var(--font-inter,sans-serif)', background: pending ? '#fef9c3' : 'transparent',
       }}
       onFocus={e => { e.currentTarget.style.border = '1.5px solid #e2e8f0'; e.currentTarget.style.background = '#fff' }}
@@ -218,7 +218,7 @@ function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste,
     <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, overflow: 'hidden', borderTop: `4px solid ${corAccent}` }}>
       <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '.5rem' }}>
         <div>
-          <div style={{ fontSize: '.85rem', fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+          <div style={{ fontSize: '.85rem', fontWeight: 800, color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
             {titulo} — {linhas.length} escola{linhas.length !== 1 ? 's' : ''}
           </div>
           <div style={{ fontSize: '.68rem', color: '#94a3b8', marginTop: '.15rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{subtitulo}</div>
@@ -245,7 +245,7 @@ function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste,
           <tbody>
             {linhas.map(l => (
               <tr key={l.escolaId}>
-                <td style={{ ...td, textAlign: 'left', fontSize: '.78rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', position: 'sticky', left: 0, background: '#fff', whiteSpace: 'nowrap' }}>
+                <td style={{ ...td, textAlign: 'left', fontSize: '.78rem', fontWeight: 700, color: '#002933', fontFamily: 'var(--font-inter,sans-serif)', position: 'sticky', left: 0, background: '#fff', whiteSpace: 'nowrap' }}>
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                     <NomeEditavel escolaId={l.escolaId} nome={l.nome} />
                     <Link href={`/comercial/escolas/${l.escolaId}/editar`} title="Abrir cadastro completo da escola" style={{ color: '#94a3b8', display: 'inline-flex', flexShrink: 0 }}>
@@ -295,7 +295,7 @@ function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste,
               <tr>
                 <td style={{ ...td, textAlign: 'left', fontWeight: 800, fontSize: '.72rem', color: '#64748b', position: 'sticky', left: 0, background: '#f8fafc' }}>Total por série</td>
                 {SERIES_CONTRATO.map(s => (
-                  <td key={s.campo} style={{ ...tdSerie, fontWeight: 800, fontSize: '.78rem', color: '#0f172a', background: '#f8fafc' }}>{totaisColuna[s.campo]}</td>
+                  <td key={s.campo} style={{ ...tdSerie, fontWeight: 800, fontSize: '.78rem', color: '#002933', background: '#f8fafc' }}>{totaisColuna[s.campo]}</td>
                 ))}
                 <td style={{ ...td, fontWeight: 800, color: corAccent, background: '#f8fafc' }}>{totalGeral}</td>
                 <td style={{ ...td, background: '#f8fafc' }} />
@@ -425,7 +425,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
 
       {/* ── Adicionar escola veterana manualmente ─────────────────────── */}
       <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '1rem 1.25rem', position: 'relative' }}>
-        <div style={{ fontSize: '.72rem', fontWeight: 800, color: '#0f172a', marginBottom: '.4rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+        <div style={{ fontSize: '.72rem', fontWeight: 800, color: '#002933', marginBottom: '.4rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
           + Adicionar escola parceira à lista
         </div>
         <div style={{ fontSize: '.68rem', color: '#94a3b8', marginBottom: '.5rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
@@ -451,7 +451,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                 onClick={criarNova} disabled={criando}
                 style={{
                   padding: '.5rem .9rem', borderRadius: 8, border: 'none', cursor: criando ? 'wait' : 'pointer',
-                  background: '#4A7FDB', color: '#fff', fontSize: '.76rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
+                  background: '#00889e', color: '#fff', fontSize: '.76rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap',
                 }}
               >
                 {criando ? 'Cadastrando...' : `+ Cadastrar "${buscaAdicionar.trim()}"`}
@@ -462,7 +462,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
         {candidatos.length > 0 && (
           <div style={{
             position: 'absolute', zIndex: 10, marginTop: '.3rem', width: '100%', maxWidth: 360,
-            background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 10, boxShadow: '0 12px 28px rgba(15,23,42,.14)', overflow: 'hidden',
+            background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 10, boxShadow: '0 12px 28px rgba(0,41,51,.14)', overflow: 'hidden',
           }}>
             {candidatos.map(c => (
               <button
@@ -470,7 +470,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                 style={{
                   display: 'block', width: '100%', textAlign: 'left', padding: '.55rem .8rem',
                   border: 'none', borderBottom: '1px solid #f1f5f9', background: '#fff', cursor: adicionando ? 'wait' : 'pointer',
-                  fontSize: '.78rem', fontFamily: 'var(--font-inter,sans-serif)', color: '#0f172a',
+                  fontSize: '.78rem', fontFamily: 'var(--font-inter,sans-serif)', color: '#002933',
                 }}
               >
                 {c.nome} {c.uf ? <span style={{ color: '#94a3b8' }}>· {c.uf}</span> : null}
@@ -517,7 +517,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
       <TabelaAlunos
         titulo="Em Negociação — Ano 2027"
         subtitulo="Escolas com minuta enviada — venda pro ano que vem em andamento"
-        corAccent="#4A7FDB"
+        corAccent="#00889e"
         linhas={linhasNegociacao}
         livroColunaExiste={livroColunaExiste}
         veteranaColunaExiste={veteranaColunaExiste}
@@ -530,7 +530,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
       {/* ── Distribuição pra gráfica (só escolas marcadas com Livro) ───── */}
       <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, overflow: 'hidden' }}>
         <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid #f1f5f9' }}>
-          <div style={{ fontSize: '.85rem', fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+          <div style={{ fontSize: '.85rem', fontWeight: 800, color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
             Pedido pra gráfica — distribuição de livros por série
           </div>
           <div style={{ fontSize: '.68rem', color: '#94a3b8', marginTop: '.2rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
@@ -550,7 +550,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
               {escolasLivro.map(l => (
                 <tr key={l.escolaId}>
                   <td style={{ ...td, textAlign: 'left', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-inter,sans-serif)', position: 'sticky', left: 0, background: '#fff', whiteSpace: 'nowrap' }}>
-                    <Link href={`/comercial/escolas/${l.escolaId}/editar`} style={{ color: '#0f172a', textDecoration: 'none' }} title="Editar dados cadastrais da escola">
+                    <Link href={`/comercial/escolas/${l.escolaId}/editar`} style={{ color: '#002933', textDecoration: 'none' }} title="Editar dados cadastrais da escola">
                       {l.nome}
                     </Link>
                   </td>
@@ -561,7 +561,7 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                         : (l.livroQtds[s.campo] || 0)}
                     </td>
                   ))}
-                  <td style={{ ...td, fontWeight: 800, color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                  <td style={{ ...td, fontWeight: 800, color: '#00889e', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                     {SERIES_CONTRATO.reduce((soma, s) => soma + (l.livroQtds[s.campo] || 0), 0)}
                   </td>
                 </tr>
@@ -575,11 +575,11 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                 <tr>
                   <td style={{ ...td, textAlign: 'left', fontWeight: 800, fontSize: '.72rem', color: '#64748b', position: 'sticky', left: 0, background: '#f8fafc' }}>Total por série</td>
                   {SERIES_CONTRATO.map(s => (
-                    <td key={s.campo} style={{ ...tdSerie, fontWeight: 800, fontSize: '.78rem', color: '#0f172a', background: '#f8fafc' }}>
+                    <td key={s.campo} style={{ ...tdSerie, fontWeight: 800, fontSize: '.78rem', color: '#002933', background: '#f8fafc' }}>
                       {escolasLivro.reduce((soma, l) => soma + (l.livroQtds[s.campo] || 0), 0)}
                     </td>
                   ))}
-                  <td style={{ ...td, fontWeight: 800, color: '#4A7FDB', background: '#f8fafc' }}>
+                  <td style={{ ...td, fontWeight: 800, color: '#00889e', background: '#f8fafc' }}>
                     {escolasLivro.reduce((soma, l) => soma + SERIES_CONTRATO.reduce((s2, s) => s2 + (l.livroQtds[s.campo] || 0), 0), 0)}
                   </td>
                 </tr>

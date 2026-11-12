@@ -50,7 +50,7 @@ function ChipItem({ label, negativo, estilo }: { label: string; negativo: boolea
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: '.25rem',
       background: estilo.bg, color: estilo.text, border: `1.5px solid ${estilo.border}`,
-      boxShadow: estilo.forte ? '0 1px 4px rgba(15,23,42,.25)' : 'none',
+      boxShadow: estilo.forte ? '0 1px 4px rgba(0,41,51,.25)' : 'none',
       padding: estilo.forte ? '.2rem .65rem' : '.1rem .45rem', borderRadius: 99,
       fontSize: estilo.forte ? '.66rem' : '.6rem', fontWeight: estilo.forte ? 800 : 700, whiteSpace: 'nowrap',
       fontFamily: 'var(--font-montserrat,sans-serif)',
@@ -146,9 +146,9 @@ export function FasePopover({ escolaId, faseLabel, faseCor, checklist: checklist
         <div ref={painelRef} style={{
           position: 'fixed', top: pos.top, left: pos.left, zIndex: 2000,
           width: 280, background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 12,
-          boxShadow: '0 12px 32px rgba(15,23,42,.18)', padding: '1rem',
+          boxShadow: '0 12px 32px rgba(0,41,51,.18)', padding: '1rem',
         }}>
-          <div style={{ fontSize: '.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#0f172a', marginBottom: '.75rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+          <div style={{ fontSize: '.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#002933', marginBottom: '.75rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
             Checklist de Progresso
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem', marginBottom: '.75rem' }}>
@@ -165,7 +165,7 @@ export function FasePopover({ escolaId, faseLabel, faseCor, checklist: checklist
                 }}>
                   <input type="checkbox" checked={!!checklist[key]}
                     onChange={e => setChecklist(c => ({ ...c, [key]: e.target.checked }))}
-                    style={{ width: 15, height: 15, cursor: 'pointer', accentColor: negativo ? '#dc2626' : '#5FE3D0', flexShrink: 0 }} />
+                    style={{ width: 15, height: 15, cursor: 'pointer', accentColor: negativo ? '#dc2626' : '#00ceff', flexShrink: 0 }} />
                   {label}
                 </label>
               )
@@ -187,7 +187,7 @@ export function FasePopover({ escolaId, faseLabel, faseCor, checklist: checklist
           <div style={{ display: 'flex', gap: '.5rem' }}>
             <button onClick={salvar} disabled={pending} style={{
               flex: 1, padding: '.5rem', borderRadius: 8, border: 'none', cursor: pending ? 'wait' : 'pointer',
-              background: '#4A7FDB', color: '#fff', fontSize: '.75rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)',
+              background: '#00889e', color: '#fff', fontSize: '.75rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)',
             }}>
               {pending ? 'Salvando...' : 'Salvar'}
             </button>

@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { BrandLoginStyles } from '@/components/brand/BrandLoginStyles'
 
 // We Make brand colors
-// Royal Blue: #4c8ade | Mint: #76f3cd | Navy: #0b1f44 | Amber: #ffcc00 | Deep Blue: #2a69ba
+// Royal Blue: #00889e | Mint: #00ceff | Navy: #002933 | Amber: #ffcc00 | Deep Blue: #00677d
 
 export default function AcessoEscolaPage() {
   const router = useRouter()
@@ -111,19 +111,19 @@ export default function AcessoEscolaPage() {
       <div style={{
         position: 'absolute', top: '-120px', right: '-80px',
         width: 480, height: 480, borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(76,138,222,.12) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(0,137,158,.12) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
       <div style={{
         position: 'absolute', bottom: '-100px', left: '-60px',
         width: 380, height: 380, borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(118,243,205,.14) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(0,206,255,.14) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
       <div style={{
         position: 'absolute', top: '40%', left: '8%',
         width: 200, height: 200, borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(76,138,222,.07) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(0,137,158,.07) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
 
@@ -133,8 +133,8 @@ export default function AcessoEscolaPage() {
         maxWidth: 460,
         background: '#ffffff',
         borderRadius: 24,
-        boxShadow: '0 8px 48px rgba(11,31,68,.10), 0 2px 12px rgba(76,138,222,.08)',
-        border: '1px solid rgba(76,138,222,.12)',
+        boxShadow: '0 8px 48px rgba(0,41,51,.10), 0 2px 12px rgba(0,137,158,.08)',
+        border: '1px solid rgba(0,137,158,.12)',
         overflow: 'hidden',
         position: 'relative',
         zIndex: 1,
@@ -143,7 +143,7 @@ export default function AcessoEscolaPage() {
         {/* Top accent bar */}
         <div style={{
           height: 5,
-          background: 'linear-gradient(90deg, #4c8ade 0%, #76f3cd 100%)',
+          background: 'linear-gradient(90deg, #00889e 0%, #00ceff 100%)',
         }} />
 
         <div style={{ padding: 'clamp(1.5rem, 6vw, 2.5rem) clamp(1.25rem, 5vw, 2.5rem) 2rem' }}>
@@ -166,7 +166,7 @@ export default function AcessoEscolaPage() {
               fontFamily: '"Fraunces", "Cormorant Garamond", Georgia, serif',
               fontSize: '1.85rem',
               fontWeight: 700,
-              color: '#0b1f44',
+              color: '#002933',
               lineHeight: 1.2,
               marginBottom: '.6rem',
               letterSpacing: '-.01em',
@@ -235,15 +235,15 @@ export default function AcessoEscolaPage() {
                   border: '1.5px solid #dce4f0',
                   borderRadius: 12,
                   fontSize: '.9rem',
-                  color: '#0b1f44',
+                  color: '#002933',
                   background: '#f8fafd',
                   outline: 'none',
                   transition: 'border-color .15s, box-shadow .15s',
                   boxSizing: 'border-box',
                 }}
                 onFocus={e => {
-                  e.target.style.borderColor = '#4c8ade'
-                  e.target.style.boxShadow = '0 0 0 3px rgba(76,138,222,.15)'
+                  e.target.style.borderColor = '#00889e'
+                  e.target.style.boxShadow = '0 0 0 3px rgba(0,137,158,.15)'
                   e.target.style.background = '#fff'
                 }}
                 onBlur={e => {
@@ -294,25 +294,25 @@ export default function AcessoEscolaPage() {
                       textAlign: 'center',
                       fontSize: 'clamp(1.1rem, 5vw, 1.5rem)',
                       fontWeight: 700,
-                      color: '#0b1f44',
-                      border: `1.5px solid ${digit ? '#4c8ade' : '#dce4f0'}`,
+                      color: '#002933',
+                      border: `1.5px solid ${digit ? '#00889e' : '#dce4f0'}`,
                       borderRadius: 12,
-                      background: digit ? 'rgba(76,138,222,.06)' : '#f8fafd',
+                      background: digit ? 'rgba(0,137,158,.06)' : '#f8fafd',
                       outline: 'none',
                       transition: 'border-color .15s, box-shadow .15s, background .15s',
                       cursor: 'text',
-                      caretColor: '#4c8ade',
+                      caretColor: '#00889e',
                       fontFamily: '"Geist", monospace',
                     }}
                     onFocus={e => {
-                      e.target.style.borderColor = '#4c8ade'
-                      e.target.style.boxShadow = '0 0 0 3px rgba(76,138,222,.18)'
+                      e.target.style.borderColor = '#00889e'
+                      e.target.style.boxShadow = '0 0 0 3px rgba(0,137,158,.18)'
                       e.target.style.background = '#fff'
                     }}
                     onBlur={e => {
-                      e.target.style.borderColor = digit ? '#4c8ade' : '#dce4f0'
+                      e.target.style.borderColor = digit ? '#00889e' : '#dce4f0'
                       e.target.style.boxShadow = 'none'
-                      e.target.style.background = digit ? 'rgba(76,138,222,.06)' : '#f8fafd'
+                      e.target.style.background = digit ? 'rgba(0,137,158,.06)' : '#f8fafd'
                     }}
                   />
                 ))}
@@ -338,7 +338,7 @@ export default function AcessoEscolaPage() {
                 padding: '.9rem',
                 background: (loading || !email.trim() || !pinFilled)
                   ? '#c8d8f0'
-                  : 'linear-gradient(135deg, #4c8ade 0%, #2a69ba 100%)',
+                  : 'linear-gradient(135deg, #00889e 0%, #00677d 100%)',
                 color: (loading || !email.trim() || !pinFilled) ? '#7a9ac8' : '#fff',
                 fontWeight: 700,
                 fontSize: '.95rem',
@@ -348,7 +348,7 @@ export default function AcessoEscolaPage() {
                 transition: 'all .2s',
                 boxShadow: (loading || !email.trim() || !pinFilled)
                   ? 'none'
-                  : '0 4px 20px rgba(76,138,222,.45)',
+                  : '0 4px 20px rgba(0,137,158,.45)',
                 letterSpacing: '.01em',
                 display: 'flex',
                 alignItems: 'center',
@@ -358,14 +358,14 @@ export default function AcessoEscolaPage() {
               onMouseEnter={e => {
                 if (!loading && email.trim() && pinFilled) {
                   e.currentTarget.style.transform = 'translateY(-1px)'
-                  e.currentTarget.style.boxShadow = '0 6px 24px rgba(76,138,222,.55)'
+                  e.currentTarget.style.boxShadow = '0 6px 24px rgba(0,137,158,.55)'
                 }
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.transform = 'translateY(0)'
                 e.currentTarget.style.boxShadow = (loading || !email.trim() || !pinFilled)
                   ? 'none'
-                  : '0 4px 20px rgba(76,138,222,.45)'
+                  : '0 4px 20px rgba(0,137,158,.45)'
               }}
             >
               {loading ? (
@@ -404,8 +404,8 @@ export default function AcessoEscolaPage() {
 
           {/* Contact */}
           <div style={{
-            background: 'linear-gradient(135deg, rgba(76,138,222,.06) 0%, rgba(118,243,205,.08) 100%)',
-            border: '1px solid rgba(76,138,222,.14)',
+            background: 'linear-gradient(135deg, rgba(0,137,158,.06) 0%, rgba(0,206,255,.08) 100%)',
+            border: '1px solid rgba(0,137,158,.14)',
             borderRadius: 12,
             padding: '1rem 1.25rem',
             textAlign: 'center',
@@ -419,14 +419,14 @@ export default function AcessoEscolaPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '.4rem',
-                color: '#4c8ade',
+                color: '#00889e',
                 fontWeight: 700,
                 fontSize: '.875rem',
                 textDecoration: 'none',
                 transition: 'color .15s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#2a69ba' }}
-              onMouseLeave={e => { e.currentTarget.style.color = '#4c8ade' }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#00677d' }}
+              onMouseLeave={e => { e.currentTarget.style.color = '#00889e' }}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="4" width="20" height="16" rx="2"/>
@@ -449,7 +449,7 @@ export default function AcessoEscolaPage() {
                 alignItems: 'center',
                 gap: '.3rem',
               }}
-              onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => { (e.currentTarget as HTMLAnchorElement).style.color = '#4c8ade' }}
+              onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => { (e.currentTarget as HTMLAnchorElement).style.color = '#00889e' }}
               onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => { (e.currentTarget as HTMLAnchorElement).style.color = '#a0aec0' }}
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

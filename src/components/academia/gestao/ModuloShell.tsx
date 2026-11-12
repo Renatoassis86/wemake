@@ -1,4 +1,4 @@
-import { Source_Serif_4 } from 'next/font/google'
+import { Fraunces } from 'next/font/google'
 import Link from 'next/link'
 import DocHero from '@/components/academia/DocHero'
 import { getModulo, type ModuloSlug } from '@/lib/modulos'
@@ -6,9 +6,10 @@ import ModuloNav from './ModuloNav'
 import '@/app/(dashboard)/academia/academia.css'
 import '@/app/(dashboard)/academia/gestao.css'
 
-const serif = Source_Serif_4({
+const serif = Fraunces({
   subsets: ['latin'],
   variable: '--font-source-serif',
+  weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
   style: ['normal', 'italic'],
 })

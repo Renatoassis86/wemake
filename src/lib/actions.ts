@@ -9,6 +9,7 @@ import { calcPotencial, calcProbabilidade, calcClassificacao } from '@/types/dat
 import type { StageNegociacao } from '@/types/database'
 import { preencherValorDaProposta, registrarFormularioNoFunil } from '@/lib/escola-da-proposta'
 import { cnpjValido, cpfValido, formatarReais, valorEmReais } from '@/lib/validacao-docs'
+import { SEGMENTOS_CONTRATO } from '@/lib/contratos'
 
 // ─── Tipos de retorno das actions (para uso em Client Components) ─────────────
 
@@ -849,6 +850,139 @@ export async function upsertContrato(formData: FormData) {
   revalidatePath('/comercial/contratos')
   revalidatePath('/comercial/funil-contratacao', 'layout')
   redirect(`/comercial/contratos?escola=${escola_id}`)
+}
+
+// ─── Módulo de Contratos — dados sistematizados (representante legal, vigência, documento) ────
+
+/**
+ * Cadastra ou atualiza os dados completos de um contrato — representante legal,
+ * alunos por série, valores reais (anual/total/mensalidade), modelo comercial,
+ * vigência, status e link do documento original no Drive. Upsert por
+ * escola_id (molde de `upsertContrato` acima). Se nenhuma escola existente foi
+ * selecionada, cria a escola na mesma submissão a partir dos campos
+ * `nova_escola_*` — mas só depois de checar que não existe outra com o mesmo
+ * CNPJ (a plataforma já teve duplicidade de escola por isso).
+ */
+export async function upsertDadosContrato(formData: FormData): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado.' }
+
+  const str = (k: string) => (formData.get(k) as string)?.trim() || null
+  const toNum = (k: string) => parseFloat(formData.get(k) as string) || 0
+  const toNumOrNull = (k: string) => { const v = formData.get(k) as string; return v ? parseFloat(v) : null }
+
+  let escola_id = (formData.get('escola_id') as string) || null
+
+  if (!escola_id) {
+    const nome = str('nova_escola_nome')
+    if (!nome) return { success: false, error: 'Selecione uma escola existente ou informe o nome da nova escola.' }
+
+    const cnpj = str('nova_escola_cnpj')
+    if (cnpj && !cnpjValido(cnpj)) return { success: false, error: 'CNPJ da escola inválido — confira os números digitados.' }
+
+    if (cnpj) {
+      const { data: duplicada } = await supabase.from('escolas').select('id, nome').eq('cnpj', cnpj).maybeSingle()
+      if (duplicada) return { success: false, error: `Já existe uma escola cadastrada com esse CNPJ: "${duplicada.nome}". Selecione-a na lista em vez de criar outra.` }
+    }
+
+    const { data: novaEscola, error: escolaErr } = await supabase.from('escolas').insert({
+      nome, cnpj,
+      cidade: str('nova_escola_cidade'),
+      estado: str('nova_escola_estado')?.toUpperCase() ?? null,
+      perfil_pedagogico: 'convencional',
+    }).select('id').single()
+    if (escolaErr) return { success: false, error: `Erro ao criar escola: ${escolaErr.message}` }
+    escola_id = novaEscola.id
+  }
+
+  const legalCpf = str('legal_cpf')
+  if (legalCpf && !cpfValido(legalCpf)) return { success: false, error: 'CPF do representante legal inválido — confira os números digitados.' }
+
+  const vigenciaInicio = str('vigencia_inicio')
+  const vigenciaFim = str('vigencia_fim')
+  if (vigenciaInicio && vigenciaFim && vigenciaFim < vigenciaInicio) {
+    return { success: false, error: 'A data final da vigência não pode vir antes da data de início.' }
+  }
+
+  const payload: Record<string, unknown> = {
+    legal_nome:        str('legal_nome'),
+    legal_cpf:         legalCpf,
+    legal_email:       str('legal_email'),
+    legal_whatsapp:    str('legal_whatsapp'),
+    legal_rua:         str('legal_rua'),
+    legal_numero:      str('legal_numero'),
+    legal_complemento: str('legal_complemento'),
+    legal_bairro:      str('legal_bairro'),
+    legal_cidade:      str('legal_cidade'),
+    legal_estado:      str('legal_estado'),
+    legal_cep:         str('legal_cep'),
+    vigencia_inicio:   vigenciaInicio,
+    vigencia_fim:      vigenciaFim,
+    drive_contrato_url:    str('drive_contrato_url'),
+    valor_mensal_inicial:  toNumOrNull('valor_mensal_inicial'),
+    valor_anual:           toNumOrNull('valor_anual'),
+    valor_total:           toNumOrNull('valor_total'),
+    modelo_comercial:      str('modelo_comercial'),
+    clausulas_especiais:   str('clausulas_especiais'),
+    contrato_assinado: formData.get('contrato_assinado') === 'true',
+    contrato_enviado:  formData.get('contrato_enviado') === 'true',
+    marcado_veterana:  formData.get('marcado_veterana') === 'true',
+  }
+  for (const [qtdKey] of SEGMENTOS_CONTRATO) payload[qtdKey] = toNum(qtdKey)
+
+  const { data: existing } = await supabase.from('contratos').select('id').eq('escola_id', escola_id).maybeSingle()
+
+  const { error } = existing
+    ? await supabase.from('contratos').update(payload).eq('id', existing.id)
+    : await supabase.from('contratos').insert({ escola_id, created_by: user.id, ...payload })
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/contratos')
+  revalidatePath('/contratos/dados')
+  revalidatePath('/financeiro')
+  revalidatePath('/financeiro/receita')
+  revalidatePath('/comercial/funil-contratacao', 'layout')
+  return { success: true, id: escola_id ?? undefined }
+}
+
+/** Cria um termo aditivo vinculado a uma escola (mesmo padrão de upsert por escola_id). */
+export async function criarAditivo(formData: FormData): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado.' }
+
+  const escola_id = formData.get('escola_id') as string
+  const titulo = formData.get('titulo') as string
+  if (!escola_id || !titulo) return { success: false, error: 'Escola e título são obrigatórios.' }
+
+  const { data, error } = await supabase.from('contratos_aditivos').insert({
+    escola_id,
+    titulo,
+    resumo: (formData.get('resumo') as string) || null,
+    data_assinatura: (formData.get('data_assinatura') as string) || null,
+    assinado: formData.get('assinado') === 'true',
+    drive_url: (formData.get('drive_url') as string) || null,
+    created_by: user.id,
+  }).select('id').single()
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/contratos/dados')
+  return { success: true, id: data.id }
+}
+
+export async function removerAditivo(id: string): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Não autenticado.' }
+
+  const { error } = await supabase.from('contratos_aditivos').delete().eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/contratos/dados')
+  return { success: true }
 }
 
 /**

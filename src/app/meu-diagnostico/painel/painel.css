@@ -1,7 +1,7 @@
 .pt {
-  --navy: #0b1f44;
-  --royal: #4c8ade;
-  --mint: #76f3cd;
+  --navy: #002933;
+  --royal: #00889e;
+  --mint: #00ceff;
   --ink: #15272d;
   --muted: #56676d;
   --line: #e2e6ea;
@@ -61,8 +61,8 @@
 
 .pt-situacao {
   display: inline-block;
-  background: rgba(118, 243, 205, 0.18);
-  border: 1px solid rgba(76, 138, 222, 0.25);
+  background: rgba(0,206,255, 0.18);
+  border: 1px solid rgba(0,137,158, 0.25);
   color: var(--navy);
   font-weight: 600;
   font-size: 0.9rem;
@@ -153,7 +153,7 @@
 .pt-arq-outro { display: block; font-size: .85rem; font-weight: 500; color: var(--royal); text-decoration: none; }
 .pt-arq-outro small { margin-left: .5rem; color: var(--muted); }
 
-.pt-lightbox { position: fixed; inset: 0; z-index: 200; background: rgba(11, 31, 68, .92); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 2rem; cursor: zoom-out; }
+.pt-lightbox { position: fixed; inset: 0; z-index: 200; background: rgba(0,41,51, .92); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 2rem; cursor: zoom-out; }
 .pt-lightbox img { max-width: min(92vw, 1100px); max-height: 80vh; object-fit: contain; border-radius: 10px; box-shadow: 0 20px 60px rgba(0, 0, 0, .5); cursor: default; }
 .pt-lightbox-legenda { color: #fff; font-size: .85rem; font-weight: 500; text-align: center; max-width: 90vw; cursor: default; }
 .pt-lightbox-x { position: absolute; top: 1.2rem; right: 1.2rem; width: 2.4rem; height: 2.4rem; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .3); background: rgba(255, 255, 255, .08); color: #fff; font-size: 1.1rem; cursor: pointer; }

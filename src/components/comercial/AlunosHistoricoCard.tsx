@@ -67,7 +67,7 @@ export function AlunosHistoricoCard({
   return (
     <div style={{ background: 'var(--surface, #fff)', border: '1px solid var(--border, #e2e8f0)', borderRadius: 12, overflow: 'hidden' }}>
       <div style={{ padding: '1rem 1.25rem .75rem', borderBottom: '1px solid var(--border, #e2e8f0)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: '.78rem', fontWeight: 700, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '.07em', fontFamily: 'var(--font-montserrat, sans-serif)', display: 'flex', alignItems: 'center', gap: '.4rem' }}>
+        <span style={{ fontSize: '.78rem', fontWeight: 700, color: '#002933', textTransform: 'uppercase', letterSpacing: '.07em', fontFamily: 'var(--font-montserrat, sans-serif)', display: 'flex', alignItems: 'center', gap: '.4rem' }}>
           <Users size={14} color="#64748b" /> Alunos
         </span>
         <button
@@ -76,7 +76,7 @@ export function AlunosHistoricoCard({
           style={{
             display: 'flex', alignItems: 'center', gap: '.25rem', padding: '.3rem .6rem', borderRadius: 7,
             border: '1.5px solid #e2e8f0', background: aberto ? '#f1f5f9' : '#fff', cursor: 'pointer',
-            fontSize: '.68rem', fontWeight: 700, color: '#4A7FDB', fontFamily: 'var(--font-montserrat, sans-serif)',
+            fontSize: '.68rem', fontWeight: 700, color: '#00889e', fontFamily: 'var(--font-montserrat, sans-serif)',
           }}
         >
           {aberto ? <X size={12} /> : <Plus size={12} />}
@@ -86,7 +86,7 @@ export function AlunosHistoricoCard({
 
       <div style={{ padding: '1.25rem' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '.6rem', marginBottom: '.35rem' }}>
-          <span style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+          <span style={{ fontSize: '1.6rem', fontWeight: 800, color: '#002933', fontFamily: 'var(--font-montserrat, sans-serif)' }}>
             {atual ? atual.valor.toLocaleString('pt-BR') : '—'}
           </span>
           {atual && (
@@ -110,7 +110,7 @@ export function AlunosHistoricoCard({
         {houveMudanca && (
           <button
             onClick={() => setMostrarHistorico(v => !v)}
-            style={{ fontSize: '.68rem', fontWeight: 700, color: '#4A7FDB', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-montserrat, sans-serif)' }}
+            style={{ fontSize: '.68rem', fontWeight: 700, color: '#00889e', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-montserrat, sans-serif)' }}
           >
             {mostrarHistorico ? 'Ocultar histórico' : `Ver histórico (${historico.length})`}
           </button>
@@ -121,7 +121,7 @@ export function AlunosHistoricoCard({
             {historico.map(h => (
               <div key={h.id} style={{ background: '#f8fafc', border: '1px solid #f1f5f9', borderRadius: 8, padding: '.45rem .6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <div style={{ fontSize: '.78rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+                  <div style={{ fontSize: '.78rem', fontWeight: 700, color: '#002933', fontFamily: 'var(--font-montserrat, sans-serif)' }}>
                     {h.valor.toLocaleString('pt-BR')} alunos
                   </div>
                   <div style={{ fontSize: '.64rem', color: '#94a3b8' }}>{ORIGEM_LABEL[h.origem]} · {formatarData(h.created_at)}</div>
@@ -159,7 +159,7 @@ export function AlunosHistoricoCard({
               disabled={pending || !valor.trim()}
               style={{
                 width: '100%', padding: '.55rem', borderRadius: 8, border: 'none', cursor: pending ? 'wait' : 'pointer',
-                background: '#4A7FDB', color: '#fff', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat, sans-serif)',
+                background: '#00889e', color: '#fff', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-montserrat, sans-serif)',
                 opacity: !valor.trim() ? .6 : 1,
               }}
             >

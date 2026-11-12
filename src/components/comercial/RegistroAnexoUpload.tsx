@@ -125,7 +125,7 @@ export function RegistroAnexoUpload({ registroId }: Props) {
               onClick={() => setTipoUpload(t)}
               style={{
                 padding: '.45rem .9rem', border: 'none', cursor: 'pointer',
-                background: tipoUpload === t ? '#4A7FDB' : '#f8fafc',
+                background: tipoUpload === t ? '#00889e' : '#f8fafc',
                 color: tipoUpload === t ? '#fff' : '#475569',
                 fontSize: '.75rem', fontWeight: 700,
                 fontFamily: 'var(--font-montserrat,sans-serif)',
@@ -141,7 +141,7 @@ export function RegistroAnexoUpload({ registroId }: Props) {
           style={{
             display: 'flex', alignItems: 'center', gap: '.4rem',
             padding: '.45rem 1rem', borderRadius: 8,
-            border: '1.5px solid #4A7FDB', background: uploading ? '#f8fafc' : '#eff6ff',
+            border: '1.5px solid #00889e', background: uploading ? '#f8fafc' : '#eff6ff',
             color: '#2563eb', cursor: uploading ? 'not-allowed' : 'pointer',
             fontSize: '.75rem', fontWeight: 700,
             fontFamily: 'var(--font-montserrat,sans-serif)',
@@ -191,7 +191,7 @@ export function RegistroAnexoUpload({ registroId }: Props) {
                 }}>{tag.label}</span>
 
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 600, fontSize: '.8rem', color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div style={{ fontWeight: 600, fontSize: '.8rem', color: '#002933', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {nomeExibicao(arq.name)}
                   </div>
                   {(arq.criado_em || arq.tamanho) && (

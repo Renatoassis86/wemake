@@ -38,7 +38,7 @@ function FunilBarras({ etapas }: { etapas: { label: string; valor: number; cor: 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '.35rem' }}>
               <span style={{ fontSize: '.72rem', fontWeight: 700, color: '#334155', fontFamily: 'var(--font-inter,sans-serif)' }}>{e.label}</span>
               <span style={{ fontSize: '.78rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
-                <strong style={{ color: '#0f172a', fontSize: '.95rem' }}>{e.valor}</strong>
+                <strong style={{ color: '#002933', fontSize: '.95rem' }}>{e.valor}</strong>
                 {conversao !== null && (
                   <span style={{ color: '#94a3b8', fontWeight: 600, marginLeft: '.4rem' }}>· {conversao}% da etapa anterior</span>
                 )}
@@ -154,15 +154,15 @@ export default async function MetasPage() {
 
         {/* ── Hero de contexto ─────────────────────────────── */}
         <div className="mp-metas-hero" style={{
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%)',
+          background: 'linear-gradient(135deg, #002933 0%, #1e293b 60%, #002933 100%)',
           borderRadius: 18, padding: '1.75rem 2rem',
           marginBottom: '2rem',
           display: 'grid', gridTemplateColumns: '1fr auto',
           gap: '2rem', alignItems: 'center',
-          boxShadow: '0 8px 32px rgba(15,23,42,.2)',
+          boxShadow: '0 8px 32px rgba(0,41,51,.2)',
         }}>
           <div>
-            <div style={{ fontSize: '.62rem', fontWeight: 800, letterSpacing: '.12em', textTransform: 'uppercase', color: '#4A7FDB', marginBottom: '.5rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+            <div style={{ fontSize: '.62rem', fontWeight: 800, letterSpacing: '.12em', textTransform: 'uppercase', color: '#00889e', marginBottom: '.5rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
               ✦ Sprint Comercial
             </div>
             <h2 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.8rem', fontWeight: 700, color: '#fff', lineHeight: 1.1, marginBottom: '.6rem' }}>
@@ -180,9 +180,9 @@ export default async function MetasPage() {
 
         {/* ── Meta de Alunos — widget principal ─────────────── */}
         <div style={{
-          background: 'linear-gradient(135deg, #0f172a 0%, #14532d 130%)',
+          background: 'linear-gradient(135deg, #002933 0%, #14532d 130%)',
           borderRadius: 18, padding: '1.75rem 2rem', marginBottom: '2rem',
-          boxShadow: '0 8px 32px rgba(15,23,42,.18)',
+          boxShadow: '0 8px 32px rgba(0,41,51,.18)',
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
             <div>
@@ -282,12 +282,12 @@ export default async function MetasPage() {
         </div>
 
         {/* ── Funil de conversão do sprint ──────────────────── */}
-        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, marginBottom: '2rem', overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.06)' }}>
+        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, marginBottom: '2rem', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,41,51,.06)' }}>
           <div style={{ padding: '1rem 1.75rem', borderBottom: '1px solid #f1f5f9', background: '#fafafa', display: 'flex', alignItems: 'center', gap: '.65rem' }}>
             <div style={{ width: 28, height: 28, borderRadius: 7, background: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
             </div>
-            <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a' }}>
+            <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#002933' }}>
               Funil de Conversão do Sprint
             </div>
           </div>
@@ -308,7 +308,7 @@ export default async function MetasPage() {
             valor={qtdEscolasNovas}
             meta={`${METAS.escolas_novas_meta} novas`}
             pct={pctEscolas}
-            cor="#4A7FDB"
+            cor="#00889e"
             bg="#fffbeb"
             border="#fde68a"
             sub={`Contratos assinados · ${qtdEscolasMinuta > 0 ? `+${qtdEscolasMinuta} em minuta (pipeline)` : 'nenhuma em minuta ainda'}`}
@@ -328,7 +328,7 @@ export default async function MetasPage() {
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-1.2rem', marginBottom: '2rem' }}>
-          <Link href="/comercial/funil-contratacao" style={{ fontSize: '.75rem', fontWeight: 700, color: '#4A7FDB', textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+          <Link href="/comercial/funil-contratacao" style={{ fontSize: '.75rem', fontWeight: 700, color: '#00889e', textDecoration: 'none', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
             Ver funil de contratação completo →
           </Link>
         </div>
@@ -337,13 +337,13 @@ export default async function MetasPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
 
           {/* Prospecção — últimas reuniões */}
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.06)' }}>
+          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,41,51,.06)' }}>
             <div style={{ padding: '1rem 1.4rem', borderBottom: '1px solid #f1f5f9', background: '#fafafa', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem' }}>
                 <div style={{ width: 26, height: 26, borderRadius: 7, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 </div>
-                <span style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a' }}>Últimas Reuniões Registradas</span>
+                <span style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#002933' }}>Últimas Reuniões Registradas</span>
               </div>
               <span style={{ fontSize: '.65rem', background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe', padding: '.15rem .55rem', borderRadius: 99, fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                 {totalReunioes} / {METAS.reunioes_meta}
@@ -354,10 +354,10 @@ export default async function MetasPage() {
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.55rem 0', borderBottom: i < registrosRecentes.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
                   <div style={{
                     width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
-                    background: r.classificacao === 'quente' ? '#ef4444' : r.classificacao === 'morno' ? '#4A7FDB' : '#6366f1',
+                    background: r.classificacao === 'quente' ? '#ef4444' : r.classificacao === 'morno' ? '#00889e' : '#6366f1',
                   }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <Link href={`/comercial/escolas/${r.escola_id}`} style={{ fontSize: '.78rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block', textDecoration: 'none' }}>
+                    <Link href={`/comercial/escolas/${r.escola_id}`} style={{ fontSize: '.78rem', fontWeight: 600, color: '#002933', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block', textDecoration: 'none' }}>
                       {(r as any).escola?.nome ?? r.escola_id.slice(0, 8)}
                     </Link>
                     <div style={{ fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
@@ -367,7 +367,7 @@ export default async function MetasPage() {
                   <span style={{
                     fontSize: '.6rem', fontWeight: 700, padding: '.1rem .4rem', borderRadius: 99, flexShrink: 0,
                     background: r.classificacao === 'quente' ? '#fef2f2' : r.classificacao === 'morno' ? '#fffbeb' : '#eef2ff',
-                    color: r.classificacao === 'quente' ? '#dc2626' : r.classificacao === 'morno' ? '#4A7FDB' : '#6366f1',
+                    color: r.classificacao === 'quente' ? '#dc2626' : r.classificacao === 'morno' ? '#00889e' : '#6366f1',
                     fontFamily: 'var(--font-montserrat,sans-serif)',
                   }}>
                     {r.classificacao}
@@ -382,33 +382,33 @@ export default async function MetasPage() {
           </div>
 
           {/* Novas escolas */}
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.06)' }}>
+          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,41,51,.06)' }}>
             <div style={{ padding: '1rem 1.4rem', borderBottom: '1px solid #f1f5f9', background: '#fafafa', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem' }}>
-                <div style={{ width: 26, height: 26, borderRadius: 7, background: '#4A7FDB', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ width: 26, height: 26, borderRadius: 7, background: '#00889e', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 </div>
-                <span style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a' }}>Novas Escolas Captadas</span>
+                <span style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#002933' }}>Novas Escolas Captadas</span>
               </div>
-              <span style={{ fontSize: '.65rem', background: '#fffbeb', color: '#4A7FDB', border: '1px solid #fde68a', padding: '.15rem .55rem', borderRadius: 99, fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+              <span style={{ fontSize: '.65rem', background: '#fffbeb', color: '#00889e', border: '1px solid #fde68a', padding: '.15rem .55rem', borderRadius: 99, fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                 {qtdEscolasNovas} / {METAS.escolas_novas_meta}
               </span>
             </div>
             <div style={{ padding: '1rem 1.4rem' }}>
               {escolasNovasRecentes.length > 0 ? escolasNovasRecentes.map((e, i) => (
                 <div key={e.escola_id} style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.55rem 0', borderBottom: i < escolasNovasRecentes.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
-                  <div style={{ width: 28, height: 28, borderRadius: 7, background: '#fffbeb', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: 'var(--font-cormorant,serif)', fontSize: '.9rem', fontWeight: 700, color: '#4A7FDB' }}>
+                  <div style={{ width: 28, height: 28, borderRadius: 7, background: '#fffbeb', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: 'var(--font-cormorant,serif)', fontSize: '.9rem', fontWeight: 700, color: '#00889e' }}>
                     {i + 1}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '.78rem', fontWeight: 600, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontSize: '.78rem', fontWeight: 600, color: '#002933', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {e.escola_nome}
                     </div>
                     <div style={{ fontSize: '.65rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>
                       {e.cidade}{e.estado ? `, ${e.estado}` : ''} · {e.alunos_cadastro ?? 0} alunos
                     </div>
                   </div>
-                  <Link href={`/comercial/escolas/${e.escola_id}`} style={{ fontSize: '.65rem', fontWeight: 700, color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)', background: '#eff6ff', padding: '.1rem .5rem', borderRadius: 99, textDecoration: 'none' }}>
+                  <Link href={`/comercial/escolas/${e.escola_id}`} style={{ fontSize: '.65rem', fontWeight: 700, color: '#00889e', fontFamily: 'var(--font-montserrat,sans-serif)', background: '#eff6ff', padding: '.1rem .5rem', borderRadius: 99, textDecoration: 'none' }}>
                     ver ficha
                   </Link>
                 </div>
@@ -422,8 +422,8 @@ export default async function MetasPage() {
         </div>
 
         {/* ── Resumo de progresso geral ────────────────────── */}
-        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.5rem 1.75rem', boxShadow: '0 1px 4px rgba(15,23,42,.06)' }}>
-          <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#0f172a', marginBottom: '1.25rem' }}>
+        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.5rem 1.75rem', boxShadow: '0 1px 4px rgba(0,41,51,.06)' }}>
+          <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#002933', marginBottom: '1.25rem' }}>
             Painel de Progresso Consolidado — Sprint até {METAS.prazo}
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem' }}>
@@ -439,7 +439,7 @@ export default async function MetasPage() {
                 <div key={m.label} style={{ padding: '.85rem 1rem', background: '#f8fafc', border: `1px solid ${m.cor}20`, borderTop: `3px solid ${m.cor}`, borderRadius: 10 }}>
                   <div style={{ fontSize: '.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: m.cor, fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.4rem' }}>{m.label}</div>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '.3rem', marginBottom: '.5rem' }}>
-                    <span style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{m.atual.toLocaleString('pt-BR')}</span>
+                    <span style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.5rem', fontWeight: 800, color: '#002933', lineHeight: 1 }}>{m.atual.toLocaleString('pt-BR')}</span>
                     <span style={{ fontSize: '.7rem', color: '#94a3b8', fontFamily: 'var(--font-inter,sans-serif)' }}>/ {m.meta.toLocaleString('pt-BR')}</span>
                   </div>
                   <BarraProgresso pct={p} cor={m.cor} height={5} />

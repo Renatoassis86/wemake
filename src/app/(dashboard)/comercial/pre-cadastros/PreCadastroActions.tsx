@@ -99,13 +99,13 @@ export default function PreCadastroActions({ registro }: Props) {
               <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <AlertTriangle size={20} color="#b91c1c" />
               </div>
-              <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.2rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+              <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.2rem', fontWeight: 700, color: '#002933', margin: 0 }}>
                 Excluir pré-cadastro?
               </h3>
             </div>
             <p style={{ fontSize: '.88rem', color: '#475569', lineHeight: 1.6, marginBottom: '1.25rem' }}>
               Você está prestes a excluir permanentemente o pré-cadastro de{' '}
-              <strong style={{ color: '#0f172a' }}>{registro.nome_fantasia || registro.razao_social || 'escola sem nome'}</strong>.
+              <strong style={{ color: '#002933' }}>{registro.nome_fantasia || registro.razao_social || 'escola sem nome'}</strong>.
               {' '}Esta ação não pode ser desfeita.
             </p>
             {erro && <ErrorBox msg={erro} />}
@@ -126,7 +126,7 @@ export default function PreCadastroActions({ registro }: Props) {
         <Modal onClose={() => !pending && setEditOpen(false)}>
           <div className="mp-modal-body" style={{ padding: '1.5rem', width: 'min(720px, 92vw)', maxHeight: '85vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+              <h3 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 700, color: '#002933', margin: 0 }}>
                 Editar pré-cadastro
               </h3>
               <button type="button" onClick={() => !pending && setEditOpen(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
@@ -194,7 +194,7 @@ export default function PreCadastroActions({ registro }: Props) {
               <button type="button" disabled={pending} onClick={() => setEditOpen(false)} style={{ ...btnBase, background: '#f1f5f9', color: '#475569', borderColor: '#cbd5e1' }}>
                 Cancelar
               </button>
-              <button type="button" disabled={pending} onClick={handleSave} style={{ ...btnBase, background: '#4A7FDB', color: '#fff', borderColor: '#4A7FDB' }}>
+              <button type="button" disabled={pending} onClick={handleSave} style={{ ...btnBase, background: '#00889e', color: '#fff', borderColor: '#00889e' }}>
                 <Save size={13} />
                 {pending ? 'Salvando…' : 'Salvar alterações'}
               </button>
@@ -215,7 +215,7 @@ function Modal({ children, onClose, fullscreen = true }: { children: React.React
       className="mp-modal-overlay"
       style={{
         position: 'fixed', inset: 0, zIndex: 1000,
-        background: 'rgba(15,23,42,.55)', backdropFilter: 'blur(3px)',
+        background: 'rgba(0,41,51,.55)', backdropFilter: 'blur(3px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: '1rem',
       }}
@@ -224,7 +224,7 @@ function Modal({ children, onClose, fullscreen = true }: { children: React.React
         onClick={e => e.stopPropagation()}
         className={fullscreen ? 'mp-modal-fs' : undefined}
         style={{
-          background: '#fff', borderRadius: 14, boxShadow: '0 20px 60px rgba(15,23,42,.35)',
+          background: '#fff', borderRadius: 14, boxShadow: '0 20px 60px rgba(0,41,51,.35)',
         }}
       >
         {children}
@@ -238,7 +238,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     <div style={{ marginBottom: '1rem' }}>
       <div style={{
         fontSize: '.65rem', fontWeight: 800, textTransform: 'uppercase',
-        letterSpacing: '.1em', color: '#4A7FDB', marginBottom: '.5rem',
+        letterSpacing: '.1em', color: '#00889e', marginBottom: '.5rem',
         fontFamily: 'var(--font-montserrat,sans-serif)',
         paddingBottom: '.3rem', borderBottom: '1px solid rgba(74,143,231,.2)',
       }}>
@@ -265,7 +265,7 @@ const lbl: React.CSSProperties = {
 
 const inp: React.CSSProperties = {
   width: '100%', padding: '.5rem .75rem', borderRadius: 8,
-  border: '1px solid #cbd5e1', fontSize: '.85rem', color: '#0f172a',
+  border: '1px solid #cbd5e1', fontSize: '.85rem', color: '#002933',
   fontFamily: 'var(--font-inter,sans-serif)',
 }
 

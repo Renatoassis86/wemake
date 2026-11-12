@@ -87,9 +87,9 @@ export function PrioridadeInline({ escolaId, prioridade: prioridadeInicial, esco
         <div ref={painelRef} style={{
           position: 'fixed', top: pos.top, left: pos.left, zIndex: 2000,
           width: 200, background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 12,
-          boxShadow: '0 12px 32px rgba(15,23,42,.18)', padding: '1rem',
+          boxShadow: '0 12px 32px rgba(0,41,51,.18)', padding: '1rem',
         }}>
-          <div style={{ fontSize: '.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#0f172a', marginBottom: '.6rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+          <div style={{ fontSize: '.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', color: '#002933', marginBottom: '.6rem', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
             Ordem de Prioridade
           </div>
           <input
@@ -107,7 +107,7 @@ export function PrioridadeInline({ escolaId, prioridade: prioridadeInicial, esco
           <div style={{ display: 'flex', gap: '.4rem' }}>
             <button onClick={() => salvar(valor)} disabled={pending} style={{
               flex: 1, padding: '.45rem', borderRadius: 8, border: 'none', cursor: pending ? 'wait' : 'pointer',
-              background: '#4A7FDB', color: '#fff', fontSize: '.72rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)',
+              background: '#00889e', color: '#fff', fontSize: '.72rem', fontWeight: 700, fontFamily: 'var(--font-montserrat,sans-serif)',
             }}>
               {pending ? '...' : 'Salvar'}
             </button>

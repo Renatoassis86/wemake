@@ -6,7 +6,7 @@ import { BancoSearch } from './BancoSearch'
 const FONTES = [
   { value: 'ciecc_2026', label: '2º CIECC 2026',  cor: '#2563eb', desc: 'Banco_Unificado_CIECC_2026.xlsx' },
   { value: 'ciecc_2025', label: '1º CIECC 2025',  cor: '#7c3aed', desc: 'Prover 2025.xlsx' },
-  { value: 'banco',      label: 'Banco de Dados',  cor: '#0f172a', desc: 'Buscar escola ou pessoa no banco' },
+  { value: 'banco',      label: 'Banco de Dados',  cor: '#002933', desc: 'Buscar escola ou pessoa no banco' },
   { value: 'outro',      label: 'Outra planilha',  cor: '#64748b', desc: 'Qualquer planilha .xlsx/.csv' },
 ]
 
@@ -115,7 +115,7 @@ export function ImportacaoClient() {
 
   // Estilos
   const lbl: React.CSSProperties = { display: 'block', fontSize: '.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#64748b', marginBottom: '.35rem', fontFamily: 'var(--font-montserrat,sans-serif)' }
-  const inp: React.CSSProperties = { width: '100%', padding: '.65rem .9rem', fontSize: '.875rem', fontFamily: 'var(--font-inter,sans-serif)', border: '1.5px solid #e2e8f0', borderRadius: 8, background: '#f8fafc', color: '#0f172a', outline: 'none', boxSizing: 'border-box' as const }
+  const inp: React.CSSProperties = { width: '100%', padding: '.65rem .9rem', fontSize: '.875rem', fontFamily: 'var(--font-inter,sans-serif)', border: '1.5px solid #e2e8f0', borderRadius: 8, background: '#f8fafc', color: '#002933', outline: 'none', boxSizing: 'border-box' as const }
 
   return (
     <div style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
@@ -135,7 +135,7 @@ export function ImportacaoClient() {
                 <div style={{ width: 28, height: 28, borderRadius: '50%', background: ativo ? fonteAtual.cor : passado ? '#16a34a' : '#e2e8f0', color: ativo || passado ? '#fff' : '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.72rem', fontWeight: 800, fontFamily: 'var(--font-montserrat,sans-serif)', flexShrink: 0 }}>
                   {passado ? '✓' : s.n}
                 </div>
-                <span style={{ fontSize: '.75rem', fontWeight: ativo ? 700 : 400, color: ativo ? '#0f172a' : '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap' }}>{s.label}</span>
+                <span style={{ fontSize: '.75rem', fontWeight: ativo ? 700 : 400, color: ativo ? '#002933' : '#94a3b8', fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap' }}>{s.label}</span>
               </div>
               {i < 2 && <div style={{ flex: 1, height: 2, background: passado ? '#16a34a' : '#e2e8f0', margin: '0 .75rem' }} />}
             </div>
@@ -148,7 +148,7 @@ export function ImportacaoClient() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
           {/* Fonte */}
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.5rem', boxShadow: '0 1px 4px rgba(15,23,42,.04)' }}>
+          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,41,51,.04)' }}>
             <label style={lbl}>Fonte dos dados</label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '.65rem' }}>
               {FONTES.map(f => (
@@ -162,13 +162,13 @@ export function ImportacaoClient() {
 
           {/* Filtro de tipo — APENAS para CIECC 2025 / 2026 */}
           {isCIECC && (
-            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.5rem', boxShadow: '0 1px 4px rgba(15,23,42,.04)' }}>
+            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,41,51,.04)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '.85rem' }}>
                 <div>
                   <label style={lbl}>Filtrar por tipo de inscrição</label>
                   <div style={{ fontSize: '.68rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', marginTop: '.15rem' }}>
                     Selecione um ou mais tipos. Os tipos exatos serão lidos da planilha após o upload.
-                    {tiposSel.size === 0 && <span style={{ color: '#4A7FDB', marginLeft: '.3rem' }}>Nenhum selecionado = importa todos os tipos.</span>}
+                    {tiposSel.size === 0 && <span style={{ color: '#00889e', marginLeft: '.3rem' }}>Nenhum selecionado = importa todos os tipos.</span>}
                   </div>
                 </div>
                 {tiposSel.size > 0 && (
@@ -187,7 +187,7 @@ export function ImportacaoClient() {
                   {[
                     { label: 'Gestores de escola',      termo: 'gestor',      cor: '#7c3aed' },
                     { label: 'Diretores de escola',     termo: 'diretor',     cor: '#2563eb' },
-                    { label: 'Mantenedores de escola',  termo: 'mantenedor',  cor: '#4A7FDB' },
+                    { label: 'Mantenedores de escola',  termo: 'mantenedor',  cor: '#00889e' },
                     { label: 'Coordenadores',           termo: 'coordenador', cor: '#0d9488' },
                   ].map(({ label, termo, cor }) => {
                     // Verificar quais tipos da planilha contém esse termo
@@ -257,7 +257,7 @@ export function ImportacaoClient() {
 
           {/* Upload — oculto quando fonte === 'banco' */}
           {!isBanco && (
-            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.5rem', boxShadow: '0 1px 4px rgba(15,23,42,.04)' }}>
+            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,41,51,.04)' }}>
               <label style={lbl}>Arquivo Excel ou CSV</label>
               <div
                 onClick={() => inputRef.current?.click()}
@@ -302,7 +302,7 @@ export function ImportacaoClient() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
 
           {/* ── Barra superior compacta ── */}
-          <div style={{ background: '#0f172a', borderRadius: 14, padding: '.85rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+          <div style={{ background: '#002933', borderRadius: 14, padding: '.85rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
             {/* Info arquivo */}
             <div style={{ minWidth: 0, flex: 1 }}>
               <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 700, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -333,7 +333,7 @@ export function ImportacaoClient() {
           </div>
 
           {/* ── Controles: busca + botões + aba ── */}
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '.85rem 1.25rem', display: 'flex', gap: '.75rem', alignItems: 'center', flexWrap: 'wrap', boxShadow: '0 1px 4px rgba(15,23,42,.04)' }}>
+          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '.85rem 1.25rem', display: 'flex', gap: '.75rem', alignItems: 'center', flexWrap: 'wrap', boxShadow: '0 1px 4px rgba(0,41,51,.04)' }}>
             {/* Busca */}
             <div style={{ position: 'relative', flex: 1, minWidth: 180 }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" style={{ position: 'absolute', left: '.75rem', top: '50%', transform: 'translateY(-50%)' }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -342,9 +342,9 @@ export function ImportacaoClient() {
             {/* Botões de seleção rápida */}
             <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
               {[
-                { label: 'Selecionar Todos',  action: () => selecionarGrupo('todos'),                                        cor: '#0f172a' },
+                { label: 'Selecionar Todos',  action: () => selecionarGrupo('todos'),                                        cor: '#002933' },
                 { label: 'Só Mapeadas',        action: () => { setColSel(new Set()); setTimeout(() => selecionarGrupo('fixo'), 0) },   cor: '#16a34a' },
-                { label: 'Só Extras',          action: () => { setColSel(new Set()); setTimeout(() => selecionarGrupo('extra'), 0) },  cor: '#4A7FDB' },
+                { label: 'Só Extras',          action: () => { setColSel(new Set()); setTimeout(() => selecionarGrupo('extra'), 0) },  cor: '#00889e' },
                 { label: 'Desmarcar Todos',    action: () => setColSel(new Set()),                                           cor: '#dc2626' },
               ].map(b => (
                 <button key={b.label} onClick={b.action} style={{ padding: '.35rem .85rem', borderRadius: 7, border: `1.5px solid ${b.cor}25`, background: b.cor + '10', color: b.cor, fontSize: '.68rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap' }}>
@@ -367,8 +367,8 @@ export function ImportacaoClient() {
 
           {/* Tipos reais da planilha com contagem — só para CIECC */}
           {isCIECC && preview.tiposDisponiveis && preview.tiposDisponiveis.length > 0 && (
-            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.04)' }}>
-              <div style={{ padding: '.75rem 1.25rem', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,41,51,.04)' }}>
+              <div style={{ padding: '.75rem 1.25rem', background: '#002933', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
                   <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.72rem', fontWeight: 700, color: '#fff' }}>
                     Tipos de inscrição encontrados na planilha
@@ -429,7 +429,7 @@ export function ImportacaoClient() {
                       {/* Label + barra */}
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '.2rem' }}>
-                          <span style={{ fontSize: '.72rem', fontWeight: sel ? 700 : 400, color: sel ? '#0f172a' : '#334155', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, paddingRight: '.4rem' }}>
+                          <span style={{ fontSize: '.72rem', fontWeight: sel ? 700 : 400, color: sel ? '#002933' : '#334155', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, paddingRight: '.4rem' }}>
                             {tipo}
                           </span>
                           <span style={{ fontSize: '.65rem', fontWeight: 700, color: cor, fontFamily: 'var(--font-montserrat,sans-serif)', flexShrink: 0 }}>
@@ -467,7 +467,7 @@ export function ImportacaoClient() {
           )}
 
           {/* ── PAINEL PRINCIPAL DE SELEÇÃO (estilo Power BI) ── */}
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.04)' }}>
+          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,41,51,.04)' }}>
 
             {/* Legenda */}
             <div style={{ padding: '.65rem 1.25rem', background: '#fafafa', borderBottom: '1px solid #f1f5f9', display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -476,7 +476,7 @@ export function ImportacaoClient() {
                 <span style={{ fontSize: '.68rem', color: '#1e293b', fontFamily: 'var(--font-inter,sans-serif)' }}><strong>Mapeado</strong> — coluna própria no banco</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}>
-                <div style={{ width: 10, height: 10, borderRadius: 3, background: '#4A7FDB' }} />
+                <div style={{ width: 10, height: 10, borderRadius: 3, background: '#00889e' }} />
                 <span style={{ fontSize: '.68rem', color: '#1e293b', fontFamily: 'var(--font-inter,sans-serif)' }}><strong>Extra</strong> — salvo em JSON pesquisável</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}>
@@ -512,7 +512,7 @@ export function ImportacaoClient() {
                             {sel && <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.5"><polyline points="20 6 9 17 4 12"/></svg>}
                           </div>
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: '.72rem', fontWeight: sel ? 600 : 400, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{col}</div>
+                            <div style={{ fontSize: '.72rem', fontWeight: sel ? 600 : 400, color: '#002933', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{col}</div>
                             <div style={{ fontSize: '.58rem', color: '#16a34a', fontFamily: 'var(--font-montserrat,sans-serif)', fontWeight: 700 }}>→ {info.campo}</div>
                           </div>
                         </div>
@@ -526,8 +526,8 @@ export function ImportacaoClient() {
               {colunasFiltradas.some(c => preview.mapeadas[c]?.tipo === 'extra') && (
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.6rem', paddingBottom: '.5rem', borderBottom: '2px solid #fde68a' }}>
-                    <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#4A7FDB' }} />
-                    <span style={{ fontSize: '.62rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                    <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#00889e' }} />
+                    <span style={{ fontSize: '.62rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#00889e', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                       Campos extras → dados JSON ({colunasFiltradas.filter(c => preview.mapeadas[c]?.tipo === 'extra').length})
                     </span>
                   </div>
@@ -538,11 +538,11 @@ export function ImportacaoClient() {
                         <div key={col} onClick={() => toggleCol(col)} style={{ display: 'flex', alignItems: 'center', gap: '.55rem', padding: '.45rem .7rem', cursor: 'pointer', borderRadius: 8, border: `1.5px solid ${sel ? '#fcd34d' : '#e2e8f0'}`, background: sel ? '#fffbeb' : '#fafafa', transition: 'all .1s', userSelect: 'none' as const }}
                           onMouseEnter={e => { if (!sel) { e.currentTarget.style.background = '#fffbeb'; e.currentTarget.style.borderColor = '#fcd34d' } }}
                           onMouseLeave={e => { if (!sel) { e.currentTarget.style.background = '#fafafa'; e.currentTarget.style.borderColor = '#e2e8f0' } }}>
-                          <div style={{ width: 15, height: 15, borderRadius: 3, border: `2px solid ${sel ? '#4A7FDB' : '#d1d5db'}`, background: sel ? '#4A7FDB' : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all .1s' }}>
+                          <div style={{ width: 15, height: 15, borderRadius: 3, border: `2px solid ${sel ? '#00889e' : '#d1d5db'}`, background: sel ? '#00889e' : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all .1s' }}>
                             {sel && <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.5"><polyline points="20 6 9 17 4 12"/></svg>}
                           </div>
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: '.72rem', fontWeight: sel ? 600 : 400, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{col}</div>
+                            <div style={{ fontSize: '.72rem', fontWeight: sel ? 600 : 400, color: '#002933', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{col}</div>
                           </div>
                         </div>
                       )
@@ -555,9 +555,9 @@ export function ImportacaoClient() {
 
           {/* ── Preview da tabela ── */}
           {colSel.size > 0 && (
-            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.04)' }}>
+            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 14, overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,41,51,.04)' }}>
               <div style={{ padding: '.75rem 1.25rem', background: '#fafafa', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '.72rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                <span style={{ fontSize: '.72rem', fontWeight: 700, color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                   Pré-visualização — {colSel.size} colunas selecionadas
                 </span>
                 <span style={{ fontSize: '.65rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)' }}>
@@ -567,7 +567,7 @@ export function ImportacaoClient() {
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.72rem' }}>
                   <thead>
-                    <tr style={{ background: '#0f172a' }}>
+                    <tr style={{ background: '#002933' }}>
                       {[...colSel].slice(0, 8).map(col => {
                         const info = preview.mapeadas[col]
                         return (
@@ -645,7 +645,7 @@ export function ImportacaoClient() {
           <div style={{ display: 'none' }}><div>
 
             {/* Header */}
-            <div style={{ padding: '1rem 1.25rem', background: '#0f172a', color: '#fff' }}>
+            <div style={{ padding: '1rem 1.25rem', background: '#002933', color: '#fff' }}>
               <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.1rem', fontWeight: 700, marginBottom: '.35rem' }}>
                 Campos da Planilha
               </div>
@@ -673,9 +673,9 @@ export function ImportacaoClient() {
             {/* Ações rápidas */}
             <div style={{ padding: '.65rem .85rem', background: '#f8fafc', borderBottom: '1px solid #f1f5f9', display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
               {[
-                { label: 'Selecionar Todos',  action: () => selecionarGrupo('todos'),   cor: '#0f172a' },
+                { label: 'Selecionar Todos',  action: () => selecionarGrupo('todos'),   cor: '#002933' },
                 { label: 'Só Mapeadas',        action: () => { setColSel(new Set()); selecionarGrupo('fixo') },  cor: '#16a34a' },
-                { label: 'Só Extras',          action: () => { setColSel(new Set()); selecionarGrupo('extra') }, cor: '#4A7FDB' },
+                { label: 'Só Extras',          action: () => { setColSel(new Set()); selecionarGrupo('extra') }, cor: '#00889e' },
                 { label: 'Desmarcar Todos',    action: () => setColSel(new Set()),       cor: '#dc2626' },
               ].map(b => (
                 <button key={b.label} onClick={b.action} style={{ padding: '.25rem .7rem', borderRadius: 6, border: `1px solid ${b.cor}30`, background: b.cor + '10', color: b.cor, fontSize: '.65rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-montserrat,sans-serif)', whiteSpace: 'nowrap' }}>
@@ -712,7 +712,7 @@ export function ImportacaoClient() {
                       {sel && <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: '.75rem', fontWeight: sel ? 600 : 400, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{col}</div>
+                      <div style={{ fontSize: '.75rem', fontWeight: sel ? 600 : 400, color: '#002933', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{col}</div>
                       <div style={{ fontSize: '.6rem', color: '#16a34a', fontFamily: 'var(--font-montserrat,sans-serif)', fontWeight: 600 }}>→ {info.campo}</div>
                     </div>
                   </div>
@@ -722,8 +722,8 @@ export function ImportacaoClient() {
               {/* Separador: Extras */}
               {colunasFiltradas.some(c => preview.mapeadas[c]?.tipo === 'extra') && (
                 <div style={{ padding: '.45rem .85rem', background: '#fffbeb', borderTop: '1px solid #fde68a', borderBottom: '1px solid #fde68a', display: 'flex', alignItems: 'center', gap: '.4rem' }}>
-                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#4A7FDB' }} />
-                  <span style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#4A7FDB', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#00889e' }} />
+                  <span style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: '#00889e', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                     Campos extras → dados_extras (JSONB)
                   </span>
                 </div>
@@ -734,11 +734,11 @@ export function ImportacaoClient() {
                   <div key={col} onClick={() => toggleCol(col)} style={{ display: 'flex', alignItems: 'center', gap: '.65rem', padding: '.55rem .85rem', cursor: 'pointer', borderBottom: '1px solid #f8fafc', background: sel ? '#fffbeb' : '#fff', transition: 'background .1s' }}
                     onMouseEnter={e => { if (!sel) e.currentTarget.style.background = '#f8fafc' }}
                     onMouseLeave={e => { if (!sel) e.currentTarget.style.background = '#fff' }}>
-                    <div style={{ width: 16, height: 16, borderRadius: 4, border: `2px solid ${sel ? '#4A7FDB' : '#d1d5db'}`, background: sel ? '#4A7FDB' : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <div style={{ width: 16, height: 16, borderRadius: 4, border: `2px solid ${sel ? '#00889e' : '#d1d5db'}`, background: sel ? '#00889e' : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       {sel && <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: '.75rem', fontWeight: sel ? 600 : 400, color: '#0f172a', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{col}</div>
+                      <div style={{ fontSize: '.75rem', fontWeight: sel ? 600 : 400, color: '#002933', fontFamily: 'var(--font-inter,sans-serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{col}</div>
                     </div>
                   </div>
                 )
@@ -751,7 +751,7 @@ export function ImportacaoClient() {
 
             {/* Seletor de aba */}
             {preview.abas.length > 1 && (
-              <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '1rem 1.25rem', boxShadow: '0 1px 4px rgba(15,23,42,.04)' }}>
+              <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '1rem 1.25rem', boxShadow: '0 1px 4px rgba(0,41,51,.04)' }}>
                 <label style={lbl}>Aba da planilha</label>
                 <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
                   {preview.abas.map((aba, i) => (
@@ -764,22 +764,22 @@ export function ImportacaoClient() {
             )}
 
             {/* Legenda */}
-            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '1rem 1.25rem', boxShadow: '0 1px 4px rgba(15,23,42,.04)', display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '1rem 1.25rem', boxShadow: '0 1px 4px rgba(0,41,51,.04)', display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
                 <div style={{ width: 10, height: 10, borderRadius: 2, background: '#16a34a' }} />
                 <span style={{ fontSize: '.72rem', color: '#1e293b', fontFamily: 'var(--font-inter,sans-serif)' }}><strong>Campo mapeado</strong> — vai para coluna própria no banco</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-                <div style={{ width: 10, height: 10, borderRadius: 2, background: '#4A7FDB' }} />
+                <div style={{ width: 10, height: 10, borderRadius: 2, background: '#00889e' }} />
                 <span style={{ fontSize: '.72rem', color: '#1e293b', fontFamily: 'var(--font-inter,sans-serif)' }}><strong>Campo extra</strong> — armazenado como JSON (pesquisável)</span>
               </div>
             </div>
 
             {/* Preview da tabela */}
             {colSel.size > 0 && (
-              <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, overflow: 'hidden', boxShadow: '0 1px 4px rgba(15,23,42,.04)' }}>
+              <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,41,51,.04)' }}>
                 <div style={{ padding: '.75rem 1.25rem', background: '#fafafa', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '.72rem', fontWeight: 700, color: '#0f172a', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
+                  <span style={{ fontSize: '.72rem', fontWeight: 700, color: '#002933', fontFamily: 'var(--font-montserrat,sans-serif)' }}>
                     Pré-visualização — {colSel.size} colunas selecionadas
                   </span>
                   <span style={{ fontSize: '.65rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)' }}>
@@ -789,7 +789,7 @@ export function ImportacaoClient() {
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.72rem' }}>
                     <thead>
-                      <tr style={{ background: '#0f172a' }}>
+                      <tr style={{ background: '#002933' }}>
                         {[...colSel].slice(0, 7).map(col => {
                           const info = preview.mapeadas[col]
                           return (
@@ -831,14 +831,14 @@ export function ImportacaoClient() {
       {etapa === 'resultado' && resultado && (
         <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-            <div style={{ width: 72, height: 72, borderRadius: '50%', background: resultado.erros === 0 ? '#f0fdf4' : '#fffbeb', border: `3px solid ${resultado.erros === 0 ? '#16a34a' : '#4A7FDB'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 72, height: 72, borderRadius: '50%', background: resultado.erros === 0 ? '#f0fdf4' : '#fffbeb', border: `3px solid ${resultado.erros === 0 ? '#16a34a' : '#00889e'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {resultado.erros === 0
                 ? <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                : <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4A7FDB" strokeWidth="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>}
+                : <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00889e" strokeWidth="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>}
             </div>
           </div>
 
-          <h2 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.8rem', fontWeight: 700, color: '#0f172a', marginBottom: '.5rem' }}>
+          <h2 style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.8rem', fontWeight: 700, color: '#002933', marginBottom: '.5rem' }}>
             {resultado.erros === 0 ? 'Importação concluída!' : 'Importação com alertas'}
           </h2>
           <p style={{ fontSize: '.875rem', color: '#475569', fontFamily: 'var(--font-inter,sans-serif)', marginBottom: '1.5rem' }}>
@@ -850,12 +850,12 @@ export function ImportacaoClient() {
               { label: 'Total',       val: resultado.total,               cor: '#64748b' },
               { label: 'Inseridos',   val: resultado.inseridos,            cor: '#16a34a' },
               { label: 'Atualizados', val: resultado.atualizados ?? 0,     cor: '#2563eb' },
-              { label: 'Ignorados',   val: resultado.ignorados ?? 0,       cor: '#4A7FDB' },
+              { label: 'Ignorados',   val: resultado.ignorados ?? 0,       cor: '#00889e' },
               { label: 'Erros',       val: resultado.erros,                cor: resultado.erros > 0 ? '#dc2626' : '#94a3b8' },
             ].map(k => (
               <div key={k.label} style={{ background: '#fff', border: `1.5px solid ${k.cor}30`, borderTop: `3px solid ${k.cor}`, borderRadius: 12, padding: '1rem' }}>
                 <div style={{ fontSize: '.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: k.cor, fontFamily: 'var(--font-montserrat,sans-serif)', marginBottom: '.25rem' }}>{k.label}</div>
-                <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '2rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{k.val.toLocaleString('pt-BR')}</div>
+                <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '2rem', fontWeight: 800, color: '#002933', lineHeight: 1 }}>{k.val.toLocaleString('pt-BR')}</div>
               </div>
             ))}
           </div>

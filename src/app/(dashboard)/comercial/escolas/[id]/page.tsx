@@ -172,7 +172,7 @@ const ClassifIcon = ({ classificacao }: { classificacao: string | null }) => {
 
 const classifStyles: Record<string, { bg: string; color: string; border: string; label: string }> = {
   quente: { bg: '#fef2f2', color: '#dc2626', border: '#fca5a5', label: 'Quente' },
-  morno:  { bg: '#fffbeb', color: '#4A7FDB', border: '#fcd34d', label: 'Morno'  },
+  morno:  { bg: '#fffbeb', color: '#00889e', border: '#fcd34d', label: 'Morno'  },
   frio:   { bg: '#eff6ff', color: '#2563eb', border: '#93c5fd', label: 'Frio'   },
 }
 
@@ -320,7 +320,7 @@ export default async function EscolaDetalhe({ params }: Props) {
   const cardTitleStyle: React.CSSProperties = {
     fontSize: '.78rem',
     fontWeight: 700,
-    color: '#0f172a',
+    color: '#002933',
     textTransform: 'uppercase',
     letterSpacing: '.07em',
     fontFamily: 'var(--font-montserrat, sans-serif)',
@@ -363,7 +363,7 @@ export default async function EscolaDetalhe({ params }: Props) {
   const kpiValueStyle: React.CSSProperties = {
     fontSize: '.85rem',
     fontWeight: 700,
-    color: '#0f172a',
+    color: '#002933',
     fontFamily: 'var(--font-montserrat, sans-serif)',
     textAlign: 'right',
   }
@@ -402,7 +402,7 @@ export default async function EscolaDetalhe({ params }: Props) {
 
       {/* ── HERO HEADER ─────────────────────────────────────────────────────── */}
       <div className="mp-escola-hero" style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a5f 100%)',
+        background: 'linear-gradient(135deg, #002933 0%, #1e293b 60%, #1e3a5f 100%)',
         padding: '2rem 2rem 1.75rem',
         position: 'relative',
         overflow: 'hidden',
@@ -413,7 +413,7 @@ export default async function EscolaDetalhe({ params }: Props) {
         }}>
           <div style={{
             position: 'absolute', top: -60, right: -60, width: 260, height: 260,
-            borderRadius: '50%', background: 'rgba(74,127,219,.08)',
+            borderRadius: '50%', background: 'rgba(0,137,158,.08)',
           }} />
           <div style={{
             position: 'absolute', bottom: -40, left: '30%', width: 180, height: 180,
@@ -489,9 +489,9 @@ export default async function EscolaDetalhe({ params }: Props) {
                 {e.escola_paideia && (
                   <span style={{
                     ...badgeBase,
-                    background: 'rgba(74,127,219,.2)',
+                    background: 'rgba(0,137,158,.2)',
                     color: '#fbbf24',
-                    border: '1px solid rgba(74,127,219,.35)',
+                    border: '1px solid rgba(0,137,158,.35)',
                   }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
@@ -590,7 +590,7 @@ export default async function EscolaDetalhe({ params }: Props) {
                     {e.site && (
                       <span style={{ display: 'flex', alignItems: 'center', gap: '.5rem', fontSize: '.83rem' }}>
                         <IconGlobe />
-                        <a href={e.site} target="_blank" rel="noreferrer" style={{ color: '#4A7FDB', textDecoration: 'none' }}>
+                        <a href={e.site} target="_blank" rel="noreferrer" style={{ color: '#00889e', textDecoration: 'none' }}>
                           Visitar site
                         </a>
                       </span>
@@ -620,7 +620,7 @@ export default async function EscolaDetalhe({ params }: Props) {
                   {e.contato_nome && (
                     <>
                       <div style={{ ...sectionLabelStyle, marginTop: '.75rem' }}>Contato Principal</div>
-                      <div style={{ fontSize: '.83rem', fontWeight: 600, color: '#0f172a' }}>{e.contato_nome}</div>
+                      <div style={{ fontSize: '.83rem', fontWeight: 600, color: '#002933' }}>{e.contato_nome}</div>
                       {(e.contato_cargo || e.diretor_nome) && (
                         <div style={{ fontSize: '.78rem', color: '#64748b', marginTop: '.15rem' }}>
                           {e.contato_cargo}{e.diretor_nome ? ` · Dir. ${e.diretor_nome}` : ''}
@@ -630,6 +630,23 @@ export default async function EscolaDetalhe({ params }: Props) {
                   )}
                 </div>
               </div>
+
+              {e.observacoes && (
+                <details style={{
+                  margin: '0 1.25rem 1.25rem', background: '#f8fafc', borderRadius: 10, padding: '.85rem 1rem',
+                  border: '1px solid #e2e8f0',
+                }}>
+                  <summary style={{
+                    cursor: 'pointer', fontSize: '.78rem', fontWeight: 600, color: '#00889e',
+                    fontFamily: 'var(--font-montserrat,sans-serif)',
+                  }}>
+                    Histórico — cadastro/contrato anterior
+                  </summary>
+                  <div style={{ marginTop: '.75rem', fontSize: '.8rem', lineHeight: 1.7, color: '#475569', whiteSpace: 'pre-wrap' }}>
+                    {e.observacoes}
+                  </div>
+                </details>
+              )}
             </div>
 
             {/* Card: Alunos & Potencial */}
@@ -705,7 +722,7 @@ export default async function EscolaDetalhe({ params }: Props) {
                   </div>
 
                   {/* Total Geral */}
-                  <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius: 14, padding: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                  <div style={{ background: 'linear-gradient(135deg, #002933, #1e293b)', borderRadius: 14, padding: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                     <div style={{ ...labelStyle, color: 'rgba(255,255,255,.5)', fontSize: '.65rem' }}>Total de Alunos</div>
                     <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#fff', fontFamily: 'var(--font-cormorant,serif)', lineHeight: 1 }}>
                       {totalAlunos}
@@ -733,7 +750,7 @@ export default async function EscolaDetalhe({ params }: Props) {
                       fontFamily: 'var(--font-cormorant, serif)',
                       fontSize: '1.8rem',
                       fontWeight: 700,
-                      color: '#4A7FDB',
+                      color: '#00889e',
                       lineHeight: 1,
                     }}>
                       {formatCurrency(pot)}
@@ -748,11 +765,11 @@ export default async function EscolaDetalhe({ params }: Props) {
                         }}>
                           <div style={{
                             width: `${e.probabilidade_atual}%`, height: '100%',
-                            background: 'linear-gradient(90deg, #f59e0b, #4A7FDB)',
+                            background: 'linear-gradient(90deg, #f59e0b, #00889e)',
                             borderRadius: 999,
                           }} />
                         </div>
-                        <span style={{ fontSize: '.9rem', fontWeight: 700, color: '#4A7FDB', fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+                        <span style={{ fontSize: '.9rem', fontWeight: 700, color: '#00889e', fontFamily: 'var(--font-montserrat, sans-serif)' }}>
                           {e.probabilidade_atual}%
                         </span>
                       </div>
@@ -844,9 +861,9 @@ export default async function EscolaDetalhe({ params }: Props) {
                   href={`/comercial/registros/novo?escola=${id}`}
                   style={{
                     ...actionBtnBase,
-                    background: 'linear-gradient(135deg, #4A7FDB, #2563b8)',
+                    background: 'linear-gradient(135deg, #00889e, #00677d)',
                     color: '#fff',
-                    boxShadow: '0 2px 8px rgba(74,127,219,.25)',
+                    boxShadow: '0 2px 8px rgba(0,137,158,.25)',
                   }}
                 >
                   <IconPlus /> Registrar Interacao
@@ -856,7 +873,7 @@ export default async function EscolaDetalhe({ params }: Props) {
                   href={`/comercial/jornada-visual?escola=${id}`}
                   style={{
                     ...actionBtnBase,
-                    background: 'linear-gradient(135deg, #0f172a, #1e293b)',
+                    background: 'linear-gradient(135deg, #002933, #1e293b)',
                     color: '#e2e8f0',
                   }}
                 >

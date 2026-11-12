@@ -34,7 +34,7 @@ export default async function PainelPage() {
       <section aria-label="Indicadores">
         <dl className="ac-kpis">
           <div><dt>Escolas no painel</dt><dd>{r.escolas}</dd></div>
-          <div><dt>Go-Live concluído</dt><dd>{r.goLive}</dd></div>
+          <div><dt>Início das aulas concluído</dt><dd>{r.goLive}</dd></div>
           <div className={r.riscoAlto ? 'is-alerta' : undefined}><dt>Com risco alto ou crítico</dt><dd>{r.riscoAlto}</dd></div>
           <div className={r.vencidos ? 'is-alerta' : undefined}><dt>Prazos vencidos</dt><dd>{r.vencidos}</dd></div>
         </dl>
@@ -89,7 +89,7 @@ export default async function PainelPage() {
               <thead>
                 <tr>
                   <th scope="col">Escola</th><th scope="col">Próxima ação</th><th scope="col">Responsável</th><th scope="col">Prazo</th>
-                  <th scope="col">Risco</th><th scope="col">%</th><th scope="col">Motivo / bloqueio</th><th scope="col">Status Go-Live</th>
+                  <th scope="col">Risco</th><th scope="col">%</th><th scope="col">Motivo / bloqueio</th><th scope="col">Status do início das aulas</th>
                 </tr>
               </thead>
               <tbody>
@@ -102,7 +102,7 @@ export default async function PainelPage() {
                     <td><Chip s={i.risco} /></td>
                     <td>{Math.round(percentual(i) * 100)}%</td>
                     <td>{i.motivo_bloqueio}</td>
-                    <td><Chip s={i.marcos?.['Go-Live'] ?? 'Não iniciado'} /></td>
+                    <td><Chip s={i.marcos?.[MARCOS[7]] ?? 'Não iniciado'} /></td>
                   </tr>
                 ))}
               </tbody>

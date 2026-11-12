@@ -4,7 +4,7 @@
  * Este arquivo não pode importar nada do Node: o middleware roda no Edge.
  */
 
-export type ModuloSlug = 'administrativo' | 'financeiro' | 'comercial' | 'contratos' | 'academia' | 'pedidos'
+export type ModuloSlug = 'administrativo' | 'financeiro' | 'comercial' | 'contratos' | 'academia' | 'pedidos' | 'projetos'
 
 export interface PaginaModulo {
   nome: string
@@ -41,6 +41,7 @@ const PADRAO: Record<ModuloSlug, string[] | 'todos'> = {
   contratos: DIRECAO,
   pedidos: DIRECAO,
   academia: ACADEMIA,
+  projetos: 'todos',
 }
 
 export function emailsDoModulo(slug: ModuloSlug): string[] | 'todos' {
@@ -135,8 +136,9 @@ export const MODULOS: Modulo[] = [
     home: '/contratos',
     prefixos: ['/contratos'],
     paginas: [
-      { nome: 'Visão geral', descricao: 'Situação dos contratos e atalhos para a jornada contratual.', href: '/contratos', status: 'disponível' },
+      { nome: 'Visão geral', descricao: 'Dashboard de indicadores: receita contratada, mapa por estado, modelo comercial, renovações e cláusulas especiais.', href: '/contratos', status: 'disponível' },
       { nome: 'Jornada contratual', descricao: 'Minuta, retorno, envio e assinatura de cada contrato, com os arquivos da escola.', href: '/comercial/contratos', status: 'disponível' },
+      { nome: 'Dados dos Contratos', descricao: 'Dados sistematizados de cada contrato assinado, com visualização do documento original.', href: '/contratos/dados', status: 'disponível' },
       { nome: 'Modelos e minutas', descricao: 'Modelos de contrato reutilizáveis.', status: 'em estruturação' },
       { nome: 'Assinatura eletrônica', descricao: 'Envio e acompanhamento de assinaturas.', status: 'em estruturação' },
       { nome: 'Certidões e documentos', descricao: 'Certidões e documentos jurídicos da empresa e das escolas.', status: 'em estruturação' },
@@ -156,6 +158,20 @@ export const MODULOS: Modulo[] = [
       { nome: 'Documentos e processos', descricao: 'As 14 páginas dos processos, com o texto integral de cada documento.', href: '/academia', status: 'disponível' },
       { nome: 'Gestão da implantação', descricao: 'Painel Mestre, lista de tarefas, quadro, calendário, agenda e workspace.', href: '/academia/gestao', status: 'disponível' },
       { nome: 'Diagnósticos das escolas', descricao: 'Respostas, fotos e parecer do Diagnóstico do Espaço Maker.', href: '/academia/gestao/diagnosticos', status: 'disponível' },
+    ],
+  },
+  {
+    slug: 'projetos',
+    nome: 'Gestão de Projetos',
+    curto: 'Projetos',
+    eyebrow: 'Gestão de projetos',
+    deck: 'Quadro kanban para organizar o que está pendente em cada frente.',
+    descricao:
+      'Um quadro estilo Trello para centralizar tarefas, prazos e responsáveis — o que está pendente, em andamento e concluído, com tags e prioridade.',
+    home: '/projetos',
+    prefixos: ['/projetos'],
+    paginas: [
+      { nome: 'Quadro', descricao: 'Quadro kanban com as tarefas, arrastar entre colunas, tags e prioridade.', href: '/projetos', status: 'disponível' },
     ],
   },
   {

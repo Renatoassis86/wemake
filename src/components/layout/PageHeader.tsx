@@ -23,7 +23,7 @@ export default function PageHeader({ title, subtitle, actions, breadcrumbs, badg
       height: 'var(--topbar-h)',
       background: '#ffffff',
       borderBottom: '1px solid var(--border)',
-      boxShadow: '0 1px 0 rgba(15,23,42,.05)',
+      boxShadow: '0 1px 0 rgba(0,41,51,.05)',
       display: 'flex', alignItems: 'center', gap: '1rem',
       padding: '0 1.75rem',
       position: 'sticky', top: 0, zIndex: 40,
@@ -42,7 +42,7 @@ export default function PageHeader({ title, subtitle, actions, breadcrumbs, badg
         }}
         aria-label="Abrir menu"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f172a" strokeWidth="2.5" strokeLinecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#002933" strokeWidth="2.5" strokeLinecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
 
       <div style={{ flex: 1, minWidth: 0 }}>

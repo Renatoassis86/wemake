@@ -55,7 +55,7 @@ export default function DashboardTopbar() {
             height: 56px;
             padding: 0 .5rem;
             padding-top: env(safe-area-inset-top);
-            background: rgba(11,31,68,.92);
+            background: rgba(0,41,51,.92);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255,255,255,.08);
