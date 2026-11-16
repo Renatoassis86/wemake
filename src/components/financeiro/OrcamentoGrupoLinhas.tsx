@@ -1,45 +1,14 @@
 'use client'
 
-import { useState } from 'react'
 import { MESES_LABEL, somarAte, type Grupo, type LinhaOrcamento, type GrupoFlat } from '@/lib/orcamentos'
 import { formatCurrency } from '@/lib/utils'
+import CelulaMoney from './CelulaMoney'
 
 export interface ContratoOpcao { id: string; nome: string }
 
 /** "previsao" tem o alternador mensal/anual embutido; "acompanhamento" é só leitura (previsto x executado até agora) */
 export type Visao = 'previsao' | 'acompanhamento'
 export type ModoPrevisao = 'mensal' | 'anual'
-
-const cellMoney: React.CSSProperties = {
-  width: '100%', minWidth: '5.5rem', boxSizing: 'border-box', border: '1px solid transparent', borderRadius: 6,
-  padding: '.3rem .35rem', font: 'inherit', fontVariantNumeric: 'tabular-nums', textAlign: 'right',
-  background: 'transparent', color: 'inherit',
-}
-
-function numeroOuZero(v: string) {
-  const n = parseFloat(v.replace(/\./g, '').replace(',', '.'))
-  return Number.isFinite(n) ? n : 0
-}
-
-/** Máscara de moeda enquanto digita: trata cada dígito novo como centavo entrando pela direita (ex.: "2000000" -> "20.000,00"). */
-function mascararDigitandoComoMoeda(valorDigitado: string) {
-  const digitos = valorDigitado.replace(/\D/g, '')
-  if (!digitos) return ''
-  const centavos = parseInt(digitos, 10)
-  const reais = Math.floor(centavos / 100)
-  return `${reais.toLocaleString('pt-BR')},${String(centavos % 100).padStart(2, '0')}`
-}
-
-function CelulaMoney({ valor, aria, onSalvar }: { valor: number; aria: string; onSalvar: (novo: number) => void }) {
-  const [texto, setTexto] = useState(valor ? valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '')
-  return (
-    <input
-      type="text" inputMode="decimal" value={texto} placeholder="0,00" style={cellMoney} aria-label={aria}
-      onChange={e => setTexto(mascararDigitandoComoMoeda(e.target.value))}
-      onBlur={() => onSalvar(numeroOuZero(texto))}
-    />
-  )
-}
 
 function classePct(valor: number) {
   return valor > 90 ? 'is-alto' : valor >= 40 ? 'is-medio' : 'is-baixo'

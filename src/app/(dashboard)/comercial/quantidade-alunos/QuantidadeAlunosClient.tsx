@@ -45,8 +45,8 @@ const th: React.CSSProperties = {
 const td: React.CSSProperties = {
   padding: '.35rem', borderBottom: '1px solid #f1f5f9', textAlign: 'center', verticalAlign: 'middle',
 }
-const tdSerie: React.CSSProperties = { ...td, minWidth: 60 }
-const thSerie: React.CSSProperties = { ...th, minWidth: 60 }
+const tdSerie: React.CSSProperties = { ...td, minWidth: 44, padding: '.3rem .2rem' }
+const thSerie: React.CSSProperties = { ...th, minWidth: 44, padding: '.5rem .3rem', whiteSpace: 'normal', lineHeight: 1.2 }
 
 function CelulaEditavel({ valor, onSalvar }: { valor: number; onSalvar: (novo: number) => void }) {
   const [texto, setTexto] = useState(String(valor || ''))
@@ -214,6 +214,10 @@ function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste,
     return acc
   }, [linhas])
   const totalGeral = linhas.reduce((soma, l) => soma + l.total, 0)
+  // Esconde colunas de série sem nenhum aluno em nenhuma escola desta tabela — evita
+  // estourar a largura da tela com segmentos que essas escolas nem oferecem (ex.:
+  // Infantil/Médio quando só há Fund. 1 e Fund. 2 na lista).
+  const seriesVisiveis = useMemo(() => SERIES_CONTRATO.filter(s => totaisColuna[s.campo] > 0), [totaisColuna])
 
   return (
     <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, overflow: 'hidden', borderTop: `4px solid ${corAccent}` }}>
@@ -237,11 +241,11 @@ function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste,
       </div>
 
       <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 1100 }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
           <thead>
             <tr>
-              <th style={{ ...th, textAlign: 'left', position: 'sticky', left: 0, background: '#f8fafc', zIndex: 1 }}>Escola</th>
-              {SERIES_CONTRATO.map(s => <th key={s.campo} style={thSerie} title={s.segmento}>{s.label}</th>)}
+              <th style={{ ...th, textAlign: 'left', position: 'sticky', left: 0, background: '#f8fafc', zIndex: 1, width: '13rem' }}>Escola</th>
+              {seriesVisiveis.map(s => <th key={s.campo} style={thSerie} title={s.segmento}>{s.label}</th>)}
               <th style={th}>Total</th>
               <th style={th}>Livro</th>
               <th style={th}></th>
@@ -250,8 +254,8 @@ function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste,
           <tbody>
             {linhas.map(l => (
               <tr key={l.escolaId}>
-                <td style={{ ...td, textAlign: 'left', fontSize: '.78rem', fontWeight: 700, color: '#002933', fontFamily: 'var(--font-inter,sans-serif)', position: 'sticky', left: 0, background: '#fff', whiteSpace: 'nowrap' }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <td style={{ ...td, textAlign: 'left', fontSize: '.78rem', fontWeight: 700, color: '#002933', fontFamily: 'var(--font-inter,sans-serif)', position: 'sticky', left: 0, background: '#fff', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, maxWidth: '100%' }}>
                     <NomeEditavel escolaId={l.escolaId} nome={l.nome} />
                     <Link href={`/comercial/escolas/${l.escolaId}/editar`} title="Abrir cadastro completo da escola" style={{ color: '#94a3b8', display: 'inline-flex', flexShrink: 0 }}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
@@ -260,7 +264,7 @@ function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste,
                     <TagVeterana escolaId={l.escolaId} veterana={l.marcadoVeterana} editavel={veteranaColunaExiste} />
                   </span>
                 </td>
-                {SERIES_CONTRATO.map(s => (
+                {seriesVisiveis.map(s => (
                   <td key={s.campo} style={tdSerie}>
                     <CelulaEditavel valor={l.qtds[s.campo] || 0} onSalvar={v => salvarCampo(l.escolaId, s.campo, v)} />
                   </td>
@@ -292,14 +296,14 @@ function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste,
               </tr>
             ))}
             {linhas.length === 0 && (
-              <tr><td colSpan={20} style={{ ...td, padding: '2rem', color: '#94a3b8', fontSize: '.8rem' }}>Nenhuma escola aqui ainda.</td></tr>
+              <tr><td colSpan={seriesVisiveis.length + 4} style={{ ...td, padding: '2rem', color: '#94a3b8', fontSize: '.8rem' }}>Nenhuma escola aqui ainda.</td></tr>
             )}
           </tbody>
           {linhas.length > 0 && (
             <tfoot>
               <tr>
                 <td style={{ ...td, textAlign: 'left', fontWeight: 800, fontSize: '.72rem', color: '#64748b', position: 'sticky', left: 0, background: '#f8fafc' }}>Total por série</td>
-                {SERIES_CONTRATO.map(s => (
+                {seriesVisiveis.map(s => (
                   <td key={s.campo} style={{ ...tdSerie, fontWeight: 800, fontSize: '.78rem', color: '#002933', background: '#f8fafc' }}>{totaisColuna[s.campo]}</td>
                 ))}
                 <td style={{ ...td, fontWeight: 800, color: corAccent, background: '#f8fafc' }}>{totalGeral}</td>
@@ -380,6 +384,10 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
   const totalGeral = linhasIniciais.reduce((soma, l) => soma + l.total, 0)
 
   const escolasLivro = linhasIniciais.filter(l => l.livroImpresso)
+  const seriesLivroVisiveis = useMemo(
+    () => SERIES_CONTRATO.filter(s => escolasLivro.some(l => (l.livroQtds[s.campo] || 0) > 0)),
+    [escolasLivro],
+  )
 
   const candidatos = buscaAdicionar.trim().length >= 2
     ? escolasDisponiveis.filter(e => e.nome.toLowerCase().includes(buscaAdicionar.trim().toLowerCase())).slice(0, 8)
@@ -548,23 +556,23 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
           </div>
         </div>
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 1000 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
             <thead>
               <tr>
-                <th style={{ ...th, textAlign: 'left', position: 'sticky', left: 0, background: '#f8fafc', zIndex: 1 }}>Escola</th>
-                {SERIES_CONTRATO.map(s => <th key={s.campo} style={thSerie}>{s.label}</th>)}
+                <th style={{ ...th, textAlign: 'left', position: 'sticky', left: 0, background: '#f8fafc', zIndex: 1, width: '13rem' }}>Escola</th>
+                {seriesLivroVisiveis.map(s => <th key={s.campo} style={thSerie}>{s.label}</th>)}
                 <th style={th}>Total</th>
               </tr>
             </thead>
             <tbody>
               {escolasLivro.map(l => (
                 <tr key={l.escolaId}>
-                  <td style={{ ...td, textAlign: 'left', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-inter,sans-serif)', position: 'sticky', left: 0, background: '#fff', whiteSpace: 'nowrap' }}>
+                  <td style={{ ...td, textAlign: 'left', fontSize: '.78rem', fontWeight: 700, fontFamily: 'var(--font-inter,sans-serif)', position: 'sticky', left: 0, background: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     <Link href={`/comercial/escolas/${l.escolaId}/editar`} style={{ color: '#002933', textDecoration: 'none' }} title="Editar dados cadastrais da escola">
                       {l.nome}
                     </Link>
                   </td>
-                  {SERIES_CONTRATO.map(s => (
+                  {seriesLivroVisiveis.map(s => (
                     <td key={s.campo} style={tdSerie}>
                       {livroQtdsColunaExiste
                         ? <CelulaEditavel valor={l.livroQtds[s.campo] || 0} onSalvar={v => salvarCampoLivro(l.escolaId, s.campo, v)} />
@@ -577,14 +585,14 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
                 </tr>
               ))}
               {escolasLivro.length === 0 && (
-                <tr><td colSpan={18} style={{ ...td, padding: '2rem', color: '#94a3b8', fontSize: '.8rem' }}>Nenhuma escola marcada com a tag "Livro" ainda.</td></tr>
+                <tr><td colSpan={seriesLivroVisiveis.length + 2} style={{ ...td, padding: '2rem', color: '#94a3b8', fontSize: '.8rem' }}>Nenhuma escola marcada com a tag "Livro" ainda.</td></tr>
               )}
             </tbody>
             {escolasLivro.length > 0 && (
               <tfoot>
                 <tr>
                   <td style={{ ...td, textAlign: 'left', fontWeight: 800, fontSize: '.72rem', color: '#64748b', position: 'sticky', left: 0, background: '#f8fafc' }}>Total por série</td>
-                  {SERIES_CONTRATO.map(s => (
+                  {seriesLivroVisiveis.map(s => (
                     <td key={s.campo} style={{ ...tdSerie, fontWeight: 800, fontSize: '.78rem', color: '#002933', background: '#f8fafc' }}>
                       {escolasLivro.reduce((soma, l) => soma + (l.livroQtds[s.campo] || 0), 0)}
                     </td>

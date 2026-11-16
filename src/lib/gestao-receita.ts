@@ -3,6 +3,28 @@ import { calcTotalAlunosContrato, calcValorTotalContrato } from '@/lib/contratos
 
 const MODELO_LABEL: Record<string, string> = { mensalidade: 'Mensalidade', kit_we_make: 'Kit We Make' }
 
+// Palavras genéricas de tipo de instituição ("Colégio", "Escola", "Instituto"...) e os conectores que
+// costumam vir logo depois ("Cristão", "de", "Educacional"...) — removidas em cadeia do início do nome
+// pra sobrar só o nome fantasia, evitando estouro de texto nas tabelas de receita.
+const PALAVRAS_GENERICAS_ESCOLA = [
+  'colegio', 'escola', 'instituto', 'centro',
+  'cristao', 'crista', 'educacional', 'cultural', 'educacao',
+  'de', 'da', 'do', 'das', 'dos', 'e',
+]
+
+function semAcento(s: string) {
+  return s.normalize('NFD').replace(/[̀-ͯ]/g, '')
+}
+
+export function nomeFantasiaEscola(nome: string): string {
+  const palavras = nome.trim().split(/\s+/)
+  let inicio = 0
+  while (inicio < palavras.length - 1 && PALAVRAS_GENERICAS_ESCOLA.includes(semAcento(palavras[inicio]).toLowerCase())) {
+    inicio++
+  }
+  return palavras.slice(inicio).join(' ') || nome
+}
+
 export interface LinhaReceita {
   id: string
   escola: string
@@ -96,7 +118,7 @@ export async function carregarReceita(): Promise<ResumoReceita> {
       const anos = ini && fim ? ((fim.getFullYear() - ini.getFullYear()) * 12 + (fim.getMonth() - ini.getMonth()) + 1) / 12 : (c.tempo_contrato ?? null)
       return {
         id: c.id as string,
-        escola: nomes.get(c.escola_id)?.nome ?? 'Escola sem cadastro',
+        escola: nomeFantasiaEscola(nomes.get(c.escola_id)?.nome ?? 'Escola sem cadastro'),
         uf: nomes.get(c.escola_id)?.estado ?? '',
         alunos: calcTotalAlunosContrato(c),
         anual,

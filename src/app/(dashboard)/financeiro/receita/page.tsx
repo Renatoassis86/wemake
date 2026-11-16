@@ -1,6 +1,8 @@
 import { carregarReceita } from '@/lib/gestao-receita'
 import { formatCurrency } from '@/lib/utils'
 import ProjecaoMensalTable from '@/components/financeiro/ProjecaoMensalTable'
+import ReceitaContratadaTable from '@/components/financeiro/ReceitaContratadaTable'
+import EmNegociacaoTable from '@/components/financeiro/EmNegociacaoTable'
 
 export const dynamic = 'force-dynamic'
 export const metadata = { title: 'Receita contratada · Gestão Financeira' }
@@ -38,53 +40,20 @@ export default async function ReceitaPage() {
         <div><dt>Valor médio por aluno/ano</dt><dd className="ac-kpi-m">{r.ticketAluno ? formatCurrency(r.ticketAluno) : '—'}</dd></div>
       </dl>
 
-      <div className="ac-table-wrap" tabIndex={0} role="region" aria-label="Receita por escola">
-        <table className="ac-table is-num">
-          <thead>
-            <tr>
-              <th scope="col">Escola</th><th scope="col">UF</th><th scope="col">Modelo</th><th scope="col">Alunos</th>
-              <th scope="col">Valor anual</th><th scope="col">Valor total (vigência)</th><th scope="col">Duração</th><th scope="col">% da receita</th>
-            </tr>
-          </thead>
-          <tbody>
-            {r.assinados.map(l => (
-              <tr key={l.id}>
-                <td>
-                  {l.escola}
-                  {l.veterana ? (
-                    <span style={{ marginLeft: '.5rem', fontSize: '.7rem', padding: '.1rem .45rem', borderRadius: '999px', background: '#f1f5f9', color: '#64748b' }}>
-                      Veterana
-                    </span>
-                  ) : null}
-                </td>
-                <td>{l.uf}</td>
-                <td>{l.modelo ?? '—'}</td>
-                <td>{l.alunos.toLocaleString('pt-BR')}</td>
-                <td>{l.anual ? formatCurrency(l.anual) : '—'}</td>
-                <td>{l.totalContrato ? formatCurrency(l.totalContrato) : '—'}</td>
-                <td>{l.anos ? `${Number(l.anos).toFixed(l.anos % 1 ? 1 : 0)} ${l.anos <= 1 ? 'ano' : 'anos'}` : '—'}</td>
-                <td>{r.receitaAnual && l.anual ? `${((l.anual / r.receitaAnual) * 100).toFixed(1).replace('.', ',')}%` : '—'}</td>
-              </tr>
-            ))}
-            <tr className="ac-total">
-              <td>Total</td><td /><td /><td>{r.alunos.toLocaleString('pt-BR')}</td>
-              <td>{r.receitaAnual ? formatCurrency(r.receitaAnual) : '—'}</td>
-              <td>{r.receitaTotalContratada ? formatCurrency(r.receitaTotalContratada) : '—'}</td>
-              <td /><td>{r.receitaAnual ? '100%' : '—'}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <ReceitaContratadaTable linhasIniciais={r.assinados.map(l => ({
+        id: l.id, escola: l.escola, uf: l.uf, modelo: l.modelo, alunos: l.alunos,
+        anual: l.anual, totalContrato: l.totalContrato, anos: l.anos, veterana: l.veterana,
+      }))} />
       {!r.assinados.length ? <p className="ac-vazio" style={{ marginTop: '1rem' }}>Nenhum contrato assinado com valor registrado ainda.</p> : null}
 
       <h2 className="ac-h3" style={{ marginTop: '3rem' }}>Projeção mensal</h2>
       <p className="ac-sec-lead">Os mesmos contratos distribuídos pelos 12 meses, no formato da planilha de planejamento financeiro.</p>
       <ProjecaoMensalTable
+        ano={2027}
         linhas={r.assinados.map(l => ({
           id: l.id, escola: l.escola, anual: l.anual, mensal: l.mensal,
           mesesReais: l.mesesReais, valoresPorAno: l.valoresPorAno, anos: l.anos,
         }))}
-        receitaAnual={r.receitaAnual} receitaMensal={r.receitaMensal}
       />
 
       {emNegociacao.length ? (
@@ -93,19 +62,9 @@ export default async function ReceitaPage() {
           <p className="ac-sec-lead">
             Contratos com valor já calculado, mas ainda sem assinatura: {formatCurrency(r.pipelineAnual)} por ano no total. Não entram na receita contratada.
           </p>
-          <div className="ac-table-wrap" tabIndex={0} role="region" aria-label="Contratos em negociação">
-            <table className="ac-table is-num">
-              <thead><tr><th scope="col">Escola</th><th scope="col">UF</th><th scope="col">Alunos</th><th scope="col">Valor anual</th><th scope="col">Situação</th></tr></thead>
-              <tbody>
-                {emNegociacao.map(l => (
-                  <tr key={l.id}>
-                    <td>{l.escola}</td><td>{l.uf}</td><td>{l.alunos.toLocaleString('pt-BR')}</td><td>{l.anual ? formatCurrency(l.anual) : '—'}</td>
-                    <td>{l.enviado ? 'Contrato enviado' : 'Em andamento'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <EmNegociacaoTable linhasIniciais={emNegociacao.map(l => ({
+            id: l.id, escola: l.escola, uf: l.uf, alunos: l.alunos, anual: l.anual, enviado: l.enviado,
+          }))} />
         </>
       ) : null}
     </>

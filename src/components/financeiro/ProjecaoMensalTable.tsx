@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import { formatCurrency } from '@/lib/utils'
+import CelulaMoney from './CelulaMoney'
+import { atualizarMesContrato } from '@/app/(dashboard)/financeiro/receita/actions'
 
 const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 
@@ -17,18 +19,30 @@ export interface LinhaProjecao {
   anos: number | null
 }
 
-export default function ProjecaoMensalTable({ linhas, receitaAnual, receitaMensal }: {
+export default function ProjecaoMensalTable({ linhas: linhasIniciais, ano }: {
   linhas: LinhaProjecao[]
-  receitaAnual: number
-  receitaMensal: number
+  ano: number
 }) {
   const [modo, setModo] = useState<'mensal' | 'anual'>('mensal')
+  const [linhas, setLinhas] = useState(linhasIniciais)
+  const [, startTransition] = useTransition()
   const maxAnos = Math.max(1, ...linhas.map(l => Math.ceil(l.anos ?? 1)))
 
   function valorAno(l: LinhaProjecao, indiceAno: number) {
     if (!l.anual) return 0
     return l.valoresPorAno?.[indiceAno] ?? l.anual
   }
+
+  function mesesDaLinha(l: LinhaProjecao) {
+    return l.mesesReais ?? Array(12).fill(l.mensal)
+  }
+
+  function onMes(id: string, mesIdx: number, valor: number) {
+    setLinhas(prev => prev.map(l => l.id === id ? { ...l, mesesReais: mesesDaLinha(l).map((v, i) => i === mesIdx ? valor : v) } : l))
+    startTransition(async () => { await atualizarMesContrato(id, ano, mesIdx + 1, valor) })
+  }
+
+  const totaisPorMes = MESES.map((_, i) => linhas.reduce((s, l) => s + (l.anual ? mesesDaLinha(l)[i] : 0), 0))
 
   return (
     <>
@@ -51,7 +65,13 @@ export default function ProjecaoMensalTable({ linhas, receitaAnual, receitaMensa
               <tr key={l.id}>
                 <td>{l.escola}</td>
                 {modo === 'mensal'
-                  ? (l.mesesReais ?? Array(12).fill(l.mensal)).map((v, i) => <td key={i}>{l.anual ? formatCurrency(v) : '—'}</td>)
+                  ? mesesDaLinha(l).map((v, i) => (
+                    <td key={i}>
+                      {l.anual || v
+                        ? <CelulaMoney valor={v} aria={`${l.escola} — ${MESES[i]}`} onSalvar={n => onMes(l.id, i, n)} style={{ minWidth: '4.2rem' }} />
+                        : '—'}
+                    </td>
+                  ))
                   : Array.from({ length: maxAnos }, (_, i) => (
                     <td key={i}>{i < Math.ceil(l.anos ?? 1) && l.anual ? formatCurrency(valorAno(l, i)) : '—'}</td>
                   ))}
@@ -60,7 +80,7 @@ export default function ProjecaoMensalTable({ linhas, receitaAnual, receitaMensa
             <tr className="ac-total">
               <td>Total</td>
               {modo === 'mensal'
-                ? MESES.map(m => <td key={m}>{receitaAnual ? formatCurrency(receitaMensal) : '—'}</td>)
+                ? totaisPorMes.map((v, i) => <td key={i}>{formatCurrency(v)}</td>)
                 : Array.from({ length: maxAnos }, (_, i) => (
                   <td key={i}>{formatCurrency(linhas.reduce((s, l) => s + (i < Math.ceil(l.anos ?? 1) ? valorAno(l, i) : 0), 0))}</td>
                 ))}
