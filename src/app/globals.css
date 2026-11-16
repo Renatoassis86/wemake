@@ -956,7 +956,7 @@ h1, h2, h3 { font-family: var(--font-cormorant, serif); }
    overflow-x:hidden do body (abaixo) corta esse excesso de forma invisível, sem
    nenhuma barra de rolagem nem como arrastar pra ver o resto — confirmado em
    iPad na tela de Priorização. Aqui o menu fica fixo e só o conteúdo rola. */
-.dashboard-content { margin-left: var(--sidebar-w, 250px); min-width: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.dashboard-content { margin-left: var(--sidebar-w, 250px); min-width: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; transition: margin-left .18s ease; }
 
 /* Mesmo motivo do min-width:0 acima: .mp-page-padding-x é o container raiz de cada
    página e também é filho flex de .dashboard-content (que usa flex-direction:column) —

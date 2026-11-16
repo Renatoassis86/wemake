@@ -13,7 +13,8 @@ import {
   Package, FlaskConical, BarChart2, Download,
   Bot, Table2, Info, FileSignature, ClipboardList,
   ExternalLink, GitBranch, Target, CalendarDays, FileAudio,
-  Upload, Database, BookOpen, Crosshair, Milestone
+  Upload, Database, BookOpen, Crosshair, Milestone,
+  PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react'
 
 import { AcademiaNav, ModuloLateral, SIDEBAR_CSS } from './SidebarContextual'
@@ -98,7 +99,7 @@ interface NavItemProps {
   wip?: boolean
 }
 
-function NavItem({ href, label, icon: Icon, active, badge, external, wip }: NavItemProps) {
+function NavItem({ href, label, icon: Icon, active, badge, external, wip, collapsed }: NavItemProps & { collapsed?: boolean }) {
   const baseStyle: React.CSSProperties = {
     display: 'flex', alignItems: 'center', gap: '.6rem',
     padding: '.5rem .9rem', margin: '1px 6px',
@@ -128,11 +129,13 @@ function NavItem({ href, label, icon: Icon, active, badge, external, wip }: NavI
         <Icon size={14} />
       </span>
 
-      <span style={{ flex: 1, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-        {label}
-      </span>
+      {!collapsed ? (
+        <span style={{ flex: 1, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {label}
+        </span>
+      ) : null}
 
-      {badge !== undefined && (
+      {!collapsed && badge !== undefined && (
         <span style={{
           marginLeft: 'auto', background: active ? 'rgba(255,255,255,.25)' : '#00889e',
           color: '#fff', fontSize: '.58rem', fontWeight: 800, padding: '.1rem .4rem',
@@ -142,7 +145,7 @@ function NavItem({ href, label, icon: Icon, active, badge, external, wip }: NavI
         </span>
       )}
 
-      {wip && (
+      {!collapsed && wip && (
         <span style={{
           marginLeft: 'auto', fontSize: '.55rem', fontWeight: 700,
           color: 'rgba(255,255,255,.3)', background: 'rgba(255,255,255,.06)',
@@ -153,20 +156,20 @@ function NavItem({ href, label, icon: Icon, active, badge, external, wip }: NavI
         </span>
       )}
 
-      {external && !wip && (
+      {!collapsed && external && !wip && (
         <ExternalLink size={10} style={{ marginLeft: 'auto', opacity: .4 }} />
       )}
     </>
   )
 
   if (external) {
-    return <a href={href} target="_blank" rel="noopener noreferrer" style={baseStyle}>{content}</a>
+    return <a href={href} target="_blank" rel="noopener noreferrer" style={baseStyle} title={collapsed ? label : undefined}>{content}</a>
   }
   if (wip) {
-    return <div style={baseStyle}>{content}</div>
+    return <div style={baseStyle} title={collapsed ? label : undefined}>{content}</div>
   }
   return (
-    <Link href={href} style={baseStyle}
+    <Link href={href} style={baseStyle} title={collapsed ? label : undefined}
       onMouseEnter={e => {
         if (!active) {
           e.currentTarget.style.background = 'rgba(255,255,255,.07)'
@@ -192,6 +195,27 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
   const router   = useRouter()
   const supabase = createClient()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [collapsed, setCollapsed] = useState(false)
+
+  // Recolhida (barra fina só com ícones) é uma preferência pessoal — persiste
+  // entre páginas e sessões. Lida do localStorage só depois de montar (evita
+  // divergir do HTML renderizado no servidor, que sempre assume expandida).
+  useEffect(() => {
+    const salvo = window.localStorage.getItem('wemake:sidebar-recolhida')
+    if (salvo === '1') {
+      setCollapsed(true)
+      document.documentElement.style.setProperty('--sidebar-w', '64px')
+    }
+  }, [])
+
+  function alternarRecolhida() {
+    setCollapsed(prev => {
+      const novo = !prev
+      document.documentElement.style.setProperty('--sidebar-w', novo ? '64px' : '256px')
+      window.localStorage.setItem('wemake:sidebar-recolhida', novo ? '1' : '0')
+      return novo
+    })
+  }
 
   useEffect(() => {
     (window as any).__toggleSidebar = () => setMobileOpen(p => !p)
@@ -248,7 +272,8 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
         position: 'fixed', top: 0, left: 0, bottom: 0,
         zIndex: 100, display: 'flex', flexDirection: 'column',
         borderRight: '1px solid rgba(255,255,255,.05)',
-        transition: 'transform .28s cubic-bezier(.4,0,.2,1)',
+        transition: 'transform .28s cubic-bezier(.4,0,.2,1), width .18s ease',
+        overflowX: 'hidden',
       }}>
 
       {/* Mobile close button — DENTRO do drawer (top-right) */}
@@ -271,48 +296,67 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
 
       {/* ── Brand ─────────────────────────────────────────────── */}
       <div className="sidebar-brand" style={{
-        padding: '1.1rem 1.1rem .9rem',
+        padding: collapsed ? '1.1rem .5rem .9rem' : '1.1rem 1.1rem .9rem',
         borderBottom: '1px solid rgba(255,255,255,.05)',
+        display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '.4rem',
       }}>
-        {emModulo ? (
-          <Image src="/academia/brand/logo-white.png" alt="We Make" width={640} height={148} style={{ height: 28, width: 'auto' }} />
-        ) : (
-          <Image
-            src="/academia/brand/logo-white.png"
-            alt="We Make"
-            width={640}
-            height={148}
-            style={{ objectFit: 'contain', objectPosition: 'left', opacity: .88, width: 'auto', height: 'auto' }}
-          />
-        )}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', marginTop: '.55rem' }}>
-          <span style={{
-            display: 'inline-block',
-            width: 6, height: 6, borderRadius: '50%', background: '#00ceff', flexShrink: 0,
-          }} />
-          <span style={{
-            fontSize: '.6rem', fontWeight: 700, letterSpacing: '.1em',
-            textTransform: 'uppercase', color: 'rgba(0,206,255,.85)',
-            fontFamily: 'var(--font-montserrat, sans-serif)',
-          }}>
-            {infoModulo ? infoModulo.nome : 'Gestão Comercial'}
-          </span>
-        </div>
+        {!collapsed ? (
+          <div style={{ minWidth: 0 }}>
+            {emModulo ? (
+              <Image src="/academia/brand/logo-white.png" alt="We Make" width={640} height={148} style={{ height: 28, width: 'auto' }} />
+            ) : (
+              <Image
+                src="/academia/brand/logo-white.png"
+                alt="We Make"
+                width={640}
+                height={148}
+                style={{ objectFit: 'contain', objectPosition: 'left', opacity: .88, width: 'auto', height: 'auto' }}
+              />
+            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', marginTop: '.55rem' }}>
+              <span style={{
+                display: 'inline-block',
+                width: 6, height: 6, borderRadius: '50%', background: '#00ceff', flexShrink: 0,
+              }} />
+              <span style={{
+                fontSize: '.6rem', fontWeight: 700, letterSpacing: '.1em',
+                textTransform: 'uppercase', color: 'rgba(0,206,255,.85)',
+                fontFamily: 'var(--font-montserrat, sans-serif)',
+              }}>
+                {infoModulo ? infoModulo.nome : 'Gestão Comercial'}
+              </span>
+            </div>
+          </div>
+        ) : null}
+        <button
+          onClick={alternarRecolhida}
+          className="sidebar-toggle-btn"
+          title={collapsed ? 'Expandir menu' : 'Recolher menu'}
+          aria-label={collapsed ? 'Expandir menu' : 'Recolher menu'}
+          style={{
+            width: 28, height: 28, borderRadius: 7, flexShrink: 0, marginLeft: collapsed ? 'auto' : 0, marginRight: collapsed ? 'auto' : 0,
+            background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.1)',
+            color: 'rgba(255,255,255,.55)', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          {collapsed ? <PanelLeftOpen size={14} /> : <PanelLeftClose size={14} />}
+        </button>
       </div>
 
       {/* ── Nav ───────────────────────────────────────────────── */}
       <nav style={{ flex: 1, overflowY: 'auto', padding: '.5rem 0 1rem' }}>
 
         {moduloAtual === 'academia' ? (
-          <AcademiaNav pathname={pathname} diagnosticos={diagnosticos} />
+          <AcademiaNav pathname={pathname} diagnosticos={diagnosticos} collapsed={collapsed} />
         ) : emModulo && moduloAtual ? (
-          <ModuloLateral slug={moduloAtual} pathname={pathname} />
+          <ModuloLateral slug={moduloAtual} pathname={pathname} collapsed={collapsed} />
         ) : (
         <>
 
         {/* ── Sobre + Tutorial — primeiras abas ────────────────── */}
-        <NavItem href="/sobre"    label="Plataforma We Make" icon={Info}     active={isActive('/sobre')} />
-        <NavItem href="/tutorial" label="Tutorial"     icon={BookOpen} active={isActive('/tutorial')} />
+        <NavItem href="/sobre"    label="Plataforma We Make" icon={Info}     active={isActive('/sobre')} collapsed={collapsed} />
+        <NavItem href="/tutorial" label="Tutorial"     icon={BookOpen} active={isActive('/tutorial')} collapsed={collapsed} />
         <NavDivider />
 
         {/* Sem seções "Gestão" (Administrativa/Financeira/Contratos/Pedidos)
@@ -320,7 +364,7 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
             as sessões dele. Os outros módulos ficam acessíveis pela página
             inicial ("Plataforma We Make"), não cruzados dentro de cada um. */}
 
-        <SectionLabel>CRM</SectionLabel>
+        {!collapsed ? <SectionLabel>CRM</SectionLabel> : null}
         {NAV_CRM.map(item => (
           <NavItem
             key={item.href}
@@ -330,11 +374,12 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
             active={item.external ? false : isActive(item.href)}
             badge={item.badge}
             external={item.external}
+            collapsed={collapsed}
           />
         ))}
 
         <NavDivider />
-        <SectionLabel>Processos</SectionLabel>
+        {!collapsed ? <SectionLabel>Processos</SectionLabel> : null}
         {NAV_PROCESS.map(item => (
           <NavItem
             key={item.href}
@@ -342,11 +387,12 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
             label={item.label}
             icon={item.icon}
             active={isActive(item.href)}
+            collapsed={collapsed}
           />
         ))}
 
         <NavDivider />
-        <SectionLabel>Ferramentas</SectionLabel>
+        {!collapsed ? <SectionLabel>Ferramentas</SectionLabel> : null}
         {NAV_TOOLS.map(item => (
           <NavItem
             key={item.href}
@@ -354,6 +400,7 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
             label={item.label}
             icon={item.icon}
             active={isActive(item.href)}
+            collapsed={collapsed}
           />
         ))}
 
@@ -361,12 +408,12 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
         {isAdmin && (
           <>
             <NavDivider />
-            <NavItem href="/adminpanel" label="Gestão de Usuários" icon={Settings} active={isActive('/adminpanel')} />
+            <NavItem href="/adminpanel" label="Gestão de Usuários" icon={Settings} active={isActive('/adminpanel')} collapsed={collapsed} />
           </>
         )}
 
         <NavDivider />
-        <SectionLabel>Em Desenvolvimento</SectionLabel>
+        {!collapsed ? <SectionLabel>Em Desenvolvimento</SectionLabel> : null}
         {NAV_WIP.map(item => (
           <NavItem
             key={item.href}
@@ -375,6 +422,7 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
             icon={item.icon}
             active={false}
             wip
+            collapsed={collapsed}
           />
         ))}
         </>
@@ -384,13 +432,13 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
       {/* ── User Footer ──────────────────────────────────────── */}
       <div style={{
         borderTop: '1px solid rgba(255,255,255,.05)',
-        padding: '.9rem 1rem',
+        padding: collapsed ? '.9rem .5rem' : '.9rem 1rem',
         background: 'rgba(0,0,0,.2)',
       }}>
         {profile ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '.65rem' }}>
+          <div style={{ display: 'flex', flexDirection: collapsed ? 'column' : 'row', alignItems: 'center', gap: '.65rem' }}>
             {/* Avatar */}
-            <div style={{
+            <div title={collapsed ? (profile.full_name || profile.email) : undefined} style={{
               width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
               background: 'linear-gradient(135deg, #00ceff, #00889e)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -404,23 +452,25 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
               }
             </div>
 
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{
-                color: 'rgba(255,255,255,.9)', fontSize: '.78rem', fontWeight: 600,
-                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                fontFamily: 'var(--font-montserrat, sans-serif)',
-              }}>
-                {profile.full_name?.split(' ').slice(0, 2).join(' ') || profile.email}
+            {!collapsed ? (
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  color: 'rgba(255,255,255,.9)', fontSize: '.78rem', fontWeight: 600,
+                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                  fontFamily: 'var(--font-montserrat, sans-serif)',
+                }}>
+                  {profile.full_name?.split(' ').slice(0, 2).join(' ') || profile.email}
+                </div>
+                <div style={{
+                  color: 'rgba(255,255,255,.3)', fontSize: '.62rem', textTransform: 'capitalize',
+                  fontFamily: 'var(--font-montserrat, sans-serif)',
+                  display: 'flex', alignItems: 'center', gap: '.3rem',
+                }}>
+                  <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e', flexShrink: 0 }} />
+                  {profile.role}
+                </div>
               </div>
-              <div style={{
-                color: 'rgba(255,255,255,.3)', fontSize: '.62rem', textTransform: 'capitalize',
-                fontFamily: 'var(--font-montserrat, sans-serif)',
-                display: 'flex', alignItems: 'center', gap: '.3rem',
-              }}>
-                <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e', flexShrink: 0 }} />
-                {profile.role}
-              </div>
-            </div>
+            ) : null}
 
             <button
               onClick={handleLogout}
@@ -448,10 +498,12 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
         ) : (
           <div style={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
             <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'rgba(255,255,255,.05)' }} />
-            <div style={{ flex: 1 }}>
-              <div style={{ height: 8, background: 'rgba(255,255,255,.07)', borderRadius: 4, marginBottom: 5, width: '70%' }} />
-              <div style={{ height: 6, background: 'rgba(255,255,255,.04)', borderRadius: 4, width: '40%' }} />
-            </div>
+            {!collapsed ? (
+              <div style={{ flex: 1 }}>
+                <div style={{ height: 8, background: 'rgba(255,255,255,.07)', borderRadius: 4, marginBottom: 5, width: '70%' }} />
+                <div style={{ height: 6, background: 'rgba(255,255,255,.04)', borderRadius: 4, width: '40%' }} />
+              </div>
+            ) : null}
           </div>
         )}
       </div>
@@ -480,6 +532,8 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
         #main-sidebar .sidebar-brand {
           padding-right: 60px; /* abre espaço pro botão close */
         }
+        /* Recolher não faz sentido no drawer mobile — lá a barra já abre/fecha sozinha */
+        .sidebar-toggle-btn { display: none !important; }
         .mobile-close-btn {
           display: flex !important;
           visibility: visible !important;

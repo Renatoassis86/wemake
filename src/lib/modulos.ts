@@ -11,6 +11,10 @@ export interface PaginaModulo {
   descricao: string
   href?: string
   status: 'disponível' | 'em estruturação'
+  /** chave pro ícone na barra lateral (ver ICONES_PAGINA em SidebarContextual.tsx) — string, não componente, pra não puxar lucide-react pro bundle do middleware (roda no Edge) */
+  icone?: string
+  /** nome da subseção que agrupa esta página na barra lateral (ex.: "Orçamento") — páginas sem grupo ficam soltas, como sempre foi */
+  grupo?: string
 }
 
 export interface Modulo {
@@ -94,14 +98,18 @@ export const MODULOS: Modulo[] = [
     home: '/financeiro',
     prefixos: ['/financeiro'],
     paginas: [
-      { nome: 'Visão geral', descricao: 'Indicadores de receita contratada e as áreas financeiras.', href: '/financeiro', status: 'disponível' },
-      { nome: 'Receita contratada', descricao: 'Receita anual e mensal de cada escola, calculada pelos contratos e pela quantidade de alunos.', href: '/financeiro/receita', status: 'disponível' },
-      { nome: 'Contas a receber e cobrança', descricao: 'Parcelas esperadas, recebidas e em atraso por escola.', status: 'em estruturação' },
-      { nome: 'Contas a pagar', descricao: 'Compromissos com fornecedores, equipe e impostos, com vencimento e situação.', status: 'em estruturação' },
-      { nome: 'Fluxo de caixa e conciliação bancária', descricao: 'Saldo projetado e realizado, conciliado com o extrato.', status: 'em estruturação' },
-      { nome: 'Faturamento e notas fiscais', descricao: 'Emissão e controle das notas por contrato.', status: 'em estruturação' },
-      { nome: 'Orçamento e planejamento financeiro', descricao: 'Planejamento anual por mês e por contrato, a partir da planilha de planejamento financeiro.', href: '/financeiro/orcamento', status: 'em estruturação' },
-      { nome: 'Centros de custo', descricao: 'Custo por frente, inclusive o centro de custo Academia proposto na Arquitetura de Processos.', status: 'em estruturação' },
+      { nome: 'Visão geral', descricao: 'Indicadores de receita contratada e as áreas financeiras.', href: '/financeiro', status: 'disponível', icone: 'dashboard' },
+      { nome: 'Receita contratada', descricao: 'Receita anual e mensal de cada escola, calculada pelos contratos e pela quantidade de alunos.', href: '/financeiro/receita', status: 'disponível', icone: 'receita' },
+      { nome: 'Contas a receber e cobrança', descricao: 'Parcelas esperadas, recebidas e em atraso por escola.', status: 'em estruturação', icone: 'a-receber' },
+      { nome: 'Contas a pagar', descricao: 'Compromissos com fornecedores, equipe e impostos, com vencimento e situação.', status: 'em estruturação', icone: 'a-pagar' },
+      { nome: 'Fluxo de caixa e conciliação bancária', descricao: 'Saldo projetado e realizado, conciliado com o extrato.', status: 'em estruturação', icone: 'fluxo-caixa' },
+      { nome: 'Faturamento e notas fiscais', descricao: 'Emissão e controle das notas por contrato.', status: 'em estruturação', icone: 'notas-fiscais' },
+      { nome: 'Receitas', descricao: 'Previsão e execução de receita por escola, em categorias de até 6 níveis.', href: '/financeiro/orcamento/receitas', status: 'disponível', icone: 'orcamento-receita', grupo: 'Orçamento' },
+      { nome: 'Despesas', descricao: 'Previsão e execução de despesa por categoria, do macro ao micro.', href: '/financeiro/orcamento/despesas', status: 'disponível', icone: 'orcamento-despesa', grupo: 'Orçamento' },
+      { nome: 'Proposta Orçamentária 2027', descricao: 'O consolidado de receita e despesa pra fechar a proposta do ano.', href: '/financeiro/orcamento/proposta', status: 'disponível', icone: 'proposta', grupo: 'Orçamento' },
+      { nome: 'Gestão Orçamentária', descricao: 'Previsto x realizado, remanejamentos, fluxo de caixa e indicadores financeiros.', href: '/financeiro/orcamento/gestao', status: 'em estruturação', icone: 'gestao-orcamentaria', grupo: 'Orçamento' },
+      { nome: 'Quantidade de alunos', descricao: 'Alunos por série em cada escola parceira, espelhado da Gestão Comercial, e pedido de livro pra gráfica.', href: '/financeiro/quantidade-alunos', status: 'disponível', icone: 'alunos' },
+      { nome: 'Centros de custo', descricao: 'Custo por frente, inclusive o centro de custo Academia proposto na Arquitetura de Processos.', status: 'em estruturação', icone: 'centros-custo' },
     ],
   },
   {

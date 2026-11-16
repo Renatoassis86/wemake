@@ -11,6 +11,7 @@ const CAMPOS_QTD = new Set(CAMPOS_QTD_LISTA)
 
 function revalidarTudo(escolaId: string) {
   revalidatePath('/comercial/quantidade-alunos', 'layout')
+  revalidatePath('/financeiro/quantidade-alunos', 'layout')
   revalidatePath('/comercial/metas', 'layout')
   revalidatePath('/comercial/funil-contratacao', 'layout')
   revalidatePath(`/comercial/escolas/${escolaId}`, 'layout')

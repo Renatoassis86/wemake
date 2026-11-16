@@ -10,6 +10,10 @@ export interface LinhaReceita {
   alunos: number
   anual: number
   mensal: number
+  /** valores reais de 2027 mês a mês, do Orçamento — null quando a escola não tem linha lá (usa anual/12) */
+  mesesReais: number[] | null
+  /** valor de cada ano de vigência (a partir do 1º ano com cobrança), quando o contrato declara escalonamento — null repete o anual */
+  valoresPorAno: number[] | null
   /** Valor total projetado pra toda a vigência do contrato (real quando o
    *  documento declara, estimado — anual × anos, sem reajuste — quando o
    *  contrato só declara o valor do 1º ano). */
@@ -63,6 +67,25 @@ export async function carregarReceita(): Promise<ResumoReceita> {
     ;(escolas ?? []).forEach((e: { id: string; nome: string; estado: string | null }) => nomes.set(e.id, { nome: e.nome, estado: e.estado }))
   }
 
+  // Meses reais de 2027, do módulo de Orçamento — mesma fonte que a grade
+  // editável usa, bem mais precisa que repetir anual/12 (que ignora início
+  // de vigência no meio do ano, gratuidade, rescisão etc).
+  const contratoIds = [...new Set((data ?? []).map((c: { id: string }) => c.id))]
+  const mesesPorContrato = new Map<string, number[]>()
+  if (contratoIds.length) {
+    const { data: linhasOrc } = await db.from('orcamentos_linhas').select('id, contrato_id').eq('ano', 2027).eq('tipo', 'receita').in('contrato_id', contratoIds)
+    const linhaIdParaContrato = new Map((linhasOrc ?? []).map((l: { id: string; contrato_id: string }) => [l.id, l.contrato_id]))
+    const linhaIds = [...linhaIdParaContrato.keys()]
+    if (linhaIds.length) {
+      const { data: valoresOrc } = await db.from('orcamentos_valores').select('linha_id, mes, valor').in('linha_id', linhaIds)
+      for (const l of linhaIds) mesesPorContrato.set(linhaIdParaContrato.get(l)!, Array(12).fill(0))
+      for (const v of valoresOrc ?? []) {
+        const contratoId = linhaIdParaContrato.get(v.linha_id)
+        if (contratoId) mesesPorContrato.get(contratoId)![v.mes - 1] = Number(v.valor)
+      }
+    }
+  }
+
   const linhas: LinhaReceita[] = (data ?? [])
     .filter((c: { declinou?: boolean }) => !c.declinou)
     .map((c: any) => {
@@ -78,6 +101,8 @@ export async function carregarReceita(): Promise<ResumoReceita> {
         alunos: calcTotalAlunosContrato(c),
         anual,
         mensal: anual / 12,
+        mesesReais: mesesPorContrato.get(c.id) ?? null,
+        valoresPorAno: Array.isArray(c.valores_por_ano) ? c.valores_por_ano : null,
         totalContrato,
         anos,
         vigenciaInicio: c.vigencia_inicio ?? null,

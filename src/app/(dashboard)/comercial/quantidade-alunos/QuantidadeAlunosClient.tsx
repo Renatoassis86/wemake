@@ -16,6 +16,8 @@ export interface EscolaLinha {
   uf: string | null
   livroImpresso: boolean
   veterana: boolean
+  /** marcação de verdade, independente de ter ou não atividade de funil em andamento pro ano que vem — é o que a tag exibida mostra */
+  marcadoVeterana: boolean
   total: number
   // true quando o Total vem de outro lugar do sistema (alunos_historico ou
   // cadastro básico) porque ninguém preencheu o detalhamento por série ainda
@@ -188,15 +190,14 @@ function TagVeterana({ escolaId, veterana, editavel }: { escolaId: string; veter
   return (
     <button
       onClick={toggle} disabled={!editavel || pending}
-      title={editavel ? 'Clique pra trocar entre Veterana e Nova' : 'Rode a migração add_contrato_marcado_veterana.sql pra poder editar'}
+      aria-label={veterana ? 'Veterana — clique pra marcar como Nova' : 'Nova — clique pra marcar como Veterana'}
+      title={editavel ? (veterana ? 'Veterana — clique pra trocar pra Nova' : 'Nova — clique pra trocar pra Veterana') : 'Rode a migração add_contrato_marcado_veterana.sql pra poder editar'}
       style={{
-        fontSize: '.6rem', fontWeight: 700, padding: '.08rem .4rem', borderRadius: 5, whiteSpace: 'nowrap',
-        border: 'none', cursor: editavel ? 'pointer' : 'not-allowed', opacity: pending ? .6 : 1,
-        background: veterana ? '#f1f5f9' : '#ecfdf5', color: veterana ? '#64748b' : '#059669',
+        width: 9, height: 9, minWidth: 9, borderRadius: '50%', padding: 0, flexShrink: 0,
+        border: 'none', cursor: editavel ? 'pointer' : 'not-allowed', opacity: pending ? .5 : 1,
+        background: veterana ? '#2563eb' : '#d97706',
       }}
-    >
-      {veterana ? 'Veterana' : 'Nova'}
-    </button>
+    />
   )
 }
 
@@ -224,6 +225,10 @@ function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste,
           <div style={{ fontSize: '.68rem', color: '#94a3b8', marginTop: '.15rem', fontFamily: 'var(--font-inter,sans-serif)' }}>{subtitulo}</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '.7rem', fontSize: '.64rem', color: '#64748b', fontFamily: 'var(--font-inter,sans-serif)' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.3rem' }}><span style={{ width: 9, height: 9, borderRadius: '50%', background: '#2563eb', display: 'inline-block' }} />Veterana</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.3rem' }}><span style={{ width: 9, height: 9, borderRadius: '50%', background: '#d97706', display: 'inline-block' }} />Nova</span>
+          </div>
           {acao}
           <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.3rem', fontWeight: 800, color: corAccent }}>
             {totalGeral.toLocaleString('pt-BR')} alunos
@@ -252,7 +257,7 @@ function TabelaAlunos({ titulo, subtitulo, corAccent, linhas, livroColunaExiste,
                       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
                     </Link>
                     <EstadoEditavel escolaId={l.escolaId} uf={l.uf} />
-                    <TagVeterana escolaId={l.escolaId} veterana={l.veterana} editavel={veteranaColunaExiste} />
+                    <TagVeterana escolaId={l.escolaId} veterana={l.marcadoVeterana} editavel={veteranaColunaExiste} />
                   </span>
                 </td>
                 {SERIES_CONTRATO.map(s => (
@@ -500,19 +505,24 @@ export function QuantidadeAlunosClient({ linhasIniciais, escolasDisponiveis, liv
         </div>
       )}
 
-      <TabelaAlunos
-        titulo="Parcerias Fechadas — Ano Corrente"
-        subtitulo="Escolas veteranas — parceria já efetivada, sem negócio novo em andamento pro ano que vem"
-        corAccent="#0f766e"
-        acao={<NovaEscolaInline cor="#0f766e" />}
-        linhas={linhasFechadas}
-        livroColunaExiste={livroColunaExiste}
-        veteranaColunaExiste={veteranaColunaExiste}
-        salvarCampo={salvarCampo}
-        remover={remover}
-        removendo={removendo}
-        removendoId={removendoId}
-      />
+      {/* Só aparece quando existe alguma veterana sem negócio 2027 em andamento
+          — hoje todas as veteranas já estão com minuta/contrato em movimento,
+          então essa tabela ficaria sempre vazia e sem sentido de mostrar. */}
+      {linhasFechadas.length > 0 && (
+        <TabelaAlunos
+          titulo="Parcerias Fechadas — Ano Corrente"
+          subtitulo="Escolas veteranas — parceria já efetivada, sem negócio novo em andamento pro ano que vem"
+          corAccent="#0f766e"
+          acao={<NovaEscolaInline cor="#0f766e" />}
+          linhas={linhasFechadas}
+          livroColunaExiste={livroColunaExiste}
+          veteranaColunaExiste={veteranaColunaExiste}
+          salvarCampo={salvarCampo}
+          remover={remover}
+          removendo={removendo}
+          removendoId={removendoId}
+        />
+      )}
 
       <TabelaAlunos
         titulo="Em Negociação — Ano 2027"

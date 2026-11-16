@@ -27,6 +27,15 @@
   --ac-amber-line: #e3b84f;
   --ac-amber-ink: #5c4208;
 
+  /* Paleta categórica dos 6 níveis de categoria do Orçamento — validada pro
+     daltonismo com o skill dataviz, nível 1 reaproveitando o ciano da marca. */
+  --ac-cat-1: #007e9b;
+  --ac-cat-2: #eb6834;
+  --ac-cat-3: #0ca30c;
+  --ac-cat-4: #eda100;
+  --ac-cat-5: #e34948;
+  --ac-cat-6: #6250d6;
+
   --ac-sans: var(--font-inter), 'Geist', system-ui, sans-serif;
   --ac-serif: var(--font-source-serif), 'Fraunces', Georgia, 'Times New Roman', serif;
 

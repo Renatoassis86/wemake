@@ -1,10 +1,9 @@
 import { carregarReceita } from '@/lib/gestao-receita'
 import { formatCurrency } from '@/lib/utils'
+import ProjecaoMensalTable from '@/components/financeiro/ProjecaoMensalTable'
 
 export const dynamic = 'force-dynamic'
 export const metadata = { title: 'Receita contratada · Gestão Financeira' }
-
-const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 
 export default async function ReceitaPage() {
   const r = await carregarReceita()
@@ -80,25 +79,13 @@ export default async function ReceitaPage() {
 
       <h2 className="ac-h3" style={{ marginTop: '3rem' }}>Projeção mensal</h2>
       <p className="ac-sec-lead">Os mesmos contratos distribuídos pelos 12 meses, no formato da planilha de planejamento financeiro.</p>
-      <div className="ac-table-wrap" tabIndex={0} role="region" aria-label="Projeção mensal por escola">
-        <table className="ac-table is-num is-meses">
-          <thead>
-            <tr><th scope="col">Escola</th>{MESES.map(m => <th key={m} scope="col">{m}</th>)}</tr>
-          </thead>
-          <tbody>
-            {r.assinados.map(l => (
-              <tr key={l.id}>
-                <td>{l.escola}</td>
-                {MESES.map(m => <td key={m}>{l.anual ? formatCurrency(l.mensal) : '—'}</td>)}
-              </tr>
-            ))}
-            <tr className="ac-total">
-              <td>Total</td>
-              {MESES.map(m => <td key={m}>{r.receitaAnual ? formatCurrency(r.receitaMensal) : '—'}</td>)}
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <ProjecaoMensalTable
+        linhas={r.assinados.map(l => ({
+          id: l.id, escola: l.escola, anual: l.anual, mensal: l.mensal,
+          mesesReais: l.mesesReais, valoresPorAno: l.valoresPorAno, anos: l.anos,
+        }))}
+        receitaAnual={r.receitaAnual} receitaMensal={r.receitaMensal}
+      />
 
       {emNegociacao.length ? (
         <>
