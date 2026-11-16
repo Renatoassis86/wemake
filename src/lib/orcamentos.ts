@@ -197,9 +197,15 @@ async function carregarOrcamento(ano: number, tipo: 'receita' | 'despesa'): Prom
   const linhasBase = linhasRaw ?? []
   const ids = linhasBase.map(l => l.id)
 
-  const { data: valoresRaw } = ids.length
-    ? await db.from('orcamentos_valores').select('linha_id, mes, valor, executado').in('linha_id', ids)
-    : { data: [] as { linha_id: string; mes: number; valor: number; executado: number }[] }
+  // Busca em lotes de 50 linha_ids: o Supabase/PostgREST corta qualquer select em 1000 linhas por
+  // padrão, e 50 linhas × 12 meses já passa disso em orçamentos grandes (despesa hoje tem 145 linhas,
+  // 1740 valores) — sem isso, os meses das últimas linhas somem silenciosamente do total.
+  const valoresRaw: { linha_id: string; mes: number; valor: number; executado: number }[] = []
+  for (let i = 0; i < ids.length; i += 50) {
+    const lote = ids.slice(i, i + 50)
+    const { data } = await db.from('orcamentos_valores').select('linha_id, mes, valor, executado').in('linha_id', lote)
+    if (data) valoresRaw.push(...data)
+  }
 
   const mesesPorLinha = new Map<string, number[]>()
   const executadoPorLinha = new Map<string, number[]>()
