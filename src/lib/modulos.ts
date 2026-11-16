@@ -100,7 +100,7 @@ export const MODULOS: Modulo[] = [
       { nome: 'Contas a pagar', descricao: 'Compromissos com fornecedores, equipe e impostos, com vencimento e situação.', status: 'em estruturação' },
       { nome: 'Fluxo de caixa e conciliação bancária', descricao: 'Saldo projetado e realizado, conciliado com o extrato.', status: 'em estruturação' },
       { nome: 'Faturamento e notas fiscais', descricao: 'Emissão e controle das notas por contrato.', status: 'em estruturação' },
-      { nome: 'Orçamento e planejamento financeiro', descricao: 'Planejamento anual por mês e por contrato, a partir da planilha de planejamento financeiro.', status: 'em estruturação' },
+      { nome: 'Orçamento e planejamento financeiro', descricao: 'Planejamento anual por mês e por contrato, a partir da planilha de planejamento financeiro.', href: '/financeiro/orcamento', status: 'em estruturação' },
       { nome: 'Centros de custo', descricao: 'Custo por frente, inclusive o centro de custo Academia proposto na Arquitetura de Processos.', status: 'em estruturação' },
     ],
   },
