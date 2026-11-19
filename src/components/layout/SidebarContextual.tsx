@@ -6,6 +6,8 @@ import {
   LayoutDashboard, Wallet, Inbox, ArrowUpFromLine, Activity, Receipt,
   TrendingUp, TrendingDown, FileBarChart, SlidersHorizontal, Users, Building2,
   Circle, ChevronDown,
+  Compass, CalendarRange, ListChecks, Route, KanbanSquare, CalendarDays, CalendarClock,
+  Laptop, ClipboardCheck, Package, Building, Contact,
 } from 'lucide-react'
 import { NAV_DOCS, NAV_GESTAO } from '@/lib/academia-nav'
 import { getModulo, type ModuloSlug, type PaginaModulo } from '@/lib/modulos'
@@ -29,6 +31,19 @@ const ICONES_PAGINA: Record<string, React.ComponentType<{ size?: number }>> = {
   'gestao-orcamentaria': SlidersHorizontal,
   'alunos': Users,
   'centros-custo': Building2,
+  'visao-geral-ac': Compass,
+  'ciclo-anual': CalendarRange,
+  'painel': LayoutDashboard,
+  'lista': ListChecks,
+  'jornada': Route,
+  'quadro': KanbanSquare,
+  'calendario': CalendarDays,
+  'agenda': CalendarClock,
+  'workspace': Laptop,
+  'diagnosticos': ClipboardCheck,
+  'produtos': Package,
+  'arquitetura-ac': Building,
+  'contatos': Contact,
 }
 
 function Rotulo({ children }: { children: React.ReactNode }) {
@@ -54,14 +69,15 @@ export function AcademiaNav({ pathname, diagnosticos, collapsed }: { pathname: s
     <>
       <Link href="/" className="sbc-voltar">{collapsed ? '←' : '← Todos os módulos'}</Link>
 
-      <Item href="/academia" ativo={pathname === '/academia'} collapsed={collapsed}>Visão geral</Item>
-      <Item href="/academia/ciclo-anual" ativo={pathname === '/academia/ciclo-anual'} collapsed={collapsed}>Ciclo Anual</Item>
+      <Item href="/academia" icone="visao-geral-ac" ativo={pathname === '/academia'} collapsed={collapsed}>Visão geral</Item>
+      <Item href="/academia/ciclo-anual" icone="ciclo-anual" ativo={pathname === '/academia/ciclo-anual'} collapsed={collapsed}>Ciclo Anual</Item>
 
       {!collapsed ? <Rotulo>Gestão da implantação</Rotulo> : null}
       {NAV_GESTAO.filter(i => !i.soDiagnosticos || diagnosticos).map(i => (
         <Item
           key={i.href}
           href={i.href}
+          icone={i.icone}
           ativo={i.href === '/academia/gestao' ? pathname === i.href : emGestao && pathname.startsWith(i.href)}
           collapsed={collapsed}
         >

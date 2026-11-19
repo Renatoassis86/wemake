@@ -35,16 +35,16 @@ export const NAV_DOCS: { grupo: string; itens: ItemNav[] }[] = [
   },
 ]
 
-export const NAV_GESTAO: { href: string; nome: string; soDiagnosticos?: boolean }[] = [
-  { href: '/academia/gestao', nome: 'Painel' },
-  { href: '/academia/gestao/lista', nome: 'Lista' },
-  { href: '/academia/gestao/jornada', nome: 'Jornada' },
-  { href: '/academia/gestao/quadro', nome: 'Quadro' },
-  { href: '/academia/gestao/calendario', nome: 'Calendário' },
-  { href: '/academia/gestao/agenda', nome: 'Agenda' },
-  { href: '/academia/gestao/workspace', nome: 'Workspace' },
-  { href: '/academia/gestao/diagnosticos', nome: 'Diagnósticos', soDiagnosticos: true },
-  { href: '/academia/gestao/produtos', nome: 'Lista de produtos', soDiagnosticos: true },
-  { href: '/academia/gestao/arquitetura', nome: 'Arquitetura', soDiagnosticos: true },
-  { href: '/academia/gestao/contatos-comerciais', nome: 'Contatos Comerciais', soDiagnosticos: true },
+export const NAV_GESTAO: { href: string; nome: string; icone: string; soDiagnosticos?: boolean }[] = [
+  { href: '/academia/gestao', nome: 'Painel', icone: 'painel' },
+  { href: '/academia/gestao/lista', nome: 'Lista', icone: 'lista' },
+  { href: '/academia/gestao/jornada', nome: 'Jornada', icone: 'jornada' },
+  { href: '/academia/gestao/quadro', nome: 'Quadro', icone: 'quadro' },
+  { href: '/academia/gestao/calendario', nome: 'Calendário', icone: 'calendario' },
+  { href: '/academia/gestao/agenda', nome: 'Agenda', icone: 'agenda' },
+  { href: '/academia/gestao/workspace', nome: 'Workspace', icone: 'workspace' },
+  { href: '/academia/gestao/diagnosticos', nome: 'Diagnósticos', icone: 'diagnosticos', soDiagnosticos: true },
+  { href: '/academia/gestao/produtos', nome: 'Lista de produtos', icone: 'produtos', soDiagnosticos: true },
+  { href: '/academia/gestao/arquitetura', nome: 'Arquitetura', icone: 'arquitetura-ac', soDiagnosticos: true },
+  { href: '/academia/gestao/contatos-comerciais', nome: 'Contatos Comerciais', icone: 'contatos', soDiagnosticos: true },
 ]
