@@ -33,8 +33,8 @@ const SECOES_TODAS = [
 const SECOES = SECOES_TODAS.filter(s => INCLUI_CONSUMIVEIS || s.id !== 'consumiveis')
 
 export default function DiagnosticoForm({
-  escola, statusInicial, respostasIniciais, arquivosIniciais,
-}: { escola: string; statusInicial: StatusDiagnostico; respostasIniciais: Respostas; arquivosIniciais: ArquivoPublico[] }) {
+  escola, statusInicial, respostasIniciais, arquivosIniciais, reutilizaveis, consumiveis,
+}: { escola: string; statusInicial: StatusDiagnostico; respostasIniciais: Respostas; arquivosIniciais: ArquivoPublico[]; reutilizaveis: Recurso[]; consumiveis: Recurso[] }) {
   const [r, setR] = useState<Respostas>(respostasIniciais)
   const [arquivos, setArquivos] = useState<ArquivoPublico[]>(arquivosIniciais)
   const [status, setStatus] = useState<StatusDiagnostico>(statusInicial)
@@ -87,7 +87,7 @@ export default function DiagnosticoForm({
   }, [])
 
   const comArquivo = useMemo(() => new Set(arquivos.map(a => a.evidencia_key)), [arquivos])
-  const prog = useMemo(() => andamento(r, comArquivo), [r, comArquivo])
+  const prog = useMemo(() => andamento(r, comArquivo, { reutilizaveis, consumiveis }), [r, comArquivo, reutilizaveis, consumiveis])
   const totalFeito = prog.reduce((s, p) => s + p.feitos, 0)
   const totalGeral = prog.reduce((s, p) => s + p.total, 0)
 
@@ -340,9 +340,9 @@ export default function DiagnosticoForm({
           </section>
 
           {/* ───────────── 4 e 5. Recursos ───────────── */}
-          <Recursos id="reutilizaveis" numero={4} titulo="Recursos que a escola já tem" kicker="Recursos reutilizáveis" itens={SCHEMA.reutilizaveis} r={r} set={set}
+          <Recursos id="reutilizaveis" numero={4} titulo="Recursos que a escola já tem" kicker="Recursos reutilizáveis" itens={reutilizaveis} r={r} set={set}
             dica="Informe só se a escola possui o item, a quantidade e, quando souber, a marca ou o modelo. Você não precisa decidir se serve: a We Make analisa." />
-          {INCLUI_CONSUMIVEIS ? <Recursos id="consumiveis" numero={5} titulo="Materiais de consumo" kicker="Recursos consumíveis" itens={SCHEMA.consumiveis} r={r} set={set}
+          {INCLUI_CONSUMIVEIS ? <Recursos id="consumiveis" numero={5} titulo="Materiais de consumo" kicker="Recursos consumíveis" itens={consumiveis} r={r} set={set}
             dica="Informe o que existe hoje em estoque. Os links de compra são só uma referência: itens equivalentes servem, desde que respeitem a especificação." /> : null}
         </fieldset>
 

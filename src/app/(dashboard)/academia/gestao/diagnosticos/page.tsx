@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { carregarGestao } from '@/lib/academia-data'
 import { fmtData } from '@/lib/academia-gestao'
 import { INCLUI_CONSUMIVEIS, STATUS_DIAGNOSTICO, SCHEMA } from '@/lib/diagnostico'
+import { carregarCatalogo } from '@/lib/catalogo'
 import { listarDiagnosticos, podeVerDiagnosticos } from '@/lib/diagnostico-staff'
 import { carregarAssinadas } from '@/lib/academia-comercial'
 import NovoDiagnosticoForm, { DiagnosticosPendentes } from '@/components/academia/gestao/NovoDiagnosticoForm'
@@ -27,7 +28,7 @@ export default async function DiagnosticosPage() {
     )
   }
 
-  const [d, g, assinadasTodas] = await Promise.all([listarDiagnosticos(), carregarGestao(), carregarAssinadas()])
+  const [d, g, assinadasTodas, catalogo] = await Promise.all([listarDiagnosticos(), carregarGestao(), carregarAssinadas(), carregarCatalogo()])
   if (d.setup) {
     return <SetupNotice erro={undefined} sql="academia_diagnostico.sql" />
   }
@@ -36,11 +37,11 @@ export default async function DiagnosticosPage() {
   const comDiagnostico = new Set(d.itens.map(i => norm(i.escola_nome)))
   const assinadas = assinadasTodas.filter(a => !comDiagnostico.has(norm(a.nome)))
 
-  const total = SCHEMA.ambiente.length + SCHEMA.briefing.length + SCHEMA.reutilizaveis.length + (INCLUI_CONSUMIVEIS ? SCHEMA.consumiveis.length : 0)
+  const total = SCHEMA.ambiente.length + SCHEMA.briefing.length + catalogo.reutilizaveis.length + (INCLUI_CONSUMIVEIS ? catalogo.consumiveis.length : 0)
   const feitos = (r: Record<string, string>) =>
     SCHEMA.ambiente.filter(a => r[a.key]).length +
     SCHEMA.briefing.filter(b => r[b.key]).length +
-    [...SCHEMA.reutilizaveis, ...(INCLUI_CONSUMIVEIS ? SCHEMA.consumiveis : [])].filter(i => r[i.key + '.p']).length
+    [...catalogo.reutilizaveis, ...(INCLUI_CONSUMIVEIS ? catalogo.consumiveis : [])].filter(i => r[i.key + '.p']).length
 
   return (
     <>

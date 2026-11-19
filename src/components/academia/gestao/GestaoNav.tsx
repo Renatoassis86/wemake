@@ -13,13 +13,14 @@ const ABAS: { href: string; label: string; exato?: boolean }[] = [
   { href: '/academia/gestao/workspace', label: 'Workspace' },
 ]
 const DIAG: { href: string; label: string; exato?: boolean } = { href: '/academia/gestao/diagnosticos', label: 'Diagnósticos' }
+const PRODUTOS: { href: string; label: string; exato?: boolean } = { href: '/academia/gestao/produtos', label: 'Produtos' }
 
 export default function GestaoNav({ diagnosticos = false }: { diagnosticos?: boolean }) {
   const path = usePathname()
   return (
     <div className="ac-subnav">
       <nav aria-label="Visões da gestão">
-        {(diagnosticos ? [...ABAS, DIAG] : ABAS).map(a => {
+        {(diagnosticos ? [...ABAS, DIAG, PRODUTOS] : ABAS).map(a => {
           const on = a.exato ? path === a.href : path.startsWith(a.href)
           return (
             <Link key={a.href} href={a.href} className={on ? 'is-on' : undefined} aria-current={on ? 'page' : undefined}>

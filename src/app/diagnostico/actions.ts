@@ -8,7 +8,7 @@ import {
   COOKIE_DIAGNOSTICO, SESSAO_HORAS, criarSessao, hashIp, hashPin, lerSessao, normalizarPin,
 } from '@/lib/diagnostico-auth'
 import {
-  BUCKET, CHAVES_ANEXO, CHAVES_ESCOLA, limparPatch, mapaDeRespostas, patchParaLinhasEscola,
+  BUCKET, CHAVES_ANEXO, chavesEscola, limparPatch, mapaDeRespostas, patchParaLinhasEscola,
   type Respostas, type RespostaBanco, type StatusDiagnostico,
 } from '@/lib/diagnostico'
 
@@ -102,7 +102,7 @@ export async function salvarRespostas(patch: Record<string, unknown>): Promise<{
   const s = await sessaoDiagnostico()
   if (!s) return { ok: false, erro: 'Sessão encerrada. Entre de novo com o PIN.' }
   if (s.status === 'em_analise' || s.status === 'concluido') return { ok: false, erro: 'Este diagnóstico já está em análise pela We Make.' }
-  const limpo = limparPatch(patch, CHAVES_ESCOLA)
+  const limpo = limparPatch(patch, await chavesEscola())
   if (!Object.keys(limpo).length) return { ok: true }
   const { data, error } = await createAdminClient().rpc('academia_salvar_respostas', { p_id: s.id, p_rows: patchParaLinhasEscola(limpo) })
   if (error || !data) return { ok: false, erro: 'Não foi possível salvar agora. Tentaremos de novo.' }

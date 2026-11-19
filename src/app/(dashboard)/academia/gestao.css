@@ -608,3 +608,8 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
   .ac-grid td[data-label="Ações"]::before { display: none; }
   .ac-grid .ac-cell-in, .ac-grid select, .ac-grid input { width: 100%; }
 }
+
+/* Lista de produtos — catálogo mestre do Diagnóstico do Espaço Maker */
+.ac-check-inline { display: inline-flex; align-items: center; gap: .4rem; font: 500 .85rem/1 var(--ac-sans); color: var(--ac-ink); cursor: pointer; }
+.prod-tabela tr.is-arquivado { opacity: .55; }
+.prod-tabela tr.is-arquivado td { font-style: italic; }

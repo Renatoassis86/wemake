@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { formatCurrency } from '@/lib/utils'
 import { BUCKET, SCHEMA, briefingVisivel, qtdAAdquirir, resumoParecer, type Recurso, type Respostas } from '@/lib/diagnostico'
+import { carregarCatalogo } from '@/lib/catalogo'
 import { sairDoPortal, sessaoPortal, type Anotacao } from '../actions'
 import FotosEnviadas, { type ArquivoPortal, type GrupoFotos } from './FotosEnviadas'
 import AdquiridoCheckbox from './AdquiridoCheckbox'
@@ -87,7 +88,8 @@ export default async function PainelPage() {
     .filter(chave => arquivosPorChave.has(chave))
     .map(chave => ({ chave, label: labelPorChave.get(chave) ?? chave, arquivos: arquivosPorChave.get(chave) ?? [] }))
 
-  const resumo = resumoParecer(parecer, num_alunos)
+  const catalogo = await carregarCatalogo()
+  const resumo = resumoParecer(parecer, num_alunos, catalogo)
 
   return (
     <div className="pt">
@@ -132,8 +134,8 @@ export default async function PainelPage() {
           <p className="pt-hint">Valores de referência, pesquisados pela We Make. Confira preço e disponibilidade no link antes de comprar — eles mudam com frequência. Vocês podem comprar itens equivalentes, respeitando a especificação técnica.</p>
         </section>
 
-        <TabelaRecursos titulo="Itens reutilizáveis (permanentes)" itens={SCHEMA.reutilizaveis} parecer={parecer} compras={compras} numAlunos={num_alunos} />
-        <TabelaRecursos titulo="Itens consumíveis (compra inicial)" itens={SCHEMA.consumiveis} parecer={parecer} compras={compras} numAlunos={num_alunos} />
+        <TabelaRecursos titulo="Itens reutilizáveis (permanentes)" itens={catalogo.reutilizaveis} parecer={parecer} compras={compras} numAlunos={num_alunos} />
+        <TabelaRecursos titulo="Itens consumíveis (compra inicial)" itens={catalogo.consumiveis} parecer={parecer} compras={compras} numAlunos={num_alunos} />
 
         {parecer['geral.arquitetura'] ? (
           <section className="pt-sec">

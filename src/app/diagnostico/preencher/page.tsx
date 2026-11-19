@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import { listarArquivosDaSessao, sair, sessaoDiagnostico } from '../actions'
+import { carregarCatalogo } from '@/lib/catalogo'
 import DiagnosticoForm from './DiagnosticoForm'
 
 export const dynamic = 'force-dynamic'
@@ -8,7 +9,7 @@ export const dynamic = 'force-dynamic'
 export default async function PreencherPage() {
   const s = await sessaoDiagnostico()
   if (!s) redirect('/diagnostico')
-  const arquivos = await listarArquivosDaSessao(s.id)
+  const [arquivos, catalogo] = await Promise.all([listarArquivosDaSessao(s.id), carregarCatalogo()])
 
   return (
     <>
@@ -29,6 +30,8 @@ export default async function PreencherPage() {
         statusInicial={s.status}
         respostasIniciais={s.respostas ?? {}}
         arquivosIniciais={arquivos}
+        reutilizaveis={catalogo.reutilizaveis}
+        consumiveis={catalogo.consumiveis}
       />
     </>
   )

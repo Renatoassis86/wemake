@@ -166,6 +166,7 @@ export const MODULOS: Modulo[] = [
       { nome: 'Documentos e processos', descricao: 'As 14 páginas dos processos, com o texto integral de cada documento.', href: '/academia', status: 'disponível' },
       { nome: 'Gestão da implantação', descricao: 'Painel Mestre, lista de tarefas, quadro, calendário, agenda e workspace.', href: '/academia/gestao', status: 'disponível' },
       { nome: 'Diagnósticos das escolas', descricao: 'Respostas, fotos e parecer do Diagnóstico do Espaço Maker.', href: '/academia/gestao/diagnosticos', status: 'disponível' },
+      { nome: 'Lista de produtos', descricao: 'Catálogo mestre do Diagnóstico do Espaço Maker — nome, descrição, link e preço, iguais pra toda escola.', href: '/academia/gestao/produtos', status: 'disponível' },
     ],
   },
   {

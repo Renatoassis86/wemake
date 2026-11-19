@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { carregarDiagnostico, podeVerDiagnosticos } from '@/lib/diagnostico-staff'
+import { carregarCatalogo } from '@/lib/catalogo'
 import AnaliseDiagnostico from '@/components/academia/gestao/AnaliseDiagnostico'
 
 export const dynamic = 'force-dynamic'
@@ -15,13 +16,13 @@ export default async function DiagnosticoDetalhe({ params }: { params: Promise<{
     )
   }
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound()
-  const r = await carregarDiagnostico(id)
+  const [r, catalogo] = await Promise.all([carregarDiagnostico(id), carregarCatalogo()])
   if (!r) notFound()
 
   return (
     <>
       <p className="ac-nota" style={{ marginTop: 0 }}><Link href="/academia/gestao/diagnosticos">← Todos os diagnósticos</Link></p>
-      <AnaliseDiagnostico diagnostico={r.diagnostico} arquivos={r.arquivos} anotacoes={r.anotacoes} arquivosEquipe={r.arquivosEquipe} arquivosMaker={r.arquivosMaker} />
+      <AnaliseDiagnostico diagnostico={r.diagnostico} arquivos={r.arquivos} anotacoes={r.anotacoes} arquivosEquipe={r.arquivosEquipe} arquivosMaker={r.arquivosMaker} catalogo={catalogo} />
     </>
   )
 }

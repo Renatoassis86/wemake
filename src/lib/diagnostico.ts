@@ -1,5 +1,6 @@
 import schemaJson from '@/content/academia/diagnostico-schema.json'
 import modeloQuantidadesJson from '@/content/academia/modelo-quantidades.json'
+import { carregarChavesCatalogo } from '@/lib/catalogo'
 
 /* ═══════════════════ Estrutura do Diagnóstico (da planilha oficial) ═══════════════════ */
 
@@ -78,25 +79,28 @@ export const STATUS_DIAGNOSTICO: Record<StatusDiagnostico, string> = {
 
 /* ═══════════════════════════ Chaves aceitas do lado da escola ═══════════════════════════ */
 
-/** Toda chave que a escola pode gravar. Qualquer outra é descartada no servidor. */
-export const CHAVES_ESCOLA: Set<string> = (() => {
+/** Toda chave que a escola pode gravar. Qualquer outra é descartada no servidor.
+ *  Async porque a parte de reutilizáveis/consumíveis vem do catálogo no banco
+ *  (academia_diag_itens, editável em "Lista de produtos") — não mais do JSON estático,
+ *  pra um produto novo valer sem precisar de deploy. */
+export async function chavesEscola(): Promise<Set<string>> {
   const k = new Set<string>()
   SCHEMA.ambiente.forEach(a => { k.add(a.key); if (a.detalhe) k.add(a.key + '.d') })
   SCHEMA.briefing.forEach(b => k.add(b.key))
   SCHEMA.medidas.forEach(m => { k.add(m.key); k.add(m.key + '.l') })
   SCHEMA.evidencias.forEach(e => k.add(e.key + '.o'))
-  ;[...SCHEMA.reutilizaveis, ...SCHEMA.consumiveis].forEach(r => { k.add(r.key + '.p'); k.add(r.key + '.q'); k.add(r.key + '.m') })
+  for (const chave of await carregarChavesCatalogo()) { k.add(chave + '.p'); k.add(chave + '.q'); k.add(chave + '.m') }
   return k
-})()
+}
 
 /** Campos do parecer que só a We Make preenche. */
-export const CHAVES_PARECER: Set<string> = (() => {
+export async function chavesParecer(): Promise<Set<string>> {
   const k = new Set<string>()
   SCHEMA.parecerAmbiente.forEach(p => { k.add(p.key + '.s'); k.add(p.key + '.o') })
-  ;[...SCHEMA.reutilizaveis, ...SCHEMA.consumiveis].forEach(r => { k.add(r.key + '.pc'); k.add(r.key + '.qa'); k.add(r.key + '.ac'); k.add(r.key + '.qr') })
+  for (const chave of await carregarChavesCatalogo()) { k.add(chave + '.pc'); k.add(chave + '.qa'); k.add(chave + '.ac'); k.add(chave + '.qr') }
   ;['geral.situacao', 'geral.reutilizaveis', 'geral.consumiveis', 'geral.memorial', 'geral.obs', 'geral.arquitetura'].forEach(x => k.add(x))
   return k
-})()
+}
 
 /** Itens que aceitam anexo: as evidências obrigatórias e cada linha do checklist de medidas ("Anexo ou link"). */
 export const CHAVES_ANEXO: Set<string> = new Set([...SCHEMA.evidencias.map(e => e.key), ...SCHEMA.medidas.map(m => m.key), ...SCHEMA.briefing.filter(b => b.anexo).map(b => b.key)])
@@ -135,8 +139,10 @@ export interface Andamento { secao: string; feitos: number; total: number }
 
 const preenchido = (v: string | undefined) => !!v && v.trim() !== ''
 
-/** Quanto a escola já respondeu em cada seção (para a barra de progresso). */
-export function andamento(r: Respostas, evidenciasComArquivo: Set<string>): Andamento[] {
+/** Quanto a escola já respondeu em cada seção (para a barra de progresso).
+ *  `reutilizaveis`/`consumiveis` vêm do catálogo carregado do banco (ver src/lib/catalogo.ts) —
+ *  quem chama (componente servidor) passa pra baixo, já que aqui não dá pra buscar direto. */
+export function andamento(r: Respostas, evidenciasComArquivo: Set<string>, catalogo: { reutilizaveis: Recurso[]; consumiveis: Recurso[] }): Andamento[] {
   const rec = (itens: Recurso[]) => itens.filter(i => preenchido(r[i.key + '.p'])).length
   return [
     { secao: 'Ambiente', feitos: SCHEMA.ambiente.filter(a => preenchido(r[a.key])).length, total: SCHEMA.ambiente.length },
@@ -146,8 +152,8 @@ export function andamento(r: Respostas, evidenciasComArquivo: Set<string>): Anda
       total: SCHEMA.briefing.filter(b => briefingVisivel(b, r)).length,
     },
     { secao: 'Evidências', feitos: SCHEMA.evidencias.filter(e => evidenciasComArquivo.has(e.key)).length, total: SCHEMA.evidencias.length },
-    { secao: 'Recursos reutilizáveis', feitos: rec(SCHEMA.reutilizaveis), total: SCHEMA.reutilizaveis.length },
-    ...(INCLUI_CONSUMIVEIS ? [{ secao: 'Consumíveis', feitos: rec(SCHEMA.consumiveis), total: SCHEMA.consumiveis.length }] : []),
+    { secao: 'Recursos reutilizáveis', feitos: rec(catalogo.reutilizaveis), total: catalogo.reutilizaveis.length },
+    ...(INCLUI_CONSUMIVEIS ? [{ secao: 'Consumíveis', feitos: rec(catalogo.consumiveis), total: catalogo.consumiveis.length }] : []),
   ]
 }
 
@@ -175,7 +181,7 @@ export function qtdAAdquirir(rec: Recurso, parecer: Respostas, numAlunos: number
   return Math.max(0, qtdRecomendada(rec, parecer, numAlunos) - num(parecer[rec.key + '.qa']))
 }
 
-export function resumoParecer(parecer: Respostas, numAlunos: number | null) {
+export function resumoParecer(parecer: Respostas, numAlunos: number | null, catalogo: { reutilizaveis: Recurso[]; consumiveis: Recurso[] }) {
   const calc = (itens: Recurso[]) => {
     let comAquisicao = 0
     let custo = 0
@@ -186,8 +192,8 @@ export function resumoParecer(parecer: Respostas, numAlunos: number | null) {
     }
     return { cadastrados: itens.length, comAquisicao, custo }
   }
-  const reu = calc(SCHEMA.reutilizaveis)
-  const con = calc(SCHEMA.consumiveis)
+  const reu = calc(catalogo.reutilizaveis)
+  const con = calc(catalogo.consumiveis)
   return { reu, con, total: reu.custo + con.custo }
 }
 
@@ -230,11 +236,11 @@ export type CampoCompras = (typeof CAMPOS_COMPRAS)[number]
  * e não pode passar pela troca de ponto por vírgula feita pra exibir preço. */
 const CAMPOS_COMPRAS_NUM = new Set<CampoCompras>(['melhor_preco', 'ml_preco', 'amazon_preco', 'link_original_preco'])
 
-export const CHAVES_COMPRAS: Set<string> = (() => {
+export async function chavesCompras(): Promise<Set<string>> {
   const k = new Set<string>()
-  ;[...SCHEMA.reutilizaveis, ...SCHEMA.consumiveis].forEach(r => CAMPOS_COMPRAS.forEach(c => k.add(r.key + '.' + c)))
+  for (const chave of await carregarChavesCatalogo()) CAMPOS_COMPRAS.forEach(c => k.add(chave + '.' + c))
   return k
-})()
+}
 
 /** 'reu-01.melhor_link' → { item_key: 'reu-01', campo: 'melhor_link' } */
 export function patchParaLinhasCompras(patch: Respostas): LinhaBanco[] {

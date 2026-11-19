@@ -7,7 +7,7 @@ import { randomBytes, randomUUID } from 'crypto'
 import { emailsAutorizados, gerarPin, hashPin } from '@/lib/diagnostico-auth'
 import { gerarSenhaNumerica, hashSenha } from '@/lib/diagnostico-portal-auth'
 import { auditar } from '@/lib/auditoria'
-import { BUCKET, CHAVES_COMPRAS, CHAVES_PARECER, STATUS_DIAGNOSTICO, limparPatch, patchParaLinhasCompras, patchParaLinhasParecer, type StatusDiagnostico } from '@/lib/diagnostico'
+import { BUCKET, chavesCompras, chavesParecer, STATUS_DIAGNOSTICO, limparPatch, patchParaLinhasCompras, patchParaLinhasParecer, type StatusDiagnostico } from '@/lib/diagnostico'
 
 /** Só quem está na lista (Renato e Dênis, a princípio) mexe nos diagnósticos e vê as respostas. */
 async function autorizado() {
@@ -82,7 +82,7 @@ export async function regenerarPin(id: string): Promise<CriarResultado> {
 export async function salvarParecer(id: string, patch: Record<string, unknown>): Promise<{ ok: boolean; erro?: string }> {
   const user = await autorizado()
   if (!user) return SEM_PERMISSAO
-  const limpo = limparPatch(patch, CHAVES_PARECER)
+  const limpo = limparPatch(patch, await chavesParecer())
   if (!Object.keys(limpo).length) return { ok: true }
   const { data, error } = await createAdminClient().rpc('academia_salvar_pareceres', { p_id: id, p_rows: patchParaLinhasParecer(limpo) })
   if (error) return { ok: false, erro: error.message }
@@ -93,7 +93,7 @@ export async function salvarParecer(id: string, patch: Record<string, unknown>):
 export async function salvarCompras(id: string, patch: Record<string, unknown>): Promise<{ ok: boolean; erro?: string }> {
   const user = await autorizado()
   if (!user) return SEM_PERMISSAO
-  const limpo = limparPatch(patch, CHAVES_COMPRAS)
+  const limpo = limparPatch(patch, await chavesCompras())
   if (!Object.keys(limpo).length) return { ok: true }
   const { data, error } = await createAdminClient().rpc('academia_salvar_compras', { p_id: id, p_rows: patchParaLinhasCompras(limpo) })
   if (error) return { ok: false, erro: error.message }

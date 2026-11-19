@@ -26,11 +26,11 @@ const tamanho = (b: number | null) => (!b ? '' : b < 1048576 ? `${Math.max(1, Ma
 
 const ehImagem = (mime: string | null) => !!mime && mime.startsWith('image/')
 
-export default function AnaliseDiagnostico({ diagnostico, arquivos, anotacoes, arquivosEquipe, arquivosMaker }: { diagnostico: DiagnosticoLinha; arquivos: ArquivoStaff[]; anotacoes: AnotacaoStaff[]; arquivosEquipe: ArquivoEquipeStaff[]; arquivosMaker: ArquivoEquipeStaff[] }) {
+export default function AnaliseDiagnostico({ diagnostico, arquivos, anotacoes, arquivosEquipe, arquivosMaker, catalogo }: { diagnostico: DiagnosticoLinha; arquivos: ArquivoStaff[]; anotacoes: AnotacaoStaff[]; arquivosEquipe: ArquivoEquipeStaff[]; arquivosMaker: ArquivoEquipeStaff[]; catalogo: { reutilizaveis: Recurso[]; consumiveis: Recurso[] } }) {
   const resp = diagnostico.respostas as Respostas
   const [p, setP] = useState<Respostas>(diagnostico.parecer as Respostas)
   const [foto, setFoto] = useState<ArquivoStaff | null>(null)
-  const semParecer = SCHEMA.reutilizaveis.some(i => !((diagnostico.parecer as Respostas)[i.key + '.pc'] || p[i.key + '.pc']))
+  const semParecer = catalogo.reutilizaveis.some(i => !((diagnostico.parecer as Respostas)[i.key + '.pc'] || p[i.key + '.pc']))
 
   const [status, setStatus] = useState<StatusDiagnostico>(diagnostico.status)
   const [salvo, setSalvo] = useState<'ok' | 'salvando' | 'erro'>('ok')
@@ -59,7 +59,7 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos, anotacoes, a
   const alunosRun = useRun()
   const numAlunosNum = numAlunos.trim() ? Number(numAlunos) : null
 
-  const resumo = useMemo(() => resumoParecer(p, numAlunosNum), [p, numAlunosNum])
+  const resumo = useMemo(() => resumoParecer(p, numAlunosNum, catalogo), [p, numAlunosNum, catalogo])
   const porEvidencia = (key: string) => arquivos.filter(a => a.evidencia_key === key)
   const mudarStatus = (novo: StatusDiagnostico) => st.run(async () => { const r = await definirStatus(diagnostico.id, novo); if (r.ok) setStatus(novo); return r.ok ? { ok: true as const } : { ok: false as const, erro: r.erro ?? 'Erro' } })
   const salvarNumAlunos = () => alunosRun.run(async () => {
@@ -198,12 +198,12 @@ export default function AnaliseDiagnostico({ diagnostico, arquivos, anotacoes, a
         </ul>
       </section>
 
-      <Tabela id="an-reu" titulo="4. Recursos reutilizáveis" itens={SCHEMA.reutilizaveis} resp={resp} p={p} set={set} numAlunos={numAlunosNum} />
-      <Tabela id="an-con" titulo="5. Recursos consumíveis" itens={SCHEMA.consumiveis} resp={resp} p={p} set={set} numAlunos={numAlunosNum} />
+      <Tabela id="an-reu" titulo="4. Recursos reutilizáveis" itens={catalogo.reutilizaveis} resp={resp} p={p} set={set} numAlunos={numAlunosNum} />
+      <Tabela id="an-con" titulo="5. Recursos consumíveis" itens={catalogo.consumiveis} resp={resp} p={p} set={set} numAlunos={numAlunosNum} />
 
       {/* Onde comprar cada item — aparece na devolutiva que a escola vê em /meu-diagnostico. */}
-      <TabelaCompras id={diagnostico.id} anchorId="an-compras" titulo="Onde comprar — reutilizáveis" itens={SCHEMA.reutilizaveis} inicial={diagnostico.compras} />
-      <TabelaCompras id={diagnostico.id} anchorId="an-compras-con" titulo="Onde comprar — consumíveis" itens={SCHEMA.consumiveis} inicial={diagnostico.compras} />
+      <TabelaCompras id={diagnostico.id} anchorId="an-compras" titulo="Onde comprar — reutilizáveis" itens={catalogo.reutilizaveis} inicial={diagnostico.compras} />
+      <TabelaCompras id={diagnostico.id} anchorId="an-compras-con" titulo="Onde comprar — consumíveis" itens={catalogo.consumiveis} inicial={diagnostico.compras} />
 
       {/* ── parecer do ambiente ── */}
       <section id="an-parecer" className="an-sec">
