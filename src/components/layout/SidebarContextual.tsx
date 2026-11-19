@@ -8,6 +8,8 @@ import {
   Circle, ChevronDown,
   Compass, CalendarRange, ListChecks, Route, KanbanSquare, CalendarDays, CalendarClock,
   Laptop, ClipboardCheck, Package, Building, Contact,
+  Calculator, Users2, ShoppingCart, Target, ClipboardList, School, FileText, Workflow,
+  FileCheck2, FileStack, PenLine, FileCheck, PackageSearch, Truck,
 } from 'lucide-react'
 import { NAV_DOCS, NAV_GESTAO } from '@/lib/academia-nav'
 import { getModulo, type ModuloSlug, type PaginaModulo } from '@/lib/modulos'
@@ -44,6 +46,22 @@ const ICONES_PAGINA: Record<string, React.ComponentType<{ size?: number }>> = {
   'produtos': Package,
   'arquitetura-ac': Building,
   'contatos': Contact,
+  'contabilidade': Calculator,
+  'pessoas': Users2,
+  'compras': ShoppingCart,
+  'estoque': Package,
+  'metas': Target,
+  'governanca': ClipboardList,
+  'escolas': School,
+  'registros': FileText,
+  'pipeline': Workflow,
+  'calculadora': Calculator,
+  'contratos-dados': FileCheck2,
+  'modelos': FileStack,
+  'assinatura': PenLine,
+  'certidoes': FileCheck,
+  'pedidos': PackageSearch,
+  'entregas': Truck,
 }
 
 function Rotulo({ children }: { children: React.ReactNode }) {
