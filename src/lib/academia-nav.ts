@@ -44,6 +44,7 @@ export const NAV_GESTAO: { href: string; nome: string; soDiagnosticos?: boolean 
   { href: '/academia/gestao/agenda', nome: 'Agenda' },
   { href: '/academia/gestao/workspace', nome: 'Workspace' },
   { href: '/academia/gestao/diagnosticos', nome: 'Diagnósticos', soDiagnosticos: true },
+  { href: '/academia/gestao/produtos', nome: 'Lista de produtos', soDiagnosticos: true },
   { href: '/academia/gestao/arquitetura', nome: 'Arquitetura', soDiagnosticos: true },
   { href: '/academia/gestao/contatos-comerciais', nome: 'Contatos Comerciais', soDiagnosticos: true },
 ]
