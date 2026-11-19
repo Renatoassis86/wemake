@@ -59,23 +59,12 @@ export default function ProdutosClient({ itensIniciais }: { itensIniciais: ItemC
           <section key={secao} className="an-sec">
             <h3 className="ac-h3">{NOME_SECAO[secao]}</h3>
             {[...porCategoria.entries()].sort(([a], [b]) => a.localeCompare(b, 'pt-BR')).map(([categoria, linhas]) => (
-              <div key={categoria} style={{ marginBottom: '1.4rem' }}>
-                <h4 className="ac-minor">{categoria}</h4>
-                <div className="ac-table-wrap is-wide" tabIndex={0} role="region" aria-label={`${NOME_SECAO[secao]} — ${categoria}`}>
-                  <table className="ac-table prod-tabela">
-                    <thead>
-                      <tr>
-                        <th scope="col">Chave</th><th scope="col">Nome</th><th scope="col">Descrição</th><th scope="col">Categoria</th>
-                        <th scope="col">Unid.</th><th scope="col">Qtd. base</th><th scope="col">Preço (R$)</th><th scope="col">Link de compra</th>
-                        <th scope="col"><span className="sr-only">Ações</span></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {linhas.map(item => (
-                        <LinhaProduto key={item.key} item={item} onSalvo={patch => atualizarLocal(item.key, patch)} />
-                      ))}
-                    </tbody>
-                  </table>
+              <div key={categoria} style={{ marginBottom: '1.6rem' }}>
+                <h4 className="ac-minor">{categoria} <small className="ac-hint">{linhas.length} {linhas.length === 1 ? 'item' : 'itens'}</small></h4>
+                <div className="prod-lista">
+                  {linhas.map(item => (
+                    <LinhaProduto key={item.key} item={item} onSalvo={patch => atualizarLocal(item.key, patch)} />
+                  ))}
                 </div>
               </div>
             ))}
@@ -135,41 +124,57 @@ function LinhaProduto({ item, onSalvo }: { item: ItemCatalogo; onSalvo: (patch: 
 
   if (!editando) {
     return (
-      <tr className={item.ativo ? undefined : 'is-arquivado'}>
-        <td><code>{item.key}</code></td>
-        <td><b>{item.item}</b>{!item.ativo ? <span className="ac-chip" data-s="arquivado" style={{ marginLeft: '.4rem' }}>Arquivado</span> : null}</td>
-        <td className="an-spec">{item.spec || <em className="an-vazio">—</em>}</td>
-        <td>{item.categoria || <em className="an-vazio">—</em>}</td>
-        <td>{item.unid || '—'}</td>
-        <td>{item.qtd ?? '—'}</td>
-        <td>{item.valor != null ? item.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '—'}</td>
-        <td>{item.ref ? <a className="ac-link" href={item.ref} target="_blank" rel="noopener noreferrer">Abrir ↗</a> : <em className="an-vazio">—</em>}</td>
-        <td>
-          <button type="button" className="ac-btn-sm" onClick={() => setEditando(true)}>Editar</button>
-          <button type="button" className="ac-btn-sm is-ghost" disabled={arquivo.pending} onClick={alternarArquivo}>
-            {arquivo.pending ? '...' : item.ativo ? 'Arquivar' : 'Restaurar'}
-          </button>
-        </td>
-      </tr>
+      <article className={`prod-card ${item.ativo ? '' : 'is-arquivado'}`}>
+        <div className="prod-card-top">
+          <div>
+            <code className="prod-chave">{item.key}</code>
+            <h5 className="prod-nome">{item.item}{!item.ativo ? <span className="ac-chip" data-s="arquivado" style={{ marginLeft: '.5rem' }}>Arquivado</span> : null}</h5>
+          </div>
+          <div className="prod-acoes">
+            <button type="button" className="ac-btn-sm" onClick={() => setEditando(true)}>Editar</button>
+            <button type="button" className="ac-btn-sm is-ghost" disabled={arquivo.pending} onClick={alternarArquivo}>
+              {arquivo.pending ? '...' : item.ativo ? 'Arquivar' : 'Restaurar'}
+            </button>
+          </div>
+        </div>
+        <p className="prod-desc">{item.spec || <em className="an-vazio">sem descrição</em>}</p>
+        <dl className="prod-meta">
+          <div><dt>Categoria</dt><dd>{item.categoria || '—'}</dd></div>
+          <div><dt>Unidade</dt><dd>{item.unid || '—'}</dd></div>
+          <div><dt>Qtd. base</dt><dd>{item.qtd ?? '—'}</dd></div>
+          <div><dt>Preço</dt><dd>{item.valor != null ? item.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '—'}</dd></div>
+          <div><dt>Link de compra</dt><dd>{item.ref ? <a className="ac-link" href={item.ref} target="_blank" rel="noopener noreferrer">Abrir ↗</a> : '—'}</dd></div>
+        </dl>
+      </article>
     )
   }
 
   return (
-    <tr>
-      <td><code>{item.key}</code></td>
-      <td><input className="ac-cell-in" value={titulo} onChange={e => setTitulo(e.target.value)} aria-label="Nome" /></td>
-      <td><input className="ac-cell-in" value={spec} onChange={e => setSpec(e.target.value)} aria-label="Descrição" /></td>
-      <td><input className="ac-cell-in" style={{ width: 120 }} value={categoria} onChange={e => setCategoria(e.target.value)} aria-label="Categoria" /></td>
-      <td><input className="ac-cell-in" style={{ width: 64 }} value={unid} onChange={e => setUnid(e.target.value)} aria-label="Unidade" /></td>
-      <td><input className="ac-cell-in an-num" style={{ width: 64 }} inputMode="decimal" value={qtd} onChange={e => setQtd(e.target.value.replace(/[^\d.,]/g, ''))} aria-label="Quantidade base" /></td>
-      <td><input className="ac-cell-in an-num" style={{ width: 80 }} inputMode="decimal" value={valor} onChange={e => setValor(e.target.value.replace(/[^\d.,]/g, ''))} aria-label="Preço" /></td>
-      <td><input className="ac-cell-in" value={ref} onChange={e => setRef(e.target.value)} aria-label="Link de compra" placeholder="https://" /></td>
-      <td>
+    <article className="prod-card is-editando">
+      <div className="prod-card-top">
+        <code className="prod-chave">{item.key}</code>
+        <input className="ac-cell-in prod-nome-in" value={titulo} onChange={e => setTitulo(e.target.value)} aria-label="Nome do produto" placeholder="Nome do produto" />
+      </div>
+      <label className="prod-campo">
+        <span>Descrição / especificação</span>
+        <textarea className="ac-cell-in" rows={2} value={spec} onChange={e => setSpec(e.target.value)} />
+      </label>
+      <div className="prod-form-grade">
+        <label className="prod-campo"><span>Categoria</span><input className="ac-cell-in" value={categoria} onChange={e => setCategoria(e.target.value)} /></label>
+        <label className="prod-campo"><span>Unidade</span><input className="ac-cell-in" value={unid} onChange={e => setUnid(e.target.value)} /></label>
+        <label className="prod-campo"><span>Qtd. base</span><input className="ac-cell-in an-num" inputMode="decimal" value={qtd} onChange={e => setQtd(e.target.value.replace(/[^\d.,]/g, ''))} /></label>
+        <label className="prod-campo"><span>Preço (R$)</span><input className="ac-cell-in an-num" inputMode="decimal" value={valor} onChange={e => setValor(e.target.value.replace(/[^\d.,]/g, ''))} /></label>
+      </div>
+      <label className="prod-campo">
+        <span>Link de compra</span>
+        <input className="ac-cell-in" value={ref} onChange={e => setRef(e.target.value)} placeholder="https://" />
+      </label>
+      <div className="ac-form-a" style={{ marginTop: '.5rem' }}>
         <button type="button" className="ac-btn-sm" disabled={salvar.pending} onClick={salvarEdicao}>{salvar.pending ? 'Salvando…' : 'Salvar'}</button>
         <button type="button" className="ac-btn-sm is-ghost" onClick={() => setEditando(false)}>Cancelar</button>
-        <Aviso erro={salvar.erro} />
-      </td>
-    </tr>
+      </div>
+      <Aviso erro={salvar.erro} />
+    </article>
   )
 }
 

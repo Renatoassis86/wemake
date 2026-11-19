@@ -611,5 +611,26 @@ select.ac-risco[data-r='Crítico'] { color: #b3261e; font-weight: 700; }
 
 /* Lista de produtos — catálogo mestre do Diagnóstico do Espaço Maker */
 .ac-check-inline { display: inline-flex; align-items: center; gap: .4rem; font: 500 .85rem/1 var(--ac-sans); color: var(--ac-ink); cursor: pointer; }
-.prod-tabela tr.is-arquivado { opacity: .55; }
-.prod-tabela tr.is-arquivado td { font-style: italic; }
+
+.prod-lista { display: flex; flex-direction: column; gap: .8rem; }
+.prod-card { background: #fff; border: 1px solid var(--ac-line); border-radius: 14px; padding: 1rem 1.2rem; }
+.prod-card.is-arquivado { opacity: .6; background: var(--ac-ivory); }
+.prod-card.is-editando { border-color: var(--ac-ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ac-ink) 8%, transparent); }
+.prod-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: .8rem; flex-wrap: wrap; margin-bottom: .5rem; }
+.prod-chave { font: 600 .68rem/1 var(--ac-sans); color: var(--ac-muted); background: var(--ac-ivory); border: 1px solid var(--ac-line-2); border-radius: 6px; padding: .2rem .4rem; white-space: nowrap; }
+.prod-nome { margin: .3rem 0 0; font: 700 1.05rem/1.3 var(--ac-sans); color: var(--ac-ink); }
+.prod-nome-in { display: block; width: 100%; margin-top: .3rem; font: 700 1.05rem/1.3 var(--ac-sans) !important; }
+.prod-acoes { display: flex; gap: .4rem; flex-shrink: 0; }
+.prod-desc { margin: 0 0 .7rem; font: 500 .92rem/1.5 var(--ac-sans); color: var(--ac-ink); white-space: pre-wrap; overflow-wrap: anywhere; }
+.prod-meta { display: flex; flex-wrap: wrap; gap: .4rem 1.6rem; margin: 0; }
+.prod-meta > div { min-width: 90px; }
+.prod-meta dt { font: 600 .62rem/1.3 var(--ac-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ac-muted); }
+.prod-meta dd { margin: 0; font: 600 .88rem/1.4 var(--ac-sans); color: var(--ac-ink); overflow-wrap: anywhere; }
+.prod-campo { display: block; margin: 0 0 .6rem; }
+.prod-campo span { display: block; font: 600 .66rem/1.3 var(--ac-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ac-muted); margin-bottom: .25rem; }
+.prod-campo textarea.ac-cell-in, .prod-campo input.ac-cell-in { width: 100%; }
+.prod-form-grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 0 1rem; }
+@media (max-width: 640px) {
+  .prod-card-top { flex-direction: column; }
+  .prod-acoes { width: 100%; }
+}
