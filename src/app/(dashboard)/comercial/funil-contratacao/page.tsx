@@ -377,7 +377,12 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
             <FunilVisual
               estagios={[
                 { fase: 'base' as const, label: 'Base de Leads', ...kpis.baseDeLeads },
-                ...FASE_FUNIL_ORDEM.map((fase, idx) => {
+                // Só as etapas principais do funil DE VENDAS — "Contrato Enviado" é só
+                // o passo imediatamente antes de "Contrato Assinado" (quase sempre o
+                // mesmo total dos dois, por isso some daqui) e "Implantação"/"Parceiro
+                // Ativo" são pós-venda (já aparecem à parte no KPI "Em Implantação").
+                ...(['negociacao', 'proposta_enviada', 'minuta', 'contrato_assinado'] as const).map(fase => {
+                  const idx = FASE_FUNIL_ORDEM.indexOf(fase)
                   const faseComOuMaisAvancadas = FASE_FUNIL_ORDEM.slice(idx)
                   const acumulado = faseComOuMaisAvancadas.reduce((acc, f) => ({
                     total:  acc.total  + kpis.porFase[f],

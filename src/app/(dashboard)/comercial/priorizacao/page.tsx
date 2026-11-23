@@ -1047,7 +1047,7 @@ export default async function PriorizacaoPage({ searchParams }: Props) {
                           fontSize: '.75rem', fontWeight: 700, color: '#065F46',
                           fontFamily: 'var(--font-montserrat, sans-serif)',
                         }}>
-                          {escola.total_alunos.toLocaleString('pt-BR')}
+                          {escola.alunosEfetivo.toLocaleString('pt-BR')}
                         </span>
                       </td>
                       <td data-label="Ações" style={{ padding: '.6rem 1rem' }}>

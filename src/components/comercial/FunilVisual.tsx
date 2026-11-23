@@ -24,12 +24,13 @@ const TEMP_COR: Record<LeadTemperatura, string> = {
  */
 export function FunilVisual({ estagios }: { estagios: FunilVisualEstagio[] }) {
   const maxTotal = Math.max(1, ...estagios.map(e => e.total))
-  const larguraMin = 18 // % — nunca deixa a base ficar invisível quando total > 0
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem', alignItems: 'center', padding: '.5rem 0' }}>
       {estagios.map((e, idx) => {
-        const larguraPct = e.total > 0 ? Math.max(larguraMin, (e.total / maxTotal) * 100) : larguraMin * 0.6
+        // Proporcional de verdade — o único "piso" é o minWidth (160px) logo abaixo,
+        // só pra não deixar a barra sumir quando o total for muito pequeno perto do maior.
+        const larguraPct = (e.total / maxTotal) * 100
         const somaTemp = e.quente + e.morno + e.frio
         return (
           <div key={e.fase} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
