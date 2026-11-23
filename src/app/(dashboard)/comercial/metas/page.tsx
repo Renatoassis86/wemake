@@ -94,10 +94,18 @@ export default async function MetasPage() {
   // da página Funil de Contratação), para as duas páginas nunca mostrarem
   // números diferentes para a mesma coisa ──────────────────────────────
 
-  // Reuniões = TODOS os registros de contato, sem deduplicar por escola — a
-  // mesma escola pode ter várias reuniões e cada uma conta. Vem de
-  // funil.kpis (já somado com o client admin) em vez de registros.length
-  // aqui, pra não depender da mesma query afetada por RLS.
+  // Esta tela mede o FLUXO da campanha 2027 (prospecção, propostas, minutas,
+  // contratos NOVOS) — não o ESTOQUE que a We Make já tinha antes dela
+  // (escolas veteranas, com contrato antigo em vigor ou renovado, ver
+  // marcado_veterana em funil-contratacao.ts). Toda meta de sprint abaixo usa
+  // só `linhasCampanha`, sem veteranas — senão uma escola que já era parceira
+  // antes de 2027 contaria como "nova" na meta de 26 escolas.
+  const linhasCampanha = funil.linhas.filter(l => !l.marcado_veterana)
+
+  // Reuniões = TODOS os registros de contato da campanha, sem deduplicar por
+  // escola — a mesma escola pode ter várias reuniões e cada uma conta. Vem de
+  // funil.kpis (já somado com o client admin, e já sem veteranas) em vez de
+  // registros.length aqui, pra não depender da mesma query afetada por RLS.
   const totalReunioes = funil.kpis.totalReunioes
 
   // Propostas enviadas — qualquer escola com proposta gerada pela Calculadora
@@ -105,31 +113,40 @@ export default async function MetasPage() {
   // PDF/e-mail fora da Calculadora, ex.: leva antiga registrada só na planilha
   // externa) — mesmo critério que promove a fase pra "Proposta Enviada" no
   // Funil de Contratação.
-  const propostasEnviadas = funil.linhas.filter(l => l.proposta_id !== null || l.proposta_enviada_manual).length
+  const propostasEnviadas = linhasCampanha.filter(l => l.proposta_id !== null || l.proposta_enviada_manual).length
   const valorPipelinePropostas = funil.kpis.valorPipelineTotal
 
   // Minutas contratuais enviadas — contagem cumulativa (independente de já ter
   // avançado pra assinatura)
-  const minutasEnviadas = funil.linhas.filter(l => l.minuta_enviada).length
+  const minutasEnviadas = linhasCampanha.filter(l => l.minuta_enviada).length
 
-  // ✅ NOVAS ESCOLAS PARCEIRAS = contrato assinado por ambas as partes
-  const escolasAssinadas = funil.linhas.filter(l => l.contrato_assinado)
+  // ✅ NOVAS ESCOLAS PARCEIRAS = contrato assinado por ambas as partes, de
+  // escola que NÃO era veterana — essas são o ganho real da campanha 2027.
+  const escolasAssinadas = linhasCampanha.filter(l => l.contrato_assinado)
   const qtdEscolasNovas = escolasAssinadas.length
 
   // Escolas em minuta, aguardando assinatura (pipeline avançado)
-  const qtdEscolasMinuta = funil.linhas.filter(l => l.minuta_enviada && !l.contrato_assinado).length
+  const qtdEscolasMinuta = linhasCampanha.filter(l => l.minuta_enviada && !l.contrato_assinado).length
 
-  // Alunos rumo à meta — soma o porte de toda escola que já recebeu minuta OU
-  // contrato (assinado ou não): a partir da minuta o negócio está avançado o
-  // suficiente pra contar como comprometido rumo à meta de 4.000 alunos.
-  const alunosMeta = funil.linhas
+  // Alunos rumo à meta — soma o porte de toda escola NOVA (não veterana) que já
+  // recebeu minuta OU contrato (assinado ou não): a partir da minuta o negócio
+  // está avançado o suficiente pra contar como comprometido rumo à meta de
+  // 4.000 alunos. Estoque de veteranas não entra aqui — essa meta é sobre
+  // alunos conquistados pela campanha, não sobre quem já era parceiro.
+  const alunosMeta = linhasCampanha
     .filter(l => l.minuta_enviada || l.contrato_enviado || l.contrato_assinado)
     .reduce((soma, l) => soma + (l.alunos_cadastro || 0), 0)
 
-  // Alunos ativos hoje — soma só das escolas com contrato JÁ ASSINADO (parceiras
-  // de verdade, veteranas ou recém-assinadas) — cresce sozinho a cada novo
-  // contrato assinado, sem precisar de número manual.
-  const alunosAtivosHoje = escolasAssinadas.reduce((soma, l) => soma + (l.alunos_cadastro || 0), 0)
+  // Alunos ativos hoje — headcount operacional (não é meta de sprint): soma de
+  // TODA escola com contrato já assinado, veterana ou não. Aqui, ao contrário
+  // das metas acima, o estoque anterior entra de propósito — é "quantos
+  // alunos atendemos hoje", não "quantos a campanha 2027 trouxe". Por isso
+  // vem quebrado em duas partes (estoque x novas), nunca como um total único
+  // sem explicação — ver uso abaixo.
+  const escolasVeteranasAssinadas = funil.linhas.filter(l => l.marcado_veterana && l.contrato_assinado)
+  const alunosEstoqueVeteranas = escolasVeteranasAssinadas.reduce((soma, l) => soma + (l.alunos_cadastro || 0), 0)
+  const alunosNovosCampanha = escolasAssinadas.reduce((soma, l) => soma + (l.alunos_cadastro || 0), 0)
+  const alunosAtivosHoje = alunosEstoqueVeteranas + alunosNovosCampanha
 
   // Percentuais
   const pctReunioes  = Math.round((totalReunioes    / METAS.reunioes_meta)      * 100)
@@ -198,7 +215,7 @@ export default async function MetasPage() {
                 </span>
               </div>
               <div style={{ fontSize: '.72rem', color: 'rgba(255,255,255,.45)', marginTop: '.4rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
-                Soma automática das escolas com minuta ou contrato enviado — atualiza sozinho conforme o funil avança
+                Soma automática das escolas NOVAS (não veteranas) com minuta ou contrato enviado — atualiza sozinho conforme o funil avança
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -287,8 +304,13 @@ export default async function MetasPage() {
             <div style={{ width: 28, height: 28, borderRadius: 7, background: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
             </div>
-            <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#002933' }}>
-              Funil de Conversão do Sprint
+            <div>
+              <div style={{ fontFamily: 'var(--font-montserrat,sans-serif)', fontSize: '.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.07em', color: '#002933' }}>
+                Funil de Conversão do Sprint
+              </div>
+              <div style={{ fontSize: '.68rem', color: '#64748b', marginTop: '.15rem', fontFamily: 'var(--font-inter,sans-serif)' }}>
+                Só o fluxo da campanha 2027 — escolas veteranas (parceiras antes da campanha) não entram aqui
+              </div>
             </div>
           </div>
           <div style={{ padding: '1.5rem 1.75rem' }}>
@@ -321,7 +343,7 @@ export default async function MetasPage() {
             cor="#16a34a"
             bg="#f0fdf4"
             border="#86efac"
-            sub="soma de todas as escolas com contrato assinado — veteranas + novas, cresce sozinho a cada contrato assinado"
+            sub={`estoque (veteranas): ${alunosEstoqueVeteranas.toLocaleString('pt-BR')} · novas (campanha 2027): ${alunosNovosCampanha.toLocaleString('pt-BR')}`}
             href="/comercial/contratos"
             icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
           />

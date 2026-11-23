@@ -564,8 +564,10 @@ export async function getFunilContratacao(): Promise<FunilContratacaoResult> {
   // Total de reuniões/contatos registrados — soma de TODAS as escolas ativas
   // (não só as que já entraram em negociação), sem deduplicar por escola. Vem
   // daqui (admin) em vez de uma query própria da página porque `registros`
-  // tem RLS restritiva pro client autenticado comum.
-  const totalReunioes = linhasTodas.reduce((soma, l) => soma + l.reunioes_total, 0)
+  // tem RLS restritiva pro client autenticado comum. Exclui veteranas: esse
+  // número alimenta a meta de prospecção da campanha 2027 (Metas Comerciais),
+  // e reunião de acompanhamento com escola já parceira não é prospecção nova.
+  const totalReunioes = linhasTodas.filter(l => !l.marcado_veterana).reduce((soma, l) => soma + l.reunioes_total, 0)
 
   return {
     linhas,
