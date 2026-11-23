@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { moduloDoCaminho, moduloPermitido } from '@/lib/modulos'
+import { acessoRestritoDoUsuario, caminhoPermitido } from '@/lib/acesso-restrito'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -88,6 +89,17 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // Acesso restrito por e-mail: só abre as páginas da lista dele, mesmo dentro
+  // de um módulo liberado a "todos" (ex.: comercial) — roda antes do gate por
+  // módulo, que é mais permissivo e não barraria essas rotas sozinho.
+  const restricao = user ? acessoRestritoDoUsuario(user.email) : null
+  if (restricao && !isPublic && pathname !== restricao.home && !caminhoPermitido(restricao, pathname)) {
+    const url = request.nextUrl.clone()
+    url.pathname = restricao.home
+    url.search = ''
+    return NextResponse.redirect(url)
+  }
+
   // Módulos restritos: só entra quem está na lista do módulo (vale para páginas e ações)
   if (user && !isPublic) {
     const modulo = moduloDoCaminho(pathname)
@@ -99,10 +111,11 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Usuário logado em /login → leva para o Hub (não mais /comercial direto)
+  // Usuário logado em /login → leva para o Hub (não mais /comercial direto),
+  // exceto quem tem acesso restrito, que vai direto pra home dele
   if (user && pathname === '/login') {
     const url = request.nextUrl.clone()
-    url.pathname = '/'
+    url.pathname = restricao ? restricao.home : '/'
     return NextResponse.redirect(url)
   }
 

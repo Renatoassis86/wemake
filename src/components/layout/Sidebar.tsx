@@ -10,8 +10,8 @@ import Image from 'next/image'
 import {
   LayoutDashboard, School, Users, FileText, Activity,
   Kanban, Calculator, LogOut, Settings,
-  Package, FlaskConical, BarChart2, Download,
-  Bot, Table2, Info, FileSignature, ClipboardList,
+  Download,
+  Table2, Info, FileSignature, ClipboardList,
   ExternalLink, GitBranch, Target, CalendarDays, FileAudio,
   Upload, Database, BookOpen, Crosshair, Milestone,
   PanelLeftClose, PanelLeftOpen,
@@ -19,6 +19,7 @@ import {
 
 import { AcademiaNav, ModuloLateral, SIDEBAR_CSS } from './SidebarContextual'
 import { moduloDoCaminho, getModulo } from '@/lib/modulos'
+import { acessoRestritoDoUsuario, caminhoPermitido } from '@/lib/acesso-restrito'
 
 interface SidebarProps { profile: Profile | null; diagnosticos?: boolean }
 
@@ -63,12 +64,8 @@ const NAV_TOOLS = [
   { href: '/exports',             label: 'Downloads',        icon: Download        },
 ]
 
-const NAV_WIP = [
-  { href: '/estoque',     label: 'Estoque',       icon: Package    },
-  { href: '/amostras',    label: 'Amostras',      icon: FlaskConical },
-  { href: '/dashboards',  label: 'BI / Analytics',icon: BarChart2  },
-  { href: '/ai-bob',      label: 'ALMA — IA',     icon: Bot        },
-]
+// Estoque, Amostras, BI/Analytics e ALMA-IA ficaram de fora da barra lateral
+// de propósito — são frentes em construção, sem nada pra mostrar ainda.
 
 // ── Subcomponents ─────────────────────────────────────────────────────────────
 
@@ -249,6 +246,12 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
   // Gestão de Usuários visível apenas para o administrador principal
   const isAdmin = profile?.email === 'contato@wemake.tec.br' || profile?.email === 'renato086@gmail.com'
 
+  // Acesso restrito (ex.: consultor externo): só mostra os itens de menu que ele pode abrir
+  const restricao = acessoRestritoDoUsuario(profile?.email)
+  const navCrm = restricao ? NAV_CRM.filter(i => caminhoPermitido(restricao, i.href)) : NAV_CRM
+  const navProcess = restricao ? NAV_PROCESS.filter(i => caminhoPermitido(restricao, i.href)) : NAV_PROCESS
+  const navTools = restricao ? NAV_TOOLS.filter(i => caminhoPermitido(restricao, i.href)) : NAV_TOOLS
+
   return (
     <>
       {/* Mobile overlay */}
@@ -364,45 +367,57 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
             as sessões dele. Os outros módulos ficam acessíveis pela página
             inicial ("Plataforma We Make"), não cruzados dentro de cada um. */}
 
-        {!collapsed ? <SectionLabel>CRM</SectionLabel> : null}
-        {NAV_CRM.map(item => (
-          <NavItem
-            key={item.href}
-            href={item.href}
-            label={item.label}
-            icon={item.icon}
-            active={item.external ? false : isActive(item.href)}
-            badge={item.badge}
-            external={item.external}
-            collapsed={collapsed}
-          />
-        ))}
+        {navCrm.length > 0 && (
+          <>
+            {!collapsed ? <SectionLabel>CRM</SectionLabel> : null}
+            {navCrm.map(item => (
+              <NavItem
+                key={item.href}
+                href={item.href}
+                label={item.label}
+                icon={item.icon}
+                active={item.external ? false : isActive(item.href)}
+                badge={item.badge}
+                external={item.external}
+                collapsed={collapsed}
+              />
+            ))}
+          </>
+        )}
 
-        <NavDivider />
-        {!collapsed ? <SectionLabel>Processos</SectionLabel> : null}
-        {NAV_PROCESS.map(item => (
-          <NavItem
-            key={item.href}
-            href={item.href}
-            label={item.label}
-            icon={item.icon}
-            active={isActive(item.href)}
-            collapsed={collapsed}
-          />
-        ))}
+        {navProcess.length > 0 && (
+          <>
+            <NavDivider />
+            {!collapsed ? <SectionLabel>Processos</SectionLabel> : null}
+            {navProcess.map(item => (
+              <NavItem
+                key={item.href}
+                href={item.href}
+                label={item.label}
+                icon={item.icon}
+                active={isActive(item.href)}
+                collapsed={collapsed}
+              />
+            ))}
+          </>
+        )}
 
-        <NavDivider />
-        {!collapsed ? <SectionLabel>Ferramentas</SectionLabel> : null}
-        {NAV_TOOLS.map(item => (
-          <NavItem
-            key={item.href}
-            href={item.href}
-            label={item.label}
-            icon={item.icon}
-            active={isActive(item.href)}
-            collapsed={collapsed}
-          />
-        ))}
+        {navTools.length > 0 && (
+          <>
+            <NavDivider />
+            {!collapsed ? <SectionLabel>Ferramentas</SectionLabel> : null}
+            {navTools.map(item => (
+              <NavItem
+                key={item.href}
+                href={item.href}
+                label={item.label}
+                icon={item.icon}
+                active={isActive(item.href)}
+                collapsed={collapsed}
+              />
+            ))}
+          </>
+        )}
 
         {/* Gestão de usuários — visível apenas para Renato (admin principal) */}
         {isAdmin && (
@@ -411,20 +426,6 @@ export default function Sidebar({ profile, diagnosticos = false }: SidebarProps)
             <NavItem href="/adminpanel" label="Gestão de Usuários" icon={Settings} active={isActive('/adminpanel')} collapsed={collapsed} />
           </>
         )}
-
-        <NavDivider />
-        {!collapsed ? <SectionLabel>Em Desenvolvimento</SectionLabel> : null}
-        {NAV_WIP.map(item => (
-          <NavItem
-            key={item.href}
-            href={item.href}
-            label={item.label}
-            icon={item.icon}
-            active={false}
-            wip
-            collapsed={collapsed}
-          />
-        ))}
         </>
         )}
       </nav>
