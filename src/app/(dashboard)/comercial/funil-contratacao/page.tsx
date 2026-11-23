@@ -17,6 +17,7 @@ import { AnexarPropostaPdf } from '@/components/comercial/AnexarPropostaPdf'
 import { ContratoDocumentosPanel } from '@/components/comercial/ContratoDocumentosPanel'
 import { DeleteEscolaBtn } from '@/components/comercial/DeleteEscolaBtn'
 import { STAGE_OPTIONS } from '@/types/database'
+import { FileDown } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -323,7 +324,25 @@ export default async function FunilContratacaoPage({ searchParams }: Props) {
 
   return (
     <div>
-      <PageHeader title="Funil de Contratação" subtitle="Da negociação ao contrato assinado — visão consolidada por escola" />
+      <PageHeader
+        title="Funil de Contratação"
+        subtitle="Da negociação ao contrato assinado — visão consolidada por escola"
+        actions={
+          <a
+            href="/api/funil-export"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '.5rem',
+              background: '#002933', border: '1px solid #002933',
+              color: '#fff', padding: '.6rem 1.1rem', borderRadius: 9,
+              fontSize: '.78rem', fontWeight: 700, textDecoration: 'none',
+              fontFamily: 'var(--font-montserrat, sans-serif)',
+            }}
+          >
+            <FileDown size={15} />
+            Exportar Excel
+          </a>
+        }
+      />
 
       <div className="mp-page-padding-x" style={{ padding: '2rem 2.5rem' }}>
 

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import * as XLSX from 'xlsx'
 import { getFilaPriorizacao } from '@/lib/priorizacao'
+import { createClient } from '@/lib/supabase/server'
+import { acessoRestritoDoUsuario, caminhoPermitido } from '@/lib/acesso-restrito'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,6 +18,15 @@ const STAGE_LABELS: Record<string, string> = {
 }
 
 export async function GET() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+
+  const restricao = acessoRestritoDoUsuario(user.email)
+  if (restricao && !caminhoPermitido(restricao, '/comercial/priorizacao')) {
+    return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+  }
+
   try {
     const {
       elegiveis, filaCompletarCadastro, clientesAtivos,
