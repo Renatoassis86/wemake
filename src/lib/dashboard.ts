@@ -117,7 +117,13 @@ export async function getDashboardData(filtros: DashboardFiltros): Promise<Dashb
   const agora = Date.now()
   const JANELA_30D = 30 * 86_400_000
 
+  // Exclui veteranas (escolas parceiras de antes da campanha 2027, ver
+  // marcado_veterana em funil-contratacao.ts) — esse dashboard é sobre o
+  // fluxo da campanha 2027, não sobre o estoque que a We Make já tinha. Sem
+  // isso, uma escola veterana com contrato em vigor contava como "contrato
+  // assinado" da campanha, inflando os KPIs e o funil.
   const linhasFiltradas = funil.linhas.filter(l => {
+    if (l.marcado_veterana) return false
     if (filtros.estado && l.estado !== filtros.estado) return false
     if (cidadeKey && normalizarNomeEscola(l.cidade) !== cidadeKey) return false
     if (bairroKey && normalizarNomeEscola(l.bairro) !== bairroKey) return false

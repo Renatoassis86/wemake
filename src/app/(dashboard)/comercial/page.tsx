@@ -153,11 +153,23 @@ export default async function ComercialDashboard({ searchParams }: Props) {
           <div style={cardHead}>
             <div>
               <div style={cardTitle}>Funil de Conversão Completo</div>
-              <div style={cardSub}>Cada etapa soma as escolas nela ou em qualquer etapa mais avançada · cor = temperatura do lead</div>
+              <div style={cardSub}>Cada etapa soma as escolas nela ou em qualquer etapa mais avançada · cor = temperatura do lead · só campanha 2027, sem veteranas</div>
             </div>
           </div>
           <div style={{ padding: '1.5rem 1.75rem' }}>
             <FunilVisual estagios={dados.funilEstagios} />
+            <div style={{
+              marginTop: '1.25rem', padding: '.9rem 1.25rem', borderRadius: 10,
+              background: '#f0fdf4', border: '1px solid #86efac',
+              display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '.5rem',
+            }}>
+              <span style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: '1.4rem', fontWeight: 800, color: '#16a34a' }}>
+                {dados.kpis.contratosAssinados}
+              </span>
+              <span style={{ fontSize: '.78rem', color: '#166534', fontFamily: 'var(--font-inter,sans-serif)' }}>
+                escolas novas fecharam contrato para 2027 — "Implantação"/"Parceiro Ativo" acima mostram só quem já avançou pro pós-venda, não o total fechado
+              </span>
+            </div>
           </div>
         </div>
 
